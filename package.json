@@ -1,0 +1,57 @@
+{
+  "name": "feri",
+  "version": "0.1.0",
+  "description": "The refreshingly easy to use build tool for web files.",
+  "license": "MIT",
+  "author": "Daniel Gagan",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ForestMist/feri.git"
+  },
+  "main": "code/1 - main.js",
+  "bin": {
+    "feri": "code/1 - main.js"
+  },
+  "dependencies": {
+    "chalk": "^1.1.0",
+    "chokidar": "^1.0.5",
+    "clean-css": "^3.3.9",
+    "coffee-script": "^1.9.3",
+    "ejs": "^2.3.3",
+    "gifsicle": "^3.0.1",
+    "glob": "^5.0.14",
+    "gzipme": "0.0.9",
+    "html-minifier": "^0.7.2",
+    "jade": "^1.11.0",
+    "jpegtran-bin": "^3.0.4",
+    "less": "^2.5.1",
+    "markdown-it": "^4.4.0",
+    "mkdirp": "^0.5.1",
+    "node-sass": "^3.2.0",
+    "optipng-bin": "^3.0.2",
+    "promisify-node": "^0.1.5",
+    "rimraf": "^2.4.2",
+    "stylus": "^0.52.0",
+    "tiny-lr-fork": "0.0.5",
+    "uglify-js": "^2.4.24",
+    "unique-number": "^2.0.1"
+  },
+  "devDependencies": {
+    "expect.js": "0.3.1",
+    "mocha": "^2.2.5"
+  },
+  "scripts": {
+    "test": "npm run test-shared -loglevel silent && npm run test-functions -loglevel silent && npm run test-clean -loglevel silent && npm run test-build -loglevel silent && npm run test-watch -loglevel silent",
+    "test-shared": "mocha test/shared.js",
+    "test-functions": "mocha test/functions.js",
+    "test-clean": "mocha test/clean.js",
+    "test-build": "mocha test/build.js",
+    "test-watch": "mocha test/watch.js"
+  },
+  "keywords": [
+    "clean",
+    "build",
+    "watch",
+    "livereload"
+  ]
+}

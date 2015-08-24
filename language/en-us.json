@@ -1,0 +1,47 @@
+{
+    "error": {
+        "configPaths"           : "Source and destination should be unique and not nested within each other.",
+        "destPointsToSource"    : "Destination points to a source directory.",
+        "missingDest"           : "Missing destination file.",
+        "missingSource"         : "Missing source file.",
+        "missingSourceDirectory": "Missing source directory.",
+        "removeDest"            : "Source file delete ignored since source files should never be harmed.",
+        "watchingDest"          : "Error watching destination folder.",
+        "watchingSource"        : "Error watching source folder."
+    },
+    "message": {
+        "fileChangedTooRecently"  : "{file} was changed too recently, ignoring.",
+        "includesNewer"           : "{extension} include(s) newer than destination file.",
+        "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
+        "listeningOnPort"         : "{software} listening on port {port}.",
+        "usingConfigFile"         : "Using config file {file}.",
+        "watchRefreshed"          : "{software} refreshed.",
+        "watchingDirectory"       : "Watching {directory} for changes."
+    },
+    "paddedGroups": {
+        "build": {
+            "output": "output ",
+            "copy"  : "copy   "
+        },
+        "stats": {
+            "load" : "Load  ",
+            "clean": "Clean ",
+            "build": "Build ",
+            "watch": "Watch ",
+            "total": "Total "
+        }
+    },
+    "words": {
+        "add"      : "add",
+        "build"    : "Build",
+        "clean"    : "Clean",
+        "change"   : "change",
+        "directory": "dir",
+        "done"     : "Done",
+        "removed"  : "removed",
+        "seconds"  : "seconds",
+        "stats"    : "Stats",
+        "watch"    : "Watch",
+        "watching" : "Watching"
+    }
+}
