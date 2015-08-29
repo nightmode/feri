@@ -6,7 +6,7 @@ The clean module lives in the file [code/3 - config.js](../../code/3 - config.js
 
 ## Config Object
 
-* [concurLimit](#concurLimit)
+* [concurLimit](#config.concurLimit)
 * [fileType](#config.fileType)
   * [coffeeScript](#config.fileType.coffeeScript)
   * [css](#config.fileType.css)
