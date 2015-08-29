@@ -28,15 +28,15 @@ var propertyAccessor = function propertyAccessor(object, keys) {
 var shared = {
     // null values will be populated later
     cache: {
-        'errorsSeen'       : [], // keep track of which error messages have been displayed
-        'includeFilesSeen' : {}, // will contain temporary sub arrays to keep track of which files have been seen when recursively checking source includes to find out if any of them are newer than the destination output file
-        'includesNewer'    : {}, // keep track of include files and their modified times
-        'missingMapBuild'  : []  // note file types that are missing an entry in config.map.sourceToDestTasks
+        'errorsSeen'       : [], // Keep track of which error messages have been displayed to a command line user. Used by functions.logError to show individual errors only once.
+        'includeFilesSeen' : {}, // Keep track of which include files have been seen. Child properties are of the type array.
+        'includesNewer'    : {}, // Keep track of include files and their modified times. Child properties are of the type object.
+        'missingMapBuild'  : []  // Keep track of any file types that are missing a config.map.sourceToDestTasks entry during a build pass.
     },
-    cli: false, // will be set to true if we are running from the command line
+    cli: false, // Running as a command line tool if true. Called as a require if false.
     help: false, // will be set to true if we are displaying help text on the command line
     language: { // language.base and language.loaded are a duplicate of each other to speed up our default english language usage
-        base: { // if a value in language.loaded is not available, fall back to a value from here
+        base: { // The default language object that is a fallback in case a value in shared.language.loaded is not available.
             "error": {
                 "configPaths"           : "Source and destination should be unique and not nested within each other.",
                 "destPointsToSource"    : "Destination points to a source directory.",
@@ -84,6 +84,11 @@ var shared = {
             }
         },
         display: function shared_language_display(keys) {
+            /*
+            Return a string from shared.language.loaded if available otherwise return the same string from shared.language.base.
+            @param   {String}  keys  String like 'error.missingSource'
+            @return  {String}        String like 'Missing source file.'
+            */
             var alreadyLoaded = propertyAccessor(shared.language.loaded, keys)
 
             if (typeof alreadyLoaded === 'string') {
@@ -92,7 +97,7 @@ var shared = {
                 return propertyAccessor(shared.language.base, keys)
             }
         },
-        loaded: { // can be replaced by a call like functions.setLanguage('en-us')
+        loaded: { // The active language translation. Defaults to english but can be replaced by functions.setLanguage.
             "error": {
                 "configPaths"           : "Source and destination should be unique and not nested within each other.",
                 "destPointsToSource"    : "Destination points to a source directory.",
@@ -141,13 +146,14 @@ var shared = {
         }
     },
     livereload: {
-        'calmTimer'   : null, // timer used to call livereload 300ms after the last destination file change
-        'changedFiles': [],
+        'calmTimer'   : null, // Variable used by watch.updateLiveReloadServer to update the LiveReload server 300 ms after the last destination file change.
+        'changedFiles': [], // Keeps track of which destination files were changed in order to relay those to the LiveReload server.
     },
+    log: false, // will be set to true if we are running as a command line in order to allow console logging
     platform: os.platform(),
     path: {
         'pwd': process.env.PWD,
-        'self': path.dirname(__dirname) // full path to ourself like /Users/daniel/Dropbox/Projects/node/feri
+        'self': path.dirname(__dirname) // full path to ourself like /Users/daniel/project/node_modules/feri
     },
     slash: '/', // directory separator
     stats: {
@@ -158,7 +164,7 @@ var shared = {
             'watch': 0  // seconds it took to enable watch mode
         }
     },
-    uniqueNumber: new uniqueNumber() // unique number system (https://www.npmjs.com/package/unique-number) for ensuring unique property names like shared.cache.includePaths[name]
+    uniqueNumber: new uniqueNumber() // An instance of unique-number that is used to ensure unique property names in functions like functions.includePathsEjs.
 }
 
 //------------------

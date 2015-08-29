@@ -54,7 +54,7 @@ functions.addDestToSourceExt = function functions_addDestToSourceExt(ext, mappin
 
 functions.cacheReset = function functions_cacheReset() {
     /*
-    Reset cache for a new pass through a set of files.
+    Reset shared.cache for a new pass through a set of files.
     */
     shared.cache.errorsSeen = []
     shared.cache.includeFilesSeen = {}
@@ -95,7 +95,7 @@ functions.cleanArray = function functions_cleanArray(array) {
 functions.cloneObj = function functions_cloneObj(object) {
     /*
     Clone an object recursively so the return is not a reference to the original object.
-    @param  {Object}    obj     Object like { number: 1, bool: true, array: [], subObject: {} }
+    @param  {Object}  obj  Object like { number: 1, bool: true, array: [], subObject: {} }
     @return {Object}
     */
     if (object === null || typeof object !== 'object') {
@@ -238,8 +238,8 @@ functions.fileExtension = function functions_fileExtension(filePath) {
 functions.fileSize = function functions_fileSize(filePath) {
     /*
     Find out the size of a file or folder.
-    @param  {String}    filePath    Path to a file or folder.
-    @return {Promise}               Promise that will return a boolean. True if yes.
+    @param  {String}   filePath  Path to a file or folder.
+    @return {Promise}            Promise that will return a boolean. True if yes.
     */
     return fsStatPromise(filePath).then(function(stats) {
         return stats.size
@@ -250,7 +250,7 @@ functions.fileSize = function functions_fileSize(filePath) {
 
 functions.findFiles = function functions_findFiles(match, options) {
     /*
-    Find the files using https://www.npmjs.com/package/glob
+    Find the files using https://www.npmjs.com/package/glob.
     @param   {String}  match      String like '*.jpg'
     @param   {Object}  [options]  Optional. Options for glob.
     @return  {Promise}            Promise that returns an array of files or empty array if successful. Error if not.
@@ -308,7 +308,7 @@ functions.log = function functions_log(message, indent) {
     @param  {String}   message   String to display.
     @param  {Boolean}  [indent]  Optional and defaults to true. If true, the string will be indented four spaces.
     */
-    if (config.log) {
+    if (shared.log) {
         indent = (indent === false) ? '' : '    '
         console.info(indent + message)
     }
@@ -322,7 +322,7 @@ functions.logError = function functions_logError(error) {
     var message = error.message || error
     var displayError = false
 
-    if (config.log) {
+    if (shared.log) {
         if (message === '') {
             if (typeof error.stack === 'string') {
                 displayError = true
@@ -416,7 +416,7 @@ functions.occurrences = function functions_occurrences(string, subString, allowO
     @param   {String}   string              String to search.
     @param   {String}   subString           Character or string to search for.
     @param   {Boolean}  [allowOverlapping]  Optional and defaults to false.
-    @return  {Number}                       Number of occurences of 'subString' in 'string'.
+    @return  {Number}                       Number of occurrences of 'subString' in 'string'.
     */
     // This function comes from http://stackoverflow.com/questions/4009756/how-to-count-string-occurrence-in-string
     string += ''
@@ -492,7 +492,7 @@ functions.removeDest = function functions_removeDest(filePath, log) {
     Remove file or folder if unrelated to the source directory.
     @param   {String}   filePath  Path to a file or folder.
     @param   {Boolean}  log       Set to false to disable console log removal messages.
-    @return  {Promise}            Promise that returns true if the file or folder was removed succesfully otherwise an error if not.
+    @return  {Promise}            Promise that returns true if the file or folder was removed successfully otherwise an error if not.
     */
     return Promise.resolve().then(function() {
         if (filePath.indexOf(config.path.source) >= 0) {
@@ -769,7 +769,7 @@ functions.includePathsEjs = function functions_includePathsEjs(data, filePath, i
     @param   {String}   data                     String to search for include paths.
     @param   {String}   filePath                 Source file where data came from.
     @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
-    @return  {Promise}                           Promise that returns an array of includees like ['/partials/_footer.ejs'] if succesful. An error object if not.
+    @return  {Promise}                           Promise that returns an array of includes like ['/partials/_footer.ejs'] if successful. An error object if not.
     */
     var cleanup = false
 
@@ -883,7 +883,7 @@ functions.includePathsJade = function functions_includePathsJade(data, filePath,
     @param   {String}   data                     String to search for include paths.
     @param   {String}   filePath                 Source file where data came from.
     @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
-    @return  {Promise}                           Promise that returns an array of includees like ['/partials/_footer.jade'] if succesful. An error object if not.
+    @return  {Promise}                           Promise that returns an array of includes like ['/partials/_footer.jade'] if successful. An error object if not.
     */
     var cleanup = false
 
@@ -989,7 +989,7 @@ functions.includePathsLess = function functions_includePathsLess(data, filePath,
     @param   {String}   data                     String to search for import paths.
     @param   {String}   filePath                 Source file where data came from.
     @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
-    @return  {Promise}                           Promise that returns an array of includees like ['/partials/_fonts.less'] if succesful. An error object if not.
+    @return  {Promise}                           Promise that returns an array of includes like ['/partials/_fonts.less'] if successful. An error object if not.
     */
     var cleanup = false
 
@@ -1089,11 +1089,11 @@ functions.includePathsLess = function functions_includePathsLess(data, filePath,
 
 functions.includePathsSass = function functions_includePathsSass(data, filePath, includePathsCacheName) {
     /*
-    Find SASS includes and return an array of matches.
+    Find Sass includes and return an array of matches.
     @param   {String}   data                     String to search for import paths.
     @param   {String}   filePath                 File path to where data came from.
     @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
-    @return  {Promise}                           Promise that returns an array of includees like ['/partials/_fonts.scss'] if succesful. An error object if not.
+    @return  {Promise}                           Promise that returns an array of includes like ['/partials/_fonts.scss'] if successful. An error object if not.
     */
 
     var cleanup = false
@@ -1237,7 +1237,7 @@ functions.includePathsStylus = function functions_includePathsStylus(data, fileP
     @param   {String}   data                     String to search for includes paths.
     @param   {String}   filePath                 Full file path to where data came from.
     @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
-    @return  {Promise}                           Promise that returns an array of includes like ['/partials/_fonts.styl'] if succesful. An error object if not.
+    @return  {Promise}                           Promise that returns an array of includes like ['/partials/_fonts.styl'] if successful. An error object if not.
     */
     var cleanup = false
 

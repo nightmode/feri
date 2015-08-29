@@ -89,7 +89,7 @@ if (shared.cli) {
     var configFileExists = false
 
     // enable console logging since we are running as a command line program
-    config.log = true
+    shared.log = true
 
     return Promise.resolve().then(function() {
 
@@ -177,6 +177,9 @@ if (shared.cli) {
             console.log('    ' + chalk.gray('For example, "feri --clean --noclean" would result in not cleaning.'))
             console.log()
             console.log('    ' + chalk.gray('Options "--all", "--forcebuild", and "--republish" are even stronger.'))
+            console.log()
+            console.log('    ' + chalk.gray('Want even more options? Try a custom config file.'))
+            console.log('    ' + chalk.gray('https://github.com/ForestMist/feri#custom-config-file'))
             console.log()
             console.log('Source:')
             console.log()
