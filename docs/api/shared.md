@@ -27,11 +27,11 @@ The shared module lives in the file [code/2 - shared.js](../../code/2 - shared.j
   * [self](#sharedpathself)
 * [slash](#sharedslash)
 * [stats](#sharedstats)
-  * [timeTo](#sharedtimeto)
-    * [load](#sharedtimetoload)
-    * [clean](#sharedtimetoclean)
-    * [build](#sharedtimetobuild)
-    * [watch](#sharedtimetowatch)
+  * [timeTo](#sharedstatstimeto)
+    * [load](#sharedstatstimetoload)
+    * [clean](#sharedstatstimetoclean)
+    * [build](#sharedstatstimetobuild)
+    * [watch](#sharedstatstimetowatch)
 * [uniqueNumber](#shareduniquenumber)
 
 ## shared.cache
