@@ -1,0 +1,142 @@
+# Feri - Custom Build Task
+
+Feri comes with a lot of great build tasks by default but sometimes you need something a bit more specialized. That is where custom build tasks come in. Custom build tasks must return a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) but before we go into specifics, lets review how Feri builds files behind the scenes.
+
+## config.map.sourceToDestTasks
+
+Build tasks are defined in [config.map.sourceToDestTasks](config.md#config.map.sourceToDestTasks). Each extension has an array of one or more tasks. The tasks can be strings or functions. Strings signify that the build task exists in the [build](build.md) module. Functions signify a custom build task.
+
+For example, the entry for CoffeeScript is as follows.
+
+```js
+config.map.sourceToDestTasks.coffee = ['coffeeScript', 'js']
+```
+
+In the above array, the two strings mean run any `.coffee` files through [build.coffeeScript](build.md#build.coffeeScript) and then [build.js](build.md#build.js). The first task transpiles CoffeeScript to JavaScript. The second task minifies the resulting JavaScript.
+
+If our source to destination tasks for CoffeeScript instead looked like...
+
+```js
+function magicSauce() {
+    // do magical things
+}
+
+config.map.sourceToDestTasks.coffee = ['coffeeScript', magicSauce]
+```
+
+We would surmise that any `.coffee` files would first run through [build.coffeeScript](build.md#build.coffeeScript) and then a custom build task called `magicSauce`.
+
+## Reusable Object Building
+
+Before any task defined in `config.map.sourceToDestTasks` is run, a command and control function called [build.processOneBuild](build.md#build.processOneBuild) creates an object that will be passed between build tasks for each file. Assuming the source file we are building is called `hello.txt`, the object would look like the following.
+
+```js
+obj = {
+    'source': '/source/hello.txt',
+    'dest': '',
+    'data': '',
+    'build': false
+}
+```
+
+The property `source` is where the source file is located. This field will always be filled out.
+
+The property `dest` is the destination file name. This is typically figured out by the first build task.
+
+The property `data` is used to pass strings between build functions that work in memory. Functions that write to disk will not use this field.
+
+The property `build` will be set to true if a file needs to be built.
+
+Obviously, we want our custom build task to receive a reusable object. For extra points we will also make sure it returns the reusable object so it can be chained with other build tasks.
+
+## Define a Custom Build Task
+
+Let's imagine we want a workflow that will replace instances of a string `{name}` in text files with the following content.
+
+```
+Hello {name}! Lovely weather we are having today.
+```
+
+Using code from `build.html` as our template, we can simplify our custom build task down to the following.
+
+```js
+function nameReplace(obj) {
+    return functions.objBuildInMemory(obj).then(function(obj) {
+
+        if (obj.build) {
+            obj.data = obj.data.replace('{name}', 'Susan')
+            return obj
+        } else {
+            // no further chained promises should be called
+            throw 'done'
+        }
+
+    })
+}
+
+// don't forget to assign your custom build task to a file extension
+config.map.sourceToDestTasks.txt = [nameReplace]
+```
+
+First, we create a function called `nameReplace` that expects an object.
+
+Next, we leverage a really neat [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) called [functions.objBuildInMemory](functions.md#functions.objBuildInMemory) that does quite a few things for us.
+
+> It figures out that the destination path should be `/dest/hello.txt` and writes that to `obj.dest`.
+
+> Assuming the destination file does not exist **or** if the source file is newer than the destination, it sets `obj.build` to `true`.
+
+> Assuming `obj.build` is `true`, it reads the source file content into `obj.data`.
+
+### Scenario I: Build is True
+
+> When our promise returns, we have an object like the following.
+
+> ```js
+obj = {
+    'source': '/source/hello.txt',
+    'dest': '/dest/hello.txt',
+    'data': 'Hello {name}! Lovely weather we are having today.',
+    'build': true
+}
+```
+
+> Wow, our job is actually pretty easy now.
+
+> With `obj.build` set to `true` we run a simple replace on `obj.data` and then return the entire `obj`. If another build task receives our `obj` it will see the following.
+
+> ```js
+obj = {
+    'source': '/source/hello.txt',
+    'dest': '/dest/hello.txt',
+    'data': 'Hello Susan! Lovely weather we are having today.',
+    'build': true
+}
+```
+
+> You may be thinking, wait a second... we didn't actually write a file and you are right. Every chain of build tasks has a special finisher task called [build.finalize](build.md#build.finalize) that takes care of writing our files to disk for us. So convenient!
+
+> If we instead choose to write `obj.data` to disk ourselves, it would be a good idea to clear `obj.data` before passing it along to any subsequent tasks like `build.finalize`. That way data isn't written twice.
+
+### Scenario II: Build is False
+
+> Let's say our promise returns an object like the following.
+
+> ```js
+obj = {
+    'source': '/source/hello.txt',
+    'dest': '/dest/hello.txt',
+    'data': ''
+    'build': false
+}
+```
+
+> There is no reason to return the object for any further build tasks. Knowing there is nothing to do, we can `throw 'done'` to break out of our promise chain in a nice way. With less work, Feri runs faster!
+
+## More Complex Tasks
+
+When building more complex tasks, your best friends will be [functions.objBuildInMemory](functions.md#functions.objBuildInMemory), [functions.objBuildOnDisk](functions.md#functions.objBuildOnDisk), and [functions.objBuildWithIncludes](functions.md#functions.objBuildWithIncludes). Each of these is used in various bundled [build](build) tasks so free to use any of those as a starter for your own awesome thing!
+
+## License
+
+MIT © [Daniel Gagan](https://forestmist.org)
