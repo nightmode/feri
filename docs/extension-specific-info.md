@@ -45,7 +45,7 @@ You can instead set "root" to the same path as your source folder and then write
 
 Now the include will work from any depth. Even better, the parent file containing the code can be moved without having to update the include path.
 
-To enable pretty includes, simply add the following to your [custom config file](custom-config-file.md).
+To enable pretty includes, simply add the following to your [custom config file](../README.md#custom-config-file).
 
 ```js
 // set root variable for ejs includes
@@ -58,7 +58,7 @@ config.fileType.ejs.root = config.path.source
 
 Feri comes ready to create GZ versions of files to live along side of their respective destination files. This is great if you have a web server like [nginx](http://wiki.nginx.org/Main) which can serve precompiled Gzip files to clients that support it. Less work for your web server and typically better compression too.
 
-To enable Gzip versions of your destination files, add the following to your [custom config file](custom-config-file.md).
+To enable Gzip versions of your destination files, add the following to your [custom config file](../README.md#custom-config-file).
 
 ```js
 // add gz build task for the following extensions
