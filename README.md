@@ -18,7 +18,7 @@ Spend an afternoon on your project, not your build tool. ^_^
 * [Extension Specific Information](#extension-specific-information)
 * [Edge Cases](#edge-cases)
 * [API Documentation](#api-documentation)
-* [Contribute](#help-feri)
+* [Contribute](#contribute)
 
 ## Features
 
