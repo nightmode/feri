@@ -4,7 +4,7 @@ Feri comes with a lot of great build tasks by default but sometimes you need som
 
 ## config.map.sourceToDestTasks
 
-Build tasks are defined in [config.map.sourceToDestTasks](config.md#configmapsourcetodesttasks). Each extension has an array of one or more tasks. The tasks can be strings or functions. Strings signify that the build task exists in the [build](build.md) module. Functions signify a custom build task.
+Build tasks are defined in [config.map.sourceToDestTasks](api/config.md#configmapsourcetodesttasks). Each extension has an array of one or more tasks. The tasks can be strings or functions. Strings signify that the build task exists in the [build](api/build.md) module. Functions signify a custom build task.
 
 For example, the entry for CoffeeScript is as follows.
 
@@ -12,7 +12,7 @@ For example, the entry for CoffeeScript is as follows.
 config.map.sourceToDestTasks.coffee = ['coffeeScript', 'js']
 ```
 
-In the above array, the two strings mean run any `.coffee` files through [build.coffeeScript](build.md#buildcoffeescript) and then [build.js](build.md#buildjs). The first task transpiles CoffeeScript to JavaScript. The second task minifies the resulting JavaScript.
+In the above array, the two strings mean run any `.coffee` files through [build.coffeeScript](api/build.md#buildcoffeescript) and then [build.js](api/build.md#buildjs). The first task transpiles CoffeeScript to JavaScript. The second task minifies the resulting JavaScript.
 
 If our source to destination tasks for CoffeeScript instead looked like...
 
@@ -24,11 +24,11 @@ function magicSauce() {
 config.map.sourceToDestTasks.coffee = ['coffeeScript', magicSauce]
 ```
 
-We would surmise that any `.coffee` files would first run through [build.coffeeScript](build.md#buildcoffeescript) and then a custom build task called `magicSauce`.
+We would surmise that any `.coffee` files would first run through [build.coffeeScript](api/build.md#buildcoffeescript) and then a custom build task called `magicSauce`.
 
 ## Reusable Object Building
 
-Before any task defined in `config.map.sourceToDestTasks` is run, a command and control function called [build.processOneBuild](build.md#buildprocessonebuild) creates an object that will be passed between build tasks for each file. Assuming the source file we are building is called `hello.txt`, the object would look like the following.
+Before any task defined in `config.map.sourceToDestTasks` is run, a command and control function called [build.processOneBuild](api/build.md#buildprocessonebuild) creates an object that will be passed between build tasks for each file. Assuming the source file we are building is called `hello.txt`, the object would look like the following.
 
 ```js
 obj = {
@@ -80,7 +80,7 @@ config.map.sourceToDestTasks.txt = [nameReplace]
 
 First, we create a function called `nameReplace` that expects an object.
 
-Next, we leverage a really neat [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) called [functions.objBuildInMemory](functions.md#functionsobjbuildinmemory) that does quite a few things for us.
+Next, we leverage a really neat [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) called [functions.objBuildInMemory](api/functions.md#functionsobjbuildinmemory) that does quite a few things for us.
 
 > It figures out that the destination path should be `/dest/hello.txt` and writes that to `obj.dest`.
 
@@ -114,7 +114,7 @@ obj = {
 }
 ```
 
-> You may be thinking, wait a second... we didn't actually write a file and you are right. Every chain of build tasks has a special finisher task called [build.finalize](build.md#buildfinalize) that takes care of writing our files to disk for us. So convenient!
+> You may be thinking, wait a second... we didn't actually write a file and you are right. Every chain of build tasks has a special finisher task called [build.finalize](api/build.md#buildfinalize) that takes care of writing our files to disk for us. So convenient!
 
 > If we instead choose to write `obj.data` to disk ourselves, it would be a good idea to clear `obj.data` before passing it along to any subsequent tasks like `build.finalize`. That way data isn't written twice.
 
@@ -135,7 +135,7 @@ obj = {
 
 ## More Complex Tasks
 
-When building more complex tasks, your best friends will be [functions.objBuildInMemory](functions.md#functionsobjbuildinmemory), [functions.objBuildOnDisk](functions.md#functionsobjbuildondisk), and [functions.objBuildWithIncludes](functions.md#functionsobjbuildwithincludes). Each of these is used in various bundled [build](build) tasks so free to use any of those as a starter for your own awesome thing!
+When building more complex tasks, your best friends will be [functions.objBuildInMemory](api/functions.md#functionsobjbuildinmemory), [functions.objBuildOnDisk](api/functions.md#functionsobjbuildondisk), and [functions.objBuildWithIncludes](api/functions.md#functionsobjbuildwithincludes). Each of these is used in various bundled [build](api/build.md) tasks so free to use any of those as a starter for your own awesome thing!
 
 ## License
 
