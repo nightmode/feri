@@ -43,41 +43,41 @@ Now that we know about all the modules being exported, let's go over each in a b
 
 ## Modules
 
-> ### Shared
+### Shared
 
-> Shared is all the neat things we may want to share across modules. Things that don't really belong in the config module like caches, non-user configurable variables, computed values, and more.
+Shared is all the neat things we may want to share across modules. Things that don't really belong in the config module like caches, non-user configurable variables, computed values, and more.
 
-> For more information, see the [Shared](shared.md) documentation.
+For more information, see the [Shared](shared.md) documentation.
 
-> ### Config
+### Config
 
-> Config holds all the variables that may be set by the command line, a custom config file for the command line, or programatically.
+Config holds all the variables that may be set by the command line, a custom config file for the command line, or programatically.
 
-> For more information, see the [Config](config.md) documentation.
+For more information, see the [Config](config.md) documentation.
 
-> ### Functions
+### Functions
 
-> Functions is the module that many other modules depend on. A treasure trove of helpers.
+Functions is the module that many other modules depend on. A treasure trove of helpers.
 
-> For more information, see the [Functions](functions.md) documentation.
+For more information, see the [Functions](functions.md) documentation.
 
-> ### Clean
+### Clean
 
-> Clean is the module dedicated to cleaning destination files.
+Clean is the module dedicated to cleaning destination files.
 
-> For more information, see the [Clean](clean.md) documentation.
+For more information, see the [Clean](clean.md) documentation.
 
-> ### Build
+### Build
 
-> Build is the module dedicated to building destination files.
+Build is the module dedicated to building destination files.
 
-> For more information, see the [Build](build.md) documentation.
+For more information, see the [Build](build.md) documentation.
 
-> ### Watch
+### Watch
 
-> Watch is all about watching the source and destination folders for changes. Initiating the proper clean or build tasks in response to file system events.
+Watch is all about watching the source and destination folders for changes. Initiating the proper clean or build tasks in response to file system events.
 
-> For more information, see the [Watch](watch.md) documentation.
+For more information, see the [Watch](watch.md) documentation.
 
 ## License
 
