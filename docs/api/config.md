@@ -6,45 +6,45 @@ The clean module lives in the file [code/3 - config.js](../../code/3 - config.js
 
 ## Config Object
 
-* [concurLimit](#config.concurLimit)
-* [fileType](#config.fileType)
-  * [coffeeScript](#config.fileType.coffeeScript)
-  * [css](#config.fileType.css)
-  * [ejs](#config.fileType.ejs)
-  * [js](#config.fileType.js)
-  * [less](#config.fileType.less)
-  * [sass](#config.fileType.sass)
-  * [stylus](#config.fileType.stylus)
-* [includeFileTypes](#config.includeFileTypes)
-* [includePrefix](#config.includePrefix)
-* [glob](#config.glob)
-  * [clean](#config.glob.clean)
-  * [build](#config.glob.build)
-* [language](#config.language)
-* [livereloadFileTypes](#config.livereloadFileTypes)
-* [map](#config.map)
-  * [destToSourceExt](#config.destToSourceExt)
-  * [sourceToDestTasks](#config.sourceToDestTasks)
-* [option](#config.option)
-  * [build](#config.option.build)
-  * [clean](#config.option.clean)
-  * [debug](#config.option.debug)
-  * [forcebuild](#config.option.forcebuild)
-  * [livereload](#config.option.livereload)
-  * [republish](#config.option.republish)
-  * [stats](#config.option.stats)
-  * [watch](#config.option.watch)
-* [path](#config.path)
-  * [source](#config.path.source)
-  * [dest](#config.path.dest)
-* [sourceMaps](#config.sourceMaps)
-* [sourceRoot](#config.sourceRoot)
-* [thirdParty](#config.thirdParty)
-  * [chokidar](#config.thirdParty.chokidar)
-  * [cleanCss](#config.thirdParty.cleanCss)
-  * [htmlMinifier](#config.thirdParty.htmlMinifier)
-  * [livereload](#config.thirdParty.livereload)
-  * [markdownIt](#config.thirdParty.markdownIt)
+* [concurLimit](#configconcurlimit)
+* [fileType](#configfiletype)
+  * [coffeeScript](#configfiletypecoffeescript)
+  * [css](#configfiletypecss)
+  * [ejs](#configfiletypeejs)
+  * [js](#configfiletypejs)
+  * [less](#configfiletypeless)
+  * [sass](#configfiletypesass)
+  * [stylus](#configfiletypestylus)
+* [includeFileTypes](#configincludefiletypes)
+* [includePrefix](#configincludeprefix)
+* [glob](#configglob)
+  * [clean](#configglobclean)
+  * [build](#configglobbuild)
+* [language](#configlanguage)
+* [livereloadFileTypes](#configlivereloadfiletypes)
+* [map](#configmap)
+  * [destToSourceExt](#configdesttosourceext)
+  * [sourceToDestTasks](#configsourcetodesttasks)
+* [option](#configoption)
+  * [build](#configoptionbuild)
+  * [clean](#configoptionclean)
+  * [debug](#configoptiondebug)
+  * [forcebuild](#configoptionforcebuild)
+  * [livereload](#configoptionlivereload)
+  * [republish](#configoptionrepublish)
+  * [stats](#configoptionstats)
+  * [watch](#configoptionwatch)
+* [path](#configpath)
+  * [source](#configpathsource)
+  * [dest](#configpathdest)
+* [sourceMaps](#configsourcemaps)
+* [sourceRoot](#configsourceroot)
+* [thirdParty](#configthirdparty)
+  * [chokidar](#configthirdpartychokidar)
+  * [cleanCss](#configthirdpartycleancss)
+  * [htmlMinifier](#configthirdpartyhtmlminifier)
+  * [livereload](#configthirdpartylivereload)
+  * [markdownIt](#configthirdpartymarkdownit)
 
 ## config.concurLimit
 
@@ -66,7 +66,7 @@ Parent container for options specific to a single file type.
 
 > Type: `object`
 
-> Options used by [build.coffeeScript](build.md#build.coffeeScript).
+> Options used by [build.coffeeScript](build.md#buildcoffeescript).
 
 > ```js
 config.fileType.coffeeScript = {
@@ -78,7 +78,7 @@ config.fileType.coffeeScript = {
 
 > Type: `object`
 
-> Options used by [build.css](build.md#build.css).
+> Options used by [build.css](build.md#buildcss).
 
 > ```js
 config.fileType.css = {
@@ -90,7 +90,7 @@ config.fileType.css = {
 
 > Type: `object`
 
-> Options used by [build.ejs](build.md#build.ejs).
+> Options used by [build.ejs](build.md#buildejs).
 
 > ```js
 config.fileType.ejs = {
@@ -108,7 +108,7 @@ config.fileType.ejs = {
 
 > Type: `object`
 
-> Options used by [build.js](build.md#build.js).
+> Options used by [build.js](build.md#buildjs).
 
 > ```js
 config.fileType.js = {
@@ -120,7 +120,7 @@ config.fileType.js = {
 
 > Type: `object`
 
-> Options used by [build.less](build.md#build.less).
+> Options used by [build.less](build.md#buildless).
 
 > ```js
 config.fileType.less = {
@@ -132,7 +132,7 @@ config.fileType.less = {
 
 > Type: `object`
 
-> Options used by [build.sass](build.md#build.sass).
+> Options used by [build.sass](build.md#buildsass).
 
 > ```js
 config.fileType.sass = {
@@ -144,7 +144,7 @@ config.fileType.sass = {
 
 > Type: `object`
 
-> Options used by [build.stylus](build.md#build.stylus).
+> Options used by [build.stylus](build.md#buildstylus).
 
 > ```js
 config.fileType.stylus = {
@@ -156,7 +156,7 @@ config.fileType.stylus = {
 
 Type: `array`
 
-Used by [watch.buildOne](watch.md#buildOne) to know which file types may use includes.
+Used by [watch.buildOne](watch.md#buildone) to know which file types may use includes.
 
 ```js
 config.includeFileTypes = ['ejs', 'jade', 'less', 'sass', 'scss', 'styl']
@@ -182,7 +182,7 @@ Parent container for [glob](https://www.npmjs.com/package/glob) search strings.
 
 > Type: `string`
 
-> If specified, use when running [clean.processClean](clean.md#clean.processClean) without the files parameter.
+> If specified, use when running [clean.processClean](clean.md#cleanprocessclean) without the files parameter.
 
 > ```js
 config.glob.clean = '' // default
@@ -199,7 +199,7 @@ config.glob.clean = '**/*.{gif|jpg|png}'
 
 > Type: `string`
 
-> If specified, use when running [build.processBuild](build.md#build.processBuild) without the files parameter.
+> If specified, use when running [build.processBuild](build.md#buildprocessbuild) without the files parameter.
 
 > ```js
 config.glob.build = '' // default
@@ -222,7 +222,7 @@ Specify a language Feri that should use. The language should map to a json file 
 config.language = 'en-us'
 ```
 
-Note: API users should use [functions.setLanguage](functions.md#functions.setLangauge) to change both this variable and [share.language.loaded](share.md#shared.language.loaded) at the same time. Command line users only need to set this variable.
+Note: API users should use [functions.setLanguage](functions.md#functionssetlangauge) to change both this variable and [share.language.loaded](share.md#sharedlanguageloaded) at the same time. Command line users only need to set this variable.
 
 ## config.livereloadFileTypes
 
@@ -260,7 +260,7 @@ config.map.destToSourceExt = {
 
 > Notice how an entry like `gz` has an asterisk for one of its array values? An asterisk means the extension in question could be added on to any file. Perhaps a file like `index.html.gz`, `style.css.gz`, or `hello.txt.gz`. Could be anything really so the asterisk instructs Feri to use special logic for these kinds of files.
 
-> Note: API users can use [functions.addDestToSourceExt](functions.md#functions.addDestToSourceExt) to modify this object safely.
+> Note: API users can use [functions.addDestToSourceExt](functions.md#functionsadddesttosourceext) to modify this object safely.
 
 > ### config.map.sourceToDestTasks
 
@@ -268,7 +268,7 @@ config.map.destToSourceExt = {
 
 > Source extensions to build tasks map.
 
-> Array elements for any particular file type can be a `string` or a `function`. A string signifies that an existing build function should be used. For example, `['gif']` means use [build.gif](build.md#build.gif) to optimize gif files. A function means you have constructed your own [custom build task](../custom-build-task.md).
+> Array elements for any particular file type can be a `string` or a `function`. A string signifies that an existing build function should be used. For example, `['gif']` means use [build.gif](build.md#buildgif) to optimize gif files. A function means you have constructed your own [custom build task](../custom-build-task.md).
 
 > ```js
 jsconfig.map.sourceToDestTasks = {
@@ -411,7 +411,7 @@ config.option.stats = true
 config.option.watch = false
 ```
 
-> Note: The above value is set to `true` for API users so they can call [watch.processWatch](watch.md#watch.processWatch) without having to first enable watching.
+> Note: The above value is set to `true` for API users so they can call [watch.processWatch](watch.md#watchprocesswatch) without having to first enable watching.
 
 ## config.path
 
@@ -485,7 +485,7 @@ config.thirdParty.chokidar = {
 
 > Type: `object`
 
-> Options for [clean-css](https://www.npmjs.com/package/clean-css). Used by [build.css](build.md#build.css).
+> Options for [clean-css](https://www.npmjs.com/package/clean-css). Used by [build.css](build.md#buildcss).
 
 > ```js
 config.thirdParty.cleanCss = {
@@ -504,7 +504,7 @@ config.thirdParty.cleanCss = {
 
 > Type: `object`
 
-> Options for [html-minifier](https://www.npmjs.com/package/html-minifier). Used by [build.html](build.md#build.html).
+> Options for [html-minifier](https://www.npmjs.com/package/html-minifier). Used by [build.html](build.md#buildhtml).
 
 > ```js
 config.thirdParty.htmlMinifier = {
@@ -549,7 +549,7 @@ config.thirdParty.livereload = {
 
 > Type: `object`
 
-> Options for [markdown-it](https://www.npmjs.com/package/markdown-it). Used by [build.markdown](build.md#build.markdown).
+> Options for [markdown-it](https://www.npmjs.com/package/markdown-it). Used by [build.markdown](build.md#buildmarkdown).
 
 > ```js
 config.thirdParty.markdownIt = {

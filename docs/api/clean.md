@@ -6,9 +6,9 @@ The clean module lives in the file [code/5 - clean.js](../../code/5 - clean.js)
 
 ## Clean Object
 
-* [processClean](#clean.processClean)
-* [processFiles](#clean.processFiles)
-* [processOneClean](#clean.processOneClean)
+* [processClean](#cleanprocessclean)
+* [processFiles](#cleanprocessfiles)
+* [processOneClean](#cleanprocessoneclean)
 
 ## clean.processClean
 

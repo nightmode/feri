@@ -6,45 +6,45 @@ The shared module lives in the file [code/2 - shared.js](../../code/2 - shared.j
 
 ## Shared Object
 
-* [cache](#shared.cache)
-  * [errorsSeen](#shared.cache.errorsSeen)
-  * [includesFilesSeen](#shared.cache.includesFilesSeen)
-  * [includesNewer](#shared.cache.includesNewer)
-  * [missingMapBuild](#shared.cache.missingMapBuild)
-* [cli](#shared.cli)
-* [help](#shared.help)
-* [language](#shared.language)
-  * [base](#shared.language.base)
-  * [display](#shared.language.display)
-  * [loaded](#shared.language.loaded)
-* [livereload](#shared.livereload)
-  * [calmTimer](#shared.livereload.calmTimer)
-  * [changedFiles](#shared.livereload.changedFiles)
-* [log](#shared.log)
-* [platform](#shared.platform)
-* [path](#shared.path)
-  * [pwd](#shared.path.pwd)
-  * [self](#shared.path.self)
-* [slash](#shared.slash)
-* [stats](#shared.stats)
-  * [timeTo](#shared.timeTo)
-    * [load](#shared.timeTo.load)
-    * [clean](#shared.timeTo.clean)
-    * [build](#shared.timeTo.build)
-    * [watch](#shared.timeTo.watch)
-* [uniqueNumber](#shared.uniqueNumber)
+* [cache](#sharedcache)
+  * [errorsSeen](#sharedcacheerrorsseen)
+  * [includesFilesSeen](#sharedcacheincludesfilesseen)
+  * [includesNewer](#sharedcacheincludesnewer)
+  * [missingMapBuild](#sharedcachemissingmapbuild)
+* [cli](#sharedcli)
+* [help](#sharedhelp)
+* [language](#sharedlanguage)
+  * [base](#sharedlanguagebase)
+  * [display](#sharedlanguagedisplay)
+  * [loaded](#sharedlanguageloaded)
+* [livereload](#sharedlivereload)
+  * [calmTimer](#sharedlivereloadcalmtimer)
+  * [changedFiles](#sharedlivereloadchangedfiles)
+* [log](#sharedlog)
+* [platform](#sharedplatform)
+* [path](#sharedpath)
+  * [pwd](#sharedpathpwd)
+  * [self](#sharedpathself)
+* [slash](#sharedslash)
+* [stats](#sharedstats)
+  * [timeTo](#sharedtimeto)
+    * [load](#sharedtimetoload)
+    * [clean](#sharedtimetoclean)
+    * [build](#sharedtimetobuild)
+    * [watch](#sharedtimetowatch)
+* [uniqueNumber](#shareduniquenumber)
 
 ## shared.cache
 
 Type: `object`
 
-Parent for various `array` and `object` properties that keep track of temporary information used during cleaning and building. Can be reset by [functions.cacheReset](#functions.md#functions.cacheReset).
+Parent for various `array` and `object` properties that keep track of temporary information used during cleaning and building. Can be reset by [functions.cacheReset](#functions.md#functionscachereset).
 
 > ## shared.cache.errorsSeen
 
 > Type: `array`
 
-> Keep track of which error messages have been displayed to a command line user. Used by [functions.logError](functions.md#functions.logError) to show individual errors only once.
+> Keep track of which error messages have been displayed to a command line user. Used by [functions.logError](functions.md#functionslogerror) to show individual errors only once.
 
 > ## shared.cache.includeFilesSeen
 
@@ -66,7 +66,7 @@ Parent for various `array` and `object` properties that keep track of temporary 
 
 > Type: `array`
 
-> Keep track of any file types that are missing a [config.map.sourceToDestTasks](config.md#config.map.sourceToDestTasks) entry during a build pass.
+> Keep track of any file types that are missing a [config.map.sourceToDestTasks](config.md#configmapsourcetodesttasks) entry during a build pass.
 
 ## shared.cli
 
@@ -116,7 +116,7 @@ var message = shared.language.display('error.missingSource')
 
 > Type: `object`
 
-> The active language translation. Defaults to english but can be replaced by [functions.setLanguage](functions.md#functions.setLanguage).
+> The active language translation. Defaults to english but can be replaced by [functions.setLanguage](functions.md#functionssetlanguage).
 
 ## shared.livereload
 
@@ -128,7 +128,7 @@ Parent container for LiveReload related items.
 
 > Type: `null` or `object`
 
-> Variable used by [watch.updateLiveReloadServer](watch.md#watch.updateLiveReloadServer) to update the LiveReload server 300 ms after the last destination file change.
+> Variable used by [watch.updateLiveReloadServer](watch.md#watchupdatelivereloadserver) to update the LiveReload server 300 ms after the last destination file change.
 
 > ## shared.livereload.changedFiles
 
@@ -212,7 +212,7 @@ Parent container for statistic related items.
 
 Type: `object`
 
-An instance of [unique-number](https://www.npmjs.com/package/unique-number) that is used to ensure unique property names in functions like [functions.includePathsEjs](functions.md#functions.includePathsEjs).
+An instance of [unique-number](https://www.npmjs.com/package/unique-number) that is used to ensure unique property names in functions like [functions.includePathsEjs](functions.md#functionsincludepathsejs).
 
 ## License
 

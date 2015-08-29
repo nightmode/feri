@@ -10,37 +10,37 @@ The build object is grouped into four categories.
 
 ### Build: Command and Control
 
-* [processBuild](#build.processBuild)
-* [processFiles](#build.processFiles)
-* [processOneBuild](#build.processOneBuild)
+* [processBuild](#buildprocessbuild)
+* [processFiles](#buildprocessfiles)
+* [processOneBuild](#buildprocessonebuild)
 
 ### Build: In Memory
 
-* [coffeeScript](#build.coffeeScript)
-* [css](#build.css)
-* [html](#build.html)
-* [js](#build.js)
-* [markdown](#build.markdown)
+* [coffeeScript](#buildcoffeescript)
+* [css](#buildcss)
+* [html](#buildhtml)
+* [js](#buildjs)
+* [markdown](#buildmarkdown)
 
 ### Build: On Disk
 
-* [copy](#build.copy)
-* [gif](#build.gif)
-* [jpg](#build.jpg)
-* [png](#build.png)
+* [copy](#buildcopy)
+* [gif](#buildgif)
+* [jpg](#buildjpg)
+* [png](#buildpng)
 
 ### Build: With Includes
 
-* [ejs](#build.ejs)
-* [jade](#build.jade)
-* [less](#build.less)
-* [sass](#build.sass)
-* [stylus](#build.stylus)
+* [ejs](#buildejs)
+* [jade](#buildjade)
+* [less](#buildless)
+* [sass](#buildsass)
+* [stylus](#buildstylus)
 
 ### Build: Finishers
 
-* [finalize](#build.finalize)
-* [gz](#build.gz)
+* [finalize](#buildfinalize)
+* [gz](#buildgz)
 
 ## Build: Command and Control
 

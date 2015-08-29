@@ -6,14 +6,14 @@ The watch module lives in the file [code/7 - watch.js](../../code/7 - watch.js)
 
 ## Watch Object
 
-* [buildOne](#watch.buildOne)
-* [emitterDest](#watch.emitterDest)
-* [emitterSource](#watch.emitterSource)
-* [notTooRecent](#watch.notTooRecent)
-* [processWatch](#watch.processWatch)
-* [updateLiveReloadServer](#watch.updateLiveReloadServer)
-* [watchDest](#watch.watchDest)
-* [watchSource](#watch.watchSource)
+* [buildOne](#watchbuildone)
+* [emitterDest](#watchemitterdest)
+* [emitterSource](#watchemittersource)
+* [notTooRecent](#watchnottoorecent)
+* [processWatch](#watchprocesswatch)
+* [updateLiveReloadServer](#watchupdatelivereloadserver)
+* [watchDest](#watchwatchdest)
+* [watchSource](#watchwatchsource)
 
 ## watch.buildOne
 
