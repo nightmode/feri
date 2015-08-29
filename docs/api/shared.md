@@ -38,7 +38,7 @@ The shared module lives in the file [code/2 - shared.js](../../code/2 - shared.j
 
 Type: `object`
 
-Parent for various `array` and `object` properties that keep track of temporary information used during cleaning and building. Can be reset by [functions.cacheReset](#functions.md#functionscachereset).
+Parent for various `array` and `object` properties that keep track of temporary information used during cleaning and building. Can be reset by [functions.cacheReset](functions.md#functionscachereset).
 
 > ## shared.cache.errorsSeen
 
