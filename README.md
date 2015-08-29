@@ -135,7 +135,7 @@ If you would like to help Feri and her hue-mon (they come in so many colors), th
 
  * Tell your friends and co-workers how Feri lowered your blood pressure!
  * Coordinate a massive social media storm from the comfort of your own toilet!
- * Translate [langauge/en-us.json](../language/en-us.json) into other languages. Bonus points for Klingon!
+ * Translate [langauge/en-us.json](language/en-us.json) into other languages. Bonus points for Klingon!
  * Report issues here on GitHub or forget that and post Feri fan art to [DeviantArt](https://deviantart.com) instead!
  * Invite Daniel to talk on your JavaScript podcast about Feri and get a free back farts demonstration! *Wood or tile floor recommended.*
  * Turbo-charge Feri's human with [hamburgers and root beer](https://cash.me/$ForestMist)!
