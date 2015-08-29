@@ -18,9 +18,9 @@ var path  = require('path')  // ~  1 ms
 //-----------
 var clean = {}
 
-//---------------------
-// Command and Control
-//---------------------
+//----------------------------
+// Clean: Command and Control
+//----------------------------
 // The following functions control cleaning, setting up promise chains and concurrency.
 
 clean.processClean = function clean_processClean(files, watching) {
@@ -132,11 +132,12 @@ clean.processFiles = function clean_processFiles(files, watching) {
     Create a promise chain of tasks for each file and control concurrency.
     @param   {Object,String}  files  Array of paths like ['/dest/path1', '/dest/path2'] or a string like '/dest/path'
     @return  {Promise}               Promise that returns an array of file path strings for the files cleaned like ['/dest/css/style.css', '/dest/index.html']
-
     */
     watching = watching || false
 
     var filesCleaned = [] // keep track of any files cleaned
+    
+    functions.cacheReset()
 
     return new Promise(function(resolve, reject) {
         if (typeof files === 'string') {
@@ -195,7 +196,6 @@ clean.processOneClean = function clean_processOneClean(filePath) {
     Create a promise chain of cleaning tasks based on a single file type.
     @param   {String}   filePath  Path like '/dest/index.html'
     @return  {Promise}            Promise that returns a file path string if something was cleaned otherwise undefined.
-
     */
     return new Promise(function(resolve, reject) {
         return functions.fileExists(filePath).then(function(destExists) {
