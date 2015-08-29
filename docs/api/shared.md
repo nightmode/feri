@@ -8,7 +8,7 @@ The shared module lives in the file [code/2 - shared.js](../../code/2 - shared.j
 
 * [cache](#sharedcache)
   * [errorsSeen](#sharedcacheerrorsseen)
-  * [includesFilesSeen](#sharedcacheincludesfilesseen)
+  * [includesFilesSeen](#sharedcacheincludefilesseen)
   * [includesNewer](#sharedcacheincludesnewer)
   * [missingMapBuild](#sharedcachemissingmapbuild)
 * [cli](#sharedcli)
