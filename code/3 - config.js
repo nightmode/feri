@@ -18,20 +18,19 @@ var config = {
     // null values will be populated later
     concurLimit: 1, // 1-3 recommended since node libuv has 4 slots by default
     fileType: null, // object that will hold options for individual file types
-    includeFileTypes: ['ejs', 'jade', 'less', 'sass', 'scss', 'styl'], // used by watch.buildOne to trigger a check of every file that could possibly use an include file type. For example, if _header.ejs changes, check every ejs file in case any of them need to be updated.
-    includePrefix: '_',   // files prefixed with this string will not be published directly to the destination, their contents can be included inside other files that do though
+    includeFileTypes: ['ejs', 'jade', 'less', 'sass', 'scss', 'styl'], // Used by watch.buildOne to know which file types may use includes.
+    includePrefix: '_',   // Files prefixed with this string will not be published directly to the destination directory. Prefixed files can be included inside other files that do get published to destination though.
     glob: { // glob search strings like **/*.gif
-        'clean': '', // if specified, use when running clean.processClean() without the files parameter
-        'build': '', // if specified, use when running build.processBuild() without the files parameter
+        'clean': '', // If specified, use when running clean.processClean without the files parameter.
+        'build': ''  // If specified, use when running build.processBuild without the files parameter.
     },
     language: 'en-us', // should map to a json file in the language directory
     livereloadFileTypes: ['css', 'html', 'js'], // only refresh the livereload client if one of these file types has been changed
-    log: false,
     map: {
-        'sourceToDestTasks': null, // object of file extensions, each with an array of building functions
-        'destToSourceExt'  : null  // object of destination file extensions and their possible source file types
+        'destToSourceExt'  : null, // object of destination file extensions and their possible source file types
+        'sourceToDestTasks': null  // object of file extensions, each with an array of building functions
     },
-    option: { // options which can be set programatically or via the command line
+    option: { // options which can be set programmatically or via the command line
         'build'              : true,
         'clean'              : true,
         'debug'              : false,
@@ -41,12 +40,12 @@ var config = {
         'stats'              : true,
         'watch'              : false
     },
-    path: {
+    path: { // paths which can be set programmatically or via the command line
         'source': path.join(shared.path.pwd, 'source'),
         'dest'  : path.join(shared.path.pwd, 'dest')
     },
     sourceMaps: false,
-    sourceRoot: '/source-maps', // the virtual folder all source maps will show up under when inspecting in a browser
+    sourceRoot: '/source-maps', // The virtual folder all source maps will show up under when using developer tools in a web browser.
     thirdParty: null // object that will hold options for various third party packages
 }
 
@@ -75,6 +74,17 @@ config.fileType = {
     stylus: {
         'sourceMaps': false // used by build.stylus
     }
+}
+
+//---------------------------------------------
+// Destination Extensions to Source Extensions
+//---------------------------------------------
+config.map.destToSourceExt = {
+    'css' : ['less', 'sass', 'scss', 'styl'],
+    'gz'  : ['*'],
+    'html': ['ejs', 'jade', 'md'],
+    'js'  : ['coffee'],
+    'map' : ['*']
 }
 
 //--------------------------------------
@@ -119,17 +129,6 @@ config.map.sourceToDestTasks = {
     'woff'  : ['copy'],
     'xml'   : ['copy'],
     'zip'   : ['copy']
-}
-
-//---------------------------------------------
-// Destination Extensions to Source Extensions
-//---------------------------------------------
-config.map.destToSourceExt = {
-    'css' : ['less', 'sass', 'scss', 'styl'],
-    'gz'  : ['*'],
-    'html': ['ejs', 'jade', 'md'],
-    'js'  : ['coffee'],
-    'map' : ['*']
 }
 
 //---------------------

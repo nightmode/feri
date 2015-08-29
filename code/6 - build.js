@@ -53,9 +53,9 @@ var js           // require('uglify-js')                   // ~  83 ms
 //-----------
 var build = {}
 
-//---------------------
-// Command and Control
-//---------------------
+//----------------------------
+// Build: Command and Control
+//----------------------------
 // The following functions control building, setting up promise chains and concurrency.
 
 build.processBuild = function build_processBuild(files, watching) {
@@ -271,7 +271,7 @@ build.processOneBuild = function build_processOneBuild(filePath) {
 
 build.coffeeScript = function build_coffeeScript(obj) {
     /*
-    CoffeeScript using https://www.npmjs.com/package/coffee-script
+    CoffeeScript using https://www.npmjs.com/package/coffee-script.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -354,7 +354,7 @@ build.coffeeScript = function build_coffeeScript(obj) {
 
 build.css = function build_css(obj) {
     /*
-    Minify CSS using https://www.npmjs.com/package/clean-css
+    Minify CSS using https://www.npmjs.com/package/clean-css.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -428,7 +428,7 @@ build.css = function build_css(obj) {
 
 build.html = function build_html(obj) {
     /*
-    Minify HTML using https://www.npmjs.com/package/html-minifier
+    Minify HTML using https://www.npmjs.com/package/html-minifier.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -453,7 +453,7 @@ build.html = function build_html(obj) {
 
 build.js = function build_js(obj) {
     /*
-    Minify JavaScript using https://www.npmjs.com/package/uglify-js
+    Minify JavaScript using https://www.npmjs.com/package/uglify-js.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -576,7 +576,7 @@ build.js = function build_js(obj) {
 
 build.markdown = function build_markdown(obj) {
     /*
-    Markdown using https://www.npmjs.com/package/markdown-it
+    Markdown using https://www.npmjs.com/package/markdown-it.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -646,7 +646,7 @@ build.copy = function build_copy(obj) {
 
 build.gif = function build_gif(obj) {
     /*
-    Losslessly optimize GIF files using https://www.npmjs.com/package/gifsicle
+    Losslessly optimize GIF files using https://www.npmjs.com/package/gifsicle.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -671,7 +671,7 @@ build.gif = function build_gif(obj) {
 
 build.jpg = function build_jpg(obj) {
     /*
-    Losslessly optimize JPG files using https://www.npmjs.com/package/jpegtran-bin
+    Losslessly optimize JPG files using https://www.npmjs.com/package/jpegtran-bin.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -696,7 +696,7 @@ build.jpg = function build_jpg(obj) {
 
 build.png = function build_png(obj) {
     /*
-    Losslessly optimize PNG files using https://www.npmjs.com/package/optipng-bin
+    Losslessly optimize PNG files using https://www.npmjs.com/package/optipng-bin.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -730,7 +730,7 @@ build.png = function build_png(obj) {
 
 build.ejs = function build_ejs(obj) {
     /*
-    Embedded JavaScript templates using https://www.npmjs.com/package/ejs
+    Embedded JavaScript templates using https://www.npmjs.com/package/ejs.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -761,7 +761,7 @@ build.ejs = function build_ejs(obj) {
 
 build.jade = function build_jade(obj) {
     /*
-    Jade using https://www.npmjs.com/package/jade
+    Jade using https://www.npmjs.com/package/jade.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -789,7 +789,7 @@ build.jade = function build_jade(obj) {
 
 build.less = function build_less(obj) {
     /*
-    Less using https://www.npmjs.com/package/less
+    Less using https://www.npmjs.com/package/less.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -887,7 +887,7 @@ build.less = function build_less(obj) {
 
 build.sass = function build_sass(obj) {
     /*
-    SASS using https://www.npmjs.com/package/node-sass
+    Sass using https://www.npmjs.com/package/node-sass.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -970,7 +970,7 @@ build.sass = function build_sass(obj) {
 
 build.stylus = function build_stylus(obj) {
     /*
-    Stylus using https://www.npmjs.com/package/stylus
+    Stylus using https://www.npmjs.com/package/stylus.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -1077,7 +1077,7 @@ build.stylus = function build_stylus(obj) {
 
 build.finalize = function build_finalize(obj) {
     /*
-    Finalize by writing memory to disk or copying source to dest. Only if needed.
+    Finalize by writing memory to disk or copying source to dest, if needed.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
