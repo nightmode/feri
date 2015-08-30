@@ -850,10 +850,16 @@ functions.includePathsEjs = function functions_includePathsEjs(data, filePath, i
                 // clean out any empty includes which meant their files could not be found
                 includes = functions.cleanArray(includes)
 
+                var subArr
+
                 for (var i in promiseArray) {
-                    var subArr = promiseArray[i].value()
-                    for (var ii in subArr) {
-                        includes.push(subArr[ii])
+                    try {
+                        subArr = promiseArray[i].value()
+                        for (var ii in subArr) {
+                            includes.push(subArr[ii])
+                        }
+                    } catch(e) {
+                        // do nothing
                     }
                 }
 
@@ -956,12 +962,22 @@ functions.includePathsJade = function functions_includePathsJade(data, filePath,
                 // clean out any empty includes which meant their files could not be found
                 includes = functions.cleanArray(includes)
 
+                var subArr
+
                 for (var i in promiseArray) {
-                    var subArr = promiseArray[i].value()
-                    for (var ii in subArr) {
-                        includes.push(subArr[ii])
+                    try {
+                        subArr = promiseArray[i].value()
+                        for (var ii in subArr) {
+                            includes.push(subArr[ii])
+                        }
+                    } catch(e) {
+                        // do nothing
                     }
                 }
+
+            }).catch(function(err) {
+
+                console.warn(err)
 
             }).then(function() {
 
@@ -1060,10 +1076,16 @@ functions.includePathsLess = function functions_includePathsLess(data, filePath,
                 // clean out any empty imports which meant their files could not be found
                 imports = functions.cleanArray(imports)
 
+                var subArr
+
                 for (var i in promiseArray) {
-                    var subArr = promiseArray[i].value()
-                    for (var ii in subArr) {
-                        imports.push(subArr[ii])
+                    try {
+                        subArr = promiseArray[i].value()
+                        for (var ii in subArr) {
+                            includes.push(subArr[ii])
+                        }
+                    } catch(e) {
+                        // do nothing
                     }
                 }
 
@@ -1204,10 +1226,16 @@ functions.includePathsSass = function functions_includePathsSass(data, filePath,
                 // clean out any empty imports which meant their files could not be found
                 imports = functions.cleanArray(imports)
 
+                var subArr
+
                 for (var i in promiseArray) {
-                    var subArr = promiseArray[i].value()
-                    for (var ii in subArr) {
-                        imports.push(subArr[ii])
+                    try {
+                        subArr = promiseArray[i].value()
+                        for (var ii in subArr) {
+                            includes.push(subArr[ii])
+                        }
+                    } catch(e) {
+                        // do nothing
                     }
                 }
 
@@ -1382,10 +1410,16 @@ functions.includePathsStylus = function functions_includePathsStylus(data, fileP
                 // clean out any empty includes which meant their files could not be found
                 includes = functions.cleanArray(includes)
 
+                var subArr
+
                 for (var i in promiseArray) {
-                    var subArr = promiseArray[i].value()
-                    for (var ii in subArr) {
-                        includes.push(subArr[ii])
+                    try {
+                        subArr = promiseArray[i].value()
+                        for (var ii in subArr) {
+                            includes.push(subArr[ii])
+                        }
+                    } catch(e) {
+                        // do nothing
                     }
                 }
 
@@ -1448,20 +1482,20 @@ functions.objBuildWithIncludes = function functions_objBuildWithIncludes(obj, in
 
             if (config.option.forcebuild) {
                 obj.build = true
-            } else {                
+            } else {
                 // check to see if the source file is newer than a possible dest file
                 return functions.filesExistAndTime(obj.source, obj.dest).then(function(files) {
                     if (!files.source.exists) {
                         // missing source file
                         throw 'functions.objBuildWithIncludes -> ' + shared.language.display('error.missingSource')
                     }
-    
+
                     if (files.dest.exists) {
                         // source and dest exist so compare their times
                         if (files.source.mtime > files.dest.mtime) {
                             obj.build = true
                         }
-    
+
                         destTime = files.dest.mtime // save destTime so we can check includes against it to see if they are newer
                     } else {
                         // dest file does not exist so build it
@@ -1533,17 +1567,17 @@ functions.objBuildInMemory = function functions_objBuildInMemory(obj) {
 
             // figure out dest
             obj.dest = functions.sourceToDest(obj.source)
-            
+
             if (config.option.forcebuild) {
                 obj.build = true
-            } else {   
+            } else {
                 // check to see if the source file is newer than a possible dest file
                 return functions.filesExistAndTime(obj.source, obj.dest).then(function(files) {
                     if (!files.source.exists) {
                         // missing source file
                         throw 'functions.objBuildInMemory -> ' + shared.language.display('error.missingSource')
                     }
-    
+
                     if (files.dest.exists) {
                         // source and dest exist so compare their times
                         if (files.source.mtime > files.dest.mtime) {
@@ -1623,7 +1657,7 @@ functions.objBuildOnDisk = function functions_objBuildOnDisk(obj) {
 
             // figure out dest
             obj.dest = functions.sourceToDest(obj.source)
-            
+
             if (config.option.forcebuild) {
                 obj.build = true
             } else {
@@ -1633,7 +1667,7 @@ functions.objBuildOnDisk = function functions_objBuildOnDisk(obj) {
                         // missing source file
                         throw 'functions.objBuildOnDisk -> ' + shared.language.display('error.missingSource')
                     }
-    
+
                     if (files.dest.exists) {
                         // source and dest exist so compare their times
                         if (files.source.mtime > files.dest.mtime) {
@@ -1642,7 +1676,7 @@ functions.objBuildOnDisk = function functions_objBuildOnDisk(obj) {
                     } else {
                         // dest file does not exist so build it
                         obj.build = true
-    
+
                         return functions.makeDirPath(obj.dest)
                     }
                 })
