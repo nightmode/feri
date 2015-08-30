@@ -241,7 +241,13 @@ build.processOneBuild = function build_processOneBuild(filePath) {
         var len = config.map.sourceToDestTasks[fileExt].length
 
         for (var i = 0; i < len; i++) {
-            p = p.then(build[config.map.sourceToDestTasks[fileExt][i]])
+            if (typeof config.map.sourceToDestTasks[fileExt][i] === 'string') {
+                // built-in build task
+                p = p.then(build[config.map.sourceToDestTasks[fileExt][i]])
+            } else {
+                // custom build task function
+                p = p.then(config.map.sourceToDestTasks[fileExt][i])
+            }
         }
     } else {
         if (shared.cache.missingMapBuild.indexOf(fileExt) < 0 && fileExt !== '') {
