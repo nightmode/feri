@@ -70,7 +70,7 @@ for (var i in types) {
 
 The above code loops through the types array and adds a build task called 'gz' to the end of the tasks list for each particular extension.
 
-Feel free to change the types array to whatever extensions you like of course.
+Feel free to change the types array to whatever extensions you like.
 
 ## License
 

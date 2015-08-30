@@ -13,16 +13,16 @@ Welcome to Feri Land! A magical place where you get access to all the wonderful 
 
 ## Require
 
-Assuming Feri is installed locally in your project's node_modules folder, you can require her with the following.
+Assuming Feri is installed locally in your project's node_modules folder, you can require her with the following:
 
     var feri = require('feri')
 
 ## Lay of the Land
 
-When you require Feri, you are actually requiring her [code/1 - main.js](../../code/1 - main.js) file. Inside this file you'll notice that Feri is sharing every module she uses herself.
+When you require Feri, you are actually requiring her [code/1 - main.js](../../code/1 - main.js) file. Inside this file you'll notice that Feri is sharing every module she uses herself, plus a convenience object called action.
 
 ```js
-module.exports = {
+var feri = {
     'action': {
         'clean': clean.processClean,
         'build': build.processBuild,
@@ -35,9 +35,11 @@ module.exports = {
     'build'    : build,
     'watch'    : watch
 }
+
+module.exports = feri
 ```
 
-Every module plus a convenience object called `action`. This object exists solely to enable cool statements like `feri.action.clean()` instead of `feri.clean.processClean()`. Both will accomplish the same thing so feel free to use whichever style you prefer.
+The action object exists solely to enable cool statements like `feri.action.clean()` instead of `feri.clean.processClean()`. Both will accomplish the same thing so feel free to use whichever style you prefer.
 
 Now that we know about all the modules being exported, let's go over each in a bit more detail.
 
@@ -75,7 +77,7 @@ For more information, see the [Build](build.md) documentation.
 
 ### Watch
 
-Watch is all about watching the source and destination folders for changes. Initiating the proper clean or build tasks in response to file system events.
+Watch is all about watching the source and destination folders for changes, and initiating the proper clean or build tasks in response to file system events.
 
 For more information, see the [Watch](watch.md) documentation.
 

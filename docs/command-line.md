@@ -20,11 +20,9 @@ Optional elements include options, source, and destination.
 
 ## Options
 
-Let's talk about options as three separate groups for easier [grokking](https://en.wikipedia.org/wiki/Grok).
+Options come in three flavours: Common, Negating, and Special.
 
 ### Common Options
-
-The first group can be considered the most common options.
 
 ```
 -c, --clean          clean the destination directory
@@ -38,8 +36,6 @@ Feri will clean, build, and display statistics by default. If you like those beh
 
 ### Negating Options
 
-The second group can be considered the negating version of group one.
-
 ```
 -nc, --noclean       no clean
 -nb, --nobuild       no build
@@ -48,11 +44,11 @@ The second group can be considered the negating version of group one.
 -ns, --nostats       no statistics
 ```
 
-Negating options are stronger than the options they override. For example, `feri --clean --noclean` would result in the destination folder not being cleaned.
+Negating options override their counterparts. For example, `feri --clean --noclean` would result in the destination folder not being cleaned.
 
 ### Special Options
 
-The third group are special options that can override any previous group, do multiple things at once, or otherwise be uniquely awesome.
+Special options can override other options, do multiple things at once, or otherwise be uniquely awesome.
 
 ```
 -a, --all            clean, build, watch, livereload, stats
@@ -63,7 +59,7 @@ The third group are special options that can override any previous group, do mul
 -h, --help           help
 ```
 
-Options like `--all`, `--forcebuild`, and `--republish` will override settings from any previous group.
+Options like `--all`, `--forcebuild`, and `--republish` will override any other settings.
 
 ## Source
 

@@ -216,13 +216,13 @@ config.glob.build = '**/*.less'
 
 Type: `string`
 
-Specify a language Feri that should use. The language should map to a json file like [language/en-us.json](../../langauge/en-us.json) in the language directory.
+Specify a language Feri that should use. The language should map to a json file like [language/en-us.json](../../language/en-us.json) in the language directory.
 
 ```js
 config.language = 'en-us'
 ```
 
-Note: API users should use [functions.setLanguage](functions.md#functionssetlangauge) to change both this variable and [share.language.loaded](share.md#sharedlanguageloaded) at the same time. Command line users only need to set this variable.
+Note: API users should use [functions.setLanguage](functions.md#functionssetlanguage) to change both this variable and [share.language.loaded](share.md#sharedlanguageloaded) at the same time. Command line users only need to set this variable.
 
 ## config.livereloadFileTypes
 
