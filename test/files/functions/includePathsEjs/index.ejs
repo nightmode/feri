@@ -1,7 +1,9 @@
 <html>
-<%- include('partials/_01', {a: 'b'}) %>
+<%- include('partials/_00', {a: 'b'}) %><!-- _00.ejs does not exist -->
+<%- include('partials/_01', {a: 'b'}) %>
 <% include('partials/_02') %>
 <% include 'partials/_03.ejs' %>
 <% include partials/_04.ejs %>
+<% include partials/_05.ejs %> <!-- _05.ejs does not exist -->
 include nothing
 </html>

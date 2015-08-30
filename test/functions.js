@@ -685,7 +685,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                         time = functions.sharedStatsTimeTo(time)
                         expect(time).to.be.greaterThan(0.5)
                         resolve()
-                    }, 501)
+                    }, 510)
 
                 })
 
@@ -901,6 +901,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 }).then(function(returnObj) {
 
                     var desiredObj = [
+                        config.path.source + '/partials/_01.ejs',
                         config.path.source + '/partials/_02.ejs',
                         config.path.source + '/partials/_03.ejs',
                         config.path.source + '/partials/_04.ejs'
