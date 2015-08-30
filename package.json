@@ -1,6 +1,6 @@
 {
   "name": "feri",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The refreshingly easy to use build tool for web files.",
   "license": "MIT",
   "author": "Daniel Gagan",
@@ -13,9 +13,9 @@
     "feri": "code/1 - main.js"
   },
   "dependencies": {
-    "chalk": "^1.1.0",
+    "chalk": "^1.1.1",
     "chokidar": "^1.0.5",
-    "clean-css": "^3.3.9",
+    "clean-css": "^3.4.1",
     "coffee-script": "^1.9.3",
     "ejs": "^2.3.3",
     "gifsicle": "^3.0.1",
@@ -27,10 +27,10 @@
     "less": "^2.5.1",
     "markdown-it": "^4.4.0",
     "mkdirp": "^0.5.1",
-    "node-sass": "^3.2.0",
+    "node-sass": "^3.3.2",
     "optipng-bin": "^3.0.2",
-    "promisify-node": "^0.1.5",
-    "rimraf": "^2.4.2",
+    "promisify-node": "^0.2.1",
+    "rimraf": "^2.4.3",
     "stylus": "^0.52.0",
     "tiny-lr-fork": "0.0.5",
     "uglify-js": "^2.4.24",
