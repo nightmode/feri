@@ -15,9 +15,13 @@ var shared = require('./2 - shared.js')
 //-------------------------
 // Command Line or Require
 //-------------------------
-if (require.main.filename === __filename) {
-    // we are running on the command line
-    shared.cli = true
+try {
+    if (require.main.filename === __filename) {
+        // we are running on the command line
+        shared.cli = true
+    }
+} catch(e) {
+    // do nothing
 }
 
 //-----------------------
@@ -34,6 +38,23 @@ var watch     = require('./7 - watch.js')
 //----------
 var chalk = require('chalk') // ~ 20 ms
 var path  = require('path')  // ~  1 ms
+
+//-----------
+// Variables
+//-----------
+var feri = {
+    'action': {
+        'clean': clean.processClean,
+        'build': build.processBuild,
+        'watch': watch.processWatch,
+    },
+    'shared'   : shared,
+    'config'   : config,
+    'functions': functions,
+    'clean'    : clean,
+    'build'    : build,
+    'watch'    : watch
+}
 
 //-----------
 // Functions
@@ -101,7 +122,7 @@ if (shared.cli) {
     }).then(function() {
 
         if (configFileExists) {
-            require(configFile)(config) // share our config reference with this require
+            require(configFile)(feri) // share our feri reference with this require
         }
 
         if (config.language !== 'en-us') {
@@ -405,16 +426,4 @@ if (shared.cli) {
 //---------
 // Exports
 //---------
-module.exports = {
-    'action': {
-        'clean': clean.processClean,
-        'build': build.processBuild,
-        'watch': watch.processWatch,
-    },
-    'shared'   : shared,
-    'config'   : config,
-    'functions': functions,
-    'clean'    : clean,
-    'build'    : build,
-    'watch'    : watch
-}
+module.exports = feri
