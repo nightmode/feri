@@ -54,12 +54,11 @@ functions.addDestToSourceExt = function functions_addDestToSourceExt(ext, mappin
 
 functions.cacheReset = function functions_cacheReset() {
     /*
-    Reset shared.cache for a new pass through a set of files.
+    Reset shared.cache and shared.uniqueNumber for a new pass through a set of files.
     */
-    shared.cache.errorsSeen = []
-    shared.cache.includeFilesSeen = {}
-    shared.cache.includesNewer = {}
-    shared.cache.missingMapBuild = []
+    for (var i in shared.cache) {
+        shared.cache[i] = shared.cache[i].constructor()
+    }
 
     shared.uniqueNumber = new uniqueNumber()
 } // cacheReset

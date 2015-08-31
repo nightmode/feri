@@ -81,7 +81,7 @@ Add or append a mapping to config.map.destToSourceExt without harming existing e
 
 Type: `function`
 
-Reset [shared.cache](shared.md#sharedcache) for a new pass through a set of files.
+Reset [shared.cache](shared.md#sharedcache) and [shared.uniqueNumber](shared.md#shareduniquenumber) for a new pass through a set of files.
 
 ### functions.changeExt
 
