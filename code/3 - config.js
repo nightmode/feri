@@ -22,7 +22,11 @@ var config = {
     includePrefix: '_',   // Files prefixed with this string will not be published directly to the destination directory. Prefixed files can be included inside other files that do get published to destination though.
     glob: { // glob search strings like **/*.gif
         'clean': '', // If specified, use when running clean.processClean without the files parameter.
-        'build': ''  // If specified, use when running build.processBuild without the files parameter.
+        'build': '', // If specified, use when running build.processBuild without the files parameter.
+        'watch': {
+            'source': '', // If specified, use when running watch.processWatch without the sourceFiles parameter.
+            'dest'  : ''  // If specified, use when running watch.processWatch without the destFiles parameter.
+        }
     },
     language: 'en-us', // should map to a json file in the language directory
     livereloadFileTypes: ['css', 'html', 'js'], // only refresh the livereload client if one of these file types has been changed

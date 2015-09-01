@@ -26,7 +26,6 @@ describe('File -> ../code/5 - clean.js\n', function() {
         // runs before each test in this describe block
         config.option.clean = true
         config.option.concurLimit = 1
-        config.option.log = false
         config.path.source = path.join(testPath, 'source')
         config.path.dest   = path.join(testPath, 'dest')
     })

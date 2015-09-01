@@ -26,7 +26,6 @@ describe('File -> ../code/6 - build.js\n', function() {
     beforeEach(function() {
         // runs before each test in this describe block
         config.option.concurLimit = 1
-        config.option.log = false
         config.option.build = true
     })
 

@@ -11,6 +11,7 @@ The watch module lives in the file [code/7 - watch.js](../../code/7 - watch.js)
 * [emitterSource](#watchemittersource)
 * [notTooRecent](#watchnottoorecent)
 * [processWatch](#watchprocesswatch)
+* [stop](#watchstop)
 * [updateLiveReloadServer](#watchupdatelivereloadserver)
 * [watchDest](#watchwatchdest)
 * [watchSource](#watchwatchsource)
@@ -97,14 +98,16 @@ Type: `function`
 Watch both source and destination folders for activity.
 
 ```
+@param   {String,Object}  [sourceFiles]  Optional. Glob search string for watching source files like '*.html' or array of full paths like ['/source/about.html', '/source/index.html']
+@param   {String,Object}  [destFiles]    Optional. Glob search string for watching destination files like '*.css' or array of full paths like ['/dest/fonts.css', '/dest/grid.css']
 @return  {Promise}
 ```
 
 Example
 
 ```js
-config.option.watch = true
-config.option.livereload = true
+config.option.watch = true      // watch the source folder
+config.option.livereload = true // watch the destination folder for livereload
 
 return watch.processWatch().then(function() {
     // we are now watching
@@ -113,6 +116,18 @@ return watch.processWatch().then(function() {
 
 Note: This function is also aliased as `feri.action.watch`.
 
+## watch.stop
+
+Type: `function`
+
+Stop watching the source and/or destination folders. Also stop the LiveReload server.
+
+```
+@param  {Boolean}  [stopSource]      Optional and defaults to true. If true, stop watching the source folder.
+@param  {Boolean}  [stopDest]        Optional and defaults to true. If true, stop watching the destination folder.
+@param  {Boolean}  [stopLivereload]  Optional and defaults to true. If true, stop the LiveReload server.
+```
+
 ## watch.updateLiveReloadServer
 
 Type: `function`
@@ -120,7 +135,7 @@ Type: `function`
 Update the LiveReload server with a list of changed files.
 
 ```
-@param   {Boolean}  now  True meaning we have already waited 300 ms for events to settle
+@param   {Boolean}  now  True meaning we have already waited 300 ms for events to settle.
 @return  {Promise}       Promise that returns true if everything is ok otherwise an error.
 ```
 
@@ -131,6 +146,7 @@ Type: `function`
 Watch the destination directory for changes in order to update our LiveReload server as needed.
 
 ```
+@param   {String,Object}  [files]  Optional. Glob search string for watching destination files like '*.css' or array of full paths like ['/dest/fonts.css', '/dest/grid.css']
 @return  {Promise}
 ```
 
@@ -141,6 +157,7 @@ Type: `function`
 Watch source directory for changes and kick off the appropriate response tasks as needed.
 
 ```
+@param   {String,Object}  [files]  Optional. Glob search string for watching source files like '*.html' or array of full paths like ['/source/about.html', '/source/index.html']
 @return  {Promise}
 ```
 

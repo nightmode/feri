@@ -25,7 +25,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
     beforeEach(function() {
         // runs before each test in this descibe block
         config.option.concurLimit = 1
-        config.option.log = false
     })
 
     afterEach(function() {

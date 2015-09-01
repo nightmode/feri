@@ -29,11 +29,29 @@ var tinyLrFork // require('tiny-lr-fork') // ~ 52 ms
 //-----------
 // Variables
 //-----------
+var chokidarSource   = '' // will become a chokidar object when watching the source folder
+var chokidarDest     = '' // will become a chokidar object when watching the destination folder
+
+var chokidarSourceFiles = '' // string or array of source files being watched
+var chokidarDestFiles   = '' // string or array of destination files being watched
+
+var livereloadServer = '' // will become a tinyLrFork object when watching the destination folder
+
 var recentFiles = {} // keep track of files that have changed too recently
+
 var watch = {
     'emitterDest'  : new events.EventEmitter(),
     'emitterSource': new events.EventEmitter()
 }
+
+//-------------------
+// Private Functions
+//-------------------
+var lazyLoadChokidar = function watch_lazyLoadChokidar () {
+    if (typeof chokidar !== 'object') {
+        chokidar = require('chokidar')
+    }
+} // lazyLoadChokidar
 
 //-----------
 // Functions
@@ -100,15 +118,20 @@ watch.notTooRecent = function watch_notTooRecent(file) {
     }
 } // notTooRecent
 
-watch.processWatch = function watch_processWatch() {
+watch.processWatch = function watch_processWatch(sourceFiles, destFiles) {
     /*
     Watch both source and destination folders for activity.
+    @param   {String,Object}  [sourceFiles]  Optional. Glob search string for watching source files like '*.html' or array of full paths like ['/source/about.html', '/source/index.html']
+    @param   {String,Object}  [destFiles]    Optional. Glob search string for watching destination files like '*.css' or array of full paths like ['/dest/fonts.css', '/dest/grid.css']
     @return  {Promise}
     */
     if (!config.option.watch) {
         return Promise.resolve()
     } else {
         return Promise.resolve().then(function(good) {
+
+            // start watch timer
+            shared.stats.timeTo.watch = functions.sharedStatsTimeTo(shared.stats.timeTo.watch)
 
             if (functions.configPathsAreGood() === false) {
                 throw shared.language.display('error.configPaths')
@@ -125,16 +148,10 @@ watch.processWatch = function watch_processWatch() {
         }).then(function() {
 
             return new Promise(function(resolve, reject) {
-                // start watch timer
-                shared.stats.timeTo.watch = functions.sharedStatsTimeTo(shared.stats.timeTo.watch)
 
                 functions.log(chalk.gray('\n' + shared.language.display('words.watch') + '\n'), false)
 
-                if (typeof chokidar !== 'object') {
-                    chokidar = require('chokidar')
-                }
-
-                return watch.watchSource().then(function() {
+                return watch.watchSource(sourceFiles).then(function() {
                     //------------
                     // LiveReload
                     //------------
@@ -145,11 +162,14 @@ watch.processWatch = function watch_processWatch() {
                             tinyLrFork = require('tiny-lr-fork')
                         }
 
-                        tinyLrFork().listen(config.thirdParty.livereload.port, function(err) {
+                        watch.stop(false, false, true) // stop only livereload
+
+                        livereloadServer = tinyLrFork()
+                        livereloadServer.listen(config.thirdParty.livereload.port, function(err) {
                             if (err) {
                                 reject(err)
                             } else {
-                                return watch.watchDest().then(function() {
+                                return watch.watchDest(destFiles).then(function() {
                                     functions.log(chalk.gray(shared.language.display('message.listeningOnPort').replace('{software}', 'LiveReload').replace('{port}', config.thirdParty.livereload.port)))
                                         resolve()
                                 }).catch(function(err) {
@@ -169,10 +189,45 @@ watch.processWatch = function watch_processWatch() {
     }
 } // processWatch
 
+watch.stop = function watch_stop(stopSource, stopDest, stopLivereload) {
+    /*
+    Stop watching the source and/or destination folders. Also stop the LiveReload server.
+    @param  {Boolean}  [stopSource]      Optional and defaults to true. If true, stop watching the source folder.
+    @param  {Boolean}  [stopDest]        Optional and defaults to true. If true, stop watching the destination folder.
+    @param  {Boolean}  [stopLivereload]  Optional and defaults to true. If true, stop the LiveReload server.
+    */
+    stopSource = stopSource || false
+    stopDest = stopDest || false
+    stopLivereload = stopLivereload || false
+
+    if (stopSource) {
+        if (typeof chokidarSource === 'object') {
+            // clean up previous watcher
+            chokidarSource.close() // remove all listeners
+            chokidarSource.unwatch(chokidarSourceFiles)
+        }
+    }
+
+    if (stopDest) {
+        if (typeof chokidarDest === 'object') {
+            // clean up previous watcher
+            chokidarDest.close() // remove all listeners
+            chokidarDest.unwatch(chokidarDestFiles)
+        }
+    }
+
+    if (stopLivereload) {
+        if (typeof livereloadServer === 'object') {
+            // stop livereload server and free up port
+            livereloadServer.close()
+        }
+    }
+} // stop
+
 watch.updateLiveReloadServer = function watch_updateLiveReloadServer(now) {
     /*
     Update the LiveReload server with a list of changed files.
-    @param   {Boolean}  now  True meaning we have already waited 300 ms for events to settle
+    @param   {Boolean}  now  True meaning we have already waited 300 ms for events to settle.
     @return  {Promise}       Promise that returns true if everything is ok otherwise an error.
     */
     return new Promise(function(resolve, reject) {
@@ -220,16 +275,47 @@ watch.updateLiveReloadServer = function watch_updateLiveReloadServer(now) {
     })
 } // updateLiveReloadServer
 
-watch.watchDest = function watch_watchDest() {
+watch.watchDest = function watch_watchDest(files) {
     /*
     Watch the destination directory for changes in order to update our LiveReload server as needed.
+    @param   {String,Object}  [files]  Optional. Glob search string for watching destination files like '*.css' or array of full paths like ['/dest/fonts.css', '/dest/grid.css']
     @return  {Promise}
     */
     return new Promise(function(resolve, reject) {
 
-        var watcher = chokidar.watch(config.path.dest, config.thirdParty.chokidar)
+        lazyLoadChokidar()
 
-        watcher
+        var filesType = typeof files
+
+        if (filesType === 'object') {
+            // we already have a specified list to work from
+        } else {
+            if (filesType === 'string') {
+                // string should be a glob
+                files = files.replace(config.path.dest, '')
+            } else {
+                // files is undefined
+                if (config.glob.watch.dest !== '') {
+                    files = config.glob.watch.dest
+                } else {
+                    files = ''
+                }
+            }
+
+            if (files.charAt(0) === '/') {
+                files = files.replace('/', '')
+            }
+
+            files = config.path.dest + '/' + files
+        }
+
+        watch.stop(false, true, false) // stop watching dest
+
+        chokidarDestFiles = files
+
+        chokidarDest = chokidar.watch(files, config.thirdParty.chokidar)
+
+        chokidarDest
         .on('add', function(file) {
             var ext = path.extname(file).replace('.', '')
             if (config.livereloadFileTypes.indexOf(ext) >= 0) {
@@ -268,22 +354,66 @@ watch.watchDest = function watch_watchDest() {
             // emit an event
             watch.emitterDest.emit('ready')
 
-            resolve()
+            /*
+            As of September 1st 2015, chokidar and/or the OS is not always "really" ready here.
+            Events can be lost for API using code that creates file activity too soon.
+            Interim solution, have API users wait a bit before returning.
+            Waiting seems like a better solution than trying to write random files every xx milliseconds to see if we can detect events yet.
+            */
+            if (shared.cli) {
+                resolve()
+            } else {
+                // delay for API users
+                setTimeout(function() {
+                    resolve()
+                }, 700)
+            }
         })
 
     })
 } // watchDest
 
-watch.watchSource = function watch_watchSource() {
+watch.watchSource = function watch_watchSource(files) {
     /*
     Watch source directory for changes and kick off the appropriate response tasks as needed.
+    @param   {String,Object}  [files]  Optional. Glob search string for watching source files like '*.html' or array of full paths like ['/source/about.html', '/source/index.html']
     @return  {Promise}
     */
     return new Promise(function(resolve, reject) {
 
-        var watcher = chokidar.watch(config.path.source, config.thirdParty.chokidar)
+        lazyLoadChokidar()
 
-        watcher
+        var filesType = typeof files
+
+        if (filesType === 'object') {
+            // we already have a specified list to work from
+        } else {
+            if (filesType === 'string') {
+                // string should be a glob
+                files = files.replace(config.path.source, '')
+            } else {
+                // files is undefined
+                if (config.glob.watch.source !== '') {
+                    files = config.glob.watch.source
+                } else {
+                    files = ''
+                }
+            }
+
+            if (files.charAt(0) === '/') {
+                files = files.replace('/', '')
+            }
+
+            files = config.path.source + '/' + files
+        }
+
+        watch.stop(true, false, false) // stop watching source
+
+        chokidarSourceFiles = files
+
+        chokidarSource = chokidar.watch(files, config.thirdParty.chokidar)
+
+        chokidarSource
         .on('addDir', function(file) {
             functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add') + ' ' + shared.language.display('words.dir')))
 
@@ -354,7 +484,20 @@ watch.watchSource = function watch_watchSource() {
             // emit an event
             watch.emitterSource.emit('ready')
 
-            resolve()
+            /*
+            As of September 1st 2015, chokidar and/or the OS is not always "really" ready here.
+            Problem is most obvious to API users who can create file system events immediately after this function returns.
+            Interim solution, delay a bit for API users.
+            Waiting seems like a better solution than trying to write random files every xx milliseconds to see if we can detect events yet.
+            */
+            if (shared.cli) {
+                resolve()
+            } else {
+                // delay for API users
+                setTimeout(function() {
+                    resolve()
+                }, 700)
+            }
         })
 
     })
