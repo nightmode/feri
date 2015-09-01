@@ -132,6 +132,10 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     return functions.removeFile(destFile)
 
+                }).then(function() {
+
+                    return functions.removeFile(config.path.dest)
+
                 })
 
             }) // it
@@ -169,6 +173,10 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     return functions.removeFiles([destFile1, destFile2])
 
+                }).then(function() {
+
+                    return functions.removeFile(config.path.dest)
+
                 })
 
             }) // it
@@ -200,8 +208,11 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     return functions.removeFile(destFile)
 
-                })
+                }).then(function() {
 
+                    return functions.removeFile(config.path.dest)
+
+                })
 
             }) // it
         }) // describe
@@ -229,9 +240,15 @@ describe('File -> ../code/6 - build.js\n', function() {
                     'build': false
                 }
 
-                return build.coffeeScript(obj).then(function(returnObj) {
+                return functions.makeDirPath(config.path.dest, true).then(function() {
+
+                    return build.coffeeScript(obj)
+
+                }).then(function(returnObj) {
 
                     expect(returnObj.data).to.be('(function() {\n  var rootBeer;\n\n  rootBeer = true;\n\n}).call(this);\n')
+
+                    return functions.removeFile(config.path.dest)
 
                 })
 
@@ -253,7 +270,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                     'build': false
                 }
 
-                return Promise.resolve().then(function() {
+                return functions.makeDirPath(config.path.dest, true).then(function() {
 
                     // remove map file from any previous run
                     return functions.removeFile(destMapFile)
@@ -287,6 +304,10 @@ describe('File -> ../code/6 - build.js\n', function() {
                     expect(map).to.eql(desired)
 
                     return functions.removeFile(destMapFile)
+
+                }).then(function() {
+
+                    return functions.removeFile(config.path.dest)
 
                 })
 
@@ -366,6 +387,10 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     return functions.removeFile(destMapFile)
 
+                }).then(function() {
+
+                    return functions.removeFile(config.path.dest)
+
                 })
 
             }) // it
@@ -418,7 +443,11 @@ describe('File -> ../code/6 - build.js\n', function() {
                     'build': false
                 }
 
-                return functions.removeFile(destFile).then(function() {
+                return functions.makeDirPath(config.path.dest, true).then(function() {
+
+                    return functions.removeFile(destFile)
+
+                }).then(function() {
 
                     return build.js(obj)
 
@@ -446,6 +475,8 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     expect(ok).to.be(true)
 
+                    return functions.removeFile(config.path.dest)
+
                 })
 
             }) // it
@@ -469,7 +500,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                     'build': false
                 }
 
-                return Promise.resolve().then(function() {
+                return functions.makeDirPath(config.path.dest, true).then(function() {
 
                     // remove files from any previous run
                     return functions.removeFiles([destFile, destMapFile])
@@ -556,6 +587,10 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     return functions.removeFiles([destFile, destMapFile])
 
+                }).then(function() {
+
+                    return functions.removeFile(config.path.dest)
+
                 })
 
             }) // it
@@ -611,7 +646,11 @@ describe('File -> ../code/6 - build.js\n', function() {
                     'build': false
                 }
 
-                return functions.removeFile(destFile).then(function() {
+                return functions.makeDirPath(config.path.dest, true).then(function() {
+
+                    return functions.removeFile(destFile)
+
+                }).then(function() {
 
                     return build.copy(obj)
 
@@ -631,11 +670,16 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     expect(ok).to.be(true)
 
+                    return functions.removeFile(config.path.dest)
+
                 })
 
             }) // it
         }) // describe
 
+        //-----------
+        // build.gif
+        //-----------
         describe('gif', function() {
             it('should output a dest gif smaller than the source', function() {
 
@@ -655,7 +699,11 @@ describe('File -> ../code/6 - build.js\n', function() {
                     'build': false
                 }
 
-                return functions.removeFile(destFile).then(function() {
+                return functions.makeDirPath(config.path.dest, true).then(function() {
+
+                    return functions.removeFile(destFile)
+
+                }).then(function() {
 
                     return build.gif(obj)
 
@@ -683,14 +731,16 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     expect(ok).to.be(true)
 
+                    return functions.removeFile(config.path.dest)
+
                 })
 
             }) // it
         }) // describe
 
-        //----------------
-        // build.jpegtran
-        //----------------
+        //-----------
+        // build.jpg
+        //-----------
         describe('jpg', function() {
             it('should output a dest jpg smaller than the source', function() {
 
@@ -710,7 +760,11 @@ describe('File -> ../code/6 - build.js\n', function() {
                     'build': false
                 }
 
-                return functions.removeFile(destFile).then(function() {
+                return functions.makeDirPath(config.path.dest, true).then(function() {
+
+                    return functions.removeFile(destFile)
+
+                }).then(function() {
 
                     return build.jpg(obj)
 
@@ -738,14 +792,16 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     expect(ok).to.be(true)
 
+                    return functions.removeFile(config.path.dest)
+
                 })
 
             })
         }) // describe
 
-        //---------------
-        // build.optipng
-        //---------------
+        //-----------
+        // build.png
+        //-----------
         describe('png', function() {
             it('should output a dest png smaller than the source\n', function() {
 
@@ -789,9 +845,9 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     return functions.removeFile(destFile)
 
-                }).then(function(ok) {
+                }).then(function() {
 
-                    expect(ok).to.be(true)
+                    return functions.removeFile(config.path.dest)
 
                 })
 
@@ -928,6 +984,10 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     return functions.removeFile(destMapFile)
 
+                }).then(function() {
+
+                    return functions.removeFile(config.path.dest)
+
                 })
 
             }) // it
@@ -1005,6 +1065,10 @@ describe('File -> ../code/6 - build.js\n', function() {
                     expect(map).to.eql(desired)
 
                     return functions.removeFile(destMapFile)
+
+                }).then(function() {
+
+                    return functions.removeFile(config.path.dest)
 
                 })
 
@@ -1084,6 +1148,10 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     return functions.removeFile(destMapFile)
 
+                }).then(function() {
+
+                    return functions.removeFile(config.path.dest)
+
                 })
 
             }) // it
@@ -1114,7 +1182,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                     'build': false
                 }
 
-                return Promise.resolve().then(function() {
+                return functions.makeDirPath(config.path.dest, true).then(function() {
 
                     return functions.removeFile(destFile)
 
@@ -1129,7 +1197,12 @@ describe('File -> ../code/6 - build.js\n', function() {
                 }).then(function(exists) {
 
                     expect(exists).to.be(true)
+
                     return functions.removeFile(destFile)
+
+                }).then(function() {
+
+                    return functions.removeFile(config.path.dest)
 
                 })
 
@@ -1212,6 +1285,10 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     expect(fileData).to.be('hello from the data field')
                     return functions.removeFile(destFile)
+
+                }).then(function() {
+
+                    return functions.removeFile(config.path.dest)
 
                 })
 

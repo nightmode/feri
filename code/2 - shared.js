@@ -152,7 +152,7 @@ var shared = {
     log: false, // will be set to true if we are running as a command line in order to allow console logging
     platform: os.platform(),
     path: {
-        'pwd': process.env.PWD,
+        'pwd': process.cwd(),
         'self': path.dirname(__dirname) // full path to ourself like /Users/daniel/project/node_modules/feri
     },
     slash: '/', // directory separator

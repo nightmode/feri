@@ -12,17 +12,18 @@ var build     = require('./6 - build.js')
 //----------
 // Includes
 //----------
-var chalk  = require('chalk')              // ~ 20 ms
-var events = require('events')             // ~  1 ms
-var exec   = require('child_process').exec // ~ 12 ms
-var glob   = require('glob')               // ~ 13 ms
-var mkdirp = require('mkdirp')             // ~  1 ms
-var path   = require('path')               // ~  1 ms
+var chalk       = require('chalk')       // ~ 20 ms
+var events      = require('events')      // ~  1 ms
+var glob        = require('glob')        // ~ 13 ms
+var mkdirp      = require('mkdirp')      // ~  1 ms
+var path        = require('path')        // ~  1 ms
+var querystring = require('querystring') // ~  2 ms
 
 //---------------------
 // Includes: Lazy Load
 //---------------------
 var chokidar   // require('chokidar')     // ~ 75 ms
+var http       // require('http')         // ~ 17 ms
 var tinyLrFork // require('tiny-lr-fork') // ~ 52 ms
 
 //-----------
@@ -185,19 +186,36 @@ watch.updateLiveReloadServer = function watch_updateLiveReloadServer(now) {
             }, 300)
             resolve(true)
         } else {
-            var curl = 'curl -X POST http://localhost:' + config.thirdParty.livereload.port + '/changed -d \'{"files": ' + JSON.stringify(shared.livereload.changedFiles) + '}\''
+            if (typeof http !== 'object') {
+                http = require('http')
+            }
+
+            var postData = '{"files": ' + JSON.stringify(shared.livereload.changedFiles) + '}'
 
             shared.livereload.changedFiles = []
 
-            exec(curl, function(err) {
-                if (err) {
-                    console.error(err)
-                    reject(err)
-                } else {
-                    functions.log(chalk.gray(shared.language.display('message.watchRefreshed').replace('{software}', 'LiveReload') + '\n'))
-                    resolve(true)
+            var requestOptions = {
+                'port'  : config.thirdParty.livereload.port,
+                'path'  : '/changed',
+                'method': 'POST',
+                'headers': {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Length': postData.length
                 }
+            }
+
+            var request = http.request(requestOptions)
+
+            request.on('error', function(err) {
+                console.error(err)
+                reject(err)
             })
+
+            request.write(postData)
+            request.end()
+
+            functions.log(chalk.gray(shared.language.display('message.watchRefreshed').replace('{software}', 'LiveReload') + '\n'))
+            resolve(true)
         }
     })
 } // updateLiveReloadServer
@@ -215,7 +233,7 @@ watch.watchDest = function watch_watchDest() {
         .on('add', function(file) {
             var ext = path.extname(file).replace('.', '')
             if (config.livereloadFileTypes.indexOf(ext) >= 0) {
-                functions.log(chalk.gray(functions.trimDest(file) + ' ' + shared.language.display('words.add')))
+                functions.log(chalk.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
 
                 // emit an event
                 watch.emitterDest.emit('add', file)
@@ -227,7 +245,7 @@ watch.watchDest = function watch_watchDest() {
         .on('change', function(file) {
             var ext = path.extname(file).replace('.', '').toLowerCase()
             if (config.livereloadFileTypes.indexOf(ext) >= 0) {
-                functions.log(chalk.gray(functions.trimDest(file) + ' ' + shared.language.display('words.change')))
+                functions.log(chalk.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
 
                 // emit an event
                 watch.emitterDest.emit('change', file)
@@ -267,7 +285,7 @@ watch.watchSource = function watch_watchSource() {
 
         watcher
         .on('addDir', function(file) {
-            functions.log(chalk.gray(functions.trimSource(file) + ' ' + shared.language.display('words.add') + ' ' + shared.language.display('words.dir')))
+            functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add') + ' ' + shared.language.display('words.dir')))
 
             // emit an event
             watch.emitterSource.emit('add directory', file)
@@ -280,7 +298,7 @@ watch.watchSource = function watch_watchSource() {
             })
         })
         .on('unlinkDir', function(file) {
-            functions.log(chalk.gray(functions.trimSource(file) + ' ' + shared.language.display('words.removed') + ' ' + shared.language.display('words.dir')))
+            functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed') + ' ' + shared.language.display('words.dir')))
 
             // emit an event
             watch.emitterSource.emit('remove directory', file)
@@ -290,7 +308,7 @@ watch.watchSource = function watch_watchSource() {
             })
         })
         .on('add', function(file) {
-            functions.log(chalk.gray(functions.trimSource(file) + ' ' + shared.language.display('words.add')))
+            functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
 
             // emit an event
             watch.emitterSource.emit('add', file)
@@ -299,7 +317,7 @@ watch.watchSource = function watch_watchSource() {
         })
         .on('change', function(file) {
             if (watch.notTooRecent(file)) {
-                functions.log(chalk.gray(functions.trimSource(file) + ' ' + shared.language.display('words.change')))
+                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
 
                 // emit an event
                 watch.emitterSource.emit('change', file)
@@ -307,12 +325,12 @@ watch.watchSource = function watch_watchSource() {
                 watch.buildOne(file)
             } else {
                 if (config.option.debug) {
-                    functions.log(chalk.yellow(shared.language.display('message.fileChangedTooRecently').replace('{file}', functions.trimSource(file))))
+                    functions.log(chalk.yellow(shared.language.display('message.fileChangedTooRecently').replace('{file}', functions.trimSource(file).replace(/\\/g, '/'))))
                 }
             }
         })
         .on('unlink', function(file) {
-            functions.log(chalk.gray(functions.trimSource(file) + ' ' + shared.language.display('words.removed')))
+            functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed')))
 
             // emit an event
             watch.emitterSource.emit('remove', file)

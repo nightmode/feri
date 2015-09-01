@@ -382,14 +382,21 @@ functions.logWorker = function functions_logWorker(workerName, obj) {
     }
 } // logWorker
 
-functions.makeDirPath = function functions_makeDirPath(filePath) {
+functions.makeDirPath = function functions_makeDirPath(filePath, isDir) {
     /*
-    Create an entire directory structure leading up to a file, if needed.
-    @param   {String}  filePath  Path like '/dest/images/koi/magikarp.png'
-    @return  {Promise}           Promise that returns true if successful. Error object if not.
+    Create an entire directory structure leading up to a file or folder, if needed.
+    @param   {String}   filePath  Path like '/images/koi.png' or '/images'.
+    @param   {Boolean}  isDir     True if filePath is a directory that should be used as is.
+    @return  {Promise}            Promise that returns true if successful. Error object if not.
     */
-    return new Promise(function(resolve, reject) {
-        mkdirp(path.dirname(filePath), function(err) {
+    isDir = isDir || false
+    
+    if (!isDir) {
+        filePath = path.dirname(filePath)
+    }
+    
+    return new Promise(function(resolve, reject) {        
+        mkdirp(filePath, function(err) {
             if (err) {
                 reject(err)
             } else {

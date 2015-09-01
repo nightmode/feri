@@ -95,12 +95,12 @@ Expanded information is available in the [command line](docs/command-line.md) do
 
 ## Custom Config File
 
-If you are using the command line, Feri will look for a file called `feri.js` in the directory you call her from. This file can specify not only which command line options you want enabled, but also control any [config API](docs/api/config.md) settings.
+If you are using the command line, Feri will look for a file called `feri-config.js` in the directory you call her from. This file can specify not only which command line options you want enabled, but also control any [config API](docs/api/config.md) settings.
 
-For example, Feri will clean and build by default but what if you want her to watch too? You could type `feri --watch` every time you want to work on your project, but where is the fun in that? Activate your inner awesomeness and setup a `feri.js` file like:
+For example, Feri will clean and build by default but what if you want her to watch too? You could type `feri --watch` every time you want to work on your project, but where is the fun in that? Activate your inner awesomeness and setup a `feri-config.js` file like:
 
 ```js
-// feri.js
+// feri-config.js
 module.exports = function(feri) {
     // clean and build are enabled by default
     feri.config.option.watch = true
@@ -109,7 +109,7 @@ module.exports = function(feri) {
 
 Now you can type `feri` and the custom config file will take of the rest! Even better, command line switches still take precedence. That means typing `feri --nowatch` will temporarily override the config file setting.
 
-Protip: All [API documentation](docs/api/index.md) features are available to `feri.js` files.
+Protip: All [API documentation](docs/api/index.md) features are available to `feri-config.js` files.
 
 ## Custom Build Tasks
 

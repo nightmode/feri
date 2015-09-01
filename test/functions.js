@@ -145,8 +145,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('configPathsAreGood', function() {
             it('should return true for unique paths', function() {
 
-                config.path.source = '/web/source'
-                config.path.dest = '/web/dest'
+                config.path.source = path.join('web', 'source')
+                config.path.dest = path.join('web', 'dest')
 
                 expect(functions.configPathsAreGood()).to.be(true)
 
@@ -154,8 +154,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
             it('should return false for duplicate paths', function() {
 
-                config.path.source = '/web/source'
-                config.path.dest = '/web/source'
+                config.path.source = path.join('web', 'source')
+                config.path.dest = config.path.source
 
                 expect(functions.configPathsAreGood()).to.be(false)
 
@@ -163,13 +163,13 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
             it('should return false if source or dest is located in each other', function() {
 
-                config.path.source = '/web/source'
-                config.path.dest = '/web/source/css'
+                config.path.source = path.join('web', 'source')
+                config.path.dest = path.join('web', 'source', 'css')
 
                 expect(functions.configPathsAreGood()).to.be(false)
 
-                config.path.source = '/web/source/css'
-                config.path.dest = '/web/source'
+                config.path.source = path.join('web', 'source', 'css')
+                config.path.dest = path.join('web', 'source')
 
                 expect(functions.configPathsAreGood()).to.be(false)
 
@@ -399,7 +399,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('makeDirPath', function() {
             it('should create an entire path leading up to a file if needed', function() {
 
-                var pathToMake = path.join(testPath, 'functions', 'makeDirPath')
+                var pathToMake = path.join(testPath, 'makeDirPath')
 
                 return Promise.resolve().then(function() {
 
@@ -412,7 +412,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 }).then(function() {
 
-                    // create the path leading up to a file
                     return functions.makeDirPath(path.join(pathToMake, 'file.txt')).then(function(ok) {
 
                         expect(ok).to.be(true)
@@ -423,6 +422,41 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                     // remove folder
                     return functions.removeFile(pathToMake).then(function(ok) {
+
+                        expect(ok).to.be(true)
+
+                    })
+
+                })
+
+            }) // it
+
+            it('should create an entire path leading up to a folder if needed', function() {
+
+                var pathToMake = path.join(testPath, 'makeDirPath', 'folder')
+
+                return Promise.resolve().then(function() {
+
+                    // remove folder
+                    return functions.removeFile(pathToMake).then(function(ok) {
+
+                        expect(ok).to.be(true)
+
+                    })
+
+                }).then(function() {
+
+                    // create the path
+                    return functions.makeDirPath(pathToMake, true).then(function(ok) {
+
+                        expect(ok).to.be(true)
+
+                    })
+
+                }).then(function() {
+
+                    // remove parent folder
+                    return functions.removeFile(path.dirname(pathToMake)).then(function(ok) {
 
                         expect(ok).to.be(true)
 
@@ -558,7 +592,13 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 var file = path.join(testPath, 'removeFile', 'sample.txt')
 
-                return functions.writeFile(file, '...').then(function(ok) {
+                return functions.makeDirPath(file).then(function(ok) {
+
+                    expect(ok).to.be(true)
+
+                    return functions.writeFile(file, '...')
+
+                }).then(function(ok) {
 
                     expect(ok).to.be(true)
 
@@ -575,6 +615,9 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                     expect(exists).to.be(false)
 
+                    // remove empty directory
+                    return functions.removeFile(path.dirname(file))
+
                 })
 
             }) // it
@@ -588,7 +631,13 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 var file = path.join(testPath, 'removeFiles', 'sample.txt')
 
-                return functions.writeFile(file, '...').then(function(ok) {
+                return functions.makeDirPath(file).then(function(ok) {
+
+                    expect(ok).to.be(true)
+
+                    return functions.writeFile(file, '...')
+
+                }).then(function(ok) {
 
                     expect(ok).to.be(true)
 
@@ -605,6 +654,9 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                     expect(exists).to.be(false)
 
+                    // remove empty directory
+                    return functions.removeFile(path.dirname(file))
+
                 })
 
             }) // it
@@ -614,7 +666,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 var file1 = path.join(testPath, 'removeFiles', 'one.txt')
                 var file2 = path.join(testPath, 'removeFiles', 'two.txt')
 
-                return Promise.resolve().then(function() {
+                return functions.makeDirPath(file1).then(function(ok) {
 
                     return functions.writeFile(file1, '...')
 
@@ -640,6 +692,9 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 }).then(function(exists) {
 
                     expect(exists).to.eql([false, false])
+
+                    // remove empty directory
+                    return functions.removeFile(path.dirname(file1))
 
                 })
 
@@ -807,7 +862,11 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 var file = path.join(testPath, 'writeFile', 'file.txt')
 
-                return functions.writeFile(file, '...').then(function(ok) {
+                return functions.makeDirPath(file).then(function(ok) {
+
+                    return functions.writeFile(file, '...')
+
+                }).then(function(ok) {
 
                     expect(ok).to.be(true)
 
@@ -823,6 +882,9 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 }).then(function(exists) {
 
                     expect(exists).to.be(false)
+
+                    // remove empty directory
+                    return functions.removeFile(path.dirname(file))
 
                 })
 
@@ -901,10 +963,10 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 }).then(function(returnObj) {
 
                     var desiredObj = [
-                        config.path.source + '/partials/_01.ejs',
-                        config.path.source + '/partials/_02.ejs',
-                        config.path.source + '/partials/_03.ejs',
-                        config.path.source + '/partials/_04.ejs'
+                        path.join(config.path.source, 'partials', '_01.ejs'),
+                        path.join(config.path.source, 'partials', '_02.ejs'),
+                        path.join(config.path.source, 'partials', '_03.ejs'),
+                        path.join(config.path.source, 'partials', '_04.ejs')
                     ]
 
                     expect(returnObj).to.eql(desiredObj)
@@ -935,8 +997,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 }).then(function(returnObj) {
 
                     var desiredObj = [
-                        config.path.source + '/partials/_header.jade',
-                        config.path.source + '/partials/_footer.jade'
+                        path.join(config.path.source, 'partials', '_header.jade'),
+                        path.join(config.path.source, 'partials', '_footer.jade')
                     ]
 
                     expect(returnObj).to.eql(desiredObj)
@@ -967,8 +1029,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 }).then(function(returnObj) {
 
                     var desiredObj = [
-                        config.path.source + '/partials/_fonts.less',
-                        config.path.source + '/partials/_grid.less'
+                        path.join(config.path.source, 'partials', '_fonts.less'),
+                        path.join(config.path.source, 'partials', '_grid.less')
                     ]
 
                     expect(returnObj).to.eql(desiredObj)
@@ -999,8 +1061,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 }).then(function(returnObj) {
 
                     var desiredObj = [
-                        config.path.source + '/partials/_fonts.scss',
-                        config.path.source + '/partials/_grid.scss'
+                        path.join(config.path.source, 'partials', '_fonts.scss'),
+                        path.join(config.path.source, 'partials', '_grid.scss')
                     ]
 
                     expect(returnObj).to.eql(desiredObj)
@@ -1031,8 +1093,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 }).then(function(returnObj) {
 
                     var desiredObj = [
-                        config.path.source + '/partials/_fonts.styl',
-                        config.path.source + '/partials/_grid.styl'
+                        path.join(config.path.source, 'partials', '_fonts.styl'),
+                        path.join(config.path.source, 'partials', '_grid.styl')
                     ]
 
                     expect(returnObj).to.eql(desiredObj)
@@ -1062,9 +1124,17 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     data  : '...',
                     build : false
                 }
-                return functions.objBuildWithIncludes(obj, functions.includePathsEjs).then(function(obj) {
+
+                return functions.makeDirPath(config.path.dest, true).then(function() {
+
+                    return functions.objBuildWithIncludes(obj, functions.includePathsEjs)
+
+                }).then(function(obj) {
 
                     expect(obj.build).to.be(true)
+
+                    // remove empty directory
+                    return functions.removeFile(config.path.dest)
 
                 })
 
@@ -1106,27 +1176,30 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     build : false
                 }
 
-                // create our dest file with some sample data
-                return functions.writeFile(obj.dest, 'sample data')
-                    .then(function() {
+                return functions.makeDirPath(obj.dest).then(function() {
 
-                        return functions.objBuildWithIncludes(obj, functions.includePathsEjs).then(function(returnObj) {
+                    // create our dest file with some sample data
+                    return functions.writeFile(obj.dest, 'sample data')
 
-                            expect(returnObj.data).to.be('sample data')
-                            expect(returnObj.build).to.be(true)
+                }).then(function() {
 
-                        })
+                        return functions.objBuildWithIncludes(obj, functions.includePathsEjs)
 
-                    .then(function() {
+                }).then(function(returnObj) {
 
-                        // remove dest file
-                        return functions.removeDest(obj.dest, false).then(function(ok) {
+                    expect(returnObj.data).to.be('sample data')
+                    expect(returnObj.build).to.be(true)
 
-                            expect(ok).to.be(true)
+                    // remove dest file
+                    return functions.removeDest(obj.dest, false)
 
-                        })
+                }).then(function(ok) {
 
-                    })
+                    expect(ok).to.be(true)
+
+                    // remove empty directory
+                    return functions.removeFile(config.path.dest)
+
                 })
 
             }) // it
@@ -1180,7 +1253,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     build : true
                 }
 
-                return Promise.resolve().then(function() {
+                return functions.makeDirPath(destFile).then(function() {
 
                     // remove destination file from any previous run
                     return functions.removeFile(destFile)
@@ -1208,6 +1281,13 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 }).then(function() {
 
                     return functions.removeFile(destFile)
+
+                }).then(function(ok) {
+
+                    expect(ok).to.be(true)
+
+                    // remove empty directory
+                    return functions.removeFile(config.path.dest)
 
                 })
 
@@ -1274,29 +1354,28 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     build : false
                 }
 
-                // create our destination file with some sample data
-                return functions.writeFile(obj.dest, 'sample data')
-                    .then(function() {
+                return functions.makeDirPath(obj.dest).then(function() {
 
-                        return functions.objBuildInMemory(obj).then(function(returnObj) {
+                    // create our destination file with some sample data
+                    return functions.writeFile(obj.dest, 'sample data')
 
-                            expect(returnObj.data).to.be('sample data')
+                }).then(function() {
 
-                            expect(obj.build).to.be(true)
+                    return functions.objBuildInMemory(obj)
 
-                        })
+                }).then(function(returnObj) {
 
-                    .then(function() {
+                    expect(returnObj.data).to.be('sample data')
 
-                        // remove dest file
-                        return functions.removeDest(obj.dest, false).then(function(ok) {
+                    expect(obj.build).to.be(true)
 
-                            expect(ok).to.be(true)
+                }).then(function() {
 
-                        })
+                    // remove dest folder
+                    return functions.removeFile(config.path.dest)
 
-                    })
                 })
+
             }) // it
 
             it('should get back objDesired if only obj.source is specified', function() {
@@ -1348,7 +1427,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     build : true
                 }
 
-                return Promise.resolve().then(function() {
+                return functions.makeDirPath(destFile).then(function() {
 
                     // remove destination file from any previous run
                     return functions.removeFile(destFile)
@@ -1375,7 +1454,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 }).then(function() {
 
-                    return functions.removeFile(destFile)
+                    return functions.removeFile(config.path.dest)
 
                 })
 
@@ -1399,7 +1478,11 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     build : false
                 }
 
-                return functions.objBuildOnDisk(obj).then(function(returnObj) {
+                return functions.makeDirPath(config.path.dest, true).then(function() {
+
+                    return functions.objBuildOnDisk(obj)
+
+                }).then(function(returnObj) {
 
                      var objDesired = {
                         source: path.join(config.path.dest, 'sample.txt'),
@@ -1412,12 +1495,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 }).then(function() {
 
-                    // remove dest file
-                    return functions.removeDest(obj.dest, false).then(function(ok) {
-
-                        expect(ok).to.be(true)
-
-                    })
+                    // remove dest folder
+                    return functions.removeFile(config.path.dest)
 
                 })
             }) // it
@@ -1457,7 +1536,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     build : false
                 }
 
-                return Promise.resolve().then(function() {
+                return functions.makeDirPath(obj.dest).then(function() {
 
                     return functions.writeFile(obj.dest, '...')
 
@@ -1470,7 +1549,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     expect(returnObj.build).to.be(true)
                     expect(returnObj.source).to.be(obj.dest)
 
-                    return functions.removeFile(obj.dest)
+                    // remove dest folder
+                    return functions.removeFile(config.path.dest)
 
                 })
 
@@ -1511,7 +1591,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     build : false
                 }
 
-                return Promise.resolve().then(function() {
+                return functions.makeDirPath(config.path.dest, true).then(function() {
 
                     // remove destination file from any previous run
                     return functions.removeFile(destFile)
@@ -1534,7 +1614,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 }).then(function() {
 
-                    return functions.removeFile(destFile)
+                    // remove dest folder
+                    return functions.removeFile(config.path.dest)
 
                 })
 

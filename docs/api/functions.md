@@ -285,11 +285,12 @@ Overly chatty logging utility used by build functions.
 
 Type: `function`
 
-Create an entire directory structure leading up to a file, if needed.
+Create an entire directory structure leading up to a file or folder, if needed.
 
 ```
-@param   {String}  filePath  Path like '/dest/images/koi/magikarp.png'
-@return  {Promise}           Promise that returns true if successful. Error object if not.
+@param   {String}   filePath  Path like '/images/koi.png' or '/images'.
+@param   {Boolean}  isDir     True if filePath is a directory that should be used as is.
+@return  {Promise}            Promise that returns true if successful. Error object if not.
 ```
 
 ### functions.mathRoundPlaces

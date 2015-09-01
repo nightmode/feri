@@ -52,7 +52,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
             var fileSource = path.join(config.path.source, 'hello.txt')
             var fileDest = path.join(config.path.dest, 'hello.txt')
 
-            return Promise.resolve().then(function() {
+            return functions.makeDirPath(fileDest).then(function() {
 
                 // make sure the dest file doesn't exist from a previous run
                 return functions.removeFile(fileDest)
@@ -69,7 +69,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 expect(exists).to.be(true)
 
-                return functions.removeFile(fileDest)
+                // remove dest folder
+                return functions.removeFile(config.path.dest)
 
             })
 
@@ -106,7 +107,11 @@ describe('File -> ../code/7 - watch.js\n', function() {
             var files = [path.join(config.path.source, 'sample.html'),
                          path.join(config.path.dest, 'sample.html')]
 
-            return Promise.resolve().then(function() {
+            return functions.makeDirPath(config.path.source, true).then(function() {
+
+                return functions.makeDirPath(config.path.dest, true)
+
+            }).then(function() {
 
                 // make sure files from any previous run are removed
                 return functions.removeFiles(files)
@@ -147,6 +152,11 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 return functions.removeFiles(files)
 
+            }).then(function() {
+
+                // remove parent folder
+                return functions.removeFile(path.dirname(config.path.dest))
+
             })
 
         }) // it
@@ -172,7 +182,11 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             var file = path.join(config.path.dest, 'sample.html')
 
-            return Promise.resolve().then(function() {
+            return functions.makeDirPath(config.path.source, true).then(function() {
+
+                return functions.makeDirPath(config.path.dest, true)
+
+            }).then(function() {
 
                 // make sure files from any previous run are removed
                 return functions.removeFile(file)
@@ -196,7 +210,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 expect(emit).to.be(true)
 
-                return functions.removeFile(file)
+                // remove parent folder
+                return functions.removeFile(path.dirname(config.path.dest))
 
             })
 
@@ -211,7 +226,11 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             var file = path.join(config.path.source, 'sample.html')
 
-            return Promise.resolve().then(function() {
+            return functions.makeDirPath(config.path.source, true).then(function() {
+
+                return functions.makeDirPath(config.path.dest, true)
+
+            }).then(function() {
 
                 // make sure file from any previous run is removed
                 return functions.removeFile(file)
@@ -234,6 +253,14 @@ describe('File -> ../code/7 - watch.js\n', function() {
             }).then(function(emit) {
 
                 expect(emit).to.be(true)
+
+                // make sure file from any previous run is removed
+                return functions.removeFile(file)
+
+            }).then(function() {
+
+                // remove parent folder
+                return functions.removeFile(path.dirname(config.path.dest))
 
             })
 

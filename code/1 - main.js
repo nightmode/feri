@@ -106,7 +106,7 @@ if (shared.cli) {
     // Command Line
     //--------------
     var commandLineOptions = process.argv.slice(2)
-    var configFile = path.join(shared.path.pwd, 'feri.js')
+    var configFile = path.join(shared.path.pwd, 'feri-config.js')
     var configFileExists = false
 
     // enable console logging since we are running as a command line program
@@ -114,7 +114,7 @@ if (shared.cli) {
 
     return Promise.resolve().then(function() {
 
-        // check for an feri.js config file
+        // check for an feri-config.js config file
         return functions.fileExists(configFile).then(function(exists) {
             configFileExists = exists
         })

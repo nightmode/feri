@@ -843,9 +843,9 @@ build.less = function build_less(obj) {
 
                             }).then(function() {
 
-                                var replaceString = path.dirname(config.path.source) + '/'
+                                var replaceString = path.dirname(config.path.source) + shared.slash
                                 for (var i in map.sources) {
-                                    map.sources[i] = map.sources[i].replace(replaceString, '')
+                                    map.sources[i] = map.sources[i].replace(replaceString, '').replace('\\', '/')
                                 }
                                 map = JSON.stringify(map)
                                 return functions.makeDirPath(obj.dest)
