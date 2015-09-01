@@ -28,9 +28,6 @@ describe('File -> ../code/7 - watch.js\n', function() {
         // runs before each test in this describe block
         config.option.concurLimit = 1
         config.option.watch = true
-
-        //config.thirdParty.chokidar.ignoreInitial = false
-        //config.thirdParty.chokidar.usePolling = true
     })
 
     afterEach(function() {
@@ -58,7 +55,6 @@ describe('File -> ../code/7 - watch.js\n', function() {
         First you create a file in said directory, witness the change event, then immediately run functions.removeFile to remove the parent directory containing the file. You will almost always get an error like "ENOTEMPTY: directory not empty, rmdir /path/to/file".
         Solution for having more reliable tests seems to be deleting the files first to ensure empty folders then removing those empty folders.
         Other solution was to call something like functions.findFiles before removing the directory. Not sure if looking at the file system or the time taken to call the function did the trick. Either way, seems better to just delete files, then folders.
-
     */
 
     //-------

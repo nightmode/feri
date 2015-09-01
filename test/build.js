@@ -122,14 +122,9 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 }).then(function(files) {
 
-                    // check return to make sur
                     var objDesired = [destFile]
 
                     expect(files).to.eql(objDesired)
-
-                }).then(function() {
-
-                    return functions.removeFile(destFile)
 
                 }).then(function() {
 
@@ -157,8 +152,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 return Promise.resolve().then(function() {
 
-                    // make sure files do not exist from any previous run
-                    return functions.removeFiles([destFile1, destFile2])
+                    return functions.removeFile(config.path.dest)
 
                 }).then(function(o) {
 
@@ -169,10 +163,6 @@ describe('File -> ../code/6 - build.js\n', function() {
                     var desiredObj = [destFile1, destFile2]
 
                     expect(o).to.eql(desiredObj)
-
-                    return functions.removeFiles([destFile1, destFile2])
-
-                }).then(function() {
 
                     return functions.removeFile(config.path.dest)
 
@@ -204,10 +194,6 @@ describe('File -> ../code/6 - build.js\n', function() {
                 }).then(function(exists) {
 
                     expect(exists).to.be(true)
-
-                    return functions.removeFile(destFile)
-
-                }).then(function() {
 
                     return functions.removeFile(config.path.dest)
 
@@ -302,10 +288,6 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     expect(map).to.eql(desired)
 
-                    return functions.removeFile(destMapFile)
-
-                }).then(function() {
-
                     return functions.removeFile(config.path.dest)
 
                 })
@@ -383,10 +365,6 @@ describe('File -> ../code/6 - build.js\n', function() {
                     map = JSON.parse(map)
 
                     expect(map).to.eql(desired)
-
-                    return functions.removeFile(destMapFile)
-
-                }).then(function() {
 
                     return functions.removeFile(config.path.dest)
 
@@ -467,12 +445,6 @@ describe('File -> ../code/6 - build.js\n', function() {
                     sourceFileSize = fileSize
 
                     expect(destFileSize).to.be.lessThan(sourceFileSize)
-
-                    return functions.removeFile(destFile)
-
-                }).then(function(ok) {
-
-                    expect(ok).to.be(true)
 
                     return functions.removeFile(config.path.dest)
 
@@ -584,10 +556,6 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     expect(map).to.eql(desired)
 
-                    return functions.removeFiles([destFile, destMapFile])
-
-                }).then(function() {
-
                     return functions.removeFile(config.path.dest)
 
                 })
@@ -663,12 +631,6 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     expect(exists).to.be(true)
 
-                    return functions.removeFile(destFile)
-
-                }).then(function(ok) {
-
-                    expect(ok).to.be(true)
-
                     return functions.removeFile(config.path.dest)
 
                 })
@@ -723,12 +685,6 @@ describe('File -> ../code/6 - build.js\n', function() {
                     sourceFileSize = fileSize
 
                     expect(destFileSize).to.be.lessThan(sourceFileSize)
-
-                    return functions.removeFile(destFile)
-
-                }).then(function(ok) {
-
-                    expect(ok).to.be(true)
 
                     return functions.removeFile(config.path.dest)
 
@@ -785,12 +741,6 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     expect(destFileSize).to.be.lessThan(sourceFileSize)
 
-                    return functions.removeFile(destFile)
-
-                }).then(function(ok) {
-
-                    expect(ok).to.be(true)
-
                     return functions.removeFile(config.path.dest)
 
                 })
@@ -841,10 +791,6 @@ describe('File -> ../code/6 - build.js\n', function() {
                     sourceFileSize = fileSize
 
                     expect(destFileSize).to.be.lessThan(sourceFileSize)
-
-                    return functions.removeFile(destFile)
-
-                }).then(function() {
 
                     return functions.removeFile(config.path.dest)
 
@@ -981,10 +927,6 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     expect(map).to.eql(desired)
 
-                    return functions.removeFile(destMapFile)
-
-                }).then(function() {
-
                     return functions.removeFile(config.path.dest)
 
                 })
@@ -1062,10 +1004,6 @@ describe('File -> ../code/6 - build.js\n', function() {
                     map = JSON.parse(map)
 
                     expect(map).to.eql(desired)
-
-                    return functions.removeFile(destMapFile)
-
-                }).then(function() {
 
                     return functions.removeFile(config.path.dest)
 
@@ -1145,10 +1083,6 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     expect(map).to.eql(desired)
 
-                    return functions.removeFile(destMapFile)
-
-                }).then(function() {
-
                     return functions.removeFile(config.path.dest)
 
                 })
@@ -1196,10 +1130,6 @@ describe('File -> ../code/6 - build.js\n', function() {
                 }).then(function(exists) {
 
                     expect(exists).to.be(true)
-
-                    return functions.removeFile(destFile)
-
-                }).then(function() {
 
                     return functions.removeFile(config.path.dest)
 
@@ -1283,9 +1213,6 @@ describe('File -> ../code/6 - build.js\n', function() {
                 }).then(function(fileData) {
 
                     expect(fileData).to.be('hello from the data field')
-                    return functions.removeFile(destFile)
-
-                }).then(function() {
 
                     return functions.removeFile(config.path.dest)
 

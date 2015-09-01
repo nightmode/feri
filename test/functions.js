@@ -1189,14 +1189,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     expect(returnObj.data).to.be('sample data')
                     expect(returnObj.build).to.be(true)
 
-                    // remove dest file
-                    return functions.removeDest(obj.dest, false)
-
-                }).then(function(ok) {
-
-                    expect(ok).to.be(true)
-
-                    // remove empty directory
                     return functions.removeFile(config.path.dest)
 
                 })
@@ -1252,10 +1244,9 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     build : true
                 }
 
-                return functions.makeDirPath(destFile).then(function() {
+                return functions.removeFile(config.path.dest).then(function() {
 
-                    // remove destination file from any previous run
-                    return functions.removeFile(destFile)
+                    return functions.makeDirPath(destFile)
 
                 }).then(function() {
 
@@ -1278,12 +1269,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     expect(returnObj).to.eql(objDesired)
 
                 }).then(function() {
-
-                    return functions.removeFile(destFile)
-
-                }).then(function(ok) {
-
-                    expect(ok).to.be(true)
 
                     // remove empty directory
                     return functions.removeFile(config.path.dest)
