@@ -133,8 +133,9 @@ watch.processWatch = function watch_processWatch(sourceFiles, destFiles) {
             // start watch timer
             shared.stats.timeTo.watch = functions.sharedStatsTimeTo(shared.stats.timeTo.watch)
 
-            if (functions.configPathsAreGood() === false) {
-                throw shared.language.display('error.configPaths')
+            var configPathsAreGood = functions.configPathsAreGood()
+            if (configPathsAreGood !== true) {
+                throw new Error(configPathsAreGood)
             }
 
         }).then(function() {

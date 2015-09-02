@@ -151,26 +151,78 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
             }) // it
 
-            it('should return false for duplicate paths', function() {
+            it('should return an error string for duplicate paths', function() {
 
                 config.path.source = path.join('web', 'source')
                 config.path.dest = config.path.source
 
-                expect(functions.configPathsAreGood()).to.be(false)
+                expect(functions.configPathsAreGood()).to.be.a('string')
 
             }) // it
 
-            it('should return false if source or dest is located in each other', function() {
+            it('should return an error string if source or dest is located within the other', function() {
 
                 config.path.source = path.join('web', 'source')
                 config.path.dest = path.join('web', 'source', 'css')
 
-                expect(functions.configPathsAreGood()).to.be(false)
+                expect(functions.configPathsAreGood()).to.be.a('string')
 
                 config.path.source = path.join('web', 'source', 'css')
                 config.path.dest = path.join('web', 'source')
 
-                expect(functions.configPathsAreGood()).to.be(false)
+                expect(functions.configPathsAreGood()).to.be.a('string')
+
+            }) // it
+
+            it('should return error strings when appropriate for protected destinations', function() {
+
+                config.path.source = path.join('imaginary', 'path')
+
+                if (shared.slash === '\\') {
+                    // we are on windows
+                    if (typeof process.env.windir === 'string') {
+                        config.path.dest = process.env.windir
+                        expect(functions.configPathsAreGood()).to.be.a('string')
+
+                        config.path.dest = path.join(process.env.windir, 'system32')
+                        expect(functions.configPathsAreGood()).to.be.a('string')
+
+                        config.path.dest = path.join(process.env.windir, 'system32', 'drivers')
+                        expect(functions.configPathsAreGood()).to.be.a('string')
+                    }
+
+                    var env = [process.env.ProgramFiles, process.env['ProgramFiles(x86)'], path.dirname(process.env.USERPROFILE)]
+
+                    for (var i in env) {
+                        if (typeof env[i] === 'string') {
+                            config.path.dest = env[i]
+                            expect(functions.configPathsAreGood()).to.be.a('string')
+
+                            config.path.dest = path.join(env[i], 'second')
+                            expect(functions.configPathsAreGood()).to.be.a('string')
+
+                            config.path.dest = path.join(env[i], 'second', 'third')
+                            expect(functions.configPathsAreGood()).to.be(true)
+                        }
+                    }
+
+                    config.path.dest = 'c:\\'
+                    expect(functions.configPathsAreGood()).to.be.a('string')
+                } else {
+                    if (typeof process.env.HOME === 'string') {
+                        config.path.dest = path.dirname(process.env.HOME)
+                        expect(functions.configPathsAreGood()).to.be.a('string')
+
+                        config.path.dest = path.join(config.path.dest, 'name') // path like '/Users/name'
+                        expect(functions.configPathsAreGood()).to.be.a('string')
+
+                        config.path.dest = path.join(config.path.dest, 'project') // path like '/Users/name/project'
+                        expect(functions.configPathsAreGood()).to.be(true)
+                    }
+
+                    config.path.dest = '/'
+                    expect(functions.configPathsAreGood()).to.be.a('string')
+                }
 
             }) // it
         }) // describe

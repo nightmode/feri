@@ -127,19 +127,88 @@ functions.cloneObj = function functions_cloneObj(object) {
 
 functions.configPathsAreGood = function functions_configPathsAreGood() {
     /*
-    Ensure source and destination are not the same and not in each others path.
-    @return  {Boolean}  True if both paths are good.
+    Ensure source and destination are not blank, not the same, and not in each others path. Also ensure that the destination is not a protected folder.
+    @return  {*}  Boolean true if both paths are good. String with an error message if not.
     */
-    var source = config.path.source + shared.slash
-    var dest = config.path.dest + shared.slash
 
-    if (source !== dest) {
-        if (source.indexOf(dest) < 0 && dest.indexOf(source) < 0 ) {
-            return true
+    // resolve any relative paths to absolute
+    config.path.source = path.resolve(config.path.source)
+    config.path.dest = path.resolve(config.path.dest)
+
+    var source = config.path.source.toLowerCase()
+    var dest = config.path.dest.toLowerCase()
+
+    var sourceSlash = source + shared.slash
+    var destSlash = dest + shared.slash
+
+    var protect = false
+    var test = ''
+
+    if (source === dest || sourceSlash.indexOf(destSlash) === 0 || destSlash.indexOf(sourceSlash) === 0) {
+        // source and destination are the same or in each others path
+        return shared.language.display('error.configPaths')
+    }
+
+    if (shared.slash === '\\') {
+        // we are on windows
+
+        if (typeof process.env.windir === 'string') {
+            test = process.env.windir.toLowerCase() + shared.slash
+            if (destSlash.indexOf(test) === 0) {
+                // protect 'C:\Windows' and sub folders
+                protect = true
+            }
+        }
+
+        var env = [process.env.ProgramFiles,
+                   process.env['ProgramFiles(x86)'],
+                   path.dirname(process.env.USERPROFILE)]
+
+        for (var i in env) {
+            if (typeof env[i] === 'string') {
+                test = env[i].toLowerCase()
+
+                if (dest === test) {
+                    // protect folders like 'C:\Program Files', 'C:\Program Files(x86)', or 'C:\Users'
+                    protect = true
+                    break
+                } else if (path.dirname(dest) === test) {
+                    // protect one level deeper into folder, but not farther
+                    protect = true
+                    break
+                }
+            }
+        }
+
+        if (dest === 'c:\\') {
+            // zoinks
+            protect = true
+        }
+    } else {
+        // mac, unix, etc...
+
+        if (typeof process.env.HOME === 'string') {
+            test = path.dirname(process.env.HOME.toLowerCase())
+            if (dest === test) {
+                // protect Mac '/Users' and Unix '/home' folders
+                protect = true
+            } else if (path.dirname(dest) === test) {
+                // protect one level deeper like '/Users/name'
+                protect = true
+            }
+        }
+
+        if (dest === '/') {
+            // yikes
+            protect = true
         }
     }
 
-    return false
+    if (protect) {
+        return shared.language.display('error.destProtected').replace('{path}', "'" + config.path.dest + "'")
+    }
+
+    return true
 } // configPathsAreGood
 
 functions.destToSource = function functions_destToSource(dest) {
@@ -390,12 +459,12 @@ functions.makeDirPath = function functions_makeDirPath(filePath, isDir) {
     @return  {Promise}            Promise that returns true if successful. Error object if not.
     */
     isDir = isDir || false
-    
+
     if (!isDir) {
         filePath = path.dirname(filePath)
     }
-    
-    return new Promise(function(resolve, reject) {        
+
+    return new Promise(function(resolve, reject) {
         mkdirp(filePath, function(err) {
             if (err) {
                 reject(err)

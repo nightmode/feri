@@ -40,6 +40,7 @@ var shared = {
             "error": {
                 "configPaths"           : "Source and destination should be unique and not nested within each other.",
                 "destPointsToSource"    : "Destination points to a source directory.",
+                "destProtected"         : "Destination should not be a protected location like {path}.",
                 "missingDest"           : "Missing destination file.",
                 "missingSource"         : "Missing source file.",
                 "missingSourceDirectory": "Missing source directory.",
@@ -101,6 +102,7 @@ var shared = {
             "error": {
                 "configPaths"           : "Source and destination should be unique and not nested within each other.",
                 "destPointsToSource"    : "Destination points to a source directory.",
+                "destProtected"         : "Destination should not be a protected location like {path}.",
                 "missingDest"           : "Missing destination file.",
                 "missingSource"         : "Missing source file.",
                 "missingSourceDirectory": "Missing source directory.",

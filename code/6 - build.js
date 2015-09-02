@@ -73,8 +73,9 @@ build.processBuild = function build_processBuild(files, watching) {
 
     return Promise.resolve().then(function(good) {
 
-        if (functions.configPathsAreGood() === false) {
-            throw shared.language.display('error.configPaths')
+        var configPathsAreGood = functions.configPathsAreGood()
+        if (configPathsAreGood !== true) {
+            throw new Error(configPathsAreGood)
         }
 
     }).then(function() {

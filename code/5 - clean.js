@@ -38,8 +38,9 @@ clean.processClean = function clean_processClean(files, watching) {
 
     return Promise.resolve().then(function(good) {
 
-        if (functions.configPathsAreGood() === false) {
-            throw new Error(shared.language.display('error.configPaths'))
+        var configPathsAreGood = functions.configPathsAreGood()
+        if (configPathsAreGood !== true) {
+            throw new Error(configPathsAreGood)
         }
 
     }).then(function() {
@@ -136,7 +137,7 @@ clean.processFiles = function clean_processFiles(files, watching) {
     watching = watching || false
 
     var filesCleaned = [] // keep track of any files cleaned
-    
+
     functions.cacheReset()
 
     return new Promise(function(resolve, reject) {

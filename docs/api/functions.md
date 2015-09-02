@@ -121,10 +121,10 @@ Clone an object recursively so the return is not a reference to the original obj
 
 Type: `function`
 
-Ensure source and destination are not the same and not in each others path.
+Ensure source and destination are not blank, not the same, and not in each others path. Also ensure that the destination is not a protected folder.
 
 ```
-@return  {Boolean}  True if both paths are good.
+@return  {*}  Boolean true if both paths are good. String with an error message if not.
 ```
 
 ### functions.destToSource
