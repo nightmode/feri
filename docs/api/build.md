@@ -6,7 +6,7 @@ The build module lives in the file [code/6 - build.js](../../code/6 - build.js)
 
 ## Build Object
 
-The build object is grouped into four categories.
+The build object is grouped into five categories.
 
 ### Build: Command and Control
 

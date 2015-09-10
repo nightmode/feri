@@ -49,7 +49,7 @@ return feri.action.watch().then(function() {
 
 // pretend a file called 'sample.txt' was just added to the destination folder
 
-// display 'detected add event for /destination/sample.txt'
+// display 'detected add event for /dest/sample.txt'
 ```
 
 ## watch.emitterSource

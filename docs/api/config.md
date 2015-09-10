@@ -97,7 +97,7 @@ Options used by [build.ejs](build.md#buildejs).
 
 ```js
 config.fileType.ejs = {
-    'root': ""
+    'root': ''
 }
 ```
 
@@ -303,7 +303,7 @@ config.map.destToSourceExt = {
 
 Notice how an entry like `gz` has an asterisk for one of its array values? An asterisk means the extension in question could be added on to any file. Perhaps a file like `index.html.gz`, `style.css.gz`, or `hello.txt.gz`. Could be anything really so the asterisk instructs Feri to use special logic for these kinds of files.
 
-Note: API users can use [functions.addDestToSourceExt](functions.md#functionsadddesttosourceext) to modify this object safely.
+Protip: Use [functions.addDestToSourceExt](functions.md#functionsadddesttosourceext) to modify this object safely.
 
 ## config.map.sourceToDestTasks
 
@@ -354,6 +354,7 @@ jsconfig.map.sourceToDestTasks = {
     'xml'   : ['copy'],
     'zip'   : ['copy']
 }
+```
 
 Example
 
@@ -469,7 +470,7 @@ Type: `string`
 The source folder that should be used to build files from.
 
 ```js
-config.path.source = './source'
+config.path.source = 'source'
 ```
 
 ## config.path.dest
@@ -479,7 +480,7 @@ Type: `string`
 The destination folder that receives files built from source. The folder that is also cleaned based on the existence of equivalent files in the source directory. Please be careful when choosing your destination folder.
 
 ```js
-config.path.dest = './dest'
+config.path.dest = 'dest'
 ```
 
 ## config.sourceMaps
