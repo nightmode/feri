@@ -42,11 +42,11 @@
   },
   "scripts": {
     "test": "npm run test-shared -loglevel silent && npm run test-functions -loglevel silent && npm run test-clean -loglevel silent && npm run test-build -loglevel silent && npm run test-watch -loglevel silent",
-    "test-shared": "mocha test/shared.js",
-    "test-functions": "mocha test/functions.js",
-    "test-clean": "mocha test/clean.js",
-    "test-build": "mocha test/build.js",
-    "test-watch": "mocha test/watch.js"
+    "test-shared": "mocha \"test/2 - shared.js\"",
+    "test-functions": "mocha \"test/4 - functions.js\"",
+    "test-clean": "mocha \"test/5 - clean.js\"",
+    "test-build": "mocha \"test/6 - build.js\"",
+    "test-watch": "mocha \"test/7 - watch.js\""
   },
   "keywords": [
     "clean",
