@@ -44,6 +44,7 @@ var html         // require('html-minifier').minify        // ~   4 ms
 var jade         // require('jade')                        // ~ 363 ms
 var less         // require('less')                        // ~  89 ms
 var markdown     // require('markdown-it')()               // ~  56 ms
+var pako         // require('pako')                        // ~  21 ms
 var sassPromise  // promisify(require('node-sass').render) // ~   7 ms
 var stylus       // require('stylus')                      // ~  98 ms
 var js           // require('uglify-js')                   // ~  83 ms
@@ -1138,10 +1139,22 @@ build.gz = function build_gz(obj) {
                 return execPromise('gzip -9 -k -n -f "' + obj.dest + '"')
             } else {
                 // we are on windows
-                if (typeof gzipme !== 'object') {
-                    gzipme = require('gzipme')
+                if (typeof pako !== 'object') {
+                    pako = require('pako')
                 }
-                gzipme(obj.dest, false, 'best')
+
+                return functions.readFile(obj.dest).then(function(data) {
+
+                    return pako.gzip(data, {
+                        level: 9,
+                        to: 'string'
+                    })
+
+                }).then(function(data) {
+
+                    return fsWriteFilePromise(obj.dest + '.gz', data, 'binary')
+
+                })
             }
 
         }).then(function() {
