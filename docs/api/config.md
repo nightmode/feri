@@ -8,13 +8,14 @@ The clean module lives in the file [code/3 - config.js](../../code/3 - config.js
 
 * [concurLimit](#configconcurlimit)
 * [fileType](#configfiletype)
-  * [coffeeScript](#configfiletypecoffeescript)
+  * [coffee](#configfiletypecoffee)
   * [css](#configfiletypecss)
   * [ejs](#configfiletypeejs)
   * [js](#configfiletypejs)
   * [less](#configfiletypeless)
   * [sass](#configfiletypesass)
-  * [stylus](#configfiletypestylus)
+  * [scss](#configfiletypescss)
+  * [styl](#configfiletypestyl)
 * [includeFileTypes](#configincludefiletypes)
 * [includePrefix](#configincludeprefix)
 * [glob](#configglob)
@@ -65,17 +66,19 @@ Type: `object`
 
 Parent container for options specific to a single file type.
 
-## config.fileType.coffeeScript
+## config.fileType.coffee
 
 Type: `object`
 
 Options used by [build.coffeeScript](build.md#buildcoffeescript).
 
 ```js
-config.fileType.coffeeScript = {
+config.fileType.coffee = {
     'sourceMaps': false
 }
 ```
+
+Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
 
 ## config.fileType.css
 
@@ -88,6 +91,8 @@ config.fileType.css = {
     'sourceMaps': false
 }
 ```
+
+Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
 
 ## config.fileType.ejs
 
@@ -119,6 +124,8 @@ config.fileType.js = {
 }
 ```
 
+Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+
 ## config.fileType.less
 
 Type: `object`
@@ -130,6 +137,8 @@ config.fileType.less = {
     'sourceMaps': false
 }
 ```
+
+Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
 
 ## config.fileType.sass
 
@@ -143,17 +152,35 @@ config.fileType.sass = {
 }
 ```
 
-## config.fileType.stylus
+Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+
+## config.fileType.scss
+
+Type: `object`
+
+Options used by [build.sass](build.md#buildsass).
+
+```js
+config.fileType.scss = {
+    'sourceMaps': false
+}
+```
+
+Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+
+## config.fileType.styl
 
 Type: `object`
 
 Options used by [build.stylus](build.md#buildstylus).
 
 ```js
-config.fileType.stylus = {
+config.fileType.styl = {
     'sourceMaps': false
 }
 ```
+
+Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
 
 ## config.includeFileTypes
 
@@ -314,7 +341,7 @@ Source extensions to build tasks map.
 Array elements for any particular file type can be a `string` or a `function`. A string signifies that an existing build function should be used. For example, `['gif']` means use [build.gif](build.md#buildgif) to optimize gif files. A function means you have constructed your own [custom build task](../custom-build-task.md).
 
 ```js
-jsconfig.map.sourceToDestTasks = {
+config.map.sourceToDestTasks = {
     'coffee': ['coffeeScript', 'js'],
     'css'   : ['css'],
     'ejs'   : ['ejs', 'html'],
@@ -330,20 +357,40 @@ jsconfig.map.sourceToDestTasks = {
     'scss'  : ['sass'],
     'styl'  : ['stylus'],
     // copy only tasks
+    '7z'    : ['copy'],
     'ai'    : ['copy'],
+    'asp'   : ['copy'],
+    'aspx'  : ['copy'],
+    'cfm'   : ['copy'],
+    'cfc'   : ['copy'],
+    'csv'   : ['copy'],
+    'doc'   : ['copy'],
+    'docx'  : ['copy'],
     'eot'   : ['copy'],
+    'eps'   : ['copy'],
+    'flv'   : ['copy'],
     'gz'    : ['copy'],
     'ico'   : ['copy'],
+    'ini'   : ['copy'],
     'iso'   : ['copy'],
     'json'  : ['copy'],
     'm4a'   : ['copy'],
     'map'   : ['copy'],
+    'mov'   : ['copy'],
     'mp3'   : ['copy'],
     'mp4'   : ['copy'],
     'ogg'   : ['copy'],
     'otf'   : ['copy'],
+    'pdf'   : ['copy'],
+    'php'   : ['copy'],
+    'pl'    : ['copy'],
+    'py'    : ['copy'],
     'psd'   : ['copy'],
+    'rb'    : ['copy'],
+    'rss'   : ['copy'],
     'svg'   : ['copy'],
+    'swf'   : ['copy'],
+    'tar'   : ['copy'],
     'ttf'   : ['copy'],
     'txt'   : ['copy'],
     'vtt'   : ['copy'],
@@ -351,6 +398,8 @@ jsconfig.map.sourceToDestTasks = {
     'weba'  : ['copy'],
     'webm'  : ['copy'],
     'woff'  : ['copy'],
+    'xls'   : ['copy'],
+    'xlsx'  : ['copy'],
     'xml'   : ['copy'],
     'zip'   : ['copy']
 }
@@ -492,6 +541,8 @@ Enable source maps for file types that generate CSS or JS files. Defaults to `fa
 ```js
 config.sourceMaps = false
 ```
+
+Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
 
 ## config.sourceRoot
 

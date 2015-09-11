@@ -542,6 +542,90 @@ describe('File -> ../code/4 - functions.js\n', function() {
             }) // it
         }) // describe
 
+        //-------------------------------
+        // functions.possibleSourceFiles
+        //-------------------------------
+        describe('possibleSourceFiles', function() {
+            it('should return the desired objects', function() {
+
+                var file
+                var arrayDesired
+                var test
+
+                //------------
+                // index.html
+                //------------
+                file = path.join(config.path.dest, 'index.html')
+
+                arrayDesired = [
+                    path.join(config.path.source, 'index.html'),
+                    path.join(config.path.source, 'index.ejs'),
+                    path.join(config.path.source, 'index.jade'),
+                    path.join(config.path.source, 'index.md')
+                ]
+
+                test = functions.possibleSourceFiles(file)
+
+                expect(test).to.eql(arrayDesired)
+
+                //---------
+                // code.js
+                //---------
+                file = path.join(config.path.dest, 'code.js')
+
+                arrayDesired = [
+                    path.join(config.path.source, 'code.js'),
+                    path.join(config.path.source, 'code.coffee')
+                ]
+
+                test = functions.possibleSourceFiles(file)
+
+                expect(test).to.eql(arrayDesired)
+
+                //-------------------------------
+                // style.css.map with sourceMaps
+                //-------------------------------
+                config.fileType.css.sourceMaps = true
+
+                file = path.join(config.path.dest, 'style.css.map')
+
+                arrayDesired = [
+                    path.join(config.path.source, 'style.css.map'),
+                    path.join(config.path.source, 'style.css'),
+                    path.join(config.path.source, 'style.less'),
+                    path.join(config.path.source, 'style.sass'),
+                    path.join(config.path.source, 'style.scss'),
+                    path.join(config.path.source, 'style.styl')
+                ]
+
+                test = functions.possibleSourceFiles(file)
+
+                expect(test).to.eql(arrayDesired)
+
+                //-----------------------------------------
+                // code.js.map.gz with sourceMaps and Gzip
+                //-----------------------------------------
+                config.fileType.js.sourceMaps = true
+
+                config.map.sourceToDestTasks.map.push('gz')
+                config.map.sourceToDestTasks.js.push('gz')
+
+                file = path.join(config.path.dest, 'code.js.map.gz')
+
+                arrayDesired = [
+                    path.join(config.path.source, 'code.js.map.gz'),
+                    path.join(config.path.source, 'code.js.map'),
+                    path.join(config.path.source, 'code.js'),
+                    path.join(config.path.source, 'code.coffee')
+                ]
+
+                test = functions.possibleSourceFiles(file)
+
+                expect(test).to.eql(arrayDesired)
+
+            }) // it
+        }) // describe
+
         //--------------------
         // functions.readFile
         //--------------------

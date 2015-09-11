@@ -72,6 +72,8 @@ The above code loops through the types array and adds a build task called 'gz' t
 
 Feel free to change the types array to whatever extensions you like.
 
+Note: Feri will only generate a file like `index.html.gz` when `index.html` needs to be built. Running `feri --republish` or `feri --forcebuild` once after enabling Gzip will ensure the creation of all relevant files.
+
 ## License
 
 MIT © [Daniel Gagan](https://forestmist.org)

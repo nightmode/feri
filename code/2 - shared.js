@@ -53,7 +53,7 @@ var shared = {
                 "includesNewer"           : "{extension} include(s) newer than destination file.",
                 "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
                 "listeningOnPort"         : "{software} listening on port {port}.",
-                "usingConfigFile"         : "Using config file {file}.",
+                "usingConfigFile"         : "Using {file} file.",
                 "watchRefreshed"          : "{software} refreshed.",
                 "watchingDirectory"       : "Watching {directory} for changes."
             },
@@ -115,7 +115,7 @@ var shared = {
                 "includesNewer"           : "{extension} include(s) newer than destination file.",
                 "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
                 "listeningOnPort"         : "{software} listening on port {port}.",
-                "usingConfigFile"         : "Using config file {file}.",
+                "usingConfigFile"         : "Using {file} file.",
                 "watchRefreshed"          : "{software} refreshed.",
                 "watchingDirectory"       : "Watching {directory} for changes."
             },

@@ -326,7 +326,7 @@ if (shared.cli) {
         if (!shared.help) {
 
             if (configFileExists) {
-                functions.log(chalk.gray(shared.language.display('message.usingConfigFile').replace('{file}', configFile)), false)
+                functions.log(chalk.gray(shared.language.display('message.usingConfigFile').replace('{file}', '"feri-config.js"')), false)
             }
 
             var p = Promise.resolve()

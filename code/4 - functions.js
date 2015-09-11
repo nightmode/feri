@@ -520,6 +520,79 @@ functions.occurrences = function functions_occurrences(string, subString, allowO
     return n
 } // occurrences
 
+functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath) { // bork need mocha test // bork needs docs
+    /*
+    Figure out all the possible source files for any given destination file path.
+    @param   {String}  filepath  File path like '/dest/code.js'
+    @return  {Object}            Array of possible source files like ['/source/code.js', '/source/code.coffee']
+    */
+    filePath = functions.destToSource(filePath)
+
+    var destExt = functions.fileExtension(filePath)
+    var sources = [filePath]
+
+    if (config.map.destToSourceExt.hasOwnProperty(destExt)) {
+        var proceed = false
+
+        if (destExt === 'map') {
+            if (config.sourceMaps) {
+                proceed = true
+            } else {
+                try {
+                    var parentFileType = functions.fileExtension(functions.removeExt(filePath))
+
+                    if (config.fileType[parentFileType].sourceMaps) {
+                        proceed = true
+                    }
+                } catch(e) {
+                    // do nothing
+                }
+            }
+        } else if (destExt === 'gz') {
+            try {
+                var parentFileType = functions.fileExtension(functions.removeExt(filePath))
+
+                if (config.map.sourceToDestTasks[parentFileType].indexOf('gz') >= 0) {
+                    proceed = true
+                }
+            } catch(e) {
+                // do nothing
+            }
+        } else {
+            // file is not a GZ or MAP file type
+            proceed = true
+        }
+
+        if (proceed) {
+            var ext = ''
+            var filePathMinusOneExt = ''
+
+            var len = config.map.destToSourceExt[destExt].length
+
+            for (var i = 0; i < len; i++) {
+                ext = config.map.destToSourceExt[destExt][i]
+
+                if (ext === '*') {
+                    // extension is in addition to another extension
+                    // for example, index.html.gz, library.js.map, etc...
+
+                    // trim off one file extension
+                    filePathMinusOneExt = functions.removeExt(filePath)
+
+                    if (filePathMinusOneExt.indexOf('.') >= 0) {
+                        // call self recursively
+                        sources = sources.concat(functions.possibleSourceFiles(filePathMinusOneExt))
+                    }
+                } else {
+                    sources.push(functions.changeExt(filePath, ext))
+                }
+            }
+        }
+    }
+
+    return sources
+} // possibleSourceFiles
+
 functions.readFile = function functions_readFile(filePath, encoding) {
     /*
     Promise version of fs.readFile.

@@ -121,7 +121,7 @@ Additional [extension specific information](docs/extension-specific-info.md) is 
 
 ## Edge Cases
 
-An index murder mystery!? Plus, what the heck are remora files? Find out in this melodramatic issue of [Edge Cases](docs/edge-cases.md).
+An index murder mystery!? Find out more in this melodramatic issue of [Edge Cases](docs/edge-cases.md).
 
 ## API Documentation
 

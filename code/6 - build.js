@@ -292,7 +292,7 @@ build.coffeeScript = function build_coffeeScript(obj) {
                 coffeeScript = require('coffee-script')
             }
 
-            if (config.sourceMaps || config.fileType.coffeeScript.sourceMaps) {
+            if (config.sourceMaps || config.fileType.coffee.sourceMaps) {
                 var coffeeObj = coffeeScript.compile(obj.data, {
                     sourceMap: true,
                     bare: true
@@ -913,7 +913,7 @@ build.sass = function build_sass(obj) {
                 outputStyle: 'compressed' // without this, node-sass seems to mess up source maps
             }
 
-            if (config.sourceMaps || config.fileType.sass.sourceMaps) {
+            if (config.sourceMaps || config.fileType.sass.sourceMaps || config.fileType.scss.sourceMaps) {
                 options.outFile = obj.dest
                 options.sourceMap = obj.dest + '.map'
                 options.sourceMapContents = true
@@ -922,7 +922,7 @@ build.sass = function build_sass(obj) {
 
             return sassPromise(options).then(function(data) {
 
-                if (config.sourceMaps || config.fileType.sass.sourceMaps) {
+                if (config.sourceMaps || config.fileType.sass.sourceMaps || config.fileType.scss.sourceMaps) {
                     data.css = data.css.toString().replace(/\n\n/g, '\n')
 
                     var map = JSON.parse(data.map.toString())
@@ -998,7 +998,7 @@ build.stylus = function build_stylus(obj) {
                     .set('filename', obj.source)
                     .set('paths', [path.dirname(obj.source)])
 
-                if (config.sourceMaps || config.fileType.stylus.sourceMaps) {
+                if (config.sourceMaps || config.fileType.styl.sourceMaps) {
                     style.set('sourcemap', {
                         'sourceRoot': config.sourceRoot
                     })
@@ -1009,7 +1009,7 @@ build.stylus = function build_stylus(obj) {
                         functions.log(err)
                         reject(err)
                     } else {
-                        if (config.sourceMaps || config.fileType.stylus.sourceMaps) {
+                        if (config.sourceMaps || config.fileType.styl.sourceMaps) {
                             var string = '/*# sourceMappingURL='
                             var pos = css.indexOf(string)
 

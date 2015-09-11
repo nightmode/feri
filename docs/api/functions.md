@@ -33,6 +33,7 @@ The functions object is grouped into three categories.
 * [makeDirPath](#functionsmakedirpath)
 * [mathRoundPlaces](#functionsmathroundplaces)
 * [occurrences](#functionsoccurrences)
+* [possibleSourceFiles](#functionspossiblesourcefiles)
 * [readFile](#functionsreadfile)
 * [readFiles](#functionsreadfiles)
 * [removeDest](#functionsremovedest)
@@ -316,6 +317,17 @@ Find out how many characters or strings are in a string.
 @param   {String}   subString           Character or string to search for.
 @param   {Boolean}  [allowOverlapping]  Optional and defaults to false.
 @return  {Number}                       Number of occurrences of 'subString' in 'string'.
+```
+
+### functions.possibleSourceFiles
+
+Type: `function`
+
+Figure out all the possible source files for any given destination file path.
+
+```
+@param   {String}  filepath  File path like '/dest/code.js'
+@return  {Object}            Array of possible source files like ['/source/code.js', '/source/code.coffee']
 ```
 
 ### functions.readFile

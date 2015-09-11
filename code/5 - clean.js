@@ -221,71 +221,35 @@ clean.processOneClean = function clean_processOneClean(filePath) {
             var obj = {
                 destFile: filePath,
                 destExt: functions.fileExtension(filePath),
-                sourceFile: functions.destToSource(filePath),
                 sourceExists: false
             }
 
-            // check if a mapping exists in order to search that mapping for the special '*' indicator
-            while (config.map.destToSourceExt.hasOwnProperty(obj.destExt)) {
-                if (config.map.destToSourceExt[obj.destExt].indexOf('*') >= 0) {
-                    // extension is in addition to another extension
-                    // for example, index.html.gz, sample.txt.gz, etc...
-                    obj.destExt = functions.fileExtension(functions.removeExt(obj.sourceFile))
-                    obj.sourceFile = functions.removeExt(obj.sourceFile)
-                } else {
-                    break
-                }
-            }
-            // otherwise a simple one to one extension mapping
+            obj.sourceFiles = functions.possibleSourceFiles(filePath)
 
-            return obj
+            var len = obj.sourceFiles.length
 
-        }).then(function(obj) {
+            var p = Promise.resolve()
 
-            // figure out which array of functions (if any) apply to this file type
-            if (config.map.destToSourceExt.hasOwnProperty(obj.destExt)) {
-                var p = Promise.resolve()
+            for (var i = 0; i < len; i++) {
+                (function() {
+                    var possibleSourceFile = obj.sourceFiles[i]
 
-                var len = config.map.destToSourceExt[obj.destExt].length
-                var possibleExt = ''
-
-                for (var i = 0; i < len; i++) {
-                    (function() {
-                        var possibleSourceFile = functions.changeExt(obj.sourceFile, config.map.destToSourceExt[obj.destExt][i])
-
-                        p = p.then(function(exists) {
-                            if (exists) {
-                                return true
-                            } else {
-                                return functions.fileExists(possibleSourceFile)
-                            }
-                        })
-                    })()
-                }
-
-                p = p.then(function(exists) {
-                    if (exists) obj.sourceExists = true
-                    return obj
-                })
-
-                return p
+                    p = p.then(function(exists) {
+                        if (exists) {
+                            return true
+                        } else {
+                            return functions.fileExists(possibleSourceFile)
+                        }
+                    })
+                })()
             }
 
-            return obj
-
-        }).then(function(obj) {
-
-            if (!obj.sourceExists) {
-                // check for a one to one mapping
-                return functions.fileExists(obj.sourceFile).then(function(exists) {
-                    if (exists) {
-                        obj.sourceExists = true
-                    }
-                    return obj
-                })
-            } else {
+            p = p.then(function(exists) {
+                if (exists) obj.sourceExists = true
                 return obj
-            }
+            })
+
+            return p
 
         }).then(function(obj) {
 

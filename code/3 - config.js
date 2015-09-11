@@ -57,7 +57,7 @@ var config = {
 // File Type Options
 //-------------------
 config.fileType = {
-    coffeeScript: {
+    coffee: {
         'sourceMaps': false // used by build.coffeeScript
     },
     css: {
@@ -75,7 +75,10 @@ config.fileType = {
     sass: {
         'sourceMaps': false // used by build.sass
     },
-    stylus: {
+    scss: {
+        'sourceMaps': false // used by build.sass
+    },
+    styl: {
         'sourceMaps': false // used by build.stylus
     }
 }
@@ -110,20 +113,40 @@ config.map.sourceToDestTasks = {
     'scss'  : ['sass'],
     'styl'  : ['stylus'],
     // copy only tasks
+    '7z'    : ['copy'],
     'ai'    : ['copy'],
+    'asp'   : ['copy'],
+    'aspx'  : ['copy'],
+    'cfm'   : ['copy'],
+    'cfc'   : ['copy'],
+    'csv'   : ['copy'],
+    'doc'   : ['copy'],
+    'docx'  : ['copy'],
     'eot'   : ['copy'],
+    'eps'   : ['copy'],
+    'flv'   : ['copy'],
     'gz'    : ['copy'],
     'ico'   : ['copy'],
+    'ini'   : ['copy'],
     'iso'   : ['copy'],
     'json'  : ['copy'],
     'm4a'   : ['copy'],
     'map'   : ['copy'],
+    'mov'   : ['copy'],
     'mp3'   : ['copy'],
     'mp4'   : ['copy'],
     'ogg'   : ['copy'],
     'otf'   : ['copy'],
+    'pdf'   : ['copy'],
+    'php'   : ['copy'],
+    'pl'    : ['copy'],
+    'py'    : ['copy'],
     'psd'   : ['copy'],
+    'rb'    : ['copy'],
+    'rss'   : ['copy'],
     'svg'   : ['copy'],
+    'swf'   : ['copy'],
+    'tar'   : ['copy'],
     'ttf'   : ['copy'],
     'txt'   : ['copy'],
     'vtt'   : ['copy'],
@@ -131,6 +154,8 @@ config.map.sourceToDestTasks = {
     'weba'  : ['copy'],
     'webm'  : ['copy'],
     'woff'  : ['copy'],
+    'xls'   : ['copy'],
+    'xlsx'  : ['copy'],
     'xml'   : ['copy'],
     'zip'   : ['copy']
 }
