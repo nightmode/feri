@@ -166,6 +166,7 @@ var shared = {
             'watch': 0  // seconds it took to enable watch mode
         }
     },
+    suppressWatchEvents: false, // Used to temporarily suppress watch events for command line users until the title "Watching" is displayed. Can also be used to temporarily suppress watch events without having to stop the watch process.
     uniqueNumber: new uniqueNumber() // An instance of unique-number that is used to ensure unique property names in functions like functions.includePathsEjs.
 }
 

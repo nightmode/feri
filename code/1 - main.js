@@ -336,21 +336,29 @@ if (shared.cli) {
                 //-------
                 // Clean
                 //-------
-                return clean.processClean()
+                if (config.option.clean) {
+                    return clean.processClean()
+                }
 
             }).then(function() {
 
                 //-------
                 // Build
                 //-------
-                return build.processBuild()
+                if (config.option.build) {
+                    return build.processBuild()
+                }
 
             }).then(function() {
 
                 //-------
                 // Watch
                 //-------
-                return watch.processWatch()
+                if (config.option.watch) {
+                    shared.suppressWatchEvents = true // suppress watch events until the title "Watching" is displayed
+
+                    return watch.processWatch()
+                }
 
             }).then(function() {
 
@@ -393,6 +401,8 @@ if (shared.cli) {
                 //----------
                 if (config.option.watch) {
                     functions.log(chalk.gray(shared.language.display('words.watching')) + '\n', false)
+
+                    shared.suppressWatchEvents = false
                 }
 
             })

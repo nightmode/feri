@@ -32,6 +32,7 @@ The shared module lives in the file [code/2 - shared.js](../../code/2 - shared.j
     * [clean](#sharedstatstimetoclean)
     * [build](#sharedstatstimetobuild)
     * [watch](#sharedstatstimetowatch)
+* [suppressWatchEvents](#sharedsuppresswatchevents)
 * [uniqueNumber](#shareduniquenumber)
 
 ## shared.cache
@@ -207,6 +208,16 @@ Seconds it took to build.
 Type: `number`
 
 Seconds it took to enable watch mode.
+
+## shared.suppressWatchEvents
+
+Type: `boolean`
+
+Used to temporarily suppress watch events for command line users until the title "Watching" is displayed. Can also be used to temporarily suppress watch events without having to stop the watch process.
+
+```js
+shared.suppressWatchEvents = false // default
+```
 
 ## shared.uniqueNumber
 

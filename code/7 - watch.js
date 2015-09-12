@@ -318,27 +318,31 @@ watch.watchDest = function watch_watchDest(files) {
 
         chokidarDest
         .on('add', function(file) {
-            var ext = path.extname(file).replace('.', '')
-            if (config.livereloadFileTypes.indexOf(ext) >= 0) {
-                functions.log(chalk.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
-
-                // emit an event
-                watch.emitterDest.emit('add', file)
-
-                shared.livereload.changedFiles.push(file.replace(config.path.dest + '/', ''))
-                watch.updateLiveReloadServer()
+            if (!shared.suppressWatchEvents) {
+                var ext = path.extname(file).replace('.', '')
+                if (config.livereloadFileTypes.indexOf(ext) >= 0) {
+                    functions.log(chalk.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
+    
+                    // emit an event
+                    watch.emitterDest.emit('add', file)
+    
+                    shared.livereload.changedFiles.push(file.replace(config.path.dest + '/', ''))
+                    watch.updateLiveReloadServer()
+                }
             }
         })
         .on('change', function(file) {
-            var ext = path.extname(file).replace('.', '').toLowerCase()
-            if (config.livereloadFileTypes.indexOf(ext) >= 0) {
-                functions.log(chalk.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
-
-                // emit an event
-                watch.emitterDest.emit('change', file)
-
-                shared.livereload.changedFiles.push(file.replace(config.path.dest + '/', ''))
-                watch.updateLiveReloadServer()
+            if (!shared.suppressWatchEvents) {
+                var ext = path.extname(file).replace('.', '').toLowerCase()
+                if (config.livereloadFileTypes.indexOf(ext) >= 0) {
+                    functions.log(chalk.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
+    
+                    // emit an event
+                    watch.emitterDest.emit('change', file)
+    
+                    shared.livereload.changedFiles.push(file.replace(config.path.dest + '/', ''))
+                    watch.updateLiveReloadServer()
+                }
             }
         })
         .on('error', function(error) {
@@ -416,59 +420,69 @@ watch.watchSource = function watch_watchSource(files) {
 
         chokidarSource
         .on('addDir', function(file) {
-            functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add') + ' ' + shared.language.display('words.dir')))
-
-            // emit an event
-            watch.emitterSource.emit('add directory', file)
-
-            mkdirp(functions.sourceToDest(file), function(err) {
-                if (err) {
-                    console.error(err)
-                    return
-                }
-            })
+            if (!shared.suppressWatchEvents) {
+                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add') + ' ' + shared.language.display('words.dir')))
+    
+                // emit an event
+                watch.emitterSource.emit('add directory', file)
+    
+                mkdirp(functions.sourceToDest(file), function(err) {
+                    if (err) {
+                        console.error(err)
+                        return
+                    }
+                })
+            }
         })
         .on('unlinkDir', function(file) {
-            functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed') + ' ' + shared.language.display('words.dir')))
-
-            // emit an event
-            watch.emitterSource.emit('remove directory', file)
-
-            functions.removeDest(functions.sourceToDest(file)).then(function() {
-                functions.log(' ')
-            })
+            if (!shared.suppressWatchEvents) {
+                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed') + ' ' + shared.language.display('words.dir')))
+    
+                // emit an event
+                watch.emitterSource.emit('remove directory', file)
+    
+                functions.removeDest(functions.sourceToDest(file)).then(function() {
+                    functions.log(' ')
+                })
+            }
         })
         .on('add', function(file) {
-            functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
-
-            // emit an event
-            watch.emitterSource.emit('add', file)
-
-            watch.buildOne(file)
+            if (!shared.suppressWatchEvents) {
+                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
+    
+                // emit an event
+                watch.emitterSource.emit('add', file)
+    
+                watch.buildOne(file)
+            }
         })
         .on('change', function(file) {
-            if (watch.notTooRecent(file)) {
-                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
-
-                // emit an event
-                watch.emitterSource.emit('change', file)
-
-                watch.buildOne(file)
-            } else {
-                if (config.option.debug) {
-                    functions.log(chalk.yellow(shared.language.display('message.fileChangedTooRecently').replace('{file}', functions.trimSource(file).replace(/\\/g, '/'))))
+            if (!shared.suppressWatchEvents) {
+                if (watch.notTooRecent(file)) {
+                    functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
+    
+                    // emit an event
+                    watch.emitterSource.emit('change', file)
+    
+                    watch.buildOne(file)
+                } else {
+                    if (config.option.debug) {
+                        functions.log(chalk.yellow(shared.language.display('message.fileChangedTooRecently').replace('{file}', functions.trimSource(file).replace(/\\/g, '/'))))
+                    }
                 }
             }
         })
         .on('unlink', function(file) {
-            functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed')))
-
-            // emit an event
-            watch.emitterSource.emit('remove', file)
-
-            clean.processClean(functions.sourceToDest(file), true).then(function() {
-                functions.log(' ')
-            })
+            if (!shared.suppressWatchEvents) {
+                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed')))
+    
+                // emit an event
+                watch.emitterSource.emit('remove', file)
+    
+                clean.processClean(functions.sourceToDest(file), true).then(function() {
+                    functions.log(' ')
+                })
+            }
         })
         .on('error', function(error) {
             functions.log(shared.language.display('error.watchingSource'), error)
