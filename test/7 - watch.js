@@ -19,6 +19,23 @@ var watch     = require('../code/7 - watch.js')
 var configBackup = functions.cloneObj(config)
 var testPath = path.join(shared.path.self, 'test', 'files', 'watch')
 
+//------------------------
+// Notes for test writers
+//------------------------
+/*
+Use Unique File Names
+
+    Specify unique source file names in tests that may use watch.notTooRecent() behind the scenes.
+    If you use do not use unique source file names, you may lose events that happen in quick succession.
+
+Chokidar + Mac = Weird
+
+    Let's say you are using chokidar to watch a directory.
+    First you create a file in said directory, witness a watch event, then immediately run functions.removeFile to remove the parent directory containing the file.
+    You then receive an error like "ENOTEMPTY: directory not empty, rmdir /path/to/file".
+    To conpensate for this, delete files first to ensure empty folders. Then removing empty folders.
+*/
+
 //-------------
 // Mocha Tests
 //-------------
@@ -37,29 +54,13 @@ describe('File -> ../code/7 - watch.js\n', function() {
         // remove any event listeners
         watch.emitterDest.removeAllListeners()
         watch.emitterSource.removeAllListeners()
+
+        watch.stop()
     })
 
-    //------------------------
-    // Notes for test writers
-    //------------------------
-    /*
-    Use Unique File Names
-
-        Specify unique source file names in tests that may use watch.notTooRecent() behind the scenes.
-        If you use do not use unique source file names, you may lose change events that happen in quick succession.
-
-    Chokidar + Mac = Weird
-
-        Issue encountered on September 1st, 2015.
-        Let's say you are using chokidar to watch a directory.
-        First you create a file in said directory, witness the change event, then immediately run functions.removeFile to remove the parent directory containing the file. You will almost always get an error like "ENOTEMPTY: directory not empty, rmdir /path/to/file".
-        Solution for having more reliable tests seems to be deleting the files first to ensure empty folders then removing those empty folders.
-        Other solution was to call something like functions.findFiles before removing the directory. Not sure if looking at the file system or the time taken to call the function did the trick. Either way, seems better to just delete files, then folders.
-    */
-
-    //-------
-    // watch
-    //-------
+    //----------------
+    // watch.buildOne
+    //----------------
     describe('buildOne', function() {
         it('should build one file', function() {
 
@@ -88,6 +89,9 @@ describe('File -> ../code/7 - watch.js\n', function() {
         }) // it
     }) // describe
 
+    //--------------------
+    // watch.notTooRecent
+    //--------------------
     describe('notTooRecent', function() {
         it('should return true if file activity is spaced apart', function(done) {
 
@@ -109,8 +113,11 @@ describe('File -> ../code/7 - watch.js\n', function() {
         }) // it
     }) // describe
 
+    //--------------------
+    // watch.processWatch
+    //--------------------
     describe('processWatch', function() {
-        it('should see changes in both source and destination', function() {
+        it('should see adds in both source and destination', function() {
 
             config.option.livereload = true
 
@@ -126,15 +133,11 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             }).then(function() {
 
-                return functions.makeDirPath(fileSource).then(function() {
-                    return functions.writeFile(fileSource, '...')
-                })
+                return functions.makeDirPath(fileSource)
 
             }).then(function() {
 
-                return functions.makeDirPath(fileDest).then(function() {
-                    return functions.writeFile(fileDest, '...')
-                })
+                return functions.makeDirPath(fileDest)
 
             }).then(function() {
 
@@ -153,14 +156,14 @@ describe('File -> ../code/7 - watch.js\n', function() {
                         }
                     }
 
-                    watch.emitterSource.on('change', function(file) {
+                    watch.emitterSource.on('add', function(file) {
                         expect(file).to.be(fileSource)
 
                         check1 = true
                         check()
                     })
 
-                    watch.emitterDest.on('change', function(file) {
+                    watch.emitterDest.on('add', function(file) {
                         expect(file).to.be(fileDest)
 
                         check2 = true
@@ -178,6 +181,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
                 return functions.removeFiles([fileSource, fileDest])
 
             }).then(function() {
+                
+                watch.stop()
 
                 return functions.removeFile(path.dirname(config.path.dest))
 
@@ -204,15 +209,11 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             }).then(function() {
 
-                return functions.makeDirPath(fileSource).then(function() {
-                    return functions.writeFile(fileSource, '...')
-                })
+                return functions.makeDirPath(fileSource)
 
             }).then(function() {
 
-                return functions.makeDirPath(fileDest).then(function() {
-                    return functions.writeFile(fileDest, '...')
-                })
+                return functions.makeDirPath(fileDest)
 
             }).then(function() {
 
@@ -231,14 +232,14 @@ describe('File -> ../code/7 - watch.js\n', function() {
                         }
                     }
 
-                    watch.emitterSource.on('change', function(file) {
+                    watch.emitterSource.on('add', function(file) {
                         expect(file).to.be(fileSource) // source
 
                         check1 = true
                         check()
                     })
 
-                    watch.emitterDest.on('change', function(file) {
+                    watch.emitterDest.on('add', function(file) {
                         expect(file).to.be(fileDest) // dest
 
                         check2 = true
@@ -255,6 +256,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
                 return functions.removeFiles([fileSource, fileDest])
 
             }).then(function() {
+                
+                watch.stop()
 
                 return functions.removeFile(path.dirname(config.path.dest))
 
@@ -265,9 +268,6 @@ describe('File -> ../code/7 - watch.js\n', function() {
         it('should use glob search strings as parameters', function() {
 
             config.option.livereload = true
-
-            config.glob.watch.source = '*.less'
-            config.glob.watch.dest = '*.css'
 
             config.path.source = path.join(testPath, 'processWatch', 'source')
             config.path.dest   = path.join(testPath, 'processWatch', 'dest')
@@ -284,15 +284,11 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             }).then(function() {
 
-                return functions.makeDirPath(fileSource).then(function() {
-                    return functions.writeFile(fileSource, '...')
-                })
+                return functions.makeDirPath(fileSource)
 
             }).then(function() {
 
-                return functions.makeDirPath(fileDest).then(function() {
-                    return functions.writeFile(fileDest, '...')
-                })
+                return functions.makeDirPath(fileDest)
 
             }).then(function() {
 
@@ -311,14 +307,14 @@ describe('File -> ../code/7 - watch.js\n', function() {
                         }
                     }
 
-                    watch.emitterSource.on('change', function(file) {
+                    watch.emitterSource.on('add', function(file) {
                         expect(file).to.be(fileSource)
 
                         check1 = true
                         check()
                     })
 
-                    watch.emitterDest.on('change', function(file) {
+                    watch.emitterDest.on('add', function(file) {
                         expect(file).to.be(fileDest)
 
                         check2 = true
@@ -340,6 +336,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
                 return functions.removeFiles([fileSource, fileDest, ignoreFileSource])
 
             }).then(function() {
+                
+                watch.stop()
 
                 return functions.removeFile(path.dirname(config.path.dest))
 
@@ -350,9 +348,6 @@ describe('File -> ../code/7 - watch.js\n', function() {
         it('should use arrays with file path strings as parameters', function() {
 
             config.option.livereload = true
-
-            config.glob.watch.source = '*.less'
-            config.glob.watch.dest = '*.css'
 
             config.path.source = path.join(testPath, 'processWatch', 'source')
             config.path.dest   = path.join(testPath, 'processWatch', 'dest')
@@ -370,14 +365,14 @@ describe('File -> ../code/7 - watch.js\n', function() {
             }).then(function() {
 
                 return functions.makeDirPath(fileSource).then(function() {
-                    return functions.writeFile(fileSource, '...')
-                })
+					return functions.writeFile(fileSource, '...')
+				})
 
             }).then(function() {
 
                 return functions.makeDirPath(fileDest).then(function() {
-                    return functions.writeFile(fileDest, '...')
-                })
+					return functions.writeFile(fileDest, '...')
+				})
 
             }).then(function() {
 
@@ -425,6 +420,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
                 return functions.removeFiles([fileSource, fileDest, ignoreFileSource])
 
             }).then(function() {
+                
+                watch.stop()
 
                 return functions.removeFile(path.dirname(config.path.dest))
 
@@ -439,6 +436,15 @@ describe('File -> ../code/7 - watch.js\n', function() {
     // Stop watching the source and/or destination folders. Also stop the livereload server.
     // No need to test since it will be tested by watch.processWatch, watch.watchDest, and watch.watchSource.
 
+    //--------------------
+    // watch.testChokidar
+    //--------------------
+    // Write files in order to generate an event to test chokidar watching.
+    // No need to test since it will be tested by watch.watchDest and watch.watchSource.
+
+    //------------------------------
+    // watch.updateLiveReloadServer
+    //------------------------------
     describe('updateLiveReloadServer', function() {
         it('should not return an error', function() {
 
@@ -449,8 +455,11 @@ describe('File -> ../code/7 - watch.js\n', function() {
         }) // it
     }) // describe
 
+    //-----------------
+    // watch.watchDest
+    //-----------------
     describe('watchDest', function() {
-        it('should notice a change in the destination folder', function() {
+        it('should notice an add in the destination folder', function() {
 
             config.option.livereload = true
 
@@ -465,10 +474,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             }).then(function() {
 
-                return functions.makeDirPath(fileDest).then(function() {
-                    return functions.writeFile(fileDest, '...')
-                })
-
+                return functions.makeDirPath(fileDest)
             }).then(function() {
 
                 return watch.watchDest()
@@ -477,7 +483,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 return new Promise(function(resolve, reject) {
 
-                    watch.emitterDest.on('change', function(file) {
+                    watch.emitterDest.on('add', function(file) {
                         resolve(true)
                     })
 
@@ -491,6 +497,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
                 return functions.removeFile(fileDest)
 
             }).then(function() {
+                
+                watch.stop()
 
                 return functions.removeFile(path.dirname(config.path.dest))
 
@@ -499,8 +507,11 @@ describe('File -> ../code/7 - watch.js\n', function() {
         }) // it
     }) // describe
 
+    //-------------------
+    // watch.watchSource
+    //-------------------
     describe('watchSource', function() {
-        it('should notice a change in the source folder', function() {
+        it('should notice an add in the source folder', function() {
 
             config.option.livereload = true
 
@@ -515,9 +526,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             }).then(function() {
 
-                return functions.makeDirPath(fileSource).then(function() {
-                    return functions.writeFile(fileSource, '...')
-                })
+                return functions.makeDirPath(fileSource)
 
             }).then(function() {
 
@@ -527,7 +536,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 return new Promise(function(resolve, reject) {
 
-                    watch.emitterSource.on('change', function(file) {
+                    watch.emitterSource.on('add', function(file) {
                         resolve(true)
                     })
 
@@ -544,6 +553,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
                 return functions.removeFile(fileSource)
 
             }).then(function() {
+                
+                watch.stop()
 
                 return functions.removeFile(path.dirname(config.path.dest))
 

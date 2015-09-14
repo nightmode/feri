@@ -1,6 +1,6 @@
 {
   "name": "feri",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "The refreshingly easy to use build tool for web files.",
   "license": "MIT",
   "author": "Daniel Gagan",
@@ -39,6 +39,9 @@
   "devDependencies": {
     "expect.js": "0.3.1",
     "mocha": "^2.3.2"
+  },
+  "engines": {
+    "node": ">= 4.0.0"
   },
   "scripts": {
     "test": "npm run test-shared -loglevel silent && npm run test-functions -loglevel silent && npm run test-clean -loglevel silent && npm run test-build -loglevel silent && npm run test-watch -loglevel silent",

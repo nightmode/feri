@@ -35,6 +35,12 @@ var chokidarDest     = '' // will become a chokidar object when watching the des
 var chokidarSourceFiles = '' // string or array of source files being watched
 var chokidarDestFiles   = '' // string or array of destination files being watched
 
+var chokidarSourceTestFile = '' // file name which will be used to generate source events to test chokidar
+var chokidarDestTestFile = '' // file name which will be used to generate destination events to test chokidar
+
+var chokidarSourceReady = false // will be set to true once a chokidarSourceTestFile change has been detected
+var chokidarDestReady   = false // will be set to true once a chokidarDestTestFile change has been detected
+
 var livereloadServer = '' // will become a tinyLrFork object when watching the destination folder
 
 var recentFiles = {} // keep track of files that have changed too recently
@@ -163,18 +169,27 @@ watch.processWatch = function watch_processWatch(sourceFiles, destFiles) {
                             tinyLrFork = require('tiny-lr-fork')
                         }
 
-                        watch.stop(false, false, true) // stop only livereload
+                        // stop the livereload server only
+                        watch.stop(false, false, true)
 
-                        livereloadServer = tinyLrFork()
+                        livereloadServer = new tinyLrFork.Server()
                         livereloadServer.listen(config.thirdParty.livereload.port, function(err) {
                             if (err) {
+                                if (shared.cli) {
+                                    console.error(err)
+                                }
                                 reject(err)
                             } else {
                                 return watch.watchDest(destFiles).then(function() {
+
                                     functions.log(chalk.gray(shared.language.display('message.listeningOnPort').replace('{software}', 'LiveReload').replace('{port}', config.thirdParty.livereload.port)))
-                                        resolve()
+
+                                    resolve()
+
                                 }).catch(function(err) {
+
                                     reject(err)
+
                                 })
                             }
                         })
@@ -193,13 +208,13 @@ watch.processWatch = function watch_processWatch(sourceFiles, destFiles) {
 watch.stop = function watch_stop(stopSource, stopDest, stopLivereload) {
     /*
     Stop watching the source and/or destination folders. Also stop the LiveReload server.
-    @param  {Boolean}  [stopSource]      Optional and defaults to true. If true, stop watching the source folder.
-    @param  {Boolean}  [stopDest]        Optional and defaults to true. If true, stop watching the destination folder.
-    @param  {Boolean}  [stopLivereload]  Optional and defaults to true. If true, stop the LiveReload server.
+    @param   {Boolean}  [stopSource]      Optional and defaults to true. If true, stop watching the source folder.
+    @param   {Boolean}  [stopDest]        Optional and defaults to true. If true, stop watching the destination folder.
+    @param   {Boolean}  [stopLivereload]  Optional and defaults to true. If true, stop the LiveReload server.
     */
-    stopSource = stopSource || false
-    stopDest = stopDest || false
-    stopLivereload = stopLivereload || false
+    stopSource     = typeof stopSource     === 'boolean' ? stopSource     : true
+    stopDest       = typeof stopDest       === 'boolean' ? stopDest       : true
+    stopLivereload = typeof stopLivereload === 'boolean' ? stopLivereload : true
 
     if (stopSource) {
         if (typeof chokidarSource === 'object') {
@@ -219,11 +234,85 @@ watch.stop = function watch_stop(stopSource, stopDest, stopLivereload) {
 
     if (stopLivereload) {
         if (typeof livereloadServer === 'object') {
-            // stop livereload server and free up port
-            livereloadServer.close()
+            if (livereloadServer.server._handle === null) {
+                // livereload is not running
+            } else {
+                // stop livereload server and free up port
+                livereloadServer.server.removeAllListeners()
+                livereloadServer.server.close()
+            }
         }
     }
 } // stop
+
+watch.testChokidar = function watch_testChokidar(filePath, checkPass) { // bork update docs // bork do we need a mocha test?
+    /*
+    Write files in order to generate an event to test chokidar watching.
+    @param  {String}   filePath     File path like '/source' or '/dest'
+    @param  {Number}   [checkPass]  Optional and defaults to 0. This function will take care of using this parameter on itself when recursing.
+    @return {Promise}
+    */
+    return new Promise(function(resolve, reject) {
+
+        checkPass = checkPass || 0
+
+        var chokidarTestFile = ''
+        var writeFile = false
+
+        if (filePath === config.path.source) {
+            if (chokidarSourceTestFile === '') {
+                chokidarSourceTestFile = path.join(config.path.source, 'chokidar-' + new Date().getTime() + '.txt')
+            }
+
+            chokidarTestFile = chokidarSourceTestFile
+
+            if (chokidarSourceReady == false) {
+                writeFile = true
+            }
+        } else {
+            if (chokidarSourceTestFile === '') {
+                chokidarDestTestFile = path.join(config.path.dest, 'chokidar-' + new Date().getTime() + '.txt')
+            }
+
+            chokidarTestFile = chokidarDestTestFile
+
+            if (chokidarDestReady == false) {
+                writeFile = true
+            }
+        }
+
+        if (writeFile) {
+            if (checkPass === 0) {
+                return functions.writeFile(chokidarTestFile, '...').then(function() {
+
+                    setTimeout(function() {
+                        return watch.testChokidar(filePath, 1).then(function() {
+                            resolve()
+                        })
+                    }, 10)
+
+                })
+            } else {
+                if (checkPass >= 20) {
+                    checkPass = 0
+                } else {
+                    checkPass = checkPass + 1
+                }
+
+                setTimeout(function() {
+                    return watch.testChokidar(filePath, checkPass).then(function() {
+                        resolve()
+                    })
+                }, 10)
+
+            }
+        } else {
+            return functions.removeFile(chokidarTestFile).then(function() {
+                resolve()
+            })
+        }
+    })
+} // testChokidar
 
 watch.updateLiveReloadServer = function watch_updateLiveReloadServer(now) {
     /*
@@ -263,7 +352,9 @@ watch.updateLiveReloadServer = function watch_updateLiveReloadServer(now) {
             var request = http.request(requestOptions)
 
             request.on('error', function(err) {
-                console.error(err)
+                if (shared.cli) {
+                    console.error(err)
+                }
                 reject(err)
             })
 
@@ -303,14 +394,33 @@ watch.watchDest = function watch_watchDest(files) {
                 }
             }
 
-            if (files.charAt(0) === '/') {
-                files = files.replace('/', '')
+            if (files.charAt(0) === '/' || files.charAt(0) === '\\') {
+                files = files.substring(1)
             }
 
-            files = config.path.dest + '/' + files
+            files = config.path.dest + shared.slash + files
         }
 
+        // watch for chokidar test files
+        var chokidarTestFiles = config.path.dest + shared.slash + 'chokidar-*'
+
+        if (typeof files === 'string') {
+            files = [files]
+            if (files[0] !== config.path.dest + shared.slash) {
+                files.push(chokidarTestFiles)
+            }
+        } else {
+            files.push(chokidarTestFiles)
+        }
+
+        // only test chokidar for watching once
+        var watchTested = false
+
         watch.stop(false, true, false) // stop watching dest
+
+        chokidarDestReady = false
+
+        chokidarDestTestFile = path.join(config.path.dest, 'chokidar-' + new Date().getTime() + '.txt')
 
         chokidarDestFiles = files
 
@@ -318,28 +428,32 @@ watch.watchDest = function watch_watchDest(files) {
 
         chokidarDest
         .on('add', function(file) {
-            if (!shared.suppressWatchEvents) {
+            if (file === chokidarDestTestFile) {
+                chokidarDestReady = true
+            } else if (!shared.suppressWatchEvents) {
                 var ext = path.extname(file).replace('.', '')
                 if (config.livereloadFileTypes.indexOf(ext) >= 0) {
                     functions.log(chalk.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
-    
+
                     // emit an event
                     watch.emitterDest.emit('add', file)
-    
+
                     shared.livereload.changedFiles.push(file.replace(config.path.dest + '/', ''))
                     watch.updateLiveReloadServer()
                 }
             }
         })
         .on('change', function(file) {
-            if (!shared.suppressWatchEvents) {
+            if (file === chokidarDestTestFile) {
+                chokidarDestReady = true
+            } else if (!shared.suppressWatchEvents) {
                 var ext = path.extname(file).replace('.', '').toLowerCase()
                 if (config.livereloadFileTypes.indexOf(ext) >= 0) {
                     functions.log(chalk.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
-    
+
                     // emit an event
                     watch.emitterDest.emit('change', file)
-    
+
                     shared.livereload.changedFiles.push(file.replace(config.path.dest + '/', ''))
                     watch.updateLiveReloadServer()
                 }
@@ -354,27 +468,21 @@ watch.watchDest = function watch_watchDest(files) {
             reject() // a promise can only be resolved or rejected once so if this gets called more than once it will be harmless
         })
         .on('ready', function() {
-            functions.log(chalk.gray(shared.language.display('message.watchingDirectory').replace('{directory}', '/' + path.basename(config.path.dest))))
+            // chokidar can return more than one ready event if given a file array with a string and glob like ['file.js', *.html']
+            // in the case of multiple ready events, only run watch.testChokidar once and then emit our own ready event
+            if (watchTested === false) {
+                watchTested = true
+                return watch.testChokidar(config.path.dest).then(function() {
 
-            // emit an event
-            watch.emitterDest.emit('ready')
+                    functions.log(chalk.gray(shared.language.display('message.watchingDirectory').replace('{directory}', '/' + path.basename(config.path.dest))))
 
-            /*
-            As of September 1st 2015, chokidar and/or the OS is not always "really" ready here.
-            Events can be lost for API using code that creates file activity too soon.
-            Interim solution, have API users wait a bit before returning.
-            Waiting seems like a better solution than trying to write random files every xx milliseconds to see if we can detect events yet.
-            */
-            if (shared.cli) {
-                resolve()
-            } else {
-                // delay for API users
-                setTimeout(function() {
+                    watch.emitterDest.emit('ready')
+
                     resolve()
-                }, 700)
+
+                })
             }
         })
-
     })
 } // watchDest
 
@@ -405,14 +513,33 @@ watch.watchSource = function watch_watchSource(files) {
                 }
             }
 
-            if (files.charAt(0) === '/') {
-                files = files.replace('/', '')
+            if (files.charAt(0) === '/' || files.charAt(0) === '\\') {
+                files = files.substring(1)
             }
 
-            files = config.path.source + '/' + files
+            files = config.path.source + shared.slash + files
         }
 
+        // watch for chokidar test files
+        var chokidarTestFiles = config.path.source + shared.slash + 'chokidar-*'
+
+        if (typeof files === 'string') {
+            files = [files]
+            if (files[0] !== config.path.source + shared.slash) {
+                files.push(chokidarTestFiles)
+            }
+        } else {
+            files.push(chokidarTestFiles)
+        }
+
+        // only test chokidar for watching once
+        var watchTested = false
+
         watch.stop(true, false, false) // stop watching source
+
+        chokidarSourceReady = false
+
+        chokidarSourceTestFile = path.join(config.path.source, 'chokidar-' + new Date().getTime() + '.txt')
 
         chokidarSourceFiles = files
 
@@ -422,10 +549,10 @@ watch.watchSource = function watch_watchSource(files) {
         .on('addDir', function(file) {
             if (!shared.suppressWatchEvents) {
                 functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add') + ' ' + shared.language.display('words.dir')))
-    
+
                 // emit an event
                 watch.emitterSource.emit('add directory', file)
-    
+
                 mkdirp(functions.sourceToDest(file), function(err) {
                     if (err) {
                         console.error(err)
@@ -437,33 +564,37 @@ watch.watchSource = function watch_watchSource(files) {
         .on('unlinkDir', function(file) {
             if (!shared.suppressWatchEvents) {
                 functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed') + ' ' + shared.language.display('words.dir')))
-    
+
                 // emit an event
                 watch.emitterSource.emit('remove directory', file)
-    
+
                 functions.removeDest(functions.sourceToDest(file)).then(function() {
                     functions.log(' ')
                 })
             }
         })
         .on('add', function(file) {
-            if (!shared.suppressWatchEvents) {
+            if (file === chokidarSourceTestFile) {
+                chokidarSourceReady = true
+            } else if (!shared.suppressWatchEvents) {
                 functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
-    
+
                 // emit an event
                 watch.emitterSource.emit('add', file)
-    
+
                 watch.buildOne(file)
             }
         })
         .on('change', function(file) {
-            if (!shared.suppressWatchEvents) {
+            if (file === chokidarSourceTestFile) {
+                chokidarSourceReady = true
+            } else if (!shared.suppressWatchEvents) {
                 if (watch.notTooRecent(file)) {
                     functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
-    
+
                     // emit an event
                     watch.emitterSource.emit('change', file)
-    
+
                     watch.buildOne(file)
                 } else {
                     if (config.option.debug) {
@@ -474,11 +605,15 @@ watch.watchSource = function watch_watchSource(files) {
         })
         .on('unlink', function(file) {
             if (!shared.suppressWatchEvents) {
-                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed')))
-    
-                // emit an event
-                watch.emitterSource.emit('remove', file)
-    
+                if (path.basename(file).indexOf('chokidar-') === 0) {
+                    // do not log or emit when chokidar test files are removed
+                } else {
+                    functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed')))
+
+                    // emit an event
+                    watch.emitterSource.emit('remove', file)
+                }
+
                 clean.processClean(functions.sourceToDest(file), true).then(function() {
                     functions.log(' ')
                 })
@@ -493,25 +628,20 @@ watch.watchSource = function watch_watchSource(files) {
             reject() // a promise can only be resolved or rejected once so if this gets called more than once it will be harmless
         })
         .on('ready', function() {
-            functions.log(chalk.gray(shared.language.display('message.watchingDirectory').replace('{directory}', '/' + path.basename(config.path.source))))
-            recentFiles = {} // reset recentFiles in case any changes happened while we were loading
+            // chokidar can return more than one ready event if given a file array with a string and glob like ['file.js', *.html']
+            // in the case of multiple ready events, only run watch.testChokidar once and then emit our own ready event
+            if (watchTested === false) {
+                watchTested = true
+                return watch.testChokidar(config.path.source).then(function() {
 
-            // emit an event
-            watch.emitterSource.emit('ready')
+                    functions.log(chalk.gray(shared.language.display('message.watchingDirectory').replace('{directory}', '/' + path.basename(config.path.source))))
 
-            /*
-            As of September 1st 2015, chokidar and/or the OS is not always "really" ready here.
-            Problem is most obvious to API users who can create file system events immediately after this function returns.
-            Interim solution, delay a bit for API users.
-            Waiting seems like a better solution than trying to write random files every xx milliseconds to see if we can detect events yet.
-            */
-            if (shared.cli) {
-                resolve()
-            } else {
-                // delay for API users
-                setTimeout(function() {
+                    recentFiles = {} // reset recentFiles in case any changes happened while we were loading
+
+                    watch.emitterSource.emit('ready')
+
                     resolve()
-                }, 700)
+                })
             }
         })
 

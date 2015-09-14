@@ -12,6 +12,7 @@ Spend an afternoon on your project, not your build tool. ^_^
   * [Extension Based](#extension-based)
   * [Include Files](#include-files)
   * [Preconfigured](#preconfigured)
+* [Requirements](#requirements)
 * [Install](#install)
 * [Command Line](#command-line)
 * [Custom Config File](#custom-config-file)
@@ -68,6 +69,10 @@ Any file prefixed with an underscore ( _ ) is considered an include file. Includ
 ### Preconfigured
 
 Feri comes preconfigured with sensible defaults that get you up and running fast. For some, you'll never have to touch a thing. For others, you'll thrill at how easy it is to make a Feri config file with all your favorite settings. Others still will cackle with mad abandonment once they harness the unrestricted power of Feri's API to make their own wild creations!
+
+## Requirements
+
+[Node](https://nodejs.org/en/) version 4.0.0 or greater.
 
 ## Install
 
