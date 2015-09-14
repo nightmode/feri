@@ -12,7 +12,6 @@ The watch module lives in the file [code/7 - watch.js](../../code/7 - watch.js)
 * [notTooRecent](#watchnottoorecent)
 * [processWatch](#watchprocesswatch)
 * [stop](#watchstop)
-* [testChokidar](#watchtestchokidar)
 * [updateLiveReloadServer](#watchupdatelivereloadserver)
 * [watchDest](#watchwatchdest)
 * [watchSource](#watchwatchsource)
@@ -127,18 +126,6 @@ Stop watching the source and/or destination folders. Also stop the LiveReload se
 @param  {Boolean}  [stopSource]      Optional and defaults to true. If true, stop watching the source folder.
 @param  {Boolean}  [stopDest]        Optional and defaults to true. If true, stop watching the destination folder.
 @param  {Boolean}  [stopLivereload]  Optional and defaults to true. If true, stop the LiveReload server.
-```
-
-## watch.testChokidar
-
-Type: `function`
-
-Write files in order to generate an event to test chokidar watching.
-
-```
-@param  {String}   filePath     File path like '/source' or '/dest'
-@param  {Number}   [checkPass]  Optional and defaults to 0. This function will take care of using this parameter on itself when recursing.
-@return {Promise}
 ```
 
 ## watch.updateLiveReloadServer

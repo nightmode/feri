@@ -14,13 +14,36 @@ var build     = require('../code/6 - build.js')
 var watch     = require('../code/7 - watch.js')
 
 //-----------
+// Functions
+//-----------
+var reWriter = function reWriter(goCrazy, filePath, data) {
+    /*
+    Keep on writing a file until chokidar notices us.
+    @param  {Boolean}  goCrazy   Start or continue to write a file every 500 ms until someone stops us!
+    @param  {String}   filePath  String file path like '/source/file.txt'. Not used if goCrazy is false.
+    @param  {String}   [data]    Optional data to write to the file. Defaults to 'changed data'.
+    */
+    if (goCrazy) {
+        data = data || 'changed data'
+        functions.writeFile(filePath, data).then(function() {
+            reWriteTimer = setTimeout(function() {
+                reWriter(goCrazy, filePath, data)
+            }, 500)
+        })
+    } else {
+        clearTimeout(reWriteTimer)
+    }
+}
+
+//-----------
 // Variables
 //-----------
 var configBackup = functions.cloneObj(config)
 var testPath = path.join(shared.path.self, 'test', 'files', 'watch')
+var reWriteTimer = setTimeout(function() {}, 0)
 
 //------------------------
-// Notes for test writers
+// Notes for Test Writers
 //------------------------
 /*
 Use Unique File Names
@@ -33,7 +56,7 @@ Chokidar + Mac = Weird
     Let's say you are using chokidar to watch a directory.
     First you create a file in said directory, witness a watch event, then immediately run functions.removeFile to remove the parent directory containing the file.
     You then receive an error like "ENOTEMPTY: directory not empty, rmdir /path/to/file".
-    To conpensate for this, delete files first to ensure empty folders. Then removing empty folders.
+    If you have to conpensate for this, delete files first to ensure empty folders. Then removing empty folders.
 */
 
 //-------------
@@ -67,10 +90,14 @@ describe('File -> ../code/7 - watch.js\n', function() {
             config.path.source = path.join(testPath, 'buildOne', 'source')
             config.path.dest   = path.join(testPath, 'buildOne', 'dest')
 
-            var fileSource = path.join(config.path.source, 'hello.txt')
-            var fileDest = path.join(config.path.dest, 'hello.txt')
+            var fileSource = path.join(config.path.source, 'buildOne.txt')
+            var fileDest = path.join(config.path.dest, 'buildOne.txt')
 
-            return functions.removeFile(config.path.dest).then(function() {
+            return Promise.resolve().then(function() {
+
+                return functions.removeFile(fileDest)
+
+            }).then(function() {
 
                 return watch.buildOne(fileSource)
 
@@ -81,6 +108,10 @@ describe('File -> ../code/7 - watch.js\n', function() {
             }).then(function(exists) {
 
                 expect(exists).to.be(true)
+
+                return functions.removeFile(fileDest)
+
+            }).then(function() {
 
                 return functions.removeFile(config.path.dest)
 
@@ -117,27 +148,23 @@ describe('File -> ../code/7 - watch.js\n', function() {
     // watch.processWatch
     //--------------------
     describe('processWatch', function() {
-        it('should see adds in both source and destination', function() {
+        it('should see events for both source and destination', function() {
 
             config.option.livereload = true
 
-            config.path.source = path.join(testPath, 'processWatch', 'source')
-            config.path.dest   = path.join(testPath, 'processWatch', 'dest')
+            config.path.source = path.join(testPath, 'processWatch-1', 'source')
+            config.path.dest   = path.join(testPath, 'processWatch-1', 'dest')
 
             var fileSource = path.join(config.path.source, 'one.html')
             var fileDest   = path.join(config.path.dest, 'one.html')
 
             return Promise.resolve().then(function() {
 
-                return functions.removeFile(path.dirname(config.path.dest))
+                return functions.writeFile(fileSource, 'original data')
 
             }).then(function() {
 
-                return functions.makeDirPath(fileSource)
-
-            }).then(function() {
-
-                return functions.makeDirPath(fileDest)
+                return functions.writeFile(fileDest, 'original data')
 
             }).then(function() {
 
@@ -156,35 +183,30 @@ describe('File -> ../code/7 - watch.js\n', function() {
                         }
                     }
 
-                    watch.emitterSource.on('add', function(file) {
+                    function checkSource(file) {
                         expect(file).to.be(fileSource)
-
                         check1 = true
                         check()
-                    })
+                    }
 
-                    watch.emitterDest.on('add', function(file) {
+                    function checkDest(file) {
+                        reWriter(false)
                         expect(file).to.be(fileDest)
-
                         check2 = true
                         check()
-                    })
+                    }
 
-                    return functions.writeFile(fileSource, '...')
+                    watch.emitterSource.on('change', checkSource)
+
+                    watch.emitterDest.on('change', checkDest)
+
+                    reWriter(true, fileSource)
 
                 })
 
             }).then(function(checks) {
 
                 expect(checks).to.be(true)
-
-                return functions.removeFiles([fileSource, fileDest])
-
-            }).then(function() {
-                
-                watch.stop()
-
-                return functions.removeFile(path.dirname(config.path.dest))
 
             })
 
@@ -197,23 +219,19 @@ describe('File -> ../code/7 - watch.js\n', function() {
             config.glob.watch.source = '*.less'
             config.glob.watch.dest = '*.css'
 
-            config.path.source = path.join(testPath, 'processWatch', 'source')
-            config.path.dest   = path.join(testPath, 'processWatch', 'dest')
+            config.path.source = path.join(testPath, 'processWatch-2', 'source')
+            config.path.dest   = path.join(testPath, 'processWatch-2', 'dest')
 
             var fileSource = path.join(config.path.source, 'two.less')
             var fileDest   = path.join(config.path.dest, 'two.css')
 
             return Promise.resolve().then(function() {
 
-                return functions.removeFile(path.dirname(config.path.dest))
+                return functions.writeFile(fileSource, 'original data')
 
             }).then(function() {
 
-                return functions.makeDirPath(fileSource)
-
-            }).then(function() {
-
-                return functions.makeDirPath(fileDest)
+                return functions.writeFile(fileDest, 'original data')
 
             }).then(function() {
 
@@ -232,34 +250,29 @@ describe('File -> ../code/7 - watch.js\n', function() {
                         }
                     }
 
-                    watch.emitterSource.on('add', function(file) {
-                        expect(file).to.be(fileSource) // source
-
+                    function checkSource(file) {
+                        expect(file).to.be(fileSource)
                         check1 = true
                         check()
-                    })
+                    }
 
-                    watch.emitterDest.on('add', function(file) {
-                        expect(file).to.be(fileDest) // dest
-
+                    function checkDest(file) {
+                        reWriter(false)
+                        expect(file).to.be(fileDest)
                         check2 = true
                         check()
-                    })
+                    }
 
-                    return functions.writeFile(fileSource, '*{content:"tastes great, less filling"}')
+                    watch.emitterSource.on('change', checkSource)
+
+                    watch.emitterDest.on('change', checkDest)
+
+                    reWriter(true, fileSource, '*{content:"tastes great, less filling"}')
                 })
 
             }).then(function(checks) {
 
                 expect(checks).to.be(true)
-
-                return functions.removeFiles([fileSource, fileDest])
-
-            }).then(function() {
-                
-                watch.stop()
-
-                return functions.removeFile(path.dirname(config.path.dest))
 
             })
 
@@ -269,8 +282,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             config.option.livereload = true
 
-            config.path.source = path.join(testPath, 'processWatch', 'source')
-            config.path.dest   = path.join(testPath, 'processWatch', 'dest')
+            config.path.source = path.join(testPath, 'processWatch-3', 'source')
+            config.path.dest   = path.join(testPath, 'processWatch-3', 'dest')
 
             var fileSource = path.join(config.path.source, 'three.js')
             var fileDest   = path.join(config.path.dest, 'three.js')
@@ -280,15 +293,15 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             return Promise.resolve().then(function() {
 
-                return functions.removeFile(path.dirname(config.path.dest))
+                return functions.writeFile(fileSource, 'original data')
 
             }).then(function() {
 
-                return functions.makeDirPath(fileSource)
+                return functions.writeFile(fileDest, 'original data')
 
             }).then(function() {
 
-                return functions.makeDirPath(fileDest)
+                return functions.writeFile(ignoreFileSource, 'original data')
 
             }).then(function() {
 
@@ -307,23 +320,26 @@ describe('File -> ../code/7 - watch.js\n', function() {
                         }
                     }
 
-                    watch.emitterSource.on('add', function(file) {
+                    function checkSource(file) {
                         expect(file).to.be(fileSource)
-
                         check1 = true
                         check()
-                    })
+                    }
 
-                    watch.emitterDest.on('add', function(file) {
+                    function checkDest(file) {
+                        reWriter(false)
                         expect(file).to.be(fileDest)
-
                         check2 = true
                         check()
-                    })
+                    }
 
-                    return functions.writeFile(ignoreFileSource, '...').then(function() {
+                    watch.emitterSource.on('change', checkSource)
 
-                        return functions.writeFile(fileSource, 'var peanut = "butter"')
+                    watch.emitterDest.on('change', checkDest)
+
+                    return functions.writeFile(ignoreFileSource, 'changed data').then(function() {
+
+                        reWriter(true, fileSource, 'var peanut = "butter"')
 
                     })
 
@@ -333,13 +349,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 expect(checks).to.be(true)
 
-                return functions.removeFiles([fileSource, fileDest, ignoreFileSource])
-
-            }).then(function() {
-                
-                watch.stop()
-
-                return functions.removeFile(path.dirname(config.path.dest))
+                return functions.removeFile(ignoreFileDest) // this file should never be here but remove it just in case
 
             })
 
@@ -349,8 +359,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             config.option.livereload = true
 
-            config.path.source = path.join(testPath, 'processWatch', 'source')
-            config.path.dest   = path.join(testPath, 'processWatch', 'dest')
+            config.path.source = path.join(testPath, 'processWatch-4', 'source')
+            config.path.dest   = path.join(testPath, 'processWatch-4', 'dest')
 
             var fileSource = path.join(config.path.source, 'four.js')
             var fileDest   = path.join(config.path.dest, 'four.js')
@@ -360,19 +370,15 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             return Promise.resolve().then(function() {
 
-                return functions.removeFile(path.dirname(config.path.dest))
+                return functions.writeFile(fileSource, 'original data')
 
             }).then(function() {
 
-                return functions.makeDirPath(fileSource).then(function() {
-					return functions.writeFile(fileSource, '...')
-				})
+                return functions.writeFile(fileDest, 'original data')
 
             }).then(function() {
 
-                return functions.makeDirPath(fileDest).then(function() {
-					return functions.writeFile(fileDest, '...')
-				})
+                return functions.writeFile(ignoreFileSource, 'original data')
 
             }).then(function() {
 
@@ -391,23 +397,26 @@ describe('File -> ../code/7 - watch.js\n', function() {
                         }
                     }
 
-                    watch.emitterSource.on('change', function(file) {
+                    function checkSource(file) {
                         expect(file).to.be(fileSource)
-
                         check1 = true
                         check()
-                    })
+                    }
 
-                    watch.emitterDest.on('change', function(file) {
+                    function checkDest(file) {
+                        reWriter(false)
                         expect(file).to.be(fileDest)
-
                         check2 = true
                         check()
-                    })
+                    }
 
-                    return functions.writeFile(ignoreFileSource, '...').then(function() {
+                    watch.emitterSource.on('change', checkSource)
 
-                        return functions.writeFile(fileSource, 'var jelly = "time"')
+                    watch.emitterDest.on('change', checkDest)
+
+                    return functions.writeFile(ignoreFileSource, 'changed data').then(function() {
+
+                        reWriter(true, fileSource, 'var jelly = "time"')
 
                     })
 
@@ -417,13 +426,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 expect(checks).to.be(true)
 
-                return functions.removeFiles([fileSource, fileDest, ignoreFileSource])
-
-            }).then(function() {
-                
-                watch.stop()
-
-                return functions.removeFile(path.dirname(config.path.dest))
+                return functions.removeFile(ignoreFileDest) // this file should never be here but remove it just in case
 
             })
 
@@ -435,12 +438,6 @@ describe('File -> ../code/7 - watch.js\n', function() {
     //------------
     // Stop watching the source and/or destination folders. Also stop the livereload server.
     // No need to test since it will be tested by watch.processWatch, watch.watchDest, and watch.watchSource.
-
-    //--------------------
-    // watch.testChokidar
-    //--------------------
-    // Write files in order to generate an event to test chokidar watching.
-    // No need to test since it will be tested by watch.watchDest and watch.watchSource.
 
     //------------------------------
     // watch.updateLiveReloadServer
@@ -459,7 +456,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
     // watch.watchDest
     //-----------------
     describe('watchDest', function() {
-        it('should notice an add in the destination folder', function() {
+        it('should notice an event in the destination folder', function() {
 
             config.option.livereload = true
 
@@ -470,11 +467,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             return Promise.resolve().then(function() {
 
-                return functions.removeFile(path.dirname(config.path.dest))
+                return functions.writeFile(fileDest, 'original data')
 
-            }).then(function() {
-
-                return functions.makeDirPath(fileDest)
             }).then(function() {
 
                 return watch.watchDest()
@@ -483,24 +477,18 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 return new Promise(function(resolve, reject) {
 
-                    watch.emitterDest.on('add', function(file) {
+                    watch.emitterDest.on('change', function() {
+                        reWriter(false)
                         resolve(true)
                     })
 
-                    return functions.writeFile(fileDest, '...')
+                    reWriter(true, fileDest)
+
                 })
 
             }).then(function(emit) {
 
                 expect(emit).to.be(true)
-
-                return functions.removeFile(fileDest)
-
-            }).then(function() {
-                
-                watch.stop()
-
-                return functions.removeFile(path.dirname(config.path.dest))
 
             })
 
@@ -511,9 +499,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
     // watch.watchSource
     //-------------------
     describe('watchSource', function() {
-        it('should notice an add in the source folder', function() {
-
-            config.option.livereload = true
+        it('should notice an event in the source folder', function() {
 
             config.path.source = path.join(testPath, 'watchSource', 'source')
             config.path.dest   = path.join(testPath, 'watchSource', 'dest')
@@ -522,11 +508,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             return Promise.resolve().then(function() {
 
-                return functions.removeFile(path.dirname(config.path.dest))
-
-            }).then(function() {
-
-                return functions.makeDirPath(fileSource)
+                return functions.writeFile(fileSource, 'original data')
 
             }).then(function() {
 
@@ -536,27 +518,18 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 return new Promise(function(resolve, reject) {
 
-                    watch.emitterSource.on('add', function(file) {
+                    watch.emitterSource.on('change', function(file) {
+                        reWriter(false)
                         resolve(true)
                     })
 
-                    return functions.writeFile(fileSource, '...')
+                    reWriter(true, fileSource)
 
                 })
 
             }).then(function(emit) {
 
                 expect(emit).to.be(true)
-
-            }).then(function() {
-
-                return functions.removeFile(fileSource)
-
-            }).then(function() {
-                
-                watch.stop()
-
-                return functions.removeFile(path.dirname(config.path.dest))
 
             })
 

@@ -520,7 +520,7 @@ functions.occurrences = function functions_occurrences(string, subString, allowO
     return n
 } // occurrences
 
-functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath) { // bork need mocha test // bork needs docs
+functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath) {
     /*
     Figure out all the possible source files for any given destination file path.
     @param   {String}  filepath  File path like '/dest/code.js'

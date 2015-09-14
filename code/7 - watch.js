@@ -35,12 +35,6 @@ var chokidarDest     = '' // will become a chokidar object when watching the des
 var chokidarSourceFiles = '' // string or array of source files being watched
 var chokidarDestFiles   = '' // string or array of destination files being watched
 
-var chokidarSourceTestFile = '' // file name which will be used to generate source events to test chokidar
-var chokidarDestTestFile = '' // file name which will be used to generate destination events to test chokidar
-
-var chokidarSourceReady = false // will be set to true once a chokidarSourceTestFile change has been detected
-var chokidarDestReady   = false // will be set to true once a chokidarDestTestFile change has been detected
-
 var livereloadServer = '' // will become a tinyLrFork object when watching the destination folder
 
 var recentFiles = {} // keep track of files that have changed too recently
@@ -245,75 +239,6 @@ watch.stop = function watch_stop(stopSource, stopDest, stopLivereload) {
     }
 } // stop
 
-watch.testChokidar = function watch_testChokidar(filePath, checkPass) { // bork update docs // bork do we need a mocha test?
-    /*
-    Write files in order to generate an event to test chokidar watching.
-    @param  {String}   filePath     File path like '/source' or '/dest'
-    @param  {Number}   [checkPass]  Optional and defaults to 0. This function will take care of using this parameter on itself when recursing.
-    @return {Promise}
-    */
-    return new Promise(function(resolve, reject) {
-
-        checkPass = checkPass || 0
-
-        var chokidarTestFile = ''
-        var writeFile = false
-
-        if (filePath === config.path.source) {
-            if (chokidarSourceTestFile === '') {
-                chokidarSourceTestFile = path.join(config.path.source, 'chokidar-' + new Date().getTime() + '.txt')
-            }
-
-            chokidarTestFile = chokidarSourceTestFile
-
-            if (chokidarSourceReady == false) {
-                writeFile = true
-            }
-        } else {
-            if (chokidarSourceTestFile === '') {
-                chokidarDestTestFile = path.join(config.path.dest, 'chokidar-' + new Date().getTime() + '.txt')
-            }
-
-            chokidarTestFile = chokidarDestTestFile
-
-            if (chokidarDestReady == false) {
-                writeFile = true
-            }
-        }
-
-        if (writeFile) {
-            if (checkPass === 0) {
-                return functions.writeFile(chokidarTestFile, '...').then(function() {
-
-                    setTimeout(function() {
-                        return watch.testChokidar(filePath, 1).then(function() {
-                            resolve()
-                        })
-                    }, 10)
-
-                })
-            } else {
-                if (checkPass >= 20) {
-                    checkPass = 0
-                } else {
-                    checkPass = checkPass + 1
-                }
-
-                setTimeout(function() {
-                    return watch.testChokidar(filePath, checkPass).then(function() {
-                        resolve()
-                    })
-                }, 10)
-
-            }
-        } else {
-            return functions.removeFile(chokidarTestFile).then(function() {
-                resolve()
-            })
-        }
-    })
-} // testChokidar
-
 watch.updateLiveReloadServer = function watch_updateLiveReloadServer(now) {
     /*
     Update the LiveReload server with a list of changed files.
@@ -413,24 +338,17 @@ watch.watchDest = function watch_watchDest(files) {
             files.push(chokidarTestFiles)
         }
 
-        // only test chokidar for watching once
-        var watchTested = false
+        var readyCalled = false
 
         watch.stop(false, true, false) // stop watching dest
 
-        chokidarDestReady = false
-
-        chokidarDestTestFile = path.join(config.path.dest, 'chokidar-' + new Date().getTime() + '.txt')
-
         chokidarDestFiles = files
 
-        chokidarDest = chokidar.watch(files, config.thirdParty.chokidar)
+        chokidarDest = chokidar.watch(null, config.thirdParty.chokidar)
 
         chokidarDest
         .on('add', function(file) {
-            if (file === chokidarDestTestFile) {
-                chokidarDestReady = true
-            } else if (!shared.suppressWatchEvents) {
+            if (!shared.suppressWatchEvents) {
                 var ext = path.extname(file).replace('.', '')
                 if (config.livereloadFileTypes.indexOf(ext) >= 0) {
                     functions.log(chalk.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
@@ -444,9 +362,7 @@ watch.watchDest = function watch_watchDest(files) {
             }
         })
         .on('change', function(file) {
-            if (file === chokidarDestTestFile) {
-                chokidarDestReady = true
-            } else if (!shared.suppressWatchEvents) {
+            if (!shared.suppressWatchEvents) {
                 var ext = path.extname(file).replace('.', '').toLowerCase()
                 if (config.livereloadFileTypes.indexOf(ext) >= 0) {
                     functions.log(chalk.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
@@ -469,20 +385,20 @@ watch.watchDest = function watch_watchDest(files) {
         })
         .on('ready', function() {
             // chokidar can return more than one ready event if given a file array with a string and glob like ['file.js', *.html']
-            // in the case of multiple ready events, only run watch.testChokidar once and then emit our own ready event
-            if (watchTested === false) {
-                watchTested = true
-                return watch.testChokidar(config.path.dest).then(function() {
+            // in the case of multiple ready events, emit our own ready event only once
+            if (readyCalled === false) {
+                readyCalled = true
 
-                    functions.log(chalk.gray(shared.language.display('message.watchingDirectory').replace('{directory}', '/' + path.basename(config.path.dest))))
+                functions.log(chalk.gray(shared.language.display('message.watchingDirectory').replace('{directory}', '/' + path.basename(config.path.dest))))
 
-                    watch.emitterDest.emit('ready')
+                watch.emitterDest.emit('ready')
 
-                    resolve()
-
-                })
+                resolve()
             }
         })
+
+        chokidarDest.add(files)
+
     })
 } // watchDest
 
@@ -532,18 +448,13 @@ watch.watchSource = function watch_watchSource(files) {
             files.push(chokidarTestFiles)
         }
 
-        // only test chokidar for watching once
-        var watchTested = false
+        var readyCalled = false
 
         watch.stop(true, false, false) // stop watching source
 
-        chokidarSourceReady = false
-
-        chokidarSourceTestFile = path.join(config.path.source, 'chokidar-' + new Date().getTime() + '.txt')
-
         chokidarSourceFiles = files
 
-        chokidarSource = chokidar.watch(files, config.thirdParty.chokidar)
+        chokidarSource = chokidar.watch(null, config.thirdParty.chokidar)
 
         chokidarSource
         .on('addDir', function(file) {
@@ -574,9 +485,7 @@ watch.watchSource = function watch_watchSource(files) {
             }
         })
         .on('add', function(file) {
-            if (file === chokidarSourceTestFile) {
-                chokidarSourceReady = true
-            } else if (!shared.suppressWatchEvents) {
+            if (!shared.suppressWatchEvents) {
                 functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
 
                 // emit an event
@@ -586,9 +495,7 @@ watch.watchSource = function watch_watchSource(files) {
             }
         })
         .on('change', function(file) {
-            if (file === chokidarSourceTestFile) {
-                chokidarSourceReady = true
-            } else if (!shared.suppressWatchEvents) {
+            if (!shared.suppressWatchEvents) {
                 if (watch.notTooRecent(file)) {
                     functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
 
@@ -629,21 +536,21 @@ watch.watchSource = function watch_watchSource(files) {
         })
         .on('ready', function() {
             // chokidar can return more than one ready event if given a file array with a string and glob like ['file.js', *.html']
-            // in the case of multiple ready events, only run watch.testChokidar once and then emit our own ready event
-            if (watchTested === false) {
-                watchTested = true
-                return watch.testChokidar(config.path.source).then(function() {
+            // in the case of multiple ready events, emit our own ready event only once
+            if (readyCalled === false) {
+                readyCalled = true
 
-                    functions.log(chalk.gray(shared.language.display('message.watchingDirectory').replace('{directory}', '/' + path.basename(config.path.source))))
+                functions.log(chalk.gray(shared.language.display('message.watchingDirectory').replace('{directory}', '/' + path.basename(config.path.source))))
 
-                    recentFiles = {} // reset recentFiles in case any changes happened while we were loading
+                recentFiles = {} // reset recentFiles in case any changes happened while we were loading
 
-                    watch.emitterSource.emit('ready')
+                watch.emitterSource.emit('ready')
 
-                    resolve()
-                })
+                resolve()
             }
         })
+
+        chokidarSource.add(files)
 
     })
 } // watchSource
