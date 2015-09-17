@@ -370,6 +370,19 @@ functions.inSource = function functions_inSource(filePath) {
     return filePath.indexOf(config.path.source) === 0
 } // inSource
 
+functions.isGlob = function functions_isGlob(string) {
+    /*
+    Find out if a string is a glob.
+    @param   {String}   string  String to test.
+    @return  {Boolean}          True if string is a glob.
+    */
+    if (string.search(/\*|\?|!|\+|@|\[|\]|\(|\)/) >= 0) {
+        return true
+    } else {
+        return false
+    }
+} // isGlob
+
 functions.log = function functions_log(message, indent) {
     /*
     Display a console message if logging is enabled.
@@ -531,6 +544,10 @@ functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath)
     var destExt = functions.fileExtension(filePath)
     var sources = [filePath]
 
+    if (functions.fileExtension(filePath) !== 'concat') {
+        sources.push(filePath + '.concat')
+    }
+
     if (config.map.destToSourceExt.hasOwnProperty(destExt)) {
         var proceed = false
 
@@ -584,7 +601,9 @@ functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath)
                         sources = sources.concat(functions.possibleSourceFiles(filePathMinusOneExt))
                     }
                 } else {
-                    sources.push(functions.changeExt(filePath, ext))
+                    var sourceFilePath = functions.changeExt(filePath, ext)
+                    sources.push(sourceFilePath)
+                    sources.push(sourceFilePath + '.concat') // check for a file like code.js.concat
                 }
             }
         }
@@ -789,9 +808,13 @@ functions.sourceToDest = function functions_sourceToDest(source) {
 
     var dest = source.replace(config.path.source, config.path.dest)
 
-    for (var destExt in config.map.destToSourceExt) {
-        if (config.map.destToSourceExt[destExt].indexOf(sourceExt) >= 0) {
-            dest = functions.changeExt(dest, destExt)
+    if (sourceExt === 'concat') {
+        dest = functions.removeExt(dest)
+    } else {
+        for (var destExt in config.map.destToSourceExt) {
+            if (config.map.destToSourceExt[destExt].indexOf(sourceExt) >= 0) {
+                dest = functions.changeExt(dest, destExt)
+            }
         }
     }
 
@@ -911,6 +934,147 @@ functions.includesNewer = function functions_includesNewer(includePaths, fileTyp
     })
 } // includesNewer
 
+functions.includePathsConcat = function functions_includePathsConcat(data, filePath, includePathsCacheName) {
+    /*
+    Find CONCAT includes and return an array of matches.
+    @param   {String}   data                     String to search for include paths.
+    @param   {String}   filePath                 Source file where data came from.
+    @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
+    @return  {Promise}                           Promise that returns an array of files to concatenate like ['/js/_library.js'] if successful. An error object if not.
+    */
+    var cleanup = false
+
+    if (typeof includePathsCacheName === 'undefined') {
+        cleanup = true
+        includePathsCacheName = 'concat' + shared.uniqueNumber.generate()
+        shared.cache.includeFilesSeen[includePathsCacheName] = [filePath]
+    }
+
+    return Promise.resolve().then(function() {
+
+        var dataArray = data.split(/[\r\n]+/g)
+
+        var includes = []
+
+        // the order of our concat file matters so find them out using a sequential promise chain
+
+        var p = Promise.resolve([])
+
+        for (var a in dataArray) {
+            (function() {
+                var match = dataArray[a].trim()
+
+                if (match.substring(0, 2) === '//') {
+                    // skip over comments
+                } else {
+                    p = p.then(function() {
+                        var matchIsGlob = functions.isGlob(match)
+
+                        if (match.indexOf(config.path.source) !== 0) {
+                            // path must be relative
+                            match = path.join(path.dirname(filePath), match)
+                        }
+
+                        if (matchIsGlob) {
+                            var options = {
+                                "nocase"  : true,
+                                "nodir"   : false,
+                                "realpath": true
+                            }
+
+                            return functions.findFiles(match, options).then(function(files) {
+
+                                if (files.length > 0) {
+                                    for (var j in files) {
+                                        if (shared.cache.includeFilesSeen[includePathsCacheName].indexOf(files[j]) < 0) {
+                                            // a unique path we haven't seen yet
+                                            shared.cache.includeFilesSeen[includePathsCacheName].push(files[j])
+                                            includes.push(files[j])
+                                        }
+                                    }
+                                }
+
+                            })
+                        } else {
+                            if (shared.cache.includeFilesSeen[includePathsCacheName].indexOf(match) < 0) {
+                                // a unique path we haven't seen yet
+                                shared.cache.includeFilesSeen[includePathsCacheName].push(match)
+                                includes.push(match)
+                            }
+                        }
+                    })
+                }
+            })() // function
+        } // for
+
+        p = p.then(function() {
+            return includes
+        })
+
+        return p
+
+    }).then(function(includes) {
+
+        if (includes.length > 0) {
+            // now we have an array of includes like ['/full/path/to/_file.js']
+
+            var promiseArray = []
+
+            for (var i in includes) {
+                (function() {
+                    var ii = i
+                    promiseArray.push(
+                        functions.fileExists(includes[ii]).then(function(exists) {
+                            if (exists) {
+                                if (functions.fileExtension(includes[ii]) === 'concat') {
+                                    return functions.readFile(includes[ii]).then(function(data) {
+                                        return functions.includePathsConcat(data, includes[ii], includePathsCacheName).then(function(subIncludes) {
+                                            for (var j in subIncludes) {
+                                                includes.push(subIncludes[j])
+                                            }
+                                        })
+                                    })
+                                }
+                            } else {
+                                delete includes[ii] // leaves an empty space in the array which we will clean up later
+                            }
+                        })
+                    )
+                })()
+            } // for
+
+            return Promise.all(promiseArray).then(function() {
+
+                // clean out any empty includes which meant their files could not be found
+                includes = functions.cleanArray(includes)
+
+            }).then(function() {
+                return includes
+            })
+        } else {
+            return includes
+        }
+
+    }).then(function(includes) {
+
+        if (cleanup) {
+            delete shared.cache.includeFilesSeen[includePathsCacheName]
+
+            for (var j in includes) {
+                if (functions.fileExtension(includes[j]) === 'concat') {
+                    delete includes[j]
+                }
+            }
+
+            // clean any empty concat entries
+            includes = functions.cleanArray(includes)
+        }
+
+        return includes
+
+    })
+} // includePathsConcat
+
 functions.includePathsEjs = function functions_includePathsEjs(data, filePath, includePathsCacheName) {
     /*
     Find EJS includes and return an array of matches.
@@ -983,7 +1147,11 @@ functions.includePathsEjs = function functions_includePathsEjs(data, filePath, i
                         functions.fileExists(includes[ii]).then(function(exists) {
                             if (exists) {
                                 return functions.readFile(includes[ii]).then(function(data) {
-                                    return functions.includePathsEjs(data, includes[ii], includePathsCacheName)
+                                    return functions.includePathsEjs(data, includes[ii], includePathsCacheName).then(function(subIncludes) {
+                                        for (var j in subIncludes) {
+                                            includes.push(subIncludes[j])
+                                        }
+                                    })
                                 })
                             } else {
                                 delete includes[ii] // leaves an empty space in the array which we will clean up later
@@ -997,21 +1165,6 @@ functions.includePathsEjs = function functions_includePathsEjs(data, filePath, i
 
                 // clean out any empty includes which meant their files could not be found
                 includes = functions.cleanArray(includes)
-
-                var subArr
-
-                for (var i in promiseArray) {
-                    try {
-                        subArr = promiseArray[i].value()
-                        for (var ii in subArr) {
-                            includes.push(subArr[ii])
-                        }
-                    } catch(e) {
-                        // do nothing
-                    }
-                }
-
-            }).then(function() {
 
                 return includes
 
@@ -1094,7 +1247,11 @@ functions.includePathsJade = function functions_includePathsJade(data, filePath,
                         functions.fileExists(includes[ii]).then(function(exists) {
                             if (exists) {
                                 return functions.readFile(includes[ii]).then(function(data) {
-                                    return functions.includePathsJade(data, includes[ii], includePathsCacheName)
+                                    return functions.includePathsJade(data, includes[ii], includePathsCacheName).then(function(subIncludes) {
+                                        for (var j in subIncludes) {
+                                            includes.push(subIncludes[j])
+                                        }
+                                    })
                                 })
                             } else {
                                 delete includes[ii] // leaves an empty space in the array which we will clean up later
@@ -1109,25 +1266,6 @@ functions.includePathsJade = function functions_includePathsJade(data, filePath,
 
                 // clean out any empty includes which meant their files could not be found
                 includes = functions.cleanArray(includes)
-
-                var subArr
-
-                for (var i in promiseArray) {
-                    try {
-                        subArr = promiseArray[i].value()
-                        for (var ii in subArr) {
-                            includes.push(subArr[ii])
-                        }
-                    } catch(e) {
-                        // do nothing
-                    }
-                }
-
-            }).catch(function(err) {
-
-                console.warn(err)
-
-            }).then(function() {
 
                 return includes
 
@@ -1208,7 +1346,11 @@ functions.includePathsLess = function functions_includePathsLess(data, filePath,
                         functions.fileExists(imports[ii]).then(function(exists) {
                             if (exists) {
                                 return functions.readFile(imports[ii]).then(function(data) {
-                                    return functions.includePathsLess(data, imports[ii], includePathsCacheName)
+                                    return functions.includePathsLess(data, imports[ii], includePathsCacheName).then(function(subIncludes) {
+                                        for (var j in subIncludes) {
+                                            includes.push(subIncludes[j])
+                                        }
+                                    })
                                 })
                             } else {
                                 delete imports[ii] // leaves an empty space in the array which we will clean up later
@@ -1223,21 +1365,6 @@ functions.includePathsLess = function functions_includePathsLess(data, filePath,
 
                 // clean out any empty imports which meant their files could not be found
                 imports = functions.cleanArray(imports)
-
-                var subArr
-
-                for (var i in promiseArray) {
-                    try {
-                        subArr = promiseArray[i].value()
-                        for (var ii in subArr) {
-                            includes.push(subArr[ii])
-                        }
-                    } catch(e) {
-                        // do nothing
-                    }
-                }
-
-            }).then(function() {
 
                 return imports
 
@@ -1358,7 +1485,11 @@ functions.includePathsSass = function functions_includePathsSass(data, filePath,
                         functions.fileExists(imports[ii]).then(function(exists) {
                             if (exists) {
                                 return functions.readFile(imports[ii]).then(function(data) {
-                                    return functions.includePathsSass(data, imports[ii], includePathsCacheName)
+                                    return functions.includePathsSass(data, imports[ii], includePathsCacheName).then(function(subIncludes) {
+                                        for (var j in subIncludes) {
+                                            includes.push(subIncludes[j])
+                                        }
+                                    })
                                 })
                             } else {
                                 delete imports[ii] // leaves an empty space in the array which we will clean up later
@@ -1373,21 +1504,6 @@ functions.includePathsSass = function functions_includePathsSass(data, filePath,
 
                 // clean out any empty imports which meant their files could not be found
                 imports = functions.cleanArray(imports)
-
-                var subArr
-
-                for (var i in promiseArray) {
-                    try {
-                        subArr = promiseArray[i].value()
-                        for (var ii in subArr) {
-                            includes.push(subArr[ii])
-                        }
-                    } catch(e) {
-                        // do nothing
-                    }
-                }
-
-            }).then(function() {
 
                 return imports
 
@@ -1466,7 +1582,7 @@ functions.includePathsStylus = function functions_includePathsStylus(data, fileP
                     match = path.join(path.dirname(filePath), match)
                 }
 
-                if (match.indexOf('*') >= 0) {
+                if (functions.isGlob(match)) {
                     // we are dealing with a glob
                     globs.push(match.replace(/\.styl/i, '') + '.styl')
                     continue
@@ -1542,7 +1658,11 @@ functions.includePathsStylus = function functions_includePathsStylus(data, fileP
                         functions.fileExists(includes[ii]).then(function(exists) {
                             if (exists) {
                                 return functions.readFile(includes[ii]).then(function(data) {
-                                    return functions.includePathsStylus(data, includes[ii], includePathsCacheName)
+                                    return functions.includePathsStylus(data, includes[ii], includePathsCacheName).then(function(subIncludes) {
+                                        for (var j in subIncludes) {
+                                            includes.push(subIncludes[j])
+                                        }
+                                    })
                                 })
                             } else {
                                 delete includes[ii] // leaves an empty space in the array which we will clean up later
@@ -1558,21 +1678,8 @@ functions.includePathsStylus = function functions_includePathsStylus(data, fileP
                 // clean out any empty includes which meant their files could not be found
                 includes = functions.cleanArray(includes)
 
-                var subArr
-
-                for (var i in promiseArray) {
-                    try {
-                        subArr = promiseArray[i].value()
-                        for (var ii in subArr) {
-                            includes.push(subArr[ii])
-                        }
-                    } catch(e) {
-                        // do nothing
-                    }
-                }
-
-            }).then(function() {
                 return includes
+
             })
         } else {
             return includes
@@ -1594,7 +1701,7 @@ functions.includePathsStylus = function functions_includePathsStylus(data, fileP
 //-------------------------------------
 functions.objBuildWithIncludes = function functions_objBuildWithIncludes(obj, includeFunction) {
     /*
-    Figure out if a reusable object, which may may have include files, needs to be built in memory.
+    Figure out if a reusable object, which may have include files, needs to be built in memory.
     @param   {Object}    obj              Reusable object originally created by build.processOneBuild
     @param   {Function}  includeFunction  Function that will parse this particular type of file (ejs, sass, stylus, etc...) and return any paths to include files.
     @return  {Promise}                    Promise that returns a reusable object.

@@ -1,6 +1,6 @@
 {
   "name": "feri",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "The refreshingly easy to use build tool for web files.",
   "license": "MIT",
   "author": "Daniel Gagan",
@@ -18,6 +18,7 @@
     "clean-css": "^3.4.1",
     "coffee-script": "^1.10.0",
     "ejs": "^2.3.4",
+    "generate-sourcemap": "^0.1.0",
     "gifsicle": "^3.0.1",
     "glob": "^5.0.14",
     "html-minifier": "^0.7.2",

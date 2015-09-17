@@ -26,6 +26,7 @@ The functions object is grouped into three categories.
 * [findFiles](#functionsfindfiles)
 * [globOptions](#functionsgloboptions)
 * [inSource](#functionsinsource)
+* [isGlob](#functionsisglob)
 * [log](#functionslog)
 * [logError](#functionslogerror)
 * [logOutput](#functionslogoutput)
@@ -53,6 +54,7 @@ The functions object is grouped into three categories.
 ### Functions: Includes
 
 * [includesNewer](#functionsincludesnewer)
+* [includePathsConcat](#functionsincludepathsconcat)
 * [includePathsEjs](#functionsincludepathsejs)
 * [includePathsJade](#functionsincludepathsjade)
 * [includePathsLess](#functionsincludepathsless)
@@ -237,6 +239,17 @@ Find out if a path is in the source directory.
 ```
 @param   {String}   filePath  Full file path like '/var/projects/a/source/index.ejs'
 @return  {Boolean}            True if the file path is in the source directory.
+```
+
+### functions.isGlob
+
+Type: `function`
+
+Find out if a string is a glob.
+
+```
+@param   {String}   string  String to test.
+@return  {Boolean}          True if string is a glob.
 ```
 
 ### functions.log
@@ -515,6 +528,19 @@ Figure out if any include files are newer than the modified time of the destinat
 @return  {Promise}                Promise that returns true if any includes files are newer.
 ```
 
+### functions.includePathsConcat
+
+Type: `function`
+
+Find CONCAT includes and return an array of matches.
+
+```
+@param   {String}   data                     String to search for include paths.
+@param   {String}   filePath                 Source file where data came from.
+@param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
+@return  {Promise}                           Promise that returns an array of files to concatenate like ['/js/_library.js'] if successful. An error object if not.
+```
+
 ### functions.includePathsEjs
 
 Type: `function`
@@ -586,7 +612,7 @@ Find Stylus includes and return an array of matches.
 
 Type: `function`
 
-Figure out if a reusable object, which may may have include files, needs to be built in memory.
+Figure out if a reusable object, which may have include files, needs to be built in memory.
 
 ```
 @param   {Object}    obj              Reusable object originally created by build.processOneBuild

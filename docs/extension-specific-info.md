@@ -1,31 +1,72 @@
 # Feri - Extension Specific Information
 
- * [Cascading Style Sheets (CSS)](#cascading-style-sheets-css)
- * [Embedded JavaScript (EJS)](#embedded-javascript-ejs)
- * [Gzip (GZ)](#gzip-gz)
+* [Concatenate (CONCAT)](#concatenate-concat)
+* [Embedded JavaScript (EJS)](#embedded-javascript-ejs)
+* [Gzip (GZ)](#gzip-gz)
 
-## Cascading Style Sheets (CSS)
+## Concatenate (CONCAT)
 
-### Chaining Source Map Build Tasks
-Feri can generate source maps for CSS, Less, Sass, and Stylus files. These will all work as intended with a default config.
+### Introduction and Example
 
-Where things can get weird is if you change the default build chain of something like Sass from...
+Feri thinks you should be able to look through your source folder and with a tiny bit of imagination, know exactly what your destination folder will look like. One of the ways Feri does this is by supporting a special file called CONCAT.
 
-```js
-config.map.sourceToDestTasks.sass = ['sass']
+A concatenate file is simply a list of file path strings or globs that point to other files. For example, if you had a directory structure like:
+
+```
+/dest
+/source
+/source/one.js
+/source/two.js
 ```
 
-To a chain of tasks that has the built-in CSS task come after something that just generated a CSS source map like...
+You might think, it sure would be nice to join both source JS files into one destination file for better performance. Assuming they are going to be joined, we would not want the individual JS files to be published to the destination folder. We can accomplish this by prefixing them with an underscore to mark them as [include](../README.md#include-files) files:
 
-```js
-config.map.sourceToDestTasks.sass = ['sass', 'css']
+```
+/dest
+/source
+/source/_one.js
+/source/_two.js
 ```
 
-In the above setup, the built-in Sass task would generate a valid source map. Next, the built-in CSS task would have trouble consuming the existing source map and generate a new source map. The new source map does not have mappings back to the original Sass file so its utility in your browser is greatly reduced.
+Next, we can create a file called `all.js.concat` in our source folder. Inside this file will be a [glob](https://www.npmjs.com/package/glob) for all JS files in the current directory.
 
-Feri thinks this is happening because of a bug in [clean-css](https://www.npmjs.com/package/clean-css) or one of its dependencies as of August 2015. This issue will most likely be resolved at some point in the future.
+```
+// all.js.concat
+*.js
+```
 
-For now, be careful when chaining the 'css' task onto anything generating an existing source map if you want proper source maps.
+Our updated directory structure is now:
+
+```
+/dest
+/source
+/source/all.js.concat
+/source/_one.js
+/source/_two.js
+```
+
+The next time `feri` builds, she notices the `all.js.concat` file and using the glob inside it, combines the two JS files into one destination file. The destination file is simply the source file without the `.concat` extension so in our case, `all.js`.
+
+Now our finished directory structure looks like:
+
+```
+/dest
+/dest/all.js
+/source
+/source/all.js.concat
+/source/_one.js
+/source/_two.js
+```
+
+Not too hard and if we are working with other developers, they will see the CONCAT file and know what is going on. All without having to consult a build tool's configuration! *cough* [grunt](http://gruntjs.com/) *cough* [gulp](http://gulpjs.com/) *cough*
+
+### Source Maps
+
+Assuming an option like `config.sourceMaps` is enabled, CONCAT files will generate source maps for JS and CSS files like `all.js.concat` and `all.css.concat`.
+
+### Twilight Zone
+
+You could create a file called `all.js.concat` that includes your prized collection of [OS/2 Warp](https://en.wikipedia.org/wiki/OS/2) binaries but... why?! Surely there are better ways to generate error messages.
 
 ## Embedded JavaScript (EJS)
 

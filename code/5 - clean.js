@@ -36,7 +36,12 @@ clean.processClean = function clean_processClean(files, watching) {
         return Promise.resolve()
     }
 
-    return Promise.resolve().then(function(good) {
+    return Promise.resolve().then(function() {
+        
+        if (!watching) {
+            // start clean timer
+            shared.stats.timeTo.clean = functions.sharedStatsTimeTo(shared.stats.timeTo.clean)
+        }
 
         var configPathsAreGood = functions.configPathsAreGood()
         if (configPathsAreGood !== true) {
@@ -54,9 +59,6 @@ clean.processClean = function clean_processClean(files, watching) {
     }).then(function() {
 
         if (!watching) {
-            // start clean timer
-            shared.stats.timeTo.clean = functions.sharedStatsTimeTo(shared.stats.timeTo.clean)
-
             // display title
             functions.log(chalk.gray('\n' + shared.language.display('words.clean') + '\n'), false)
         }
@@ -206,21 +208,26 @@ clean.processOneClean = function clean_processOneClean(filePath) {
             } else {
                 var prefix = path.basename(filePath).substr(0, config.includePrefix.length)
 
-                if (prefix === config.includePrefix) {
-                    // prefixed files are includes and should not be in the dest folder
+                var fileExt = functions.fileExtension(filePath)
+
+                if (prefix === config.includePrefix || fileExt === 'concat') {
+                    // prefixed files are includes and should not be in the destination folder
+                    // concat files should not be in the destination folder either
                     return functions.removeDest(filePath).then(function() {
                         throw 'done'
                     })
+                } else {
+                    return fileExt
                 }
             }
 
-        }).then(function() {
+        }).then(function(fileExt) {
 
             // if we got this far we know the destination file exists and it is not an include
 
             var obj = {
                 destFile: filePath,
-                destExt: functions.fileExtension(filePath),
+                destExt: fileExt,
                 sourceExists: false
             }
 

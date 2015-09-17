@@ -9,6 +9,7 @@ The clean module lives in the file [code/3 - config.js](../../code/3 - config.js
 * [concurLimit](#configconcurlimit)
 * [fileType](#configfiletype)
   * [coffee](#configfiletypecoffee)
+  * [concat](#configfiletypeconcat)
   * [css](#configfiletypecss)
   * [ejs](#configfiletypeejs)
   * [js](#configfiletypejs)
@@ -74,6 +75,20 @@ Options used by [build.coffeeScript](build.md#buildcoffeescript).
 
 ```js
 config.fileType.coffee = {
+    'sourceMaps': false
+}
+```
+
+Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+
+## config.fileType.concat
+
+Type: `object`
+
+Options used by [build.concat](build.md#buildconcat).
+
+```js
+config.fileType.concat = {
     'sourceMaps': false
 }
 ```

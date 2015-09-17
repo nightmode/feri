@@ -12,6 +12,7 @@ var functions = require('./4 - functions.js')
 //----------
 var chalk     = require('chalk')          // ~ 20 ms
 var fs        = require('fs')             // ~  1 ms
+var glob      = require('glob')           // ~ 13 ms
 var path      = require('path')           // ~  1 ms
 var promisify = require('promisify-node') // ~  8 ms
 
@@ -36,18 +37,18 @@ var png = path.join(shared.path.self, 'node_modules', 'optipng-bin', 'vendor', '
 //---------------------
 // Includes: Lazy Load
 //---------------------
-var css          // require('clean-css')                   // ~  83 ms
-var coffeeScript // require('coffee-script')               // ~  36 ms
-var ejs          // require('ejs')                         // ~   4 ms
-var gzipme       // require('gzipme')                      // ~   6 ms
-var html         // require('html-minifier').minify        // ~   4 ms
-var jade         // require('jade')                        // ~ 363 ms
-var less         // require('less')                        // ~  89 ms
-var markdown     // require('markdown-it')()               // ~  56 ms
-var pako         // require('pako')                        // ~  21 ms
-var sassPromise  // promisify(require('node-sass').render) // ~   7 ms
-var stylus       // require('stylus')                      // ~  98 ms
-var js           // require('uglify-js')                   // ~  83 ms
+var css               // require('clean-css')                   // ~  83 ms
+var coffeeScript      // require('coffee-script')               // ~  36 ms
+var ejs               // require('ejs')                         // ~   4 ms
+var generateSourcemap // require('generate-sourcemap')          // ~  19 ms
+var html              // require('html-minifier').minify        // ~   4 ms
+var jade              // require('jade')                        // ~ 363 ms
+var less              // require('less')                        // ~  89 ms
+var markdown          // require('markdown-it')()               // ~  56 ms
+var pako              // require('pako')                        // ~  21 ms
+var sassPromise       // promisify(require('node-sass').render) // ~   7 ms
+var stylus            // require('stylus')                      // ~  98 ms
+var js                // require('uglify-js')                   // ~  83 ms
 
 //-----------
 // Variables
@@ -72,7 +73,12 @@ build.processBuild = function build_processBuild(files, watching) {
         return Promise.resolve()
     }
 
-    return Promise.resolve().then(function(good) {
+    return Promise.resolve().then(function() {
+
+        if (!watching) {
+            // start build timer
+            shared.stats.timeTo.build = functions.sharedStatsTimeTo(shared.stats.timeTo.build)
+        }
 
         var configPathsAreGood = functions.configPathsAreGood()
         if (configPathsAreGood !== true) {
@@ -90,9 +96,6 @@ build.processBuild = function build_processBuild(files, watching) {
     }).then(function() {
 
         if (!watching) {
-            // start build timer
-            shared.stats.timeTo.build = functions.sharedStatsTimeTo(shared.stats.timeTo.build)
-
             // display title
             functions.log(chalk.gray('\n' + shared.language.display('words.build') + '\n'), false)
         }
@@ -377,11 +380,47 @@ build.css = function build_css(obj) {
         if (!obj.build) {
             // no further chained promises should be called
             throw 'done'
-        } else if (typeof css !== 'object') {
+        }
+
+        if (typeof css !== 'object') {
             css = require('clean-css')
         }
 
-    }).then(function() {
+        if ((config.sourceMaps || config.fileType.css.sourceMaps) && buildAlreadySet) {
+            // check if a map file already exists
+            return functions.fileExistsAndTime(obj.dest + '.map').then(function(mapFile) {
+
+                if (mapFile.exists) {
+                    // map file already exists but has it been generated recently?
+                    if (mapFile.mtime < (new Date().getTime() - 5000)) {
+                        // map file is older than 5 seconds and most likely not just built
+                        // remove old map file since we will generate a new one
+                        return functions.removeDest(obj.dest + '.map', false).then(function() {
+                            return false
+                        })
+                    } else {
+                        return functions.readFile(obj.dest + '.map').then(function(data) {
+                            return JSON.parse(data)
+                        })
+                    }
+                }
+
+            })
+        } // if
+
+    }).then(function(existingSourceMap) {
+
+        existingSourceMap = existingSourceMap || false
+
+        if (existingSourceMap) {
+            // temporarily set any soureMappingURL to a full path for clean-css
+            var string = '/*# sourceMappingURL='
+            var pos = obj.data.indexOf(string)
+
+            if (pos > 0) {
+                obj.data = obj.data.substr(0, pos) + '\n' + string + path.dirname(obj.dest) + shared.slash + path.basename(obj.dest) + '.map */'
+            }
+        }
 
         var options = functions.cloneObj(config.thirdParty.cleanCss)
 
@@ -401,7 +440,13 @@ build.css = function build_css(obj) {
 
             map.file = path.basename(obj.dest)
             map.sourceRoot = config.sourceRoot
-            map.sources = [path.basename(obj.source)]
+
+            if (existingSourceMap) {
+                map.sources = existingSourceMap.sources
+                map.sourcesContent = existingSourceMap.sourcesContent
+            } else {
+                map.sources = [path.basename(obj.source)]
+            }
 
             map = JSON.stringify(map)
 
@@ -517,7 +562,7 @@ build.js = function build_js(obj) {
             options.outSourceMap = outputFileName + '.map'
             options.sourceRoot = config.sourceRoot
             if (existingSourceMap) {
-                existingSourceMap.sourceRoot = '' // remove existing sourceRoot since it will confuse uglifyJs and cause it to generate duplicate source and sourceContent entries
+                existingSourceMap.sourceRoot = '' // remove existing sourceRoot since it will confuse uglifyJs and cause it to generate duplicate source and sourcesContent entries
                 options.inSourceMap = existingSourceMap
             }
         }
@@ -621,28 +666,43 @@ build.copy = function build_copy(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    return functions.objBuildOnDisk(obj).then(function() {
+    return Promise.resolve().then(function() {
 
         functions.logWorker('build.copy', obj)
 
-        if (obj.build) {
+        if (obj.data === '') {
 
-            return new Promise(function(resolve, reject) {
+            return functions.objBuildOnDisk(obj).then(function() {
 
-                var sourceFile = fs.createReadStream(obj.source)
-                sourceFile.on('error', reject)
+                if (obj.build) {
 
-                var destFile = fs.createWriteStream(obj.dest)
-                destFile.on('error', reject)
-                destFile.on('finish', resolve)
+                    return new Promise(function(resolve, reject) {
 
-                sourceFile.pipe(destFile)
+                        var sourceFile = fs.createReadStream(obj.source)
+                        sourceFile.on('error', reject)
 
-            }).then(function() {
+                        var destFile = fs.createWriteStream(obj.dest)
+                        destFile.on('error', reject)
+                        destFile.on('finish', resolve)
 
-                functions.logOutput(obj.dest, 'copy')
+                        // copy source to dest
+                        sourceFile.pipe(destFile)
+
+                    }).then(function() {
+
+                        functions.logOutput(obj.dest, 'copy')
+
+                    })
+
+                } else {
+                    // obj.build is false so no further chained promises should be called
+                    throw 'done'
+                }
 
             })
+
+        } else {
+            // do nothing and let build.finalize take care of writing obj.data
         }
 
     }).then(function() {
@@ -735,6 +795,160 @@ build.png = function build_png(obj) {
 // Build: With Includes
 //----------------------
 // The following functions are for file types that may contain includes.
+
+build.concat = function build_concat(obj) {
+    /*
+    Concatenate files like 'all.js.concat' which can contain globs and/or file path strings that point to other files.
+    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
+    @return  {Promise}  obj  Promise that returns a reusable object.
+    */
+    return functions.objBuildWithIncludes(obj, functions.includePathsConcat).then(function(obj) {
+
+        functions.logWorker('build.concat', obj)
+
+        if (obj.build) {
+
+            var filePaths = ''
+
+            return functions.includePathsConcat(obj.data, obj.source).then(function(includeFiles) {
+
+                filePaths = includeFiles
+
+                return functions.readFiles(includeFiles)
+
+            }).then(function(arrayData) {
+
+                // empty obj.data in preparation to populate it with include file contents
+                obj.data = ''
+
+                var fileExt = functions.fileExtension(obj.dest)
+
+                var arrayDataLength = arrayData.length - 1
+
+                for (var i in arrayData) {
+                    obj.data += arrayData[i]
+
+                    if (fileExt === 'js') {
+                        // add a safety separator for javascript
+                        obj.data += ';'
+                    }
+
+                    if (i < arrayDataLength) {
+                        obj.data += '\n'
+                    }
+                }
+
+                var createSourceMaps = false
+
+                if (fileExt === 'js' && (config.sourceMaps || config.fileType.concat.sourceMaps || config.fileType.js.sourceMaps)) {
+                    createSourceMaps = true
+                } else if (fileExt === 'css' && (config.sourceMaps || config.fileType.concat.sourceMaps || config.fileType.css.sourceMaps)) {
+                    createSourceMaps = true
+                }
+
+                if (createSourceMaps) {
+                    if (typeof generateSourcemap !== 'object') {
+                        generateSourcemap = require('generate-sourcemap')
+                    }
+
+                    var genSourceMap = generateSourcemap(path.basename(obj.dest))
+
+                    var ranges = []
+
+                    var start = 0
+                    var end   = 0
+
+                    for (var j in filePaths) {
+                        end = start + arrayData[j].split(/[\r\n]+/g).length // lines in this file
+
+                        ranges.push({
+                            'sourceFile': filePaths[j].replace(config.path.source, path.basename(config.path.source)).replace(/\\/g, '/'),
+                            'start': start,
+                            'end': end
+                        })
+
+                        start = end
+                    }
+
+                    genSourceMap.addRanges(ranges)
+
+                    var sourceMap = JSON.parse(genSourceMap.getMap())
+
+                    sourceMap.sourceRoot = config.sourceRoot
+                    sourceMap.sourcesContent = []
+
+                    for (var h in arrayData) {
+                        sourceMap.sourcesContent.push(arrayData[h])
+                    }
+
+                    if (fileExt === 'js') {
+                        obj.data += '//# sourceMappingURL=' + path.basename(obj.dest) + '.map'
+                    } else {
+                        // fileExt === 'css'
+                        obj.data += '/*# sourceMappingURL=' + path.basename(obj.dest) + '.map */'
+                    }
+
+
+                    return functions.makeDirPath(obj.dest).then(function() {
+
+                        return fsWriteFilePromise(obj.dest + '.map', JSON.stringify(sourceMap))
+
+                    }).then(function() {
+
+                        if (config.map.sourceToDestTasks.map.indexOf('gz') >= 0) {
+                            // manually kick off a gz task for the new .map file
+                            return build.gz({
+                                'source': obj.dest + '.map',
+                                'dest': obj.dest + '.map',
+                                'data': '',
+                                'build': true
+                            })
+                        }
+
+                    })
+                }
+
+            })
+        } else {
+            // no further chained promises should be called
+            throw 'done'
+        }
+
+    }).then(function() {
+
+        var fileExt = functions.fileExtension(obj.dest)
+
+        // now return a chain of build tasks just like build.processOneBuild but don't add build.finalize since that will run after our final return anyway
+        var p = Promise.resolve(obj)
+
+        // figure out which array of functions apply to this file type
+        if (config.map.sourceToDestTasks.hasOwnProperty(fileExt)) {
+            var len = config.map.sourceToDestTasks[fileExt].length
+
+            for (var i = 0; i < len; i++) {
+                if (typeof config.map.sourceToDestTasks[fileExt][i] === 'string') {
+                    // built-in build task
+                    p = p.then(build[config.map.sourceToDestTasks[fileExt][i]])
+                } else {
+                    // custom build task function
+                    p = p.then(config.map.sourceToDestTasks[fileExt][i])
+                }
+            }
+        } else {
+            if (shared.cache.missingMapBuild.indexOf(fileExt) < 0 && fileExt !== '') {
+                shared.cache.missingMapBuild.push(fileExt)
+            }
+            p = p.then(build.copy) // add default copy task
+        }
+
+        return p
+
+    }).then(function() {
+
+        return obj
+
+    })
+} // concat
 
 build.ejs = function build_ejs(obj) {
     /*

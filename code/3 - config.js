@@ -60,6 +60,9 @@ config.fileType = {
     coffee: {
         'sourceMaps': false // used by build.coffeeScript
     },
+    concat: {
+        'sourceMaps': false // used by build.concat
+    },
     css: {
         'sourceMaps': false // used by build.css
     },
@@ -99,6 +102,7 @@ config.map.destToSourceExt = {
 //--------------------------------------
 config.map.sourceToDestTasks = {
     'coffee': ['coffeeScript', 'js'],
+    'concat': ['concat'],
     'css'   : ['css'],
     'ejs'   : ['ejs', 'html'],
     'gif'   : ['gif'],

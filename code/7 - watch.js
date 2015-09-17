@@ -64,9 +64,13 @@ watch.buildOne = function watch_buildOne(fileName) {
     */
     return new Promise(function(resolve, reject) {
 
-        if (path.basename(fileName).substr(0, config.includePrefix.length) === config.includePrefix) {
-            var ext = functions.fileExtension(fileName)
+        var ext = functions.fileExtension(fileName)
+        
+        var checkConcatFiles = false
+        
+        var isInclude = path.basename(fileName).substr(0, config.includePrefix.length) === config.includePrefix
 
+        if (isInclude) {
             if (config.includeFileTypes.indexOf(ext) >= 0) {
                 // included file could be in any of this type of file so check them all
                 glob(config.path.source + "/**/*." + ext, functions.globOptions(), function(err, files) {
@@ -77,10 +81,32 @@ watch.buildOne = function watch_buildOne(fileName) {
                     }
                 })
             } else {
-                resolve([])
+                checkConcatFiles = true
             }
         } else {
-            resolve([fileName])
+            checkConcatFiles = true
+        }
+        
+        if (checkConcatFiles) {
+            if (ext === 'concat') {
+                resolve([fileName])
+            } else {
+                if (ext !== '') {
+                    ext = '.' + ext
+                }
+                
+                // .concat files can concat almost anything so check all name.ext.concat files
+                glob(config.path.source + '/**/*' + ext + '.concat', functions.globOptions(), function(err, files) {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        if (!isInclude) {
+                            files.unshift(fileName)
+                        }
+                        resolve(files)
+                    }
+                })
+            }
         }
 
     }).then(function(files) {
@@ -128,7 +154,7 @@ watch.processWatch = function watch_processWatch(sourceFiles, destFiles) {
     if (!config.option.watch) {
         return Promise.resolve()
     } else {
-        return Promise.resolve().then(function(good) {
+        return Promise.resolve().then(function() {
 
             // start watch timer
             shared.stats.timeTo.watch = functions.sharedStatsTimeTo(shared.stats.timeTo.watch)

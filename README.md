@@ -122,7 +122,7 @@ Feri thinks you should be able to grab nearly any npm module and make a [custom 
 
 ## Extension Specific Information
 
-Additional [extension specific information](docs/extension-specific-info.md) is available for CSS source maps, EJS includes, and GZ files.
+Additional [extension specific information](docs/extension-specific-info.md) is available for `concat` files, `ejs` includes, and `gz` files.
 
 ## Edge Cases
 

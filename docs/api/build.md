@@ -31,6 +31,7 @@ The build object is grouped into five categories.
 
 ### Build: With Includes
 
+* [concat](#buildconcat)
 * [ejs](#buildejs)
 * [jade](#buildjade)
 * [less](#buildless)
@@ -192,6 +193,17 @@ Losslessly optimize PNG files using [optipng-bin](https://www.npmjs.com/package/
 ## Build: With Includes
 
 The following functions are for file types that may contain includes.
+
+### build.concat
+
+Type: `function`
+
+Concatenate files like `all.js.concat` which can contain globs and/or file path strings that point to other files.
+
+```
+@param   {Object}   obj  Reusable object originally created by build.processOneBuild
+@return  {Promise}  obj  Promise that returns a reusable object.
+```
 
 ### build.ejs
 

@@ -806,6 +806,135 @@ describe('File -> ../code/6 - build.js\n', function() {
     //----------------------
     describe('Build: With Includes', function() {
 
+        //--------------
+        // build.concat
+        //--------------
+        describe('concat', function() {
+            it('should compile a concat file', function() {
+
+                config.path.source = path.join(testPath, 'concat', 'source')
+                config.path.dest   = path.join(testPath, 'concat', 'dest')
+
+                var obj = {
+                    'source': path.join(config.path.source, 'test-1', 'all.txt.concat'),
+                    'dest': '',
+                    'data': '',
+                    'build': false
+                }
+
+                return build.concat(obj).then(function(returnObj) {
+
+                    expect(returnObj.data).to.be('one\ntwo')
+
+                })
+
+            }) // it
+
+            it('should compile a js concat file with source maps', function() {
+
+                config.path.source = path.join(testPath, 'concat', 'source')
+                config.path.dest   = path.join(testPath, 'concat', 'dest')
+
+                config.sourceMaps = true
+
+                var destMapFile = path.join(config.path.dest, 'test-2', 'all.js.map')
+
+                var obj = {
+                    'source': path.join(config.path.source, 'test-2', 'all.js.concat'),
+                    'dest': '',
+                    'data': '',
+                    'build': false
+                }
+
+                return Promise.resolve().then(function() {
+
+                    return functions.removeFile(config.path.dest)
+
+                }).then(function() {
+
+                    return build.concat(obj)
+
+                }).then(function(returnObj) {
+
+                    expect(returnObj.data).to.be('var one=1,two=2;\n//# sourceMappingURL=all.js.map')
+
+                    return functions.readFile(destMapFile)
+
+                }).then(function(data) {
+
+                    data = JSON.parse(data)
+
+                    var objDesired = {
+                        version       : 3,
+                        file          : 'all.js',
+                        sources       : ['source/test-2/partials/_01.js', 'source/test-2/partials/_02.js'],
+                        names         : ['one', 'two'],
+                        mappings      : 'AAAA,GAAAA,KAAA,ECAAC,IAAA;AAAA',
+                        sourcesContent: ['var one = 1', 'var two = 2'],
+                        sourceRoot    : '/source-maps'
+                    }
+
+                    expect(data).to.eql(objDesired)
+
+                    return functions.removeFile(config.path.dest)
+
+                })
+
+            }) // it
+
+            it('should compile a css concat file with source maps', function() {
+
+                config.path.source = path.join(testPath, 'concat', 'source')
+                config.path.dest   = path.join(testPath, 'concat', 'dest')
+
+                config.sourceMaps = true
+
+                var destMapFile = path.join(config.path.dest, 'test-3', 'all.css.map')
+
+                var obj = {
+                    'source': path.join(config.path.source, 'test-3', 'all.css.concat'),
+                    'dest': '',
+                    'data': '',
+                    'build': false
+                }
+
+                return Promise.resolve().then(function() {
+
+                    return functions.removeFile(config.path.dest)
+
+                }).then(function() {
+
+                    return build.concat(obj)
+
+                }).then(function(returnObj) {
+
+                    expect(returnObj.data).to.be('.one{content:"one"}.two{content:"two"}\n/*# sourceMappingURL=all.css.map */')
+
+                    return functions.readFile(destMapFile)
+
+                }).then(function(data) {
+
+                    data = JSON.parse(data)
+
+                    var objDesired = {
+                        version       : 3,
+                        sources       : ['source/test-3/partials/_01.css', 'source/test-3/partials/_02.css'],
+                        names         : [],
+                        mappings      : 'AAAA,KACI,QAAS,MCDb,KACI,QAAS',
+                        file          : 'all.css',
+                        sourceRoot    : '/source-maps',
+                        sourcesContent: ['.one {\n    content: "one"\n}', '.two {\n    content: "two"\n}']
+                    }
+
+                    expect(data).to.eql(objDesired)
+
+                    return functions.removeFile(config.path.dest)
+
+                })
+
+            }) // it
+        }) // describe
+
         //-----------
         // build.ejs
         //-----------

@@ -420,6 +420,33 @@ describe('File -> ../code/4 - functions.js\n', function() {
             }) // it
         }) // describe
 
+        //------------------
+        // functions.isGlob
+        //------------------
+        describe('isGlob', function() {
+            it('should return true for various glob strings', function() {
+
+                expect(functions.isGlob('*')).to.be(true)
+                expect(functions.isGlob('?')).to.be(true)
+                expect(functions.isGlob('!')).to.be(true)
+                expect(functions.isGlob('+')).to.be(true)
+                expect(functions.isGlob('@')).to.be(true)
+                expect(functions.isGlob('(')).to.be(true)
+                expect(functions.isGlob(')')).to.be(true)
+                expect(functions.isGlob('[')).to.be(true)
+                expect(functions.isGlob(']')).to.be(true)
+
+            }) // it
+
+            it('should return false for non-glob strings', function() {
+
+                expect(functions.isGlob('hello')).to.be(false)
+                expect(functions.isGlob('i love you')).to.be(false)
+                expect(functions.isGlob('won\'t you tell me your name')).to.be(false)
+
+            }) // it
+        }) // describe
+
         //---------------
         // functions.log
         //---------------
@@ -559,9 +586,13 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 arrayDesired = [
                     path.join(config.path.source, 'index.html'),
+                    path.join(config.path.source, 'index.html.concat'),
                     path.join(config.path.source, 'index.ejs'),
+                    path.join(config.path.source, 'index.ejs.concat'),
                     path.join(config.path.source, 'index.jade'),
-                    path.join(config.path.source, 'index.md')
+                    path.join(config.path.source, 'index.jade.concat'),
+                    path.join(config.path.source, 'index.md'),
+                    path.join(config.path.source, 'index.md.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)
@@ -575,7 +606,9 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 arrayDesired = [
                     path.join(config.path.source, 'code.js'),
-                    path.join(config.path.source, 'code.coffee')
+                    path.join(config.path.source, 'code.js.concat'),
+                    path.join(config.path.source, 'code.coffee'),
+                    path.join(config.path.source, 'code.coffee.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)
@@ -591,11 +624,17 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 arrayDesired = [
                     path.join(config.path.source, 'style.css.map'),
+                    path.join(config.path.source, 'style.css.map.concat'),
                     path.join(config.path.source, 'style.css'),
+                    path.join(config.path.source, 'style.css.concat'),
                     path.join(config.path.source, 'style.less'),
+                    path.join(config.path.source, 'style.less.concat'),
                     path.join(config.path.source, 'style.sass'),
+                    path.join(config.path.source, 'style.sass.concat'),
                     path.join(config.path.source, 'style.scss'),
-                    path.join(config.path.source, 'style.styl')
+                    path.join(config.path.source, 'style.scss.concat'),
+                    path.join(config.path.source, 'style.styl'),
+                    path.join(config.path.source, 'style.styl.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)
@@ -614,9 +653,13 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 arrayDesired = [
                     path.join(config.path.source, 'code.js.map.gz'),
+                    path.join(config.path.source, 'code.js.map.gz.concat'),
                     path.join(config.path.source, 'code.js.map'),
+                    path.join(config.path.source, 'code.js.map.concat'),
                     path.join(config.path.source, 'code.js'),
-                    path.join(config.path.source, 'code.coffee')
+                    path.join(config.path.source, 'code.js.concat'),
+                    path.join(config.path.source, 'code.coffee'),
+                    path.join(config.path.source, 'code.coffee.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)
@@ -1077,6 +1120,38 @@ describe('File -> ../code/4 - functions.js\n', function() {
             }) // it
         }) // describe
 
+        //------------------------------
+        // functions.includePathsConcat
+        //------------------------------
+        describe('includePathsConcat', function() {
+            it('should find files to concatenate and return our desired object', function() {
+
+                config.path.source = path.join(testPath, 'includePathsConcat')
+
+                var file = path.join(config.path.source, 'all.txt.concat')
+
+                return Promise.resolve().then(function() {
+
+                    return functions.readFile(file)
+
+                }).then(function(data) {
+
+                    return functions.includePathsConcat(data, file)
+
+                }).then(function(returnObj) {
+
+                    var desiredObj = [
+                        path.join(config.path.source, 'partials', '_01.txt'),
+                        path.join(config.path.source, 'partials', '_02.txt')
+                    ]
+
+                    expect(returnObj).to.eql(desiredObj)
+
+                })
+
+            }) // it
+        }) // describe
+
         //---------------------------
         // functions.includePathsEjs
         //---------------------------
@@ -1085,7 +1160,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 config.path.source = path.join(testPath, 'includePathsEjs')
 
-                var file = path.join(testPath, 'includePathsEjs', 'index.ejs')
+                var file = path.join(config.path.source, 'index.ejs')
 
                 return Promise.resolve().then(function() {
 
