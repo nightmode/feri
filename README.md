@@ -33,6 +33,7 @@ Spend an afternoon on your project, not your build tool. ^_^
   * Markdown
   * Sass
   * Stylus
+* Concatenate
 * LiveReload
 * Minify
   * HTML
