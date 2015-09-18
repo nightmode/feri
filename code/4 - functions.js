@@ -1915,6 +1915,7 @@ functions.objBuildOnDisk = function functions_objBuildOnDisk(obj) {
 
             if (config.option.forcebuild) {
                 obj.build = true
+                return functions.makeDirPath(obj.dest)
             } else {
                 // check to see if the source file is newer than a possible dest file
                 return functions.filesExistAndTime(obj.source, obj.dest).then(function(files) {
