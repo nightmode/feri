@@ -65,9 +65,9 @@ watch.buildOne = function watch_buildOne(fileName) {
     return new Promise(function(resolve, reject) {
 
         var ext = functions.fileExtension(fileName)
-        
+
         var checkConcatFiles = false
-        
+
         var isInclude = path.basename(fileName).substr(0, config.includePrefix.length) === config.includePrefix
 
         if (isInclude) {
@@ -86,7 +86,7 @@ watch.buildOne = function watch_buildOne(fileName) {
         } else {
             checkConcatFiles = true
         }
-        
+
         if (checkConcatFiles) {
             if (ext === 'concat') {
                 resolve([fileName])
@@ -94,7 +94,7 @@ watch.buildOne = function watch_buildOne(fileName) {
                 if (ext !== '') {
                     ext = '.' + ext
                 }
-                
+
                 // .concat files can concat almost anything so check all name.ext.concat files
                 glob(config.path.source + '/**/*' + ext + '.concat', functions.globOptions(), function(err, files) {
                     if (err) {
@@ -352,18 +352,6 @@ watch.watchDest = function watch_watchDest(files) {
             files = config.path.dest + shared.slash + files
         }
 
-        // watch for chokidar test files
-        var chokidarTestFiles = config.path.dest + shared.slash + 'chokidar-*'
-
-        if (typeof files === 'string') {
-            files = [files]
-            if (files[0] !== config.path.dest + shared.slash) {
-                files.push(chokidarTestFiles)
-            }
-        } else {
-            files.push(chokidarTestFiles)
-        }
-
         var readyCalled = false
 
         watch.stop(false, true, false) // stop watching dest
@@ -462,18 +450,6 @@ watch.watchSource = function watch_watchSource(files) {
             files = config.path.source + shared.slash + files
         }
 
-        // watch for chokidar test files
-        var chokidarTestFiles = config.path.source + shared.slash + 'chokidar-*'
-
-        if (typeof files === 'string') {
-            files = [files]
-            if (files[0] !== config.path.source + shared.slash) {
-                files.push(chokidarTestFiles)
-            }
-        } else {
-            files.push(chokidarTestFiles)
-        }
-
         var readyCalled = false
 
         watch.stop(true, false, false) // stop watching source
@@ -538,14 +514,10 @@ watch.watchSource = function watch_watchSource(files) {
         })
         .on('unlink', function(file) {
             if (!shared.suppressWatchEvents) {
-                if (path.basename(file).indexOf('chokidar-') === 0) {
-                    // do not log or emit when chokidar test files are removed
-                } else {
-                    functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed')))
+                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed')))
 
-                    // emit an event
-                    watch.emitterSource.emit('remove', file)
-                }
+                // emit an event
+                watch.emitterSource.emit('remove', file)
 
                 clean.processClean(functions.sourceToDest(file), true).then(function() {
                     functions.log(' ')
