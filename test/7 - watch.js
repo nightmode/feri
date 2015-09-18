@@ -160,14 +160,6 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             return Promise.resolve().then(function() {
 
-                return functions.writeFile(fileSource, 'original data')
-
-            }).then(function() {
-
-                return functions.writeFile(fileDest, 'original data')
-
-            }).then(function() {
-
                 return watch.processWatch()
 
             }).then(function() {
@@ -208,6 +200,14 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 expect(checks).to.be(true)
 
+                watch.stop()
+
+                return functions.writeFile(fileSource, 'original data')
+
+            }).then(function() {
+
+                return functions.writeFile(fileDest, 'original data')
+
             })
 
         }) // it
@@ -226,14 +226,6 @@ describe('File -> ../code/7 - watch.js\n', function() {
             var fileDest   = path.join(config.path.dest, 'two.css')
 
             return Promise.resolve().then(function() {
-
-                return functions.writeFile(fileSource, 'original data')
-
-            }).then(function() {
-
-                return functions.writeFile(fileDest, 'original data')
-
-            }).then(function() {
 
                 return watch.processWatch()
 
@@ -274,6 +266,14 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 expect(checks).to.be(true)
 
+                watch.stop()
+
+                return functions.writeFile(fileSource, 'original data')
+
+            }).then(function() {
+
+                return functions.writeFile(fileDest, 'original data')
+
             })
 
         }) // it
@@ -292,18 +292,6 @@ describe('File -> ../code/7 - watch.js\n', function() {
             var ignoreFileDest   = path.join(config.path.dest, 'three.html')
 
             return Promise.resolve().then(function() {
-
-                return functions.writeFile(fileSource, 'original data')
-
-            }).then(function() {
-
-                return functions.writeFile(fileDest, 'original data')
-
-            }).then(function() {
-
-                return functions.writeFile(ignoreFileSource, 'original data')
-
-            }).then(function() {
 
                 return watch.processWatch('*.js', '*.js')
 
@@ -349,6 +337,20 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 expect(checks).to.be(true)
 
+                watch.stop()
+
+                return functions.writeFile(fileSource, 'original data')
+
+            }).then(function() {
+
+                return functions.writeFile(fileDest, 'original data')
+
+            }).then(function() {
+
+                return functions.writeFile(ignoreFileSource, 'original data')
+
+            }).then(function() {
+
                 return functions.removeFile(ignoreFileDest) // this file should never be here but remove it just in case
 
             })
@@ -369,18 +371,6 @@ describe('File -> ../code/7 - watch.js\n', function() {
             var ignoreFileDest   = path.join(config.path.dest, 'four.html')
 
             return Promise.resolve().then(function() {
-
-                return functions.writeFile(fileSource, 'original data')
-
-            }).then(function() {
-
-                return functions.writeFile(fileDest, 'original data')
-
-            }).then(function() {
-
-                return functions.writeFile(ignoreFileSource, 'original data')
-
-            }).then(function() {
 
                 return watch.processWatch([fileSource], [fileDest])
 
@@ -426,6 +416,20 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 expect(checks).to.be(true)
 
+                watch.stop()
+
+                return functions.writeFile(fileSource, 'original data')
+
+            }).then(function() {
+
+                return functions.writeFile(fileDest, 'original data')
+
+            }).then(function() {
+
+                return functions.writeFile(ignoreFileSource, 'original data')
+
+            }).then(function() {
+
                 return functions.removeFile(ignoreFileDest) // this file should never be here but remove it just in case
 
             })
@@ -467,10 +471,6 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             return Promise.resolve().then(function() {
 
-                return functions.writeFile(fileDest, 'original data')
-
-            }).then(function() {
-
                 return watch.watchDest()
 
             }).then(function() {
@@ -490,6 +490,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 expect(emit).to.be(true)
 
+                return functions.writeFile(fileDest, 'original data')
+
             })
 
         }) // it
@@ -507,10 +509,6 @@ describe('File -> ../code/7 - watch.js\n', function() {
             var fileSource = path.join(config.path.source, 'watchSource.html')
 
             return Promise.resolve().then(function() {
-
-                return functions.writeFile(fileSource, 'original data')
-
-            }).then(function() {
 
                 return watch.watchSource()
 
@@ -530,6 +528,10 @@ describe('File -> ../code/7 - watch.js\n', function() {
             }).then(function(emit) {
 
                 expect(emit).to.be(true)
+
+                watch.stop()
+
+                return functions.writeFile(fileSource, 'original data')
 
             })
 
