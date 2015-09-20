@@ -544,7 +544,7 @@ functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath)
     var destExt = functions.fileExtension(filePath)
     var sources = [filePath]
 
-    if (functions.fileExtension(filePath) !== 'concat') {
+    if (functions.fileExtension(filePath) !== 'concat' && config.fileType.concat.enabled) {
         sources.push(filePath + '.concat')
     }
 
@@ -603,7 +603,9 @@ functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath)
                 } else {
                     var sourceFilePath = functions.changeExt(filePath, ext)
                     sources.push(sourceFilePath)
-                    sources.push(sourceFilePath + '.concat') // check for a file like code.js.concat
+                    if (config.fileType.concat.enabled) {
+                        sources.push(sourceFilePath + '.concat') // check for a file like code.js.concat
+                    }
                 }
             }
         }

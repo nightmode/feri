@@ -61,6 +61,7 @@ config.fileType = {
         'sourceMaps': false // used by build.coffeeScript
     },
     concat: {
+        'enabled': true,
         'sourceMaps': false // used by build.concat
     },
     css: {

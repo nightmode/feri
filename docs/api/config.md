@@ -89,6 +89,7 @@ Options used by [build.concat](build.md#buildconcat).
 
 ```js
 config.fileType.concat = {
+    'enabled': true,
     'sourceMaps': false
 }
 ```

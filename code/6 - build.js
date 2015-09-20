@@ -806,7 +806,7 @@ build.concat = function build_concat(obj) {
 
         functions.logWorker('build.concat', obj)
 
-        if (obj.build) {
+        if (obj.build && config.fileType.concat.enabled) {
 
             var filePaths = ''
 

@@ -87,7 +87,7 @@ watch.buildOne = function watch_buildOne(fileName) {
             checkConcatFiles = true
         }
 
-        if (checkConcatFiles) {
+        if (checkConcatFiles && config.fileType.concat.enabled) {
             if (ext === 'concat') {
                 resolve([fileName])
             } else {
