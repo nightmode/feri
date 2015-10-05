@@ -1,0 +1,48 @@
+{
+    "error": {
+        "configPaths"           : "Quelle und Ziel dürfen nicht identisch und verschachtelt sein.",
+        "destPointsToSource"    : "Das Ziel zeigt auf einen Quellordner.",
+        "destProtected"         : "Das Ziel kann kein schreibgeschützter Ordner sein wie {path}.",
+        "missingDest"           : "Fehlende Zieldatei.",
+        "missingSource"         : "Fehlende Quelldatei.",
+        "missingSourceDirectory": "Fehlender Quellordner.",
+        "removeDest"            : "Löschen der Quelldatei ignoriert, da Quelldateien niemals verletzt werden sollten.",
+        "watchingDest"          : "Fehler beim Beobachten des Zielordners.",
+        "watchingSource"        : "Fehler beim Beobachten des Quellordners."
+    },
+    "message": {
+        "fileChangedTooRecently"  : "{file} wurde erst kürzlich geändert, ignoriere.",
+        "includesNewer"           : "Eingebundene Dateien vom Typ {extension} sind neuer als als die Zieldatei.",
+        "missingSourceToDestTasks": "Fehlende  config.map.sourceToDestTasks für folgende Dateitypen:",
+        "listeningOnPort"         : "{software} auf Port {port} gestartet.",
+        "usingConfigFile"         : "Konfiguration {file} ist aktiv.",
+        "watchRefreshed"          : "{software} aktualisiert.",
+        "watchingDirectory"       : "Beobachte {directory} auf Änderungen."
+    },
+    "paddedGroups": {
+        "build": {
+            "output": "Ausgang ",
+            "copy"  : "Kopiere "
+        },
+        "stats": {
+            "load" : "Lade       ",
+            "clean": "Sauber     ",
+            "build": "Erstellen  ",
+            "watch": "Beobachten ",
+            "total": "Total      "
+        }
+    },
+    "words": {
+        "add"      : "Hinzufügen",
+        "build"    : "Erstellen",
+        "clean"    : "Bereinigen",
+        "change"   : "ändere",
+        "directory": "Ordner",
+        "done"     : "Fertig",
+        "removed"  : "entfernt",
+        "seconds"  : "Sekunden",
+        "stats"    : "Statistik",
+        "watch"    : "Beobachten",
+        "watching" : "Beobachte"
+    }
+}
