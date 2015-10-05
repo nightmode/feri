@@ -13,7 +13,7 @@
     "message": {
         "fileChangedTooRecently"  : "{file} wurde erst kürzlich geändert, ignoriere.",
         "includesNewer"           : "Eingebundene Dateien vom Typ {extension} sind neuer als als die Zieldatei.",
-        "missingSourceToDestTasks": "Fehlende  config.map.sourceToDestTasks für folgende Dateitypen:",
+        "missingSourceToDestTasks": "Fehlende config.map.sourceToDestTasks für folgende Dateitypen:",
         "listeningOnPort"         : "{software} auf Port {port} gestartet.",
         "usingConfigFile"         : "Konfiguration {file} ist aktiv.",
         "watchRefreshed"          : "{software} aktualisiert.",
