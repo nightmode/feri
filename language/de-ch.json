@@ -3,6 +3,7 @@
         "configPaths"           : "Quelle und Ziel dürfen nicht identisch und verschachtelt sein.",
         "destPointsToSource"    : "Das Ziel zeigt auf einen Quellordner.",
         "destProtected"         : "Das Ziel kann kein schreibgeschützter Ordner sein wie {path}.",
+        "halted"                : "{software} version {version} wegen Fehlern abgebrochen.",
         "missingDest"           : "Fehlende Zieldatei.",
         "missingSource"         : "Fehlende Quelldatei.",
         "missingSourceDirectory": "Fehlender Quellordner.",

@@ -1,0 +1,49 @@
+{
+    "error": {
+        "configPaths"           : "Source et destination doivent être uniques et non imbriqué dans l'autre.",
+        "destPointsToSource"    : "La destination points à an un classeur source.",
+        "destProtected"         : "Destinations ne devrait pas être un endroit protégé comme {path}.",
+        "halted"                : "Arrêté {software} version {version} en raison d'erreurs.",
+        "missingDest"           : "Fichier de destination manquant.",
+        "missingSource"         : "Fichier de source manquant.",
+        "missingSourceDirectory": "Répertoire source manquant.",
+        "removeDest"            : "Effacer de fichier source ignoré car les fichiers source ne devraient jamais être blessés.",
+        "watchingDest"          : "Erreur regarder le dossier de destination.",
+        "watchingSource"        : "Erreur regarder dossier de source."
+    },
+    "message": {
+        "fileChangedTooRecently"  : "{file} fichier a été modifié trop récemment, ignorant.",
+        "includesNewer"           : "Les fichiers incorporés de type {extension} sont plus récents que le fichier de destination.",
+        "missingSourceToDestTasks": "Absence de config.map.sourceToDestTasks pour les types de fichiers suivants:",
+        "listeningOnPort"         : "{software} écoute sur le port {port}.",
+        "usingConfigFile"         : "Utilisant {file} fichier.",
+        "watchRefreshed"          : "{software} rafraîchi.",
+        "watchingDirectory"       : "Regarder {directory} pour des changements."
+    },
+    "paddedGroups": {
+        "build": {
+            "output": "Ausgang ",
+            "copy"  : "Kopiere "
+        },
+        "stats": {
+            "load" : "Lade       ",
+            "clean": "Sauber     ",
+            "build": "Erstellen  ",
+            "watch": "Beobachten ",
+            "total": "Total      "
+        }
+    },
+    "words": {
+        "add"      : "Hinzufügen",
+        "build"    : "Erstellen",
+        "clean"    : "Bereinigen",
+        "change"   : "ändere",
+        "directory": "Ordner",
+        "done"     : "Fertig",
+        "removed"  : "entfernt",
+        "seconds"  : "Sekunden",
+        "stats"    : "Statistik",
+        "watch"    : "Beobachten",
+        "watching" : "Beobachte"
+    }
+}
