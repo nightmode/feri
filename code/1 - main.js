@@ -413,7 +413,12 @@ if (shared.cli) {
     }).catch(function(err) {
 
         functions.logError(err)
-        functions.log(chalk.gray('\nHalted ') + chalk.cyan('feri') + chalk.gray(' version ') + chalk.green(require('../package.json').version) + chalk.gray(' due to errors.\n'), false)
+
+        var message = shared.language.display('error.halted') + '\n'
+        message = message.replace('{software}', chalk.cyan('feri'))
+        message = message.replace('{version}', chalk.green(require('../package.json').version))
+
+        functions.log(chalk.gray(message), false)
         throw err
 
     })
