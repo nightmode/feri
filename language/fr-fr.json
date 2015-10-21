@@ -8,8 +8,8 @@
         "missingSource"         : "Fichier de source manquant.",
         "missingSourceDirectory": "Répertoire source manquant.",
         "removeDest"            : "Effacer de fichier source ignoré car les fichiers source ne devraient jamais être blessés.",
-        "watchingDest"          : "Erreur regarder le dossier de destination.",
-        "watchingSource"        : "Erreur regarder dossier de source."
+        "watchingDest"          : "Erreur observer le dossier de destination.",
+        "watchingSource"        : "Erreur observer dossier de source."
     },
     "message": {
         "fileChangedTooRecently"  : "{file} fichier a été modifié trop récemment, ignorant.",
@@ -18,32 +18,32 @@
         "listeningOnPort"         : "{software} écoute sur le port {port}.",
         "usingConfigFile"         : "Utilisant {file} fichier.",
         "watchRefreshed"          : "{software} rafraîchi.",
-        "watchingDirectory"       : "Regarder {directory} pour des changements."
+        "watchingDirectory"       : "Observant {directory} pour des changements."
     },
     "paddedGroups": {
         "build": {
-            "output": "Ausgang ",
-            "copy"  : "Kopiere "
+            "output": "Production ",
+            "copy"  : "Copie "
         },
         "stats": {
-            "load" : "Lade       ",
-            "clean": "Sauber     ",
-            "build": "Erstellen  ",
-            "watch": "Beobachten ",
-            "total": "Total      "
+            "load" : "charger    ",
+            "clean": "nettoyer   ",
+            "build": "construire ",
+            "watch": "observer   ",
+            "total": "total      "
         }
     },
     "words": {
-        "add"      : "Hinzufügen",
-        "build"    : "Erstellen",
-        "clean"    : "Bereinigen",
-        "change"   : "ändere",
-        "directory": "Ordner",
-        "done"     : "Fertig",
-        "removed"  : "entfernt",
-        "seconds"  : "Sekunden",
-        "stats"    : "Statistik",
-        "watch"    : "Beobachten",
-        "watching" : "Beobachte"
+        "add"      : "ajouter",
+        "build"    : "construit",
+        "clean"    : "nettoyé",
+        "change"   : "changé",
+        "directory": "dossier",
+        "done"     : "fini",
+        "removed"  : "enlevé",
+        "seconds"  : "secondes",
+        "stats"    : "statistiques",
+        "watch"    : "observer",
+        "watching" : "observant"
     }
 }

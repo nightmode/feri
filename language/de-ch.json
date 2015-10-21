@@ -22,22 +22,22 @@
     },
     "paddedGroups": {
         "build": {
-            "output": "Ausgang ",
-            "copy"  : "Kopiere "
+            "output": "Ausgabe ",
+            "copy"  : "Kopie   "
         },
         "stats": {
-            "load" : "Lade       ",
-            "clean": "Sauber     ",
+            "load" : "Laden      ",
+            "clean": "Bereinigen ",
             "build": "Erstellen  ",
             "watch": "Beobachten ",
             "total": "Total      "
         }
     },
     "words": {
-        "add"      : "Hinzufügen",
-        "build"    : "Erstellen",
+        "add"      : "Hinzugefügt",
+        "build"    : "Erstellt",
         "clean"    : "Bereinigen",
-        "change"   : "ändere",
+        "change"   : "geändert",
         "directory": "Ordner",
         "done"     : "Fertig",
         "removed"  : "entfernt",
