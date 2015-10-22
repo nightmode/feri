@@ -1350,7 +1350,7 @@ functions.includePathsLess = function functions_includePathsLess(data, filePath,
                                 return functions.readFile(imports[ii]).then(function(data) {
                                     return functions.includePathsLess(data, imports[ii], includePathsCacheName).then(function(subIncludes) {
                                         for (var j in subIncludes) {
-                                            includes.push(subIncludes[j])
+                                            imports.push(subIncludes[j])
                                         }
                                     })
                                 })
@@ -1489,7 +1489,7 @@ functions.includePathsSass = function functions_includePathsSass(data, filePath,
                                 return functions.readFile(imports[ii]).then(function(data) {
                                     return functions.includePathsSass(data, imports[ii], includePathsCacheName).then(function(subIncludes) {
                                         for (var j in subIncludes) {
-                                            includes.push(subIncludes[j])
+                                            imports.push(subIncludes[j])
                                         }
                                     })
                                 })
