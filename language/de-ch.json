@@ -3,6 +3,7 @@
         "configPaths"           : "Quelle und Ziel dürfen nicht identisch und verschachtelt sein.",
         "destPointsToSource"    : "Das Ziel zeigt auf einen Quellordner.",
         "destProtected"         : "Das Ziel kann kein schreibgeschützter Ordner sein wie {path}.",
+        "halted"                : "{software} version {version} wegen Fehlern abgebrochen.",
         "missingDest"           : "Fehlende Zieldatei.",
         "missingSource"         : "Fehlende Quelldatei.",
         "missingSourceDirectory": "Fehlender Quellordner.",
@@ -21,22 +22,22 @@
     },
     "paddedGroups": {
         "build": {
-            "output": "Ausgang ",
-            "copy"  : "Kopiere "
+            "output": "Ausgabe ",
+            "copy"  : "Kopie   "
         },
         "stats": {
-            "load" : "Lade       ",
-            "clean": "Sauber     ",
+            "load" : "Laden      ",
+            "clean": "Bereinigen ",
             "build": "Erstellen  ",
             "watch": "Beobachten ",
             "total": "Total      "
         }
     },
     "words": {
-        "add"      : "Hinzufügen",
-        "build"    : "Erstellen",
+        "add"      : "Hinzugefügt",
+        "build"    : "Erstellt",
         "clean"    : "Bereinigen",
-        "change"   : "ändere",
+        "change"   : "geändert",
         "directory": "Ordner",
         "done"     : "Fertig",
         "removed"  : "entfernt",
