@@ -14,7 +14,6 @@ var build     = require('./6 - build.js')
 //----------
 var chalk       = require('chalk')       // ~ 20 ms
 var events      = require('events')      // ~  1 ms
-var glob        = require('glob')        // ~ 13 ms
 var mkdirp      = require('mkdirp')      // ~  1 ms
 var path        = require('path')        // ~  1 ms
 var querystring = require('querystring') // ~  2 ms
@@ -62,7 +61,7 @@ watch.buildOne = function watch_buildOne(fileName) {
     @param   {String}   fileName  File path like '/source/js/combined.js'
     @return  {Promise}
     */
-    return new Promise(function(resolve, reject) {
+    return Promise.resolve().then(function() {
 
         var ext = functions.fileExtension(fileName)
 
@@ -73,13 +72,7 @@ watch.buildOne = function watch_buildOne(fileName) {
         if (isInclude) {
             if (config.includeFileTypes.indexOf(ext) >= 0) {
                 // included file could be in any of this type of file so check them all
-                glob(config.path.source + "/**/*." + ext, functions.globOptions(), function(err, files) {
-                    if (err) {
-                        reject(err)
-                    } else {
-                        resolve(files)
-                    }
-                })
+                return functions.findFiles(config.path.source + "/**/*." + ext)
             } else {
                 checkConcatFiles = true
             }
@@ -89,22 +82,18 @@ watch.buildOne = function watch_buildOne(fileName) {
 
         if (checkConcatFiles && config.fileType.concat.enabled) {
             if (ext === 'concat') {
-                resolve([fileName])
+                return [fileName]
             } else {
                 if (ext !== '') {
                     ext = '.' + ext
                 }
 
                 // .concat files can concat almost anything so check all name.ext.concat files
-                glob(config.path.source + '/**/*' + ext + '.concat', functions.globOptions(), function(err, files) {
-                    if (err) {
-                        reject(err)
-                    } else {
-                        if (!isInclude) {
-                            files.unshift(fileName)
-                        }
-                        resolve(files)
+                return functions.findFiles(config.path.source + '/**/*' + ext + '.concat').then(function(files) {
+                    if (!isInclude) {
+                        files.unshift(fileName)
                     }
+                    return files
                 })
             }
         }
