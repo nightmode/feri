@@ -179,7 +179,9 @@ config.map.sourceToDestTasks = {
 //---------------------
 config.thirdParty = {
     chokidar: { // used by watch.*
-        'ignored'       : [/\/\.(?!htaccess)/, '**/untitled folder', '**/Untitled Folder', '**/New folder'], // ignore dot objects (except for .htaccess files) and newly created folders for Mac OS, Ubuntu, and Windows
+        // ignore dot objects except for .htaccess files and .nvm directories
+        // also ignore newly created folders for Mac OS, Ubuntu, and Windows
+        'ignored': [/[\/\\]\.(?!htaccess|nvm)/, '**/untitled folder', '**/Untitled Folder', '**/New folder'], 
         'ignoreInitial' : true,
         'followSymlinks': false
     },

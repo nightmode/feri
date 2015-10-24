@@ -450,7 +450,7 @@ watch.watchSource = function watch_watchSource(files) {
         chokidarSource
         .on('addDir', function(file) {
             if (!shared.suppressWatchEvents) {
-                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add') + ' ' + shared.language.display('words.dir')))
+                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add') + ' ' + shared.language.display('words.directory')))
 
                 // emit an event
                 watch.emitterSource.emit('add directory', file)
@@ -465,7 +465,7 @@ watch.watchSource = function watch_watchSource(files) {
         })
         .on('unlinkDir', function(file) {
             if (!shared.suppressWatchEvents) {
-                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed') + ' ' + shared.language.display('words.dir')))
+                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed') + ' ' + shared.language.display('words.directory')))
 
                 // emit an event
                 watch.emitterSource.emit('remove directory', file)

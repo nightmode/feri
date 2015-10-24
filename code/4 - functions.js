@@ -670,7 +670,7 @@ functions.removeDest = function functions_removeDest(filePath, log) {
 
         return rimrafPromise(filePath).then(function() {
             if (log !== false) {
-                functions.log(chalk.gray(filePath.replace(config.path.dest, '/' + path.basename(config.path.dest)) + ' ' + shared.language.display('words.removed')))
+                functions.log(chalk.gray(filePath.replace(config.path.dest, '/' + path.basename(config.path.dest)).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed')))
             }
             return true
         })
