@@ -317,7 +317,7 @@ Type: `array`
 Only refresh the livereload client if one of these file types has been changed.
 
 ```js
-config.livereloadFileTypes = ['css', 'html', 'js']
+config.livereloadFileTypes = ['css', 'html', 'js', 'php']
 ```
 
 ## config.map

@@ -29,7 +29,7 @@ var config = {
         }
     },
     language: 'en-us', // should map to a json file in the language directory
-    livereloadFileTypes: ['css', 'htm', 'html', 'js'], // Only refresh the livereload client if one of these file types has been changed.
+    livereloadFileTypes: ['css', 'html', 'js', 'php'], // Only refresh the livereload client if one of these file types has been changed.
     map: {
         'destToSourceExt'  : null, // object of destination file extensions and their possible source file types
         'sourceToDestTasks': null  // object of file extensions, each with an array of building functions
