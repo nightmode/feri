@@ -869,7 +869,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                         file          : 'all.js',
                         sources       : ['source/test-2/partials/_01.js', 'source/test-2/partials/_02.js'],
                         names         : ['one', 'two'],
-                        mappings      : 'AAAA,GAAAA,KAAA,ECAAC,IAAA;AAAA',
+                        mappings      : 'AAAA,AAAA,GAAAA,KAAA,ECAAC,IAAA;AAAA',
                         sourcesContent: ['var one = 1', 'var two = 2'],
                         sourceRoot    : '/source-maps'
                     }
