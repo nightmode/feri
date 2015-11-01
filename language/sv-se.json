@@ -23,12 +23,12 @@
     "paddedGroups": {
         "build": {
             "output": "output ",
-            "copy"  : "kopia   "
+            "copy"  : "kopia  "
         },
         "stats": {
-            "load" : "Ladda  ",
-            "clean": "Rensa ",
-            "build": "Bygg ",
+            "load" : "Ladda    ",
+            "clean": "Rensa    ",
+            "build": "Bygg     ",
             "watch": "Övervaka ",
             "total": "Total "
         }
