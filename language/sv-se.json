@@ -1,0 +1,49 @@
+{
+    "error": {
+        "configPaths"           : "Källa och mål måste vara unika och får inte vara sammannästlade.",
+        "destPointsToSource"    : "Mål pekar mot en källkatalog.",
+        "destProtected"         : "Mål får inte vara en skyddad plats som {path}.",
+        "halted"                : "Stoppade {software} version {version} på grund av fel.",
+        "missingDest"           : "Saknar målfil.",
+        "missingSource"         : "Saknar källfil.",
+        "missingSourceDirectory": "Saknar källkatalog.",
+        "removeDest"            : "Ignorerar borttagning av källfil då de aldrig bör skadas.",
+        "watchingDest"          : "Fel vid övervakning av målkatalog.",
+        "watchingSource"        : "Fel vid övervakning av källkatalog."
+    },
+    "message": {
+        "fileChangedTooRecently"  : "{file} ändrades för nyligen, ignorerar.",
+        "includesNewer"           : "{extension} inkluderar nyare än målfil.",
+        "missingSourceToDestTasks": "Saknar config.map.sourceToDestTasks för följande filtyper:",
+        "listeningOnPort"         : "{software} lyssnar på port {port}.",
+        "usingConfigFile"         : "Använder fil {file}.",
+        "watchRefreshed"          : "{software} förnyades.",
+        "watchingDirectory"       : "Övervakar {directory} efter ändringar."
+    },
+    "paddedGroups": {
+        "build": {
+            "output": "output ",
+            "copy"  : "kopia   "
+        },
+        "stats": {
+            "load" : "Ladda  ",
+            "clean": "Rensa ",
+            "build": "Bygg ",
+            "watch": "Övervaka ",
+            "total": "Total "
+        }
+    },
+    "words": {
+        "add"      : "lägg till",
+        "build"    : "Bygg",
+        "clean"    : "Rensa",
+        "change"   : "ändra",
+        "directory": "katalog",
+        "done"     : "Klar",
+        "removed"  : "borttagen",
+        "seconds"  : "sekunder",
+        "stats"    : "Statistik",
+        "watch"    : "Övervaka",
+        "watching" : "Övervakar"
+    }
+}
