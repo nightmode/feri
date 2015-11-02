@@ -1,6 +1,6 @@
 # Feri
 
-<img src="https://raw.githubusercontent.com/ForestMist/feri/master/images/feri-the-ferret.png" width="440" height="474" align="right" alt="">
+<img src="https://raw.githubusercontent.com/ForestMist/feri/master/images/feri-the-ferret.png" width="420" height="453" align="right" alt="">
 
 The easy to use build tool for web files.
 
