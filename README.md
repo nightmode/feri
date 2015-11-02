@@ -6,8 +6,6 @@ The easy to use build tool for web files.
 
 Incrementally clean, build, and watch with little to no configuration required.
 
-Spend an afternoon on your project, not your build tool. ^_^
-
 * [Features](#features)
 * [How It Works](#how-it-works)
   * [One Source, One Destination](#one-source-one-destination)
