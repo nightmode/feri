@@ -1,7 +1,7 @@
 {
   "name": "feri",
-  "version": "0.2.0",
-  "description": "The refreshingly easy to use build tool for web files.",
+  "version": "0.2.1",
+  "description": "The easy to use build tool for web files.",
   "license": "MIT",
   "author": "Daniel Gagan",
   "repository": {
