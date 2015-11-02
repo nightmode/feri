@@ -1,8 +1,8 @@
 # Feri
 
-<img src="https://raw.githubusercontent.com/ForestMist/feri/master/images/feri-the-ferret.png" style="float: right; height: 499px; margin: 6px -15px 0 -185px; width: 470px" alt="">
+<img src="https://raw.githubusercontent.com/ForestMist/feri/master/images/feri-the-ferret.png" width="480" height="510" align="right" alt="">
 
-Feri is a refreshingly easy to use build tool for web files.
+The easy to use build tool for web files.
 
 Incrementally clean, build, and watch with little to no configuration required.
 
