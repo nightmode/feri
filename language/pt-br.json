@@ -1,0 +1,49 @@
+{
+    "error": {
+        "configPaths"           : "Origem e destino devem ser únicos e não aninhados um no outro (diretórios separados",
+        "destPointsToSource"    : "Destino aponta para um diretório de origem",
+        "destProtected"         : "Destino não deve ser um lugar protegido como {path}.",
+        "halted"                : "{software} versão {version} suspenso devido a erros.",
+        "missingDest"           : "Arquivo de destino não encontrado.",
+        "missingSource"         : "Arquivo de origem não encontrado.",
+        "missingSourceDirectory": "Diretório de origem não encontrado.",
+        "removeDest"            : "Remoção de arquivo de origem ignorado, já que arquivos de origem nunca devem ser prejudicados.",
+        "watchingDest"          : "Erro ao observar o diretório de destino.",
+        "watchingSource"        : "Erro ao observar o diretório de origem."
+    },
+    "message": {
+        "fileChangedTooRecently"  : "{file} foi alterado muito recentement, ignorando.",
+        "includesNewer"           : "{extension} incluídos são mais novos que os arquivos de destino.",
+        "missingSourceToDestTasks": "config.map.sourceToDestTasks não encontrado para os seguintes tipos de arquivo:",
+        "listeningOnPort"         : "{software} escutando na porta {port}.",
+        "usingConfigFile"         : "Usando o arquivo {file}.",
+        "watchRefreshed"          : "{software} atualizado.",
+        "watchingDirectory"       : "Observando alterações no diretório {directory}."
+    },
+    "paddedGroups": {
+        "build": {
+            "output": "resultado ",
+            "copy"  : "cópia   "
+        },
+        "stats": {
+            "load" : "Carregar  ",
+            "clean": "Limpar ",
+            "build": "Build ",
+            "watch": "Observar ",
+            "total": "Total "
+        }
+    },
+    "words": {
+        "add"      : "adicionar",
+        "build"    : "Build",
+        "clean"    : "Limpar",
+        "change"   : "alterar",
+        "directory": "pasta",
+        "done"     : "Finalizado",
+        "removed"  : "removido",
+        "seconds"  : "segundos",
+        "stats"    : "Status",
+        "watch"    : "Observar",
+        "watching" : "Observando"
+    }
+}
