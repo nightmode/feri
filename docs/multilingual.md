@@ -59,7 +59,7 @@ This section contains various error messages in sentence format.
 }
 ```
 
-One thing you may notice is that certain messages have special placeholders like `{software}`. These placeholders get replaced at run time so a string like:
+One thing you may notice is that certain messages have special placeholders like `{software}`. These placeholders get replaced at run time, so a string like:
 
 ```
 Halted {software} version {version} due to errors.
@@ -133,7 +133,7 @@ Same idea for `paddedGroups.stats` except that the longest strings here are most
 
 ### Words
 
-Words get used in all sorts of places so let's go over examples for each to understand them better.
+Words get used in all sorts of places. Let's go over examples for each to understand them better.
 
 ```js
 "words": {
