@@ -3,7 +3,7 @@
  * [Languages](#languages)
  * [Usage](#usage)
  * [Translation Guide](#translation-guide)
- * [Contributing Translations](#contributing)
+ * [Contributing Translations](#contributing-translations)
 
 ## Languages
 
