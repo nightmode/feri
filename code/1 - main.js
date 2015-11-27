@@ -371,19 +371,19 @@ if (shared.cli) {
                     functions.log(chalk.gray('\n' + shared.language.display('words.stats') + '\n'), false)
 
                     if (shared.stats.timeTo.load > 0) {
-                        functions.log(chalk.gray(shared.language.display('paddedGroups.stats.load')) + chalk.cyan(shared.stats.timeTo.load))
+                        functions.log(chalk.gray(shared.language.display('paddedGroups.stats.load')) + ' ' + chalk.cyan(shared.stats.timeTo.load))
                     }
 
                     if (shared.stats.timeTo.clean > 0) {
-                        functions.log(chalk.gray(shared.language.display('paddedGroups.stats.clean')) + chalk.cyan(shared.stats.timeTo.clean))
+                        functions.log(chalk.gray(shared.language.display('paddedGroups.stats.clean')) + ' ' + chalk.cyan(shared.stats.timeTo.clean))
                     }
 
                     if (shared.stats.timeTo.build > 0) {
-                        functions.log(chalk.gray(shared.language.display('paddedGroups.stats.build')) + chalk.cyan(shared.stats.timeTo.build))
+                        functions.log(chalk.gray(shared.language.display('paddedGroups.stats.build')) + ' ' + chalk.cyan(shared.stats.timeTo.build))
                     }
 
                     if (shared.stats.timeTo.watch > 0) {
-                        functions.log(chalk.gray(shared.language.display('paddedGroups.stats.watch')) + chalk.cyan(shared.stats.timeTo.watch))
+                        functions.log(chalk.gray(shared.language.display('paddedGroups.stats.watch')) + ' ' + chalk.cyan(shared.stats.timeTo.watch))
                     }
 
                     var totalTime = shared.stats.timeTo.load + shared.stats.timeTo.clean + shared.stats.timeTo.build + shared.stats.timeTo.watch
@@ -391,7 +391,7 @@ if (shared.cli) {
                     totalTime = functions.mathRoundPlaces(totalTime, 3)
 
                     functions.log('', false)
-                    functions.log(chalk.gray(shared.language.display('paddedGroups.stats.total')) + chalk.cyan(totalTime) + chalk.gray(' ' + shared.language.display('words.seconds') + '\n'))
+                    functions.log(chalk.gray(shared.language.display('paddedGroups.stats.total')) + ' ' + chalk.cyan(totalTime) + chalk.gray(' ' + shared.language.display('words.seconds') + '\n'))
                 }
 
             }).then(function() {

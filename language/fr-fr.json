@@ -23,14 +23,14 @@
     "paddedGroups": {
         "build": {
             "output": "Production ",
-            "copy"  : "Copie "
+            "copy"  : "Copie      "
         },
         "stats": {
-            "load" : "charger    ",
-            "clean": "nettoyer   ",
-            "build": "construire ",
-            "watch": "observer   ",
-            "total": "total      "
+            "load" : "charger   ",
+            "clean": "nettoyer  ",
+            "build": "construire",
+            "watch": "observer  ",
+            "total": "total     "
         }
     },
     "words": {

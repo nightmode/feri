@@ -22,15 +22,15 @@
     },
     "paddedGroups": {
         "build": {
-            "output": "output ",
-            "copy"  : "kopia  "
+            "output": "output",
+            "copy"  : "kopia "
         },
         "stats": {
-            "load" : "Ladda    ",
-            "clean": "Rensa    ",
-            "build": "Bygg     ",
-            "watch": "Övervaka ",
-            "total": "Total "
+            "load" : "Ladda   ",
+            "clean": "Rensa   ",
+            "build": "Bygg    ",
+            "watch": "Övervaka",
+            "total": "Total   "
         }
     },
     "words": {

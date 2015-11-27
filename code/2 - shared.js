@@ -60,15 +60,15 @@ var shared = {
             },
             "paddedGroups": {
                 "build": {
-                    "output": "output ",
-                    "copy"  : "copy   "
+                    "output": "output",
+                    "copy"  : "copy  "
                 },
                 "stats": {
-                    "load" : "Load  ",
-                    "clean": "Clean ",
-                    "build": "Build ",
-                    "watch": "Watch ",
-                    "total": "Total "
+                    "load" : "Load ",
+                    "clean": "Clean",
+                    "build": "Build",
+                    "watch": "Watch",
+                    "total": "Total"
                 }
             },
             "words": {
@@ -123,15 +123,15 @@ var shared = {
             },
             "paddedGroups": {
                 "build": {
-                    "output": "output ",
-                    "copy"  : "copy   "
+                    "output": "output",
+                    "copy"  : "copy  "
                 },
                 "stats": {
-                    "load" : "Load  ",
-                    "clean": "Clean ",
-                    "build": "Build ",
-                    "watch": "Watch ",
-                    "total": "Total "
+                    "load" : "Load ",
+                    "clean": "Clean",
+                    "build": "Build",
+                    "watch": "Watch",
+                    "total": "Total"
                 }
             },
             "words": {

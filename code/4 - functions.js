@@ -444,7 +444,7 @@ functions.logOutput = function functions_logOutput(destFilePath, message) {
         file = file.replace(/\\/g, '/')
     }
 
-    functions.log(chalk.gray(shared.language.display('paddedGroups.build.' + message)) + chalk.cyan(file))
+    functions.log(chalk.gray(shared.language.display('paddedGroups.build.' + message)) + ' ' + chalk.cyan(file))
 } // logOutput
 
 functions.logWorker = function functions_logWorker(workerName, obj) {
@@ -770,6 +770,8 @@ functions.setLanguage = function functions_setLanguage(lang) {
     return functions.readFile(file).then(function(data) {
         shared.language.loaded = JSON.parse(data)
 
+        // the following code is longer needed now that we have a translation guide (published 2015-11-26)
+        /*
         var currentLen, longestLen, padding
 
         for (var i in shared.language.loaded.paddedGroups) {
@@ -795,6 +797,7 @@ functions.setLanguage = function functions_setLanguage(lang) {
             }
             // now these items will line up nicely in columns when displayed
         }
+        */
 
         return true
     })

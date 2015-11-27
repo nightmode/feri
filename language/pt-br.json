@@ -22,15 +22,15 @@
     },
     "paddedGroups": {
         "build": {
-            "output": "resultado ",
-            "copy"  : "cópia     "
+            "output": "resultado",
+            "copy"  : "cópia    "
         },
         "stats": {
-            "load" : "Carregar ",
-            "clean": "Limpar   ",
-            "build": "Build    ",
-            "watch": "Observar ",
-            "total": "Total    "
+            "load" : "Carregar",
+            "clean": "Limpar  ",
+            "build": "Build   ",
+            "watch": "Observar",
+            "total": "Total   "
         }
     },
     "words": {
