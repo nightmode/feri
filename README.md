@@ -43,7 +43,7 @@ Incrementally clean, build, and watch with little to no configuration required.
   * GIF
   * JPG
   * PNG
-* Multilingual
+* [Multilingual](docs/multilingual.md)
 * Multi-platform
 * Promise Based
 * Source Maps
@@ -137,17 +137,14 @@ Learn how to leverage Feri's favorite functions in the full [API documentation](
 
 Feri and her silly creator [Daniel](https://forestmist.org/about/) would like nothing more than to make the world a better place. ^_^
 
-If you would like to help Feri and her hue-mon (they come in so many colors), then here are a few ideas to get you started:
+But wait you ask... how can I help in this endeavor!? In nearly any way you can think of but here are a few ideas to wet your good natured appetite.
 
- * Tell your friends and co-workers how Feri lowered your blood pressure!
- * Coordinate a massive social media storm from the comfort of your own toilet!
- * Translate [language/en-us.json](language/en-us.json) into other languages. Bonus points for Klingon!
- * Report issues here on GitHub or forget that and post Feri fan art to [DeviantArt](https://deviantart.com) instead!
- * Invite Daniel to talk on your JavaScript podcast about Feri and get a free back farts demonstration! *Wood or tile floor recommended.*
+ * Are your friends grunting and gulping their way through a broccoli brunch? Tell them about the best non-digestive themed build tool available. Feri!
+ * [Translate Feri](docs/multilingual.md#translation-guide) into other languages. Bonus points for Klingon!
+ * [Report issues on GitHub](https://github.com/ForestMist/feri/issues) or forget that and post Feri fan art to [DeviantArt](https://deviantart.com) instead!
+ * Have a podcast or live event? Invite Daniel to talk about Feri and get free Feri stickers!
  * Turbo-charge Feri's human with [hamburgers and root beer](https://cash.me/$ForestMist)!
- * Run mocha tests or... test how copious amounts of mocha affects your run! *huff puff*
  * Pull reqrests to improv spellng in documantations!
- * Beastmaster x Feri fan fiction!
 
 Other wacky ideas, job offers, and/or lifetime supplies of [Burgerville](http://www.burgerville.com/) welcome. ^_^
 
