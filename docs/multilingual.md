@@ -15,7 +15,7 @@ Feri is currently available in the following languages.
  * Portuguese (Brazil)
  * Swedish (Sweden)
 
-Don't see your favorite language? Check out the [translation guide](#translating) to see how you can help.
+Don't see your favorite language? Check out the [translation guide](#translation-guide) to see how you can help.
 
 ## Usage
 
