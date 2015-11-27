@@ -137,7 +137,7 @@ Learn how to leverage Feri's favorite functions in the full [API documentation](
 
 Feri and her silly creator [Daniel](https://forestmist.org/about/) would like nothing more than to make the world a better place. ^_^
 
-But wait you ask... how can I help in this endeavor!? In nearly any way you can think of but here are a few ideas to wet your good natured appetite.
+But wait you ask... how can I help in this endeavor!? In nearly any way you can think of! Not in the mood for heavy thinking? Set your brain phasers to stun and use one of these existing ideas instead!
 
  * Are your friends grunting and gulping their way through a broccoli brunch? Tell them about the best non-digestive themed build tool available. Feri!
  * [Translate Feri](docs/multilingual.md#translation-guide) into other languages. Bonus points for Klingon!

@@ -21,7 +21,7 @@ Don't see your favorite language? Check out the [translation guide](#translating
 
 Specifying a language is accomplished with a [custom config file](../README.md#custom-config-file).
 
-For example, if we wanted to work in Swedish we would create a `feri-config.js` file in our project directory with the following in it:
+For example, if we wanted to work in Swedish we would create a `feri-config.js` file in our project directory with the following code in it:
 
 ```js
 // feri-config.js
@@ -30,11 +30,11 @@ module.exports = function(feri) {
 }
 ```
 
-By setting `feri.config.langauge` to `sv-se`, we are telling Feri to look in the [language](../tree/master/language) directory for a file called `sv-se.json`. Assuming the file exists and is valid, the next time you run Feri you'll be doing so in a certain Muppet Chef's language of choice. Bork bork bork!
+By setting `feri.config.langauge` to `sv-se`, we are telling Feri to look in the [language](https://github.com/ForestMist/feri/tree/master/language) directory for a file called `sv-se.json`. Assuming the file exists and is valid, the next time you run Feri you'll be doing so in a certain Muppet Chef's language of choice. Bork bork bork!
 
 ## Translation Guide
 
-In addition to US English, Feri stores all her translations inside the [language](../tree/master/language) directory. Files are named by language then country and saved in a JSON format.
+In addition to US English, Feri stores all her translations inside the [language](https://github.com/ForestMist/feri/tree/master/language) directory. Files are named by language then country and saved in a JSON format.
 
 To make a new translation, start by copying `en-us.json` to a new file. If you are not sure which language or country abbreviation to use, feel free to name your file `new.json` or similar.
 
@@ -59,7 +59,7 @@ This section contains various error messages in sentence format.
 }
 ```
 
-One special thing you may notice is that certain messages have special placeholders like `{software}`. These placeholders get replaced at run time so a string like:
+One thing you may notice is that certain messages have special placeholders like `{software}`. These placeholders get replaced at run time so a string like:
 
 ```
 Halted {software} version {version} due to errors.
@@ -185,7 +185,7 @@ Words get used in all sorts of places so let's go over examples for each to unde
 /dest/old_folder removed dir
 ```
 
-**Seconds** is only displayed after when displaying statistics. For example...
+**Seconds** is only displayed when displaying statistics. For example...
 
 ```
 Total 0.392 seconds
