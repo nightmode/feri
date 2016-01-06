@@ -39,6 +39,7 @@ var config = {
         'clean'              : true,
         'debug'              : false,
         'forcebuild'         : false,
+        'init'               : false,
         'livereload'         : false,
         'republish'          : false,
         'stats'              : true,
@@ -66,9 +67,6 @@ config.fileType = {
     },
     css: {
         'sourceMaps': false // used by build.css
-    },
-    ejs: {
-        'root': '' // will be passed to the EJS rendering engine to figure out include file paths like <% include root + '/partials/_header.ejs' %>
     },
     js: {
         'sourceMaps': false // used by build.js

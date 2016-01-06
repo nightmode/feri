@@ -17,6 +17,7 @@ The functions object is grouped into three categories.
 * [cloneObj](#functionscloneobj)
 * [configPathsAreGood](#functionsconfigpathsaregood)
 * [destToSource](#functionsdesttosource)
+* [figureOutPath](#functionsfigureoutpath)
 * [fileExists](#functionsfileexists)
 * [filesExist](#functionsfilesexist)
 * [fileExistsAndTime](#functionsfileexistsandtime)
@@ -25,6 +26,7 @@ The functions object is grouped into three categories.
 * [fileSize](#functionsfilesize)
 * [findFiles](#functionsfindfiles)
 * [globOptions](#functionsgloboptions)
+* [initFeri](#functionsinitferi)
 * [inSource](#functionsinsource)
 * [isGlob](#functionsisglob)
 * [log](#functionslog)
@@ -141,6 +143,17 @@ Convert destination path to its source equivalent.
 @return  {String}        File path like '/source/index.html'
 ```
 
+### functions.figureOutPath
+
+Type: `function`
+
+Figure out if a path is relative and if so, return an absolute version of the path.
+
+```
+@param   {String}  filePath  File path like '/full/path/to/folder' or '/relative/path'
+@return  {String}            File path like '/fully/resolved/relative/path'
+```
+
 ### functions.fileExists
 
 Type: `function`
@@ -228,6 +241,16 @@ Return glob options updated to ignore include prefixed files.
 
 ```
 @return  {Object}
+```
+
+### functions.initFeri
+
+Type: `function`
+
+If needed, create the source and destination folders along with a [feri-config.js](../../README.md#custom-config-file) file in the present working directory.
+
+```
+@return  {Promise}
 ```
 
 ### functions.inSource

@@ -72,26 +72,19 @@ You could create a file called `all.js.concat` that includes your prized collect
 
 ### Smarter Includes
 
-Feri supports passing a variable called "root" into your EJS files. This is super useful for includes because instead of having dot dot slash nightmares like...
+Feri exposes a variable called "root" into your EJS files. This is super useful for includes because instead of having dot dot slash nightmares like...
 
 ```js
 <% include ('../../../../partials/header.ejs') %>
 ```
 
-You can instead set "root" to the same path as your source folder and then write beautiful includes like...
+You can instead use "root" to specify the same path as your source folder and then write beautiful includes like...
 
 ```js
 <% include (root + '/partials/header.ejs') %>
 ```
 
 Now the include will work from any depth. Even better, the parent file containing the code can be moved without having to update the include path.
-
-To enable pretty includes, simply add the following to your [custom config file](../README.md#custom-config-file).
-
-```js
-// set root variable for ejs includes
-config.fileType.ejs.root = config.path.source
-```
 
 ## Gzip (GZ)
 

@@ -59,32 +59,6 @@ var feri = {
 //-----------
 // Functions
 //-----------
-var figureOutPath = function figureOutPath(filePath) {
-    /*
-    Figure out if a path is relative and if so, return an absolute version of the path.
-    @param   {String}  filePath  File path like '/full/path/to/folder' or '/relative/path'
-    @return  {String}            File path like '/fully/resolved/relative/path'
-    */
-    var pos = 0
-    var str = '/'
-
-    filePath = path.normalize(filePath)
-
-    if (shared.slash === '\\') {
-        // we are on windows
-        pos = 1
-        str = ':'
-    }
-
-    if (filePath.charAt(pos) === str) {
-        // absolute path
-        return filePath
-    }
-
-    // relative path
-    return path.join(shared.path.pwd, filePath)
-} // figureOutPath
-
 var inOptions = function inOptions(search) {
     /*
     Find out if the options variable has any occurence of what we are searching for.
@@ -95,6 +69,7 @@ var inOptions = function inOptions(search) {
             return true
         }
     }
+    
     return false
 } // inOptions
 
@@ -122,7 +97,11 @@ if (shared.cli) {
     }).then(function() {
 
         if (configFileExists) {
-            require(configFile)(feri) // share our feri reference with this require
+            try {
+                require(configFile)(feri) // share our feri reference with this require
+            } catch(e) {
+                throw 'Loading ' + configFile + ' \n\n' + 'Make sure the file is a valid module like...\n\n' + 'module.exports = function(feri) { /* code */ }'
+            }
         }
 
         if (config.language !== 'en-us') {
@@ -142,9 +121,9 @@ if (shared.cli) {
                     // found a path
                     if (foundSource === false) {
                         foundSource = true
-                        config.path.source = figureOutPath(commandLineOptions[i])
+                        config.path.source = functions.figureOutPath(commandLineOptions[i])
                     } else {
-                        config.path.dest = figureOutPath(commandLineOptions[i])
+                        config.path.dest = functions.figureOutPath(commandLineOptions[i])
                     }
                 } else {
                     // lower case this option
@@ -190,6 +169,7 @@ if (shared.cli) {
             console.log('    -a, --all            clean, build, watch, livereload, stats')
             console.log('    -f, --forcebuild     overwrite destination files without consideration')
             console.log('    -r, --republish      remove all destination files and then build')
+            console.log('    -i, --init           create source, destination, and feri-config.js')
             console.log('    -d, --debug          enable verbose console logging')
             console.log('    -v, --version        version')
             console.log('    -h, --help           help')
@@ -290,9 +270,9 @@ if (shared.cli) {
                 config.option.livereload = true
             }
 
-            //---------------------------------
-            // Command Line Options: Republish
-            //---------------------------------
+            //-----------------------------------
+            // Command Line Options: Force Build
+            //-----------------------------------
             if (inOptions(['--forcebuild', '-f'])) {
                 // forcebuild is a stronger option than nobuild
                 config.option.build = true
@@ -315,6 +295,10 @@ if (shared.cli) {
             if (inOptions(['--debug', '-d'])) {
                 config.option.debug = true
             }
+            
+            if (inOptions(['--init', '-i'])) {
+                config.option.init = true
+            }
         } // if
 
     }).then(function() {
@@ -324,92 +308,101 @@ if (shared.cli) {
         shared.stats.timeTo.load = functions.sharedStatsTimeTo(time)
 
         if (!shared.help) {
-
-            if (configFileExists) {
-                functions.log(chalk.gray(shared.language.display('message.usingConfigFile').replace('{file}', '"feri-config.js"')), false)
-            }
-
-            var p = Promise.resolve()
-
-            p = p.then(function() {
-
-                //-------
-                // Clean
-                //-------
-                if (config.option.clean) {
-                    return clean.processClean()
+            
+            if (config.option.init) {
+                
+                return functions.initFeri()
+                
+            } else {
+                
+                if (configFileExists) {
+                    functions.log(chalk.gray(shared.language.display('message.usingConfigFile').replace('{file}', '"feri-config.js"')), false)
                 }
-
-            }).then(function() {
-
-                //-------
-                // Build
-                //-------
-                if (config.option.build) {
-                    return build.processBuild()
-                }
-
-            }).then(function() {
-
-                //-------
-                // Watch
-                //-------
-                if (config.option.watch) {
-                    shared.suppressWatchEvents = true // suppress watch events until the title "Watching" is displayed
-
-                    return watch.processWatch()
-                }
-
-            }).then(function() {
-
-                //-------
-                // Stats
-                //-------
-                if (!config.option.stats) {
-                    functions.log('', false)
-                } else {
-                    functions.log(chalk.gray('\n' + shared.language.display('words.stats') + '\n'), false)
-
-                    if (shared.stats.timeTo.load > 0) {
-                        functions.log(chalk.gray(shared.language.display('paddedGroups.stats.load')) + ' ' + chalk.cyan(shared.stats.timeTo.load))
+    
+                var p = Promise.resolve()
+    
+                p = p.then(function() {
+    
+                    //-------
+                    // Clean
+                    //-------
+                    if (config.option.clean) {
+                        return clean.processClean()
                     }
-
-                    if (shared.stats.timeTo.clean > 0) {
-                        functions.log(chalk.gray(shared.language.display('paddedGroups.stats.clean')) + ' ' + chalk.cyan(shared.stats.timeTo.clean))
+    
+                }).then(function() {
+    
+                    //-------
+                    // Build
+                    //-------
+                    if (config.option.build) {
+                        return build.processBuild()
                     }
-
-                    if (shared.stats.timeTo.build > 0) {
-                        functions.log(chalk.gray(shared.language.display('paddedGroups.stats.build')) + ' ' + chalk.cyan(shared.stats.timeTo.build))
+    
+                }).then(function() {
+    
+                    //-------
+                    // Watch
+                    //-------
+                    if (config.option.watch) {
+                        shared.suppressWatchEvents = true // suppress watch events until the title "Watching" is displayed
+    
+                        return watch.processWatch()
                     }
-
-                    if (shared.stats.timeTo.watch > 0) {
-                        functions.log(chalk.gray(shared.language.display('paddedGroups.stats.watch')) + ' ' + chalk.cyan(shared.stats.timeTo.watch))
+    
+                }).then(function() {
+    
+                    //-------
+                    // Stats
+                    //-------
+                    if (!config.option.stats) {
+                        functions.log('', false)
+                    } else {
+                        functions.log(chalk.gray('\n' + shared.language.display('words.stats') + '\n'), false)
+    
+                        if (shared.stats.timeTo.load > 0) {
+                            functions.log(chalk.gray(shared.language.display('paddedGroups.stats.load')) + ' ' + chalk.cyan(shared.stats.timeTo.load))
+                        }
+    
+                        if (shared.stats.timeTo.clean > 0) {
+                            functions.log(chalk.gray(shared.language.display('paddedGroups.stats.clean')) + ' ' + chalk.cyan(shared.stats.timeTo.clean))
+                        }
+    
+                        if (shared.stats.timeTo.build > 0) {
+                            functions.log(chalk.gray(shared.language.display('paddedGroups.stats.build')) + ' ' + chalk.cyan(shared.stats.timeTo.build))
+                        }
+    
+                        if (shared.stats.timeTo.watch > 0) {
+                            functions.log(chalk.gray(shared.language.display('paddedGroups.stats.watch')) + ' ' + chalk.cyan(shared.stats.timeTo.watch))
+                        }
+    
+                        var totalTime = shared.stats.timeTo.load + shared.stats.timeTo.clean + shared.stats.timeTo.build + shared.stats.timeTo.watch
+    
+                        totalTime = functions.mathRoundPlaces(totalTime, 3)
+    
+                        functions.log('', false)
+                        functions.log(chalk.gray(shared.language.display('paddedGroups.stats.total')) + ' ' + chalk.cyan(totalTime) + chalk.gray(' ' + shared.language.display('words.seconds') + '\n'))
                     }
-
-                    var totalTime = shared.stats.timeTo.load + shared.stats.timeTo.clean + shared.stats.timeTo.build + shared.stats.timeTo.watch
-
-                    totalTime = functions.mathRoundPlaces(totalTime, 3)
-
-                    functions.log('', false)
-                    functions.log(chalk.gray(shared.language.display('paddedGroups.stats.total')) + ' ' + chalk.cyan(totalTime) + chalk.gray(' ' + shared.language.display('words.seconds') + '\n'))
-                }
-
-            }).then(function() {
-
-                //----------
-                // Watching
-                //----------
-                if (config.option.watch) {
-                    functions.log(chalk.gray(shared.language.display('words.watching')) + '\n', false)
-
-                    shared.suppressWatchEvents = false
-                }
-
-            })
-
-            return p
-        } // if
-
+    
+                }).then(function() {
+    
+                    //----------
+                    // Watching
+                    //----------
+                    if (config.option.watch) {
+                        functions.log(chalk.gray(shared.language.display('words.watching')) + '\n', false)
+    
+                        shared.suppressWatchEvents = false
+                    }
+    
+                })
+    
+                return p
+            
+            } // if (config.option.init)
+            
+        } // if (!shared.help)
+        
     }).catch(function(err) {
 
         functions.logError(err)

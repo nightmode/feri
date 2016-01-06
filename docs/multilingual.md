@@ -127,7 +127,7 @@ For example, `paddedGroups.build` has two keys, `output` and `copy`. The longest
 
 <img src="https://raw.githubusercontent.com/ForestMist/feri/master/images/translation-guide-build.png" width="918" height="150" alt="">
 
-Same idea for `paddedGroups.stats` except that the longest strings here are mostly 5 characters. Adding one space to `load` ensures they all line up nicely when displayed.
+Same idea for `paddedGroups.stats` except that the longest strings here are 5 characters long. Adding one space to `load` ensures that they all line up nicely when displayed.
 
 <img src="https://raw.githubusercontent.com/ForestMist/feri/master/images/translation-guide-stats.png" width="918" height="227" alt="">
 

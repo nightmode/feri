@@ -55,7 +55,7 @@ The clean module lives in the file [code/3 - config.js](../../code/3 - config.js
 
 Type: `number`
 
-Controls how many build and clean processes can run simultaneously. Values 1-3 recommended since node [libuv](https://github.com/libuv/libuv) seems to have 4 slots by default. Feel free to experiment with this setting to see how fast you can get Feri to run.
+Controls the number of build or clean processes that can be run simultaneously. Values 1-3 recommended since node [libuv](https://github.com/libuv/libuv) seems to have 4 slots by default. Feel free to experiment with this setting to see how fast you can get Feri to run.
 
 ```js
 config.concurLimit = 1

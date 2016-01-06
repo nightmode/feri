@@ -220,6 +220,32 @@ functions.destToSource = function functions_destToSource(dest) {
     return dest.replace(config.path.dest, config.path.source)
 } // destToSource
 
+functions.figureOutPath = function functions_figureOutPath(filePath) {
+    /*
+    Figure out if a path is relative and if so, return an absolute version of the path.
+    @param   {String}  filePath  File path like '/full/path/to/folder' or '/relative/path'
+    @return  {String}            File path like '/fully/resolved/relative/path'
+    */
+    var pos = 0
+    var str = '/'
+
+    filePath = path.normalize(filePath)
+
+    if (shared.slash === '\\') {
+        // we are on windows
+        pos = 1
+        str = ':'
+    }
+
+    if (filePath.charAt(pos) === str) {
+        // absolute path
+        return filePath
+    }
+
+    // relative path
+    return path.join(shared.path.pwd, filePath)
+} // figureOutPath
+
 functions.fileExists = function functions_fileExists(filePath) {
     /*
     Find out if a file or folder exists.
@@ -360,6 +386,51 @@ functions.globOptions = function functions_globOptions() {
         'realpath': true
     }
 } // globOptions
+
+functions.initFeri = function initFeri() {
+    /*
+    If needed, create the source and destination folders along with a feri-config.js file in the present working directory.
+    @return  {Promise}
+    */    
+    return Promise.resolve().then(function() {
+        
+        // make sure config.path.source is an absolute path in case it was set programmatically
+        config.path.source = functions.figureOutPath(config.path.source)
+
+        return functions.makeDirPath(config.path.source, true)
+
+    }).then(function() {
+
+        // make sure config.path.dest is an absolute path in case it was set programmatically
+        config.path.dest = functions.figureOutPath(config.path.dest)
+
+        return functions.makeDirPath(config.path.dest, true)
+
+    }).then(function() {
+
+        var configFile = path.join(shared.path.pwd, 'feri-config.js')
+
+        return functions.fileExists(configFile).then(function(exists) {
+
+            if (exists) {
+                // do nothing
+                return
+            }
+
+            return functions.readFile(path.join(shared.path.self, 'templates', 'feri-config.js')).then(function(data) {
+
+                return functions.writeFile(configFile, data)
+
+            })
+
+        }) // return
+
+    }).then(function() {
+
+        functions.log('\n' + chalk.gray(shared.language.display('words.done') + '.\n'), false)
+
+    })
+} // initFeri
 
 functions.inSource = function functions_inSource(filePath) {
     /*
@@ -1113,8 +1184,8 @@ functions.includePathsEjs = function functions_includePathsEjs(data, filePath, i
         var match
         var includes = []
 
-        // config.fileType.ejs.root can be used by the EJS engine to figure out include paths so make it available for evaling in this function too
-        var root = config.fileType.ejs.root
+        // root can be used by the EJS engine to figure out include paths so make it available for evaling in this function too
+        var root = config.path.source
 
         while (match = re.exec(data)) {
             match = match[1].trim()

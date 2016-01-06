@@ -240,6 +240,25 @@ describe('File -> ../code/4 - functions.js\n', function() {
             }) // it
         }) // describe
 
+        //-------------------------
+        // functions.figureOutPath
+        //-------------------------
+        describe('figureOutPath', function() {
+            it('should resolve a relative path to an absolute version', function() {
+
+                expect(functions.figureOutPath('source') === config.path.source)
+
+            }) // it
+
+            it('should leave an absolute path as is', function() {
+
+                var imaginaryPath = path.join(shared.path.pwd, 'some', 'folder')
+
+                expect(functions.figureOutPath(imaginaryPath) === imaginaryPath)
+
+            }) // it
+        }) // describe
+
         //----------------------
         // functions.fileExists
         //----------------------
@@ -373,6 +392,75 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                     expect(files).to.be.an('array')
                     expect(files).to.not.be.empty()
+
+                })
+
+            }) // it
+        }) // describe
+
+        //--------------------
+        // functions.initFeri
+        //--------------------
+        describe('initFeri', function() {
+            it('should create source and destination folders along with a feri-config.js file', function() {
+
+                shared.path.pwd = path.join(testPath, 'initFeri')
+
+                config.path.source = path.join(testPath, 'initFeri', 'source')
+                config.path.dest   = path.join(testPath, 'initFeri', 'dest')
+
+                var configFile = path.join(testPath, 'initFeri', 'feri-config.js')
+
+                var files = [config.path.source, config.path.dest, configFile]
+
+                return functions.initFeri().then(function() {
+
+                    return functions.filesExist(files)
+
+                }).then(function(filesExist) {
+
+                    expect(filesExist).to.eql([true, true, true])
+
+                    return functions.removeFiles(files)
+
+                }).then(function(filesRemoved) {
+
+                    expect(filesRemoved).to.be(true)
+
+                })
+
+            }) // it
+
+            it('should create source and destination folders but not touch an existing feri-config.js file', function() {
+
+                shared.path.pwd = path.join(testPath, 'initFeri', 'existingConfig')
+
+                config.path.source = path.join(shared.path.pwd, 'source')
+                config.path.dest   = path.join(shared.path.pwd, 'dest')
+
+                var configFile = path.join(shared.path.pwd, 'feri-config.js')
+
+                var files = [config.path.source, config.path.dest, configFile]
+
+                return functions.initFeri().then(function() {
+
+                    return functions.filesExist(files)
+
+                }).then(function(filesExist) {
+
+                    expect(filesExist).to.eql([true, true, true])
+
+                    return functions.removeFiles([config.path.source, config.path.dest])
+
+                }).then(function(filesRemoved) {
+
+                    expect(filesRemoved).to.be(true)
+
+                    return functions.readFile(configFile)
+
+                }).then(function(data) {
+
+                    expect(data).to.be('module.exports = function(feri) {}')
 
                 })
 
