@@ -72,13 +72,13 @@ You could create a file called `all.js.concat` that includes your prized collect
 
 ### Smarter Includes
 
-Feri exposes a variable called "root" into your EJS files. This is super useful for includes because instead of having dot dot slash nightmares like...
+Feri exposes a variable called `root` into your EJS files. This is super useful for includes because instead of having dot dot slash nightmares like...
 
 ```js
 <% include ('../../../../partials/header.ejs') %>
 ```
 
-You can instead use "root" to specify the same path as your source folder and then write beautiful includes like...
+You can instead use `root` to specify the same path as your source folder and then write beautiful includes like...
 
 ```js
 <% include (root + '/partials/header.ejs') %>
