@@ -11,7 +11,6 @@ The clean module lives in the file [code/3 - config.js](../../code/3 - config.js
   * [coffee](#configfiletypecoffee)
   * [concat](#configfiletypeconcat)
   * [css](#configfiletypecss)
-  * [ejs](#configfiletypeejs)
   * [js](#configfiletypejs)
   * [less](#configfiletypeless)
   * [sass](#configfiletypesass)
@@ -109,24 +108,6 @@ config.fileType.css = {
 ```
 
 Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
-
-## config.fileType.ejs
-
-Type: `object`
-
-Options used by [build.ejs](build.md#buildejs).
-
-```js
-config.fileType.ejs = {
-    'root': ''
-}
-```
-
-The root variable will be passed to the EJS rendering engine to figure out include file paths like...
-
-```js
-<% include root + '/partials/_header.ejs' %>
-```
 
 ## config.fileType.js
 
