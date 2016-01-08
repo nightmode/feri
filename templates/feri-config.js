@@ -6,6 +6,8 @@ module.exports = function(feri) {
     // feri.config.language = 'de-de' // German (Germany)
     // feri.config.language = 'en-us' // English (US)
     // feri.config.language = 'fr-fr' // French (France)
+    // feri.config.language = 'it-ch' // Italian (Switzerland)
+    // feri.config.language = 'it-it' // Italian (Italy)
     // feri.config.language = 'pt-br' // Portuguese (Brazil)
     // feri.config.language = 'sv-se' // Swedish (Sweden)
 

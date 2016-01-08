@@ -16,7 +16,6 @@ Feri is currently available in the following languages.
  * Portuguese (Brazil)
  * Swedish (Sweden)
 
-
 Don't see your favorite language? Check out the [translation guide](#translation-guide) to see how you can help.
 
 ## Usage
@@ -139,24 +138,30 @@ Words get used in all sorts of places. Let's go over examples for each to unders
 
 ```js
 "words": {
-    "add"      : "add",
-    "build"    : "Build",
-    "clean"    : "Clean",
-    "change"   : "change",
-    "directory": "dir",
-    "done"     : "Done",
-    "removed"  : "removed",
-    "seconds"  : "seconds",
-    "stats"    : "Stats",
-    "watch"    : "Watch",
-    "watching" : "Watching"
+    "add"             : "add",
+    "addDirectory"    : "add dir",
+    "build"           : "Build",
+    "clean"           : "Clean",
+    "change"          : "change",
+    "done"            : "Done",
+    "removed"         : "removed",
+    "removedDirectory": "removed dir",
+    "seconds"         : "seconds",
+    "stats"           : "Stats",
+    "watch"           : "Watch",
+    "watching"        : "Watching"
 }
 ```
 
-**Add** is used when a file or directory is added while watching. For example...
+**Add** is used when a file is added while watching. For example...
 
 ```
 /source/index.html add
+```
+
+**Add Directory** is used when a folder is added while watching. For example...
+
+```
 /source/new_folder add dir
 ```
 
@@ -171,19 +176,17 @@ Words get used in all sorts of places. Let's go over examples for each to unders
 /dest/index.html change
 ```
 
-**Directory** is used when a source directory is added or removed while watching. For example...
-
-```
-/source/new_folder add dir
-/source/old_folder removed dir
-```
-
 **Done** signifies that no tasks needed to be run after a clean or build phase.
 
-**Removed** is used throughout Feri to indicate that a file or folder was removed. For example...
+**Removed** is used throughout Feri to indicate that a file was removed. For example...
 
 ```
 /dest/old.txt removed
+```
+
+**Removed Directory** is used when a folder is removed while watching. For example...
+
+```
 /dest/old_folder removed dir
 ```
 
