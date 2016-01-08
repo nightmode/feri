@@ -12,8 +12,10 @@ Feri is currently available in the following languages.
  * English (US)
  * French (France)
  * German (Germany and Switzerland)
+ * Italian (Italy and Switzerland)
  * Portuguese (Brazil)
  * Swedish (Sweden)
+
 
 Don't see your favorite language? Check out the [translation guide](#translation-guide) to see how you can help.
 

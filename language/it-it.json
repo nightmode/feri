@@ -1,0 +1,49 @@
+{
+    "error": {
+        "configPaths"           : "Sorgente e destinazione dovrebbero essere univoche e non innestate l'una nell'altra.",
+        "destPointsToSource"    : "La destinazione punta ad una cartella sorgente.",
+        "destProtected"         : "La destinazione non dovrebbe essere una locazione protetta come {path}.",
+        "halted"                : "{software} versione {version} interrotto a causa di errori.",
+        "missingDest"           : "File destinazione mancante.",
+        "missingSource"         : "File sorgente mancante.",
+        "missingSourceDirectory": "Cartella sorgente mancante.",
+        "removeDest"            : "Cancellazione file sorgente ignorata poiché i file sorgente non dovrebbero mai essere toccati.",
+        "watchingDest"          : "Errore monitorando la cartella destinazione.",
+        "watchingSource"        : "Errore monitorando la cartella sorgente."
+    },
+    "message": {
+        "fileChangedTooRecently"  : "{file} è stato modificato troppo recentemente, verrà ignorato.",
+        "includesNewer"           : "File {extension} inclusi più recenti rispetto ai file destinazione.",
+        "missingSourceToDestTasks": "config.map.sourceToDestTasks mancante per i seguenti tipi di file:",
+        "listeningOnPort"         : "{software} in ascolto sulla porta {port}.",
+        "usingConfigFile"         : "Utilizzando il file {file}.",
+        "watchRefreshed"          : "{software} aggiornato.",
+        "watchingDirectory"       : "Monitorando cambiamenti in {directory}."
+    },
+    "paddedGroups": {
+        "build": {
+            "output": "output",
+            "copy"  : "copia "
+        },
+        "stats": {
+            "load" : "Caricamento ",
+            "clean": "Pulizia     ",
+            "build": "Assemblaggio",
+            "watch": "Monitoraggio",
+            "total": "Totale      "
+        }
+    },
+    "words": {
+        "add"      : "aggiunto",
+        "build"    : "Assemblaggio",
+        "clean"    : "Pulizia",
+        "change"   : "modificato",
+        "directory": "cartella",
+        "done"     : "Fatto",
+        "removed"  : "rimosso",
+        "seconds"  : "secondi",
+        "stats"    : "Statistiche",
+        "watch"    : "Monitora",
+        "watching" : "Monitorando"
+    }
+}
