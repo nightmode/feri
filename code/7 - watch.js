@@ -470,9 +470,7 @@ watch.watchSource = function watch_watchSource(files) {
                 // emit an event
                 watch.emitterSource.emit('removed directory', file)
 
-                functions.removeDest(functions.sourceToDest(file)).then(function() {
-                    functions.log(' ')
-                })
+                functions.removeDest(functions.sourceToDest(file), true, true)
             }
         })
         .on('add', function(file) {
@@ -508,9 +506,7 @@ watch.watchSource = function watch_watchSource(files) {
                 // emit an event
                 watch.emitterSource.emit('removed', file)
 
-                clean.processClean(functions.sourceToDest(file), true).then(function() {
-                    functions.log(' ')
-                })
+                clean.processClean(functions.sourceToDest(file), true)
             }
         })
         .on('error', function(error) {

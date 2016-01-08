@@ -398,7 +398,8 @@ Remove file or folder if unrelated to the source directory.
 
 ```
 @param   {String}   filePath  Path to a file or folder.
-@param   {Boolean}  log       Set to false to disable console log removal messages.
+@param   {Boolean}  [log]     Optional and defaults to true. Set to false to disable console log removal messages.
+@param   {Boolean}  [isDir]   Optional and defaults to false. If true, log with 'words.removedDir' instead of 'words.remove'.
 @return  {Promise}            Promise that returns true if the file or folder was removed successfully otherwise an error if not.
 ```
 

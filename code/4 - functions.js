@@ -391,9 +391,9 @@ functions.initFeri = function initFeri() {
     /*
     If needed, create the source and destination folders along with a feri-config.js file in the present working directory.
     @return  {Promise}
-    */    
+    */
     return Promise.resolve().then(function() {
-        
+
         // make sure config.path.source is an absolute path in case it was set programmatically
         config.path.source = functions.figureOutPath(config.path.source)
 
@@ -727,21 +727,31 @@ functions.readFiles = function functions_readFiles(filePaths, encoding) {
     return p
 } // readFiles
 
-functions.removeDest = function functions_removeDest(filePath, log) {
+functions.removeDest = function functions_removeDest(filePath, log, isDir) {
     /*
     Remove file or folder if unrelated to the source directory.
     @param   {String}   filePath  Path to a file or folder.
-    @param   {Boolean}  log       Set to false to disable console log removal messages.
+    @param   {Boolean}  [log]     Optional and defaults to true. Set to false to disable console log removal messages.
+    @param   {Boolean}  [isDir]   Optional and defaults to false. If true, log with 'words.removedDir' instead of 'words.remove'.
     @return  {Promise}            Promise that returns true if the file or folder was removed successfully otherwise an error if not.
     */
+    log = (log === false) ? false : true
+    isDir = (isDir === true) ? true : false
+
     return Promise.resolve().then(function() {
         if (filePath.indexOf(config.path.source) >= 0) {
             throw 'functions.removeDest -> ' + shared.language.display('error.removeDest') + ' -> ' + filePath
         }
 
         return rimrafPromise(filePath).then(function() {
-            if (log !== false) {
-                functions.log(chalk.gray(filePath.replace(config.path.dest, '/' + path.basename(config.path.dest)).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed')))
+            if (log) {
+                var message = 'words.removed'
+
+                if (isDir) {
+                    message = 'words.removedDirectory'
+                }
+
+                functions.log(chalk.gray(filePath.replace(config.path.dest, '/' + path.basename(config.path.dest)).replace(/\\/g, '/') + ' ' + shared.language.display(message)))
             }
             return true
         })
