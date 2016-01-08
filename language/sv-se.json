@@ -34,16 +34,17 @@
         }
     },
     "words": {
-        "add"      : "lägg till",
-        "build"    : "Bygg",
-        "clean"    : "Rensa",
-        "change"   : "ändra",
-        "directory": "katalog",
-        "done"     : "Klar",
-        "removed"  : "borttagen",
-        "seconds"  : "sekunder",
-        "stats"    : "Statistik",
-        "watch"    : "Övervaka",
-        "watching" : "Övervakar"
+        "add"             : "lägg till",
+        "addDirectory"    : "lägg till katalog",
+        "build"           : "Bygg",
+        "clean"           : "Rensa",
+        "change"          : "ändra",
+        "done"            : "Klar",
+        "removed"         : "borttagen",
+        "removedDirectory": "borttagen katalog",
+        "seconds"         : "sekunder",
+        "stats"           : "Statistik",
+        "watch"           : "Övervaka",
+        "watching"        : "Övervakar"
     }
 }

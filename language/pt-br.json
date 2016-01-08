@@ -34,16 +34,17 @@
         }
     },
     "words": {
-        "add"      : "adicionar",
-        "build"    : "Build",
-        "clean"    : "Limpar",
-        "change"   : "alterar",
-        "directory": "pasta",
-        "done"     : "Finalizado",
-        "removed"  : "removido",
-        "seconds"  : "segundos",
-        "stats"    : "Status",
-        "watch"    : "Observar",
-        "watching" : "Observando"
+        "add"             : "adicionar",
+        "addDirectory"    : "adicionar pasta",
+        "build"           : "Build",
+        "clean"           : "Limpar",
+        "change"          : "alterar",
+        "done"            : "Finalizado",
+        "removed"         : "removido",
+        "removedDirectory": "removido pasta",
+        "seconds"         : "segundos",
+        "stats"           : "Status",
+        "watch"           : "Observar",
+        "watching"        : "Observando"
     }
 }

@@ -72,17 +72,18 @@ var shared = {
                 }
             },
             "words": {
-                "add"      : "add",
-                "build"    : "Build",
-                "clean"    : "Clean",
-                "change"   : "change",
-                "directory": "dir",
-                "done"     : "Done",
-                "removed"  : "removed",
-                "seconds"  : "seconds",
-                "stats"    : "Stats",
-                "watch"    : "Watch",
-                "watching" : "Watching"
+                "add"             : "add",
+                "addDirectory"    : "add dir",
+                "build"           : "Build",
+                "clean"           : "Clean",
+                "change"          : "change",
+                "done"            : "Done",
+                "removed"         : "removed",
+                "removedDirectory": "removed dir",
+                "seconds"         : "seconds",
+                "stats"           : "Stats",
+                "watch"           : "Watch",
+                "watching"        : "Watching"
             }
         },
         display: function shared_language_display(keys) {
@@ -135,17 +136,18 @@ var shared = {
                 }
             },
             "words": {
-                "add"      : "add",
-                "build"    : "Build",
-                "clean"    : "Clean",
-                "change"   : "change",
-                "directory": "dir",
-                "done"     : "Done",
-                "removed"  : "removed",
-                "seconds"  : "seconds",
-                "stats"    : "Stats",
-                "watch"    : "Watch",
-                "watching" : "Watching"
+                "add"             : "add",
+                "addDirectory"    : "add dir",
+                "build"           : "Build",
+                "clean"           : "Clean",
+                "change"          : "change",
+                "done"            : "Done",
+                "removed"         : "removed",
+                "removedDirectory": "removed dir",
+                "seconds"         : "seconds",
+                "stats"           : "Stats",
+                "watch"           : "Watch",
+                "watching"        : "Watching"
             }
         }
     },

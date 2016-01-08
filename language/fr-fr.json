@@ -34,16 +34,17 @@
         }
     },
     "words": {
-        "add"      : "ajouter",
-        "build"    : "construit",
-        "clean"    : "nettoyé",
-        "change"   : "changé",
-        "directory": "dossier",
-        "done"     : "fini",
-        "removed"  : "enlevé",
-        "seconds"  : "secondes",
-        "stats"    : "statistiques",
-        "watch"    : "observer",
-        "watching" : "observant"
+        "add"             : "ajouter",
+        "addDirectory"    : "ajouter dossier",
+        "build"           : "construit",
+        "clean"           : "nettoyé",
+        "change"          : "changé",
+        "done"            : "fini",
+        "removed"         : "enlevé",
+        "removedDirectory": "enlevé dossier",
+        "seconds"         : "secondes",
+        "stats"           : "statistiques",
+        "watch"           : "observer",
+        "watching"        : "observant"
     }
 }

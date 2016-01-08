@@ -34,16 +34,17 @@
         }
     },
     "words": {
-        "add"      : "Hinzugefügt",
-        "build"    : "Erstellt",
-        "clean"    : "Bereinigen",
-        "change"   : "geändert",
-        "directory": "Ordner",
-        "done"     : "Fertig",
-        "removed"  : "entfernt",
-        "seconds"  : "Sekunden",
-        "stats"    : "Statistik",
-        "watch"    : "Beobachten",
-        "watching" : "Beobachte"
+        "add"             : "hinzugefügt",
+        "addDirectory"    : "hinzugefügt ordner",
+        "build"           : "Erstellt",
+        "clean"           : "Bereinigen",
+        "change"          : "geändert",
+        "done"            : "Fertig",
+        "removed"         : "entfernt",
+        "removedDirectory": "entfernt ordner",
+        "seconds"         : "Sekunden",
+        "stats"           : "Statistik",
+        "watch"           : "Beobachten",
+        "watching"        : "Beobachte"
     }
 }
