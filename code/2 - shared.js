@@ -159,7 +159,7 @@ var shared = {
     platform: os.platform(),
     path: {
         'pwd': process.cwd(),
-        'self': path.dirname(__dirname) // full path to ourself like /Users/daniel/project/node_modules/feri
+        'self': path.dirname(__dirname) // full path to ourself like /Users/daniel/projects/feri
     },
     slash: '/', // directory separator
     stats: {
