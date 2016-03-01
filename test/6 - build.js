@@ -495,7 +495,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     var desired = {
                         "version": 3,
-                        "file": "sample.js.map",
+                        "file": "sample.js",
                         "sources": ["source/sample.js"],
                         "names": ["mellow"],
                         "mappings": "AAAA,GAAIA,QAAS",
@@ -544,7 +544,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     var desired = {
                         "version": 3,
-                        "file": "sample.js.map",
+                        "file": "sample.js",
                         "sources":["dest/sample.js"],
                         "names":["mellow"],
                         "mappings": "AAAA,GAAIA,QAAO",
