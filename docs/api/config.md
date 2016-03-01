@@ -219,7 +219,7 @@ Example
 
 ```js
 // only clean image files
-config.glob.clean = '**/*.{gif|jpg|png}'
+config.glob.clean = '**/*.{gif,jpg,png}'
 ```
 
 ## config.glob.build
