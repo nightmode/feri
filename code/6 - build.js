@@ -512,6 +512,8 @@ build.js = function build_js(obj) {
     */
     var buildAlreadySet = obj.build
 
+    var sourcesContent = ''
+
     return functions.objBuildInMemory(obj).then(function(obj) {
 
         functions.logWorker('build.js', obj)
@@ -564,6 +566,9 @@ build.js = function build_js(obj) {
             if (existingSourceMap) {
                 existingSourceMap.sourceRoot = '' // remove existing sourceRoot since it will confuse uglifyJs and cause it to generate duplicate source and sourcesContent entries
                 options.inSourceMap = existingSourceMap
+
+                // also set this parent variable in case we want to reuse our original sourcesContent later
+                sourcesContent = existingSourceMap.sourcesContent
             }
         }
 
@@ -600,8 +605,14 @@ build.js = function build_js(obj) {
                 }
 
                 if (typeof map.sourcesContent === 'undefined') {
-                    map.sourcesContent = [origData]
+                    if (sourcesContent) {
+                        map.sourcesContent = sourcesContent
+                    } else {
+                        map.sourcesContent = [origData]
+                    }
                 }
+
+                map.file = path.basename(obj.dest)
 
                 return fsWriteFilePromise(obj.dest + '.map', JSON.stringify(map))
 
@@ -887,7 +898,6 @@ build.concat = function build_concat(obj) {
                         // fileExt === 'css'
                         obj.data += '/*# sourceMappingURL=' + path.basename(obj.dest) + '.map */'
                     }
-
 
                     return functions.makeDirPath(obj.dest).then(function() {
 
