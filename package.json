@@ -18,6 +18,7 @@
     "clean-css": "^3.4.10",
     "coffee-script": "^1.10.0",
     "ejs": "^2.4.1",
+    "es6-promisify": "3.0.0",
     "expect.js": "^0.3.1",
     "generate-sourcemap": "^0.1.0",
     "gifsicle": "^3.0.3",

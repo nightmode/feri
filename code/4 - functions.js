@@ -14,7 +14,7 @@ var fs           = require('fs')             // ~  1 ms
 var glob         = require('glob')           // ~ 13 ms
 var mkdirp       = require('mkdirp')         // ~  1 ms
 var path         = require('path')           // ~  1 ms
-var promisify    = require('promisify-node') // ~  8 ms
+var promisify    = require("es6-promisify")  // ~  4 ms
 var uniqueNumber = require("unique-number")  // ~  2 ms
 
 //---------------------
