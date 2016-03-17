@@ -73,7 +73,7 @@ Feri comes preconfigured with sensible defaults that get you up and running fast
 
 ## Requirements
 
-[Node](https://nodejs.org/en/) version 4.0.0 or greater.
+[Node](https://nodejs.org/en/) version 5.0.0 or greater.
 
 ## Install
 
