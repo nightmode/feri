@@ -895,12 +895,14 @@ functions.sourceToDest = function functions_sourceToDest(source) {
     var dest = source.replace(config.path.source, config.path.dest)
 
     if (sourceExt === 'concat') {
+        sourceExt = functions.fileExtension(functions.removeExt(source))
         dest = functions.removeExt(dest)
-    } else {
-        for (var destExt in config.map.destToSourceExt) {
-            if (config.map.destToSourceExt[destExt].indexOf(sourceExt) >= 0) {
-                dest = functions.changeExt(dest, destExt)
-            }
+    }
+
+    for (var destExt in config.map.destToSourceExt) {
+        if (config.map.destToSourceExt[destExt].indexOf(sourceExt) >= 0) {
+            dest = functions.changeExt(dest, destExt)
+            break
         }
     }
 

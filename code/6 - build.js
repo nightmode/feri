@@ -839,12 +839,12 @@ build.concat = function build_concat(obj) {
                 for (var i in arrayData) {
                     obj.data += arrayData[i]
 
-                    if (fileExt === 'js') {
-                        // add a safety separator for javascript
-                        obj.data += ';'
-                    }
-
                     if (i < arrayDataLength) {
+                        if (fileExt === 'js') {
+                            // add a safety separator for javascript
+                            obj.data += ';'
+                        }
+
                         obj.data += '\n'
                     }
                 }
@@ -893,10 +893,9 @@ build.concat = function build_concat(obj) {
                     }
 
                     if (fileExt === 'js') {
-                        obj.data += '//# sourceMappingURL=' + path.basename(obj.dest) + '.map'
-                    } else {
-                        // fileExt === 'css'
-                        obj.data += '/*# sourceMappingURL=' + path.basename(obj.dest) + '.map */'
+                        obj.data += '\n//# sourceMappingURL=' + path.basename(obj.dest) + '.map'
+                    } else if (fileExt === 'css') {
+                        obj.data += '\n/*# sourceMappingURL=' + path.basename(obj.dest) + '.map */'
                     }
 
                     return functions.makeDirPath(obj.dest).then(function() {
