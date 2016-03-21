@@ -25,6 +25,12 @@ var fsStatPromise      = promisify(fs.stat)           // ~  1 ms
 var fsWriteFilePromise = promisify(fs.writeFile)      // ~  1 ms
 var rimrafPromise      = promisify(require('rimraf')) // ~ 13 ms
 
+//---------------------
+// Includes: Lazy Load
+//---------------------
+var compareVersions // require('compare-versions') // ~  3 ms
+var https           // require('https')            // ~ 33 ms
+
 //-----------
 // Variables
 //-----------
@@ -947,6 +953,78 @@ functions.uniqueArray = function functions_uniqueArray(array) {
         return c.indexOf(a) === b
     })
 } // uniqueArray
+
+functions.upgradeAvailable = function functions_upgradeAvailable(specifyRemoteVersion) {
+    /*
+    Find out if a Feri upgrade is available.
+    @param   {String}   specifyRemoteVersion  Specify a remote version string like 1.2.3 instead of looking up the exact version on GitHub. Useful for testing.
+    @return  {Promise}                        Promise that returns a string with the latest version of Feri if an upgrade is available. Returns a boolean false otherwise.
+    */
+    specifyRemoteVersion = specifyRemoteVersion || false
+
+    return new Promise(function(resolve, reject) {
+
+        if (specifyRemoteVersion) {
+            resolve('{ "version": "' + specifyRemoteVersion + '" }')
+        } else {
+            if (typeof https !== 'object') {
+                https = require('https')
+            }
+
+            https.get({
+                host: 'raw.githubusercontent.com',
+                path: '/ForestMist/feri/master/package.json'
+            }, function(response) {
+                // explicitly treat incoming data as utf8 (avoids issues with multi-byte chars)
+                response.setEncoding('utf8')
+                
+                var data = ''
+
+                response.on('data', function(chunk) {
+                    data += chunk
+                })
+
+                response.on('end', function() {
+                    resolve(data)
+                })
+
+                response.on('error', function(e) {
+                    reject(e)
+                })
+            }).on('error', function(e) {
+                reject(e)
+            })
+        } // if
+
+    }).then(function(data) {
+
+        var remoteVersion = '0.0.0'
+        
+        try {
+            remoteVersion = JSON.parse(data).version
+        } catch(e) {
+            // do nothing
+        }
+        
+        var localVersion = require('../package.json').version
+
+        if (typeof compareVersions !== 'object') {
+            compareVersions = require('compare-versions')
+        }
+
+        if (compareVersions(remoteVersion, localVersion) > 0) {
+            return remoteVersion
+        } else {
+            return false
+        }
+
+    }).catch(function(err) {
+        
+        return false
+        
+    })
+
+} // upgradeAvailable
 
 functions.writeFile = function functions_writeFile(filePath, data, encoding) {
     /*

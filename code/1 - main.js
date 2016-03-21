@@ -69,7 +69,7 @@ var inOptions = function inOptions(search) {
             return true
         }
     }
-    
+
     return false
 } // inOptions
 
@@ -89,7 +89,7 @@ if (shared.cli) {
 
     return Promise.resolve().then(function() {
 
-        // check for an feri-config.js config file
+        // check for a feri-config.js file
         return functions.fileExists(configFile).then(function(exists) {
             configFileExists = exists
         })
@@ -140,7 +140,23 @@ if (shared.cli) {
             //-------------------------------
             // Command Line Options: Version
             //-------------------------------
-            console.log('\n' + chalk.cyan('feri') + chalk.gray(' version ') + chalk.green(require('../package.json').version) + '\n')
+            let localVersion = require('../package.json').version
+
+            console.log('\n' + chalk.cyan('Feri') + chalk.gray(' version ') + chalk.cyan(localVersion))
+
+            return functions.upgradeAvailable().then(function(upgradeVersion) {
+
+                var message = ''
+
+                if (upgradeVersion) {
+                    message += '\n' + chalk.gray('    Upgrade to version ')
+                    message += chalk.cyan(upgradeVersion) + chalk.gray(' -> ')
+                    message += chalk.green('npm install -g feri') + '\n'
+                }
+
+                console.log(message)
+
+            })
 
         } else if (inOptions(['--help', '-h'])) {
             shared.help = true
@@ -295,7 +311,7 @@ if (shared.cli) {
             if (inOptions(['--debug', '-d'])) {
                 config.option.debug = true
             }
-            
+
             if (inOptions(['--init', '-i'])) {
                 config.option.init = true
             }
@@ -308,50 +324,50 @@ if (shared.cli) {
         shared.stats.timeTo.load = functions.sharedStatsTimeTo(time)
 
         if (!shared.help) {
-            
+
             if (config.option.init) {
-                
+
                 return functions.initFeri()
-                
+
             } else {
-                
+
                 if (configFileExists) {
                     functions.log(chalk.gray(shared.language.display('message.usingConfigFile').replace('{file}', '"feri-config.js"')), false)
                 }
-    
+
                 var p = Promise.resolve()
-    
+
                 p = p.then(function() {
-    
+
                     //-------
                     // Clean
                     //-------
                     if (config.option.clean) {
                         return clean.processClean()
                     }
-    
+
                 }).then(function() {
-    
+
                     //-------
                     // Build
                     //-------
                     if (config.option.build) {
                         return build.processBuild()
                     }
-    
+
                 }).then(function() {
-    
+
                     //-------
                     // Watch
                     //-------
                     if (config.option.watch) {
                         shared.suppressWatchEvents = true // suppress watch events until the title "Watching" is displayed
-    
+
                         return watch.processWatch()
                     }
-    
+
                 }).then(function() {
-    
+
                     //-------
                     // Stats
                     //-------
@@ -359,50 +375,50 @@ if (shared.cli) {
                         functions.log('', false)
                     } else {
                         functions.log(chalk.gray('\n' + shared.language.display('words.stats') + '\n'), false)
-    
+
                         if (shared.stats.timeTo.load > 0) {
                             functions.log(chalk.gray(shared.language.display('paddedGroups.stats.load')) + ' ' + chalk.cyan(shared.stats.timeTo.load))
                         }
-    
+
                         if (shared.stats.timeTo.clean > 0) {
                             functions.log(chalk.gray(shared.language.display('paddedGroups.stats.clean')) + ' ' + chalk.cyan(shared.stats.timeTo.clean))
                         }
-    
+
                         if (shared.stats.timeTo.build > 0) {
                             functions.log(chalk.gray(shared.language.display('paddedGroups.stats.build')) + ' ' + chalk.cyan(shared.stats.timeTo.build))
                         }
-    
+
                         if (shared.stats.timeTo.watch > 0) {
                             functions.log(chalk.gray(shared.language.display('paddedGroups.stats.watch')) + ' ' + chalk.cyan(shared.stats.timeTo.watch))
                         }
-    
+
                         var totalTime = shared.stats.timeTo.load + shared.stats.timeTo.clean + shared.stats.timeTo.build + shared.stats.timeTo.watch
-    
+
                         totalTime = functions.mathRoundPlaces(totalTime, 3)
-    
+
                         functions.log('', false)
                         functions.log(chalk.gray(shared.language.display('paddedGroups.stats.total')) + ' ' + chalk.cyan(totalTime) + chalk.gray(' ' + shared.language.display('words.seconds') + '\n'))
                     }
-    
+
                 }).then(function() {
-    
+
                     //----------
                     // Watching
                     //----------
                     if (config.option.watch) {
                         functions.log(chalk.gray(shared.language.display('words.watching')) + '\n', false)
-    
+
                         shared.suppressWatchEvents = false
                     }
-    
+
                 })
-    
+
                 return p
-            
+
             } // if (config.option.init)
-            
+
         } // if (!shared.help)
-        
+
     }).catch(function(err) {
 
         functions.logError(err)

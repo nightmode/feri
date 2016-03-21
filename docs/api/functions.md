@@ -51,6 +51,7 @@ The functions object is grouped into three categories.
 * [trimSource](#functionstrimsource)
 * [trimDest](#functionstrimdest)
 * [uniqueArray](#functionsuniquearray)
+* [upgradeAvailable](#functionsupgradeavailable)
 * [writeFile](#functionswritefile)
 
 ### Functions: Includes
@@ -522,6 +523,17 @@ Keep only unique values in an array.
 ```
 @param   {Object}  array  Array like [0,0,7]
 @return  {Object}         Array like [0,7]
+```
+
+### functions.upgradeAvailable
+
+Type: `function`
+
+Find out if a Feri upgrade is available.
+
+```
+@param   {String}   specifyRemoteVersion  Specify a remote version string like 1.2.3 instead of looking up the exact version on GitHub. Useful for testing.
+@return  {Promise}                        Promise that returns a string with the latest version of Feri if an upgrade is available. Returns a boolean false otherwise.
 ```
 
 ### functions.writeFile

@@ -1119,6 +1119,37 @@ describe('File -> ../code/4 - functions.js\n', function() {
             }) // it
         }) // describe
 
+        //----------------------------
+        // functions.upgradeAvailable
+        //----------------------------
+        describe('upgradeAvailable', function() {
+
+            var localVersion = require('../package.json').version
+
+            it('should return false if the remote version is less than the local version', function() {
+
+                return functions.upgradeAvailable('0.0.0').then(function(result) {
+                    expect(result).to.be(false)
+                })
+
+            }) // it
+
+            it('should return false if the remote version equals the local version', function() {
+
+                return functions.upgradeAvailable(localVersion).then(function(result) {
+                    expect(result).to.be(false)
+                })
+
+            }) // it
+
+            it('should return a version string if the remote verion is newer than the local version', function() {
+
+                return functions.upgradeAvailable('9.9.9').then(function(result) {
+                    expect(result).to.be('9.9.9')
+                })
+
+            }) // it
+        }) // describe
 
         //---------------------
         // functions.writeFile

@@ -17,6 +17,7 @@
     "chokidar": "1.4.3",
     "clean-css": "3.4.10",
     "coffee-script": "1.10.0",
+    "compare-versions": "2.0.1",
     "ejs": "2.4.1",
     "es6-promisify": "3.0.0",
     "expect.js": "0.3.1",
