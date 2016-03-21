@@ -424,7 +424,7 @@ if (shared.cli) {
         functions.logError(err)
 
         var message = shared.language.display('error.halted') + '\n'
-        message = message.replace('{software}', chalk.cyan('feri'))
+        message = message.replace('{software}', chalk.cyan('Feri'))
         message = message.replace('{version}', chalk.green(require('../package.json').version))
 
         functions.log(chalk.gray(message), false)
