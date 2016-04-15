@@ -776,8 +776,8 @@ functions.removeExt = function functions_removeExt(filePath) {
 functions.removeFile = function functions_removeFile(filePath) {
     /*
     Remove a file or folder.
-    @param   {String}   files  String like '/dest/index.html'
-    @return  {Promise}         Promise that returns true if the file or folder was removed or if there was nothing to do. An error otherwise.
+    @param   {String}   filePath  String like '/dest/index.html'
+    @return  {Promise}            Promise that returns true if the file or folder was removed or if there was nothing to do. An error otherwise.
     */
     return rimrafPromise(filePath).then(function() {
         return true
@@ -977,7 +977,7 @@ functions.upgradeAvailable = function functions_upgradeAvailable(specifyRemoteVe
             }, function(response) {
                 // explicitly treat incoming data as utf8 (avoids issues with multi-byte chars)
                 response.setEncoding('utf8')
-                
+
                 var data = ''
 
                 response.on('data', function(chunk) {
@@ -999,13 +999,13 @@ functions.upgradeAvailable = function functions_upgradeAvailable(specifyRemoteVe
     }).then(function(data) {
 
         var remoteVersion = '0.0.0'
-        
+
         try {
             remoteVersion = JSON.parse(data).version
         } catch(e) {
             // do nothing
         }
-        
+
         var localVersion = require('../package.json').version
 
         if (typeof compareVersions !== 'object') {
@@ -1019,9 +1019,9 @@ functions.upgradeAvailable = function functions_upgradeAvailable(specifyRemoteVe
         }
 
     }).catch(function(err) {
-        
+
         return false
-        
+
     })
 
 } // upgradeAvailable
