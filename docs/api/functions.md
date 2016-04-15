@@ -422,8 +422,8 @@ Type: `function`
 Remove a file or folder.
 
 ```
-@param   {String}   files  String like '/dest/index.html'
-@return  {Promise}         Promise that returns true if the file or folder was removed or if there was nothing to do. An error otherwise.
+@param   {String}   filePath  String like '/dest/index.html'
+@return  {Promise}            Promise that returns true if the file or folder was removed or if there was nothing to do. An error otherwise.
 ```
 
 ### functions.removeFiles
