@@ -597,7 +597,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     expect(returnObj.build).to.be(true)
 
-                    expect(returnObj.data).to.be('"use strict";\n\nReact.createElement("div", { color: "transparent" });')
+                    expect(returnObj.data).to.be('React.createElement("p", null);')
 
                     return functions.removeFile(config.path.dest)
 
@@ -635,7 +635,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 }).then(function(returnObj) {
 
-                    expect(returnObj.data).to.be('"use strict";\n\nReact.createElement("div", { color: "transparent" });\n//# sourceMappingURL=sample.js.map')
+                    expect(returnObj.data).to.be('React.createElement("p", null);\n//# sourceMappingURL=sample.js.map')
 
                     // write file to disk for next test
                     return functions.writeFile(obj.dest, returnObj.data)
@@ -651,9 +651,9 @@ describe('File -> ../code/6 - build.js\n', function() {
                         file          : 'sample.js',
                         sources       : ['source/sample.jsx'],
                         names         : [],
-                        mappings      : ';;AAAA,6BAAK,OAAM,aAAN,EAAL',
+                        mappings      : 'AAAA', // simplest mapping possible since more expanded examples create different mappings on Linux vs Mac
                         sourceRoot    : '/source-maps',
-                        sourcesContent: ['<div color="transparent" />\n']
+                        sourcesContent: ['<p />']
                     }
 
                     map = JSON.parse(map)
@@ -1064,7 +1064,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 }).then(function(returnObj) {
 
-                    expect(returnObj.data).to.be('"use strict";\n\nReact.createElement("div", { color: "blue" });\nReact.createElement("div", { color: "green" });\n\n//# sourceMappingURL=all.js.map')
+                    expect(returnObj.data).to.be('React.createElement("div", { color: "blue" });\nReact.createElement("div", { color: "green" });\n//# sourceMappingURL=all.js.map')
 
                     return functions.readFile(destMapFile)
 
@@ -1077,8 +1077,8 @@ describe('File -> ../code/6 - build.js\n', function() {
                         file          : 'all.js',
                         sources       : ['source/test-4/partials/_01.jsx', 'source/test-4/partials/_02.jsx'],
                         names         : [],
-                        mappings      : ';;AAAA,oCACA;ACDA,oCACA',
-                        sourcesContent: ['<div color="blue" />\n', '<div color="green" />\n'],
+                        mappings      : 'AAAA;AACA,oCCDA,AACA',
+                        sourcesContent: ['<div color="blue" />', '<div color="green" />'],
                         sourceRoot    : '/source-maps'
                     }
 

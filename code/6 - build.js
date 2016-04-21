@@ -698,7 +698,7 @@ build.jsx = function build_jsx(obj) { // bork - need tests
         existingSourceMap = existingSourceMap || false
 
         var options = {
-            'presets': ['react', 'es2015']
+            'presets': ['react']
         }
 
         if (config.sourceMaps || config.fileType.jsx.sourceMaps) {
