@@ -37,6 +37,7 @@ var png = path.join(shared.path.self, 'node_modules', 'optipng-bin', 'vendor', '
 //---------------------
 // Includes: Lazy Load
 //---------------------
+var babel             // require('babel-core')                  // ~ 401 ms
 var css               // require('clean-css')                   // ~  83 ms
 var coffeeScript      // require('coffee-script')               // ~  36 ms
 var ejs               // require('ejs')                         // ~   4 ms
@@ -556,6 +557,15 @@ build.js = function build_js(obj) {
 
         var options = {
             'fromString': true
+            /*
+            // the following code is great for troubleshooting source maps
+            output: {
+                beautify: true
+            },
+            beautify: {
+                semicolons: false
+            }
+            */
         }
 
         var outputFileName = path.basename(obj.dest)
@@ -637,6 +647,125 @@ build.js = function build_js(obj) {
 
     })
 } // js
+
+build.jsx = function build_jsx(obj) { // bork - need tests
+    /*
+    Transpile JSX files to JS using https://www.npmjs.com/package/babel-cli.
+    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
+    @return  {Promise}  obj  Promise that returns a reusable object.
+    */
+
+    var buildAlreadySet = obj.build
+
+    return functions.objBuildInMemory(obj).then(function(obj) {
+
+        functions.logWorker('build.jsx', obj)
+
+        if (obj.build) {
+
+            if (typeof babel !== 'object') {
+                babel = require('babel-core')
+            }
+
+            if ((config.sourceMaps || config.fileType.jsx.sourceMaps) && buildAlreadySet) {
+                // check if a map file already exists
+                return functions.fileExistsAndTime(obj.dest + '.map').then(function(mapFile) {
+
+                    if (mapFile.exists) {
+                        // map file already exists but has it been generated recently?
+                        if (mapFile.mtime < (new Date().getTime() - 5000)) {
+                            // map file is older than 5 seconds and most likely not just built
+                            // remove old map file since we will generate a new one
+                            return functions.removeDest(obj.dest + '.map', false).then(function() {
+                                return false
+                            })
+                        } else {
+                            return functions.readFile(obj.dest + '.map').then(function(data) {
+                                return JSON.parse(data)
+                            })
+                        }
+                    }
+
+                })
+            } // if
+        } else {
+            // no further chained promises should be called
+            throw 'done'
+        }
+
+    }).then(function(existingSourceMap) {
+
+        existingSourceMap = existingSourceMap || false
+
+        var options = {
+            'presets': ['react', 'es2015']
+        }
+
+        if (config.sourceMaps || config.fileType.jsx.sourceMaps) {
+            options.sourceMaps = true
+            options.sourceMapTarget = path.basename(obj.dest)
+            options.sourceRoot = config.sourceRoot
+
+            if (existingSourceMap) {
+                options.inputSourceMap = existingSourceMap
+            }
+        }
+
+        return babel.transform(obj.data, options)
+
+    }).then(function(fromBabel) {
+
+        var origData = obj.data
+
+        obj.data = fromBabel.code
+
+        if (config.sourceMaps || config.fileType.jsx.sourceMaps) {
+            if (obj.data.indexOf('//# sourceMappingURL=') < 0) {
+                obj.data += '\n' + '//# sourceMappingURL=' + path.basename(obj.dest) + '.map'
+            }
+
+            return Promise.resolve().then(function() {
+
+                return functions.makeDirPath(obj.dest)
+
+            }).then(function() {
+
+                var map = fromBabel.map
+
+                if (map.sources.length === 1 && map.sources[0] === 'unknown') {
+    			 	var mapSources = obj.source.replace(config.path.source, path.basename(config.path.source))
+    			 	mapSources = mapSources.replace(config.path.dest, path.basename(config.path.dest))
+    				if (shared.slash === '/') {
+    				    map.sources = [mapSources]
+    				} else {
+    					// we are on windows
+    					map.sources = [mapSources.replace(/\\/g, '/')]
+    				}
+                }
+
+                return fsWriteFilePromise(obj.dest + '.map', JSON.stringify(map))
+
+            }).then(function() {
+
+                if (config.map.sourceToDestTasks.map.indexOf('gz') >= 0) {
+                    // manually kick off a gz task for the new .map file
+                    return build.gz({
+                        'source': obj.dest + '.map',
+                        'dest': obj.dest + '.map',
+                        'data': '',
+                        'build': true
+                    })
+                }
+
+            })
+        }
+
+    }).then(function() {
+
+        return obj
+
+    })
+} // jsx
 
 build.markdown = function build_markdown(obj) {
     /*
@@ -832,7 +961,7 @@ build.concat = function build_concat(obj) {
                 // empty obj.data in preparation to populate it with include file contents
                 obj.data = ''
 
-                var fileExt = functions.fileExtension(obj.dest)
+                var fileExtDest = functions.fileExtension(obj.dest)
 
                 var arrayDataLength = arrayData.length - 1
 
@@ -840,7 +969,7 @@ build.concat = function build_concat(obj) {
                     obj.data += arrayData[i]
 
                     if (i < arrayDataLength) {
-                        if (fileExt === 'js') {
+                        if (fileExtDest === 'js') {
                             // add a safety separator for javascript
                             obj.data += ';'
                         }
@@ -851,9 +980,11 @@ build.concat = function build_concat(obj) {
 
                 var createSourceMaps = false
 
-                if (fileExt === 'js' && (config.sourceMaps || config.fileType.concat.sourceMaps || config.fileType.js.sourceMaps)) {
+                var configConcatMaps = config.sourceMaps || config.fileType.concat.sourceMaps
+
+                if (fileExtDest === 'js' && (configConcatMaps || config.fileType.js.sourceMaps)) {
                     createSourceMaps = true
-                } else if (fileExt === 'css' && (config.sourceMaps || config.fileType.concat.sourceMaps || config.fileType.css.sourceMaps)) {
+                } else if (fileExtDest === 'css' && (configConcatMaps || config.fileType.css.sourceMaps)) {
                     createSourceMaps = true
                 }
 
@@ -870,7 +1001,7 @@ build.concat = function build_concat(obj) {
                     var end   = 0
 
                     for (var j in filePaths) {
-                        end = start + arrayData[j].split(/[\r\n]+/g).length // lines in this file
+                        end = start + arrayData[j].split(/^.*$/gm).length // lines in this file
 
                         ranges.push({
                             'sourceFile': filePaths[j].replace(config.path.source, path.basename(config.path.source)).replace(/\\/g, '/'),
@@ -892,9 +1023,9 @@ build.concat = function build_concat(obj) {
                         sourceMap.sourcesContent.push(arrayData[h])
                     }
 
-                    if (fileExt === 'js') {
+                    if (fileExtDest === 'js') {
                         obj.data += '\n//# sourceMappingURL=' + path.basename(obj.dest) + '.map'
-                    } else if (fileExt === 'css') {
+                    } else if (fileExtDest === 'css') {
                         obj.data += '\n/*# sourceMappingURL=' + path.basename(obj.dest) + '.map */'
                     }
 
@@ -925,27 +1056,27 @@ build.concat = function build_concat(obj) {
 
     }).then(function() {
 
-        var fileExt = functions.fileExtension(obj.dest)
+        var fileExtSource = path.basename(obj.source).split('.').reverse()[1] // for example, return 'js' for a file named 'file.js.concat'
 
         // now return a chain of build tasks just like build.processOneBuild but don't add build.finalize since that will run after our final return anyway
         var p = Promise.resolve(obj)
 
         // figure out which array of functions apply to this file type
-        if (config.map.sourceToDestTasks.hasOwnProperty(fileExt)) {
-            var len = config.map.sourceToDestTasks[fileExt].length
+        if (config.map.sourceToDestTasks.hasOwnProperty(fileExtSource)) {
+            var len = config.map.sourceToDestTasks[fileExtSource].length
 
             for (var i = 0; i < len; i++) {
-                if (typeof config.map.sourceToDestTasks[fileExt][i] === 'string') {
+                if (typeof config.map.sourceToDestTasks[fileExtSource][i] === 'string') {
                     // built-in build task
-                    p = p.then(build[config.map.sourceToDestTasks[fileExt][i]])
+                    p = p.then(build[config.map.sourceToDestTasks[fileExtSource][i]])
                 } else {
                     // custom build task function
-                    p = p.then(config.map.sourceToDestTasks[fileExt][i])
+                    p = p.then(config.map.sourceToDestTasks[fileExtSource][i])
                 }
             }
         } else {
-            if (shared.cache.missingMapBuild.indexOf(fileExt) < 0 && fileExt !== '') {
-                shared.cache.missingMapBuild.push(fileExt)
+            if (shared.cache.missingMapBuild.indexOf(fileExtSource) < 0 && fileExtSource !== '') {
+                shared.cache.missingMapBuild.push(fileExtSource)
             }
             p = p.then(build.copy) // add default copy task
         }
