@@ -9,7 +9,7 @@ var shared = require('./2 - shared.js')
 // Includes
 //----------
 var chalk = require('chalk') // ~ 20 ms
-var path  = require('path')  // ~ 1 ms
+var path  = require('path')  // ~  1 ms
 
 //-----------
 // Variables
@@ -71,6 +71,9 @@ config.fileType = {
     js: {
         'sourceMaps': false // used by build.js
     },
+    jsx: {
+        'sourceMaps': false // used by build.jsx
+    },
     less: {
         'sourceMaps': false // used by build.less
     },
@@ -92,7 +95,7 @@ config.map.destToSourceExt = {
     'css' : ['less', 'sass', 'scss', 'styl'],
     'gz'  : ['*'],
     'html': ['ejs', 'jade', 'md'],
-    'js'  : ['coffee'],
+    'js'  : ['coffee', 'jsx'],
     'map' : ['*']
 }
 
@@ -111,6 +114,7 @@ config.map.sourceToDestTasks = {
     'jpg'   : ['jpg'],
     'jpeg'  : ['jpg'],
     'js'    : ['js'],
+    'jsx'   : ['jsx'],
     'less'  : ['less'],
     'md'    : ['markdown', 'html'],
     'png'   : ['png'],
@@ -179,7 +183,7 @@ config.thirdParty = {
     chokidar: { // used by watch.*
         // ignore dot objects except for .htaccess files and .nvm directories
         // also ignore newly created folders for Mac OS, Ubuntu, and Windows
-        'ignored': [/[\/\\]\.(?!htaccess|nvm)/, '**/untitled folder', '**/Untitled Folder', '**/New folder'], 
+        'ignored': [/[\/\\]\.(?!htaccess|nvm)/, '**/untitled folder', '**/Untitled Folder', '**/New folder'],
         'ignoreInitial' : true,
         'followSymlinks': false
     },

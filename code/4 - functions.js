@@ -1130,8 +1130,8 @@ functions.includePathsConcat = function functions_includePathsConcat(data, fileP
             (function() {
                 var match = dataArray[a].trim()
 
-                if (match.substring(0, 2) === '//') {
-                    // skip over comments
+                if (match.substring(0, 2) === '//' || match.length === 0) {
+                    // skip over comments and empty lines
                 } else {
                     p = p.then(function() {
                         var matchIsGlob = functions.isGlob(match)

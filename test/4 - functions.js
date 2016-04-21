@@ -44,7 +44,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 var desiredObj = {
                     'karp' : ['splash', 'stare'],
-                    'js'   : ['coffee', 'tea']
+                    'js'   : ['coffee', 'jsx', 'tea']
                 }
 
                 // add new mapping
@@ -696,7 +696,9 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     path.join(config.path.source, 'code.js'),
                     path.join(config.path.source, 'code.js.concat'),
                     path.join(config.path.source, 'code.coffee'),
-                    path.join(config.path.source, 'code.coffee.concat')
+                    path.join(config.path.source, 'code.coffee.concat'),
+                    path.join(config.path.source, 'code.jsx'),
+                    path.join(config.path.source, 'code.jsx.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)
@@ -747,7 +749,9 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     path.join(config.path.source, 'code.js'),
                     path.join(config.path.source, 'code.js.concat'),
                     path.join(config.path.source, 'code.coffee'),
-                    path.join(config.path.source, 'code.coffee.concat')
+                    path.join(config.path.source, 'code.coffee.concat'),
+                    path.join(config.path.source, 'code.jsx'),
+                    path.join(config.path.source, 'code.jsx.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)
