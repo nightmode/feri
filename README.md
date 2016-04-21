@@ -25,6 +25,8 @@ Incrementally clean, build, and watch with little to no configuration required.
 
 * Clean, Build, and Watch
 * Command Line / API
+* Compile
+  * JSX
 * Compile and Minify
   * CoffeeScript
   * Embedded JavaScript (EJS)

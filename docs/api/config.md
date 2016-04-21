@@ -12,6 +12,7 @@ The clean module lives in the file [code/3 - config.js](../../code/3 - config.js
   * [concat](#configfiletypeconcat)
   * [css](#configfiletypecss)
   * [js](#configfiletypejs)
+  * [jsx](#configfiletypejsx)
   * [less](#configfiletypeless)
   * [sass](#configfiletypesass)
   * [scss](#configfiletypescss)
@@ -117,6 +118,20 @@ Options used by [build.js](build.md#buildjs).
 
 ```js
 config.fileType.js = {
+    'sourceMaps': false
+}
+```
+
+Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+
+## config.fileType.jsx
+
+Type: `object`
+
+Options used by [build.jsx](build.md#buildjsx).
+
+```js
+config.fileType.jsx = {
     'sourceMaps': false
 }
 ```
@@ -320,7 +335,7 @@ config.map.destToSourceExt = {
     'css' : ['less', 'sass', 'scss', 'styl'],
     'gz'  : ['*'],
     'html': ['ejs', 'jade', 'md'],
-    'js'  : ['coffee'],
+    'js'  : ['coffee', 'jsx'],
     'map' : ['*']
 }
 ```
@@ -347,6 +362,7 @@ config.map.sourceToDestTasks = {
     'jade'  : ['jade', 'html'],
     'jpg'   : ['jpg'],
     'js'    : ['js'],
+    'jsx'   : ['jsx'],
     'less'  : ['less'],
     'md'    : ['markdown', 'html'],
     'png'   : ['png'],
