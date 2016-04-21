@@ -648,9 +648,9 @@ build.js = function build_js(obj) {
     })
 } // js
 
-build.jsx = function build_jsx(obj) { // bork - need tests
+build.jsx = function build_jsx(obj) {
     /*
-    Transpile JSX files to JS using https://www.npmjs.com/package/babel-cli.
+    Transform JSX files to JS using https://www.npmjs.com/package/babel-cli.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
