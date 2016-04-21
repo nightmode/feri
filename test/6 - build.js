@@ -563,9 +563,9 @@ describe('File -> ../code/6 - build.js\n', function() {
             }) // it
         }) // describe
 
-        //----------
-        // build.js
-        //----------
+        //-----------
+        // build.jsx
+        //-----------
         describe('jsx', function() {
             it('should transform a jsx file to js', function() {
 
