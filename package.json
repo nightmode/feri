@@ -36,6 +36,7 @@
     "node-sass": "3.4.2",
     "optipng-bin": "3.1.0",
     "pako": "1.0.1",
+    "pug": "2.0.0-alpha6",
     "rimraf": "2.5.2",
     "stylus": "0.54.2",
     "tiny-lr-fork": "0.0.5",

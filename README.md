@@ -33,6 +33,7 @@ Incrementally clean, build, and watch with little to no configuration required.
   * Jade
   * Less
   * Markdown
+  * Pug
   * Sass
   * Stylus
 * Concatenate
