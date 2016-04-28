@@ -1282,7 +1282,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                         "file": "style.css",
                         "sources": ["source/style.scss","source/_import.scss"],
                         "sourcesContent": ["@import 'import';", "p {\n    outline: none;\n}"],
-                        "mappings":"ACAA,CAAC,AAAC,CACE,OAAO,CAAE,IAAK,CACjB",
+                        "mappings":"ACAA,AAAA,CAAC,AAAC,CACE,OAAO,CAAE,IAAK,CACjB",
                         "names":[]
                     }
 
