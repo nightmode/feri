@@ -1220,6 +1220,31 @@ describe('File -> ../code/6 - build.js\n', function() {
         }) // describe
 
         //------------
+        // build.pug
+        //------------
+        describe('pug', function() {
+            it('should compile a pug file with an include', function() {
+
+                config.path.source = path.join(testPath, 'pug', 'source')
+                config.path.dest   = path.join(testPath, 'pug', 'dest')
+
+                var obj = {
+                    'source': path.join(config.path.source, 'index.pug'),
+                    'dest': '',
+                    'data': '',
+                    'build': false
+                }
+
+                return build.pug(obj).then(function(returnObj) {
+
+                    expect(returnObj.data).to.be('<!DOCTYPE html><html><body><h1>Heading</h1><p>Hello from a pug file with an include.</p></body></html>')
+
+                })
+
+            }) // it
+        }) // describe
+
+        //------------
         // build.sass
         //------------
         describe('sass', function() {

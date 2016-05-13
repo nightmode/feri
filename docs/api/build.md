@@ -36,6 +36,7 @@ The build object is grouped into five categories.
 * [ejs](#buildejs)
 * [jade](#buildjade)
 * [less](#buildless)
+* [pug](#buildpug)
 * [sass](#buildsass)
 * [stylus](#buildstylus)
 
@@ -244,6 +245,17 @@ Jade using [jade](https://www.npmjs.com/package/jade).
 Type: `function`
 
 Less using [less](https://www.npmjs.com/package/less).
+
+```
+@param   {Object}   obj  Reusable object originally created by build.processOneBuild
+@return  {Promise}  obj  Promise that returns a reusable object.
+```
+
+### build.pug
+
+Type: `function`
+
+Pug using [pug](https://www.npmjs.com/package/pug).
 
 ```
 @param   {Object}   obj  Reusable object originally created by build.processOneBuild
