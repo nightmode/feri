@@ -59,6 +59,22 @@
     "build",
     "watch",
     "livereload",
-    "minify"
+    "minify",
+    "jsx",
+    "coffeescript",
+    "ejs",
+    "jade",
+    "less",
+    "markdown",
+    "pug",
+    "sass",
+    "stylus",
+    "html",
+    "css",
+    "javascript",
+    "gif",
+    "jpg",
+    "png",
+    "source maps"
   ]
 }
