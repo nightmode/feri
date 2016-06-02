@@ -6,6 +6,7 @@ The easy to use build tool for web files.
 
 Incrementally clean, build, and watch with little to no configuration required.
 
+* [Free Stickers!](#freestickers)
 * [Features](#features)
 * [How It Works](#how-it-works)
   * [One Source, One Destination](#one-source-one-destination)
@@ -20,6 +21,12 @@ Incrementally clean, build, and watch with little to no configuration required.
 * [Edge Cases](#edge-cases)
 * [API Documentation](#api-documentation)
 * [Contribute](#contribute)
+
+## Free Stickers!
+
+Do you live in the United States? Get your very own micro pile of Feri stickers for free! Simply contact [Daniel](https://forestmist.org/about) with your address and then stalk your mailbox until the stickers arrive!
+
+Live somewhere else in the world? Contribute to Feri in any way and then contact [Daniel](https://forestmist.org/about) with your address to get your own micro pile of Feri stickers as a thank you. Plus, you'll help Feri travel the world and bring smiles to sticker lovers everywhere. ^\_^
 
 ## Features
 
