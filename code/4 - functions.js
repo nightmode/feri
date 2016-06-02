@@ -1026,6 +1026,52 @@ functions.upgradeAvailable = function functions_upgradeAvailable(specifyRemoteVe
 
 } // upgradeAvailable
 
+functions.useExistingSourceMap = function functions_useExistingSourceMap(filePath) {
+    /*
+    Use an existing source map if it was modified recently otherwise remove it.
+    @param   {String}   filePath  Path to a file that may also have a separate '.map' file associated with it.
+    @return  {Promise}            Promise that will return a source map object that was generated recently or a boolean false.
+    */
+    filePath += '.map'
+
+    var removeFile = false
+
+    return functions.fileExistsAndTime(filePath).then(function(mapFile) {
+
+        if (mapFile.exists) {
+            // map file already exists but has it been generated recently?
+            if (mapFile.mtime < (new Date().getTime() - 5000)) {
+                // map file is older than 5 seconds and most likely not just built
+                // remove old map file so the build tool calling this function can genereate a new one
+                removeFile = true
+            } else {
+                return functions.readFile(filePath).then(function(data) {
+                    try {
+                        let sourceMap = JSON.parse(data)
+                        return sourceMap
+                    } catch(e) {
+                        removeFile = true
+                        return false
+                    }
+                })
+            }
+        } else {
+            return false
+        }
+
+    }).then(function(sourceMap) {
+
+        if (removeFile) {
+            return functions.removeDest(filePath, false).then(function() {
+                return false
+            })
+        } else {
+            return sourceMap
+        }
+
+    })
+} // useExistingSourceMap
+
 functions.writeFile = function functions_writeFile(filePath, data, encoding) {
     /*
     Promise version of fs.writeFile.

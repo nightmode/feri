@@ -1157,6 +1157,117 @@ describe('File -> ../code/4 - functions.js\n', function() {
             }) // it
         }) // describe
 
+        //--------------------------------
+        // functions.useExistingSourceMap
+        //--------------------------------
+        describe('useExistingSourceMap', function() {
+            it('should return false if a source map does not exist', function() {
+
+                var file = path.join(testPath, 'useExistingSourceMap', 'test-1.js')
+
+                return functions.useExistingSourceMap(file).then(function(result) {
+                    expect(result).to.be(false)
+                })
+
+            }) // it
+
+            it('should return false and remove an existing source map that is not a valid JSON object', function() {
+
+                var file = path.join(testPath, 'useExistingSourceMap', 'test-2.js')
+                var mapFile = file + '.map'
+
+                return Promise.resolve().then(function() {
+
+                    return functions.writeFile(mapFile, '// I am not a valid source map')
+
+                }).then(function() {
+
+                    return functions.useExistingSourceMap(file).then(function(result) {
+                        expect(result).to.be(false)
+                    })
+
+                }).then(function() {
+
+                    return functions.fileExists(mapFile).then(function(exists) {
+                        expect(exists).to.be(false)
+                    })
+
+                })
+
+            }) // it
+
+            it('should return false and remove an existing source map that is too old', function() {
+
+                this.slow(11000)    // custom mocha slow value
+                this.timeout(11000) // custom mocha timeout value
+
+                var file = path.join(testPath, 'useExistingSourceMap', 'test-3.js')
+                var mapFile = file + '.map'
+
+                return Promise.resolve().then(function() {
+
+                    return functions.writeFile(mapFile, '{"version":3}')
+
+                }).then(function() {
+
+                    return new Promise(function(resolve, reject) {
+
+                        setTimeout(function() {
+                            resolve()
+                        }, 5100)
+
+                    })
+
+                }).then(function() {
+
+                    return functions.useExistingSourceMap(file).then(function(result) {
+                        expect(result).to.be(false)
+                    })
+
+                }).then(function() {
+
+                    return functions.fileExists(mapFile).then(function(exists) {
+                        expect(exists).to.be(false)
+                    })
+
+                })
+
+            }) // it
+
+            it('should return a valid object for a recently created source map', function() {
+
+                var file = path.join(testPath, 'useExistingSourceMap', 'test-4.js')
+                var mapFile = file + '.map'
+
+                return Promise.resolve().then(function() {
+
+                    return functions.removeFile(mapFile)
+
+                }).then(function() {
+
+                    return functions.writeFile(mapFile, '{"version":3}')
+
+                }).then(function() {
+
+                    return functions.useExistingSourceMap(file).then(function(result) {
+
+                        var desiredObj = {
+                            "version": 3
+                        }
+
+                        expect(result).to.eql(desiredObj)
+
+                    })
+
+                }).then(function() {
+
+                    return functions.removeFile(mapFile)
+
+                })
+
+            }) // it
+        }) // describe
+
         //---------------------
         // functions.writeFile
         //---------------------

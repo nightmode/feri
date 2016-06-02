@@ -389,26 +389,8 @@ build.css = function build_css(obj) {
         }
 
         if ((config.sourceMaps || config.fileType.css.sourceMaps) && buildAlreadySet) {
-            // check if a map file already exists
-            return functions.fileExistsAndTime(obj.dest + '.map').then(function(mapFile) {
-
-                if (mapFile.exists) {
-                    // map file already exists but has it been generated recently?
-                    if (mapFile.mtime < (new Date().getTime() - 5000)) {
-                        // map file is older than 5 seconds and most likely not just built
-                        // remove old map file since we will generate a new one
-                        return functions.removeDest(obj.dest + '.map', false).then(function() {
-                            return false
-                        })
-                    } else {
-                        return functions.readFile(obj.dest + '.map').then(function(data) {
-                            return JSON.parse(data)
-                        })
-                    }
-                }
-
-            })
-        } // if
+            return functions.useExistingSourceMap(obj.dest)
+        }
 
     }).then(function(existingSourceMap) {
 
@@ -527,26 +509,8 @@ build.js = function build_js(obj) {
             }
 
             if ((config.sourceMaps || config.fileType.js.sourceMaps) && buildAlreadySet) {
-                // check if a map file already exists
-                return functions.fileExistsAndTime(obj.dest + '.map').then(function(mapFile) {
-
-                    if (mapFile.exists) {
-                        // map file already exists but has it been generated recently?
-                        if (mapFile.mtime < (new Date().getTime() - 5000)) {
-                            // map file is older than 5 seconds and most likely not just built
-                            // remove old map file since we will generate a new one
-                            return functions.removeDest(obj.dest + '.map', false).then(function() {
-                                return false
-                            })
-                        } else {
-                            return functions.readFile(obj.dest + '.map').then(function(data) {
-                                return JSON.parse(data)
-                            })
-                        }
-                    }
-
-                })
-            } // if
+                return functions.useExistingSourceMap(obj.dest)
+            }
         } else {
             // no further chained promises should be called
             throw 'done'
@@ -669,26 +633,9 @@ build.jsx = function build_jsx(obj) {
             }
 
             if ((config.sourceMaps || config.fileType.jsx.sourceMaps) && buildAlreadySet) {
-                // check if a map file already exists
-                return functions.fileExistsAndTime(obj.dest + '.map').then(function(mapFile) {
+                return functions.useExistingSourceMap(obj.dest)
+            }
 
-                    if (mapFile.exists) {
-                        // map file already exists but has it been generated recently?
-                        if (mapFile.mtime < (new Date().getTime() - 5000)) {
-                            // map file is older than 5 seconds and most likely not just built
-                            // remove old map file since we will generate a new one
-                            return functions.removeDest(obj.dest + '.map', false).then(function() {
-                                return false
-                            })
-                        } else {
-                            return functions.readFile(obj.dest + '.map').then(function(data) {
-                                return JSON.parse(data)
-                            })
-                        }
-                    }
-
-                })
-            } // if
         } else {
             // no further chained promises should be called
             throw 'done'

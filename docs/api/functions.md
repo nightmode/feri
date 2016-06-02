@@ -52,6 +52,7 @@ The functions object is grouped into three categories.
 * [trimDest](#functionstrimdest)
 * [uniqueArray](#functionsuniquearray)
 * [upgradeAvailable](#functionsupgradeavailable)
+* [useExistingSourceMap](#functionsuseexistingsourcemap)
 * [writeFile](#functionswritefile)
 
 ### Functions: Includes
@@ -535,6 +536,17 @@ Find out if a Feri upgrade is available.
 ```
 @param   {String}   specifyRemoteVersion  Specify a remote version string like 1.2.3 instead of looking up the exact version on GitHub. Useful for testing.
 @return  {Promise}                        Promise that returns a string with the latest version of Feri if an upgrade is available. Returns a boolean false otherwise.
+```
+
+### functions.useExistingSourceMap
+
+Type: `function`
+
+Use an existing source map if it was modified recently otherwise remove it.
+
+```
+@param   {String}   filePath  Path to a file that may also have a separate '.map' file associated with it.
+@return  {Promise}            Promise that will return a source map object that was generated recently or a boolean false.
 ```
 
 ### functions.writeFile
