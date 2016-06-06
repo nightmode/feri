@@ -35,6 +35,8 @@ The functions object is grouped into three categories.
 * [logWorker](#functionslogworker)
 * [makeDirPath](#functionsmakedirpath)
 * [mathRoundPlaces](#functionsmathroundplaces)
+* [normalizeSourceMap](#functionsnormalizesourcemap)
+* [objFromSourceMap](#functionsobjfromsourcemap)
 * [occurrences](#functionsoccurrences)
 * [possibleSourceFiles](#functionspossiblesourcefiles)
 * [readFile](#functionsreadfile)
@@ -345,6 +347,30 @@ Round a number to a certain amount of decimal places.
 @return  {Number}            Returns 0.04 if mathRoundPlaces(0.037, 2) was called.
 ```
 
+### functions.normalizeSourceMap
+
+Type: `function`
+
+Normalize Source Maps.
+
+```
+@param   {Object}  obj        Reusable object most likely created by functions.objFromSourceMap
+@param   {Object}  sourceMap  Source map to normalize.
+@return  {Object}             Normalized source map.
+```
+
+### functions.objFromSourceMap
+
+Type: `function`
+
+Create a reusable object based on a source map.
+
+```
+@param   {Object}  obj        Reusable object originally created by build.processOneBuild
+@param   {Object}  sourceMap  Source map to use in the data field of the returned object.
+@return  {Object}             A reusable object crafted especially for build.map
+```
+
 ### functions.occurrences
 
 Type: `function`
@@ -446,9 +472,9 @@ Type: `function`
 Restore an object without affecting any references to said object.
 
 ```
-@return {Object}    obj     Object to be restored.
-@param  {Object}    fromObj Object to restore from.
-@return {Object}            Object that is a restore of the original. Not a reference.
+@return  {Object}  obj      Object to be restored.
+@param   {Object}  fromObj  Object to restore from.
+@return  {Object}           Object that is a restore of the original. Not a reference.
 ```
 
 ### functions.sharedStatsTimeTo
