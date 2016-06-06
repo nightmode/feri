@@ -35,6 +35,8 @@ The functions object is grouped into three categories.
 * [logWorker](#functionslogworker)
 * [makeDirPath](#functionsmakedirpath)
 * [mathRoundPlaces](#functionsmathroundplaces)
+* [normalizeSourceMap](#functionsnormalizesourcemap)
+* [objFromSourceMap](#functionsobjfromsourcemap)
 * [occurrences](#functionsoccurrences)
 * [possibleSourceFiles](#functionspossiblesourcefiles)
 * [readFile](#functionsreadfile)
@@ -52,6 +54,7 @@ The functions object is grouped into three categories.
 * [trimDest](#functionstrimdest)
 * [uniqueArray](#functionsuniquearray)
 * [upgradeAvailable](#functionsupgradeavailable)
+* [useExistingSourceMap](#functionsuseexistingsourcemap)
 * [writeFile](#functionswritefile)
 
 ### Functions: Includes
@@ -344,6 +347,30 @@ Round a number to a certain amount of decimal places.
 @return  {Number}            Returns 0.04 if mathRoundPlaces(0.037, 2) was called.
 ```
 
+### functions.normalizeSourceMap
+
+Type: `function`
+
+Normalize Source Maps.
+
+```
+@param   {Object}  obj        Reusable object most likely created by functions.objFromSourceMap
+@param   {Object}  sourceMap  Source map to normalize.
+@return  {Object}             Normalized source map.
+```
+
+### functions.objFromSourceMap
+
+Type: `function`
+
+Create a reusable object based on a source map.
+
+```
+@param   {Object}  obj        Reusable object originally created by build.processOneBuild
+@param   {Object}  sourceMap  Source map to use in the data field of the returned object.
+@return  {Object}             A reusable object crafted especially for build.map
+```
+
 ### functions.occurrences
 
 Type: `function`
@@ -445,9 +472,9 @@ Type: `function`
 Restore an object without affecting any references to said object.
 
 ```
-@return {Object}    obj     Object to be restored.
-@param  {Object}    fromObj Object to restore from.
-@return {Object}            Object that is a restore of the original. Not a reference.
+@return  {Object}  obj      Object to be restored.
+@param   {Object}  fromObj  Object to restore from.
+@return  {Object}           Object that is a restore of the original. Not a reference.
 ```
 
 ### functions.sharedStatsTimeTo
@@ -535,6 +562,17 @@ Find out if a Feri upgrade is available.
 ```
 @param   {String}   specifyRemoteVersion  Specify a remote version string like 1.2.3 instead of looking up the exact version on GitHub. Useful for testing.
 @return  {Promise}                        Promise that returns a string with the latest version of Feri if an upgrade is available. Returns a boolean false otherwise.
+```
+
+### functions.useExistingSourceMap
+
+Type: `function`
+
+Use an existing source map if it was modified recently otherwise remove it.
+
+```
+@param   {String}   filePath  Path to a file that may also have a separate '.map' file associated with it.
+@return  {Promise}            Promise that will return a source map object that was generated recently or a boolean false.
 ```
 
 ### functions.writeFile

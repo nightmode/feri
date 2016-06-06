@@ -42,7 +42,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('addDestToSourceExt', function() {
             it('should add and append mappings to without harming existing entries', function() {
 
-                var desiredObj = {
+                var desired = {
                     'karp' : ['splash', 'stare'],
                     'js'   : ['coffee', 'jsx', 'tea']
                 }
@@ -53,9 +53,9 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 // append to existing mapping
                 functions.addDestToSourceExt('js', 'tea')
 
-                expect(config.map.destToSourceExt.karp).to.eql(desiredObj.karp)
+                expect(config.map.destToSourceExt.karp).to.eql(desired.karp)
 
-                expect(config.map.destToSourceExt.js).to.eql(desiredObj.js)
+                expect(config.map.destToSourceExt.js).to.eql(desired.js)
 
             }) // it
         }) // describe
@@ -475,14 +475,14 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 var obj = functions.globOptions()
 
-                var desiredObj = {
+                var desired = {
                     'ignore'  : '**/_*',
                     'nocase'  : true,
                     'nodir'   : true,
                     'realpath': true
                 }
 
-                expect(obj).to.eql(desiredObj)
+                expect(obj).to.eql(desired)
 
             }) // it
         }) // describe
@@ -643,6 +643,129 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 expect(test).to.be(1.15)
 
+            }) // it
+        }) // describe
+
+        //------------------------------
+        // functions.normalizeSourceMap
+        //------------------------------
+        describe('normalizeSourceMap', function() {
+            let sourceMap = {
+                "version": 3,
+                "sources": ["source/js/javascript.js"],
+                "names": ["context_menu","e","window","event","eTarget","srcElement","target","nodeName","document","oncontextmenu"],
+                "mappings": "AAEA,QAASA,cAAaC,GAClB,IAAKA,EAAG,GAAIA,GAAIC,OAAOC,KACvB,IAAIC,GAAWF,OAAY,MAAID,EAAEI,WAAaJ,EAAEK,MAEhD,OAAwB,OAApBF,EAAQG,UAED,EAFX,OANJC,SAASC,cAAgBT",
+                "file": "javascript.js",
+                "sourceRoot": "/source-maps",
+                "sourcesContent": ["document.oncontextmenu = context_menu;\n \nfunction context_menu(e) {\n    if (!e) var e = window.event;\n    var eTarget = (window.event) ? e.srcElement : e.target;\n \n    if (eTarget.nodeName == \"IMG\") {\n        //context menu attempt on top of an image element\n        return false;\n    }\n}"]
+            }
+
+            let obj = {
+                source: 'source/js/javascript.js',
+                dest: 'dest/js/javascript.js',
+                data: sourceMap.sourcesContent[0]
+            }
+
+            it('should fix various types of missing sources', function() {
+                let desired = ['source/js/javascript.js']
+                let testMap
+
+                // missing sources
+                testMap = functions.cloneObj(sourceMap)
+                delete testMap.sources
+                testMap = functions.normalizeSourceMap(obj, testMap)
+                // console.log(testMap)
+                expect(testMap.sources).to.eql(desired)
+
+                // empty array
+                testMap = functions.cloneObj(sourceMap)
+                sourceMap.sources = []
+                testMap = functions.normalizeSourceMap(obj, testMap)
+                expect(testMap.sources).to.eql(desired)
+
+                // unknown source
+                testMap = functions.cloneObj(sourceMap)
+                sourceMap.sources = ['unknown']
+                testMap = functions.normalizeSourceMap(obj, testMap)
+                expect(testMap.sources).to.eql(desired)
+
+                // ? source
+                testMap = functions.cloneObj(sourceMap)
+                sourceMap.sources = ['?']
+                testMap = functions.normalizeSourceMap(obj, testMap)
+                expect(testMap.sources).to.eql(desired)
+
+                // empty source
+                testMap = functions.cloneObj(sourceMap)
+                sourceMap.sources = ['']
+                testMap = functions.normalizeSourceMap(obj, testMap)
+                expect(testMap.sources).to.eql(desired)
+            }) // it
+
+            it('should remove relative path components from all sources', function() {
+                let desired = [
+                    'source/js/01.js',
+                    'source/js/02.js'
+                ]
+
+                let testMap = functions.cloneObj(sourceMap)
+
+                testMap.sources = [
+                    '../source/js/01.js',
+                    '../../../source/js/02.js'
+                ]
+
+                testMap = functions.normalizeSourceMap(obj, testMap)
+
+                expect(testMap.sources).to.eql(desired)
+            }) // it
+
+            it('should return the desired values', function() {
+                let testMap = functions.cloneObj(sourceMap)
+                delete testMap.names
+                delete testMap.mappings
+                delete testMap.sourceRoot
+                delete testMap.sourcesContent
+
+                testMap = functions.normalizeSourceMap(obj, testMap)
+
+                expect(testMap.names).to.eql([])
+                expect(testMap.mappings).to.be('')
+                expect(testMap.file).to.be('javascript.js')
+                expect(testMap.sourceRoot).to.be(config.sourceRoot)
+                expect(testMap.sourcesContent).to.eql([obj.data])
+            }) // it
+        }) // describe
+
+        //----------------------------
+        // functions.objFromSourceMap
+        //----------------------------
+        describe('objFromSourceMap', function() {
+            it('should return the desired object', function() {
+                let sourceMap = {
+                    version: 3,
+                    sources: ['source/js/hi.js'],
+                    names: ['hi'],
+                    mappings: 'AAAA,GAAIA,IAAK',
+                    file: 'hi.js',
+                    sourceRoot: '/source-maps',
+                    sourcesContent: ['var hi = \'there\'']
+                }
+
+                let obj = {
+                    dest: 'dest/js/hi.js'
+                }
+
+                let result = functions.objFromSourceMap(obj, sourceMap)
+
+                let desired = {
+                    source: 'dest/js/hi.js.map',
+                    dest  : 'dest/js/hi.js.map',
+                    data  : JSON.stringify(sourceMap),
+                    build : true
+                }
+
+                expect(result).to.eql(desired)
             }) // it
         }) // describe
 
@@ -1157,6 +1280,117 @@ describe('File -> ../code/4 - functions.js\n', function() {
             }) // it
         }) // describe
 
+        //--------------------------------
+        // functions.useExistingSourceMap
+        //--------------------------------
+        describe('useExistingSourceMap', function() {
+            it('should return false if a source map does not exist', function() {
+
+                var file = path.join(testPath, 'useExistingSourceMap', 'test-1.js')
+
+                return functions.useExistingSourceMap(file).then(function(result) {
+                    expect(result).to.be(false)
+                })
+
+            }) // it
+
+            it('should return false and remove an existing source map that is not a valid JSON object', function() {
+
+                var file = path.join(testPath, 'useExistingSourceMap', 'test-2.js')
+                var mapFile = file + '.map'
+
+                return Promise.resolve().then(function() {
+
+                    return functions.writeFile(mapFile, '// I am not a valid source map')
+
+                }).then(function() {
+
+                    return functions.useExistingSourceMap(file).then(function(result) {
+                        expect(result).to.be(false)
+                    })
+
+                }).then(function() {
+
+                    return functions.fileExists(mapFile).then(function(exists) {
+                        expect(exists).to.be(false)
+                    })
+
+                })
+
+            }) // it
+
+            it('should return false and remove an existing source map that is too old', function() {
+
+                this.slow(11000)    // custom mocha slow value
+                this.timeout(11000) // custom mocha timeout value
+
+                var file = path.join(testPath, 'useExistingSourceMap', 'test-3.js')
+                var mapFile = file + '.map'
+
+                return Promise.resolve().then(function() {
+
+                    return functions.writeFile(mapFile, '{"version":3}')
+
+                }).then(function() {
+
+                    return new Promise(function(resolve, reject) {
+
+                        setTimeout(function() {
+                            resolve()
+                        }, 5100)
+
+                    })
+
+                }).then(function() {
+
+                    return functions.useExistingSourceMap(file).then(function(result) {
+                        expect(result).to.be(false)
+                    })
+
+                }).then(function() {
+
+                    return functions.fileExists(mapFile).then(function(exists) {
+                        expect(exists).to.be(false)
+                    })
+
+                })
+
+            }) // it
+
+            it('should return a valid object for a recently created source map', function() {
+
+                var file = path.join(testPath, 'useExistingSourceMap', 'test-4.js')
+                var mapFile = file + '.map'
+
+                return Promise.resolve().then(function() {
+
+                    return functions.removeFile(mapFile)
+
+                }).then(function() {
+
+                    return functions.writeFile(mapFile, '{"version":3}')
+
+                }).then(function() {
+
+                    return functions.useExistingSourceMap(file).then(function(result) {
+
+                        var desired = {
+                            "version": 3
+                        }
+
+                        expect(result).to.eql(desired)
+
+                    })
+
+                }).then(function() {
+
+                    return functions.removeFile(mapFile)
+
+                })
+
+            }) // it
+        }) // describe
+
         //---------------------
         // functions.writeFile
         //---------------------
@@ -1265,12 +1499,12 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 }).then(function(returnObj) {
 
-                    var desiredObj = [
+                    var desired = [
                         path.join(config.path.source, 'partials', '_01.txt'),
                         path.join(config.path.source, 'partials', '_02.txt')
                     ]
 
-                    expect(returnObj).to.eql(desiredObj)
+                    expect(returnObj).to.eql(desired)
 
                 })
 
@@ -1297,14 +1531,14 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 }).then(function(returnObj) {
 
-                    var desiredObj = [
+                    var desired = [
                         path.join(config.path.source, 'partials', '_01.ejs'),
                         path.join(config.path.source, 'partials', '_02.ejs'),
                         path.join(config.path.source, 'partials', '_03.ejs'),
                         path.join(config.path.source, 'partials', '_04.ejs')
                     ]
 
-                    expect(returnObj).to.eql(desiredObj)
+                    expect(returnObj).to.eql(desired)
 
                 })
 
@@ -1331,12 +1565,12 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 }).then(function(returnObj) {
 
-                    var desiredObj = [
+                    var desired = [
                         path.join(config.path.source, 'partials', '_header.jade'),
                         path.join(config.path.source, 'partials', '_footer.jade')
                     ]
 
-                    expect(returnObj).to.eql(desiredObj)
+                    expect(returnObj).to.eql(desired)
 
                 })
 
@@ -1363,12 +1597,12 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 }).then(function(returnObj) {
 
-                    var desiredObj = [
+                    var desired = [
                         path.join(config.path.source, 'partials', '_fonts.less'),
                         path.join(config.path.source, 'partials', '_grid.less')
                     ]
 
-                    expect(returnObj).to.eql(desiredObj)
+                    expect(returnObj).to.eql(desired)
 
                 })
 
@@ -1395,12 +1629,12 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 }).then(function(returnObj) {
 
-                    var desiredObj = [
+                    var desired = [
                         path.join(config.path.source, 'partials', '_header.pug'),
                         path.join(config.path.source, 'partials', '_footer.pug')
                     ]
 
-                    expect(returnObj).to.eql(desiredObj)
+                    expect(returnObj).to.eql(desired)
 
                 })
 
@@ -1427,12 +1661,12 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 }).then(function(returnObj) {
 
-                    var desiredObj = [
+                    var desired = [
                         path.join(config.path.source, 'partials', '_fonts.scss'),
                         path.join(config.path.source, 'partials', '_grid.scss')
                     ]
 
-                    expect(returnObj).to.eql(desiredObj)
+                    expect(returnObj).to.eql(desired)
 
                 })
 
@@ -1459,12 +1693,12 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 }).then(function(returnObj) {
 
-                    var desiredObj = [
+                    var desired = [
                         path.join(config.path.source, 'partials', '_fonts.styl'),
                         path.join(config.path.source, 'partials', '_grid.styl')
                     ]
 
-                    expect(returnObj).to.eql(desiredObj)
+                    expect(returnObj).to.eql(desired)
 
                 })
 

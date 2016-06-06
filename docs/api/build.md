@@ -44,6 +44,7 @@ The build object is grouped into five categories.
 
 * [finalize](#buildfinalize)
 * [gz](#buildgz)
+* [map](#buildmap)
 
 ## Build: Command and Control
 
@@ -304,6 +305,17 @@ Finalize by writing memory to disk or copying source to dest, if needed.
 Type: `function`
 
 Create a gzipped version of a file to live alongside the original.
+
+```
+@param   {Object}          obj  Reusable object originally created by build.processOneBuild
+@return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
+```
+
+### build.map
+
+Type: `function`
+
+Build a map file and if needed, also make a gz version of said map file.
 
 ```
 @param   {Object}          obj  Reusable object originally created by build.processOneBuild
