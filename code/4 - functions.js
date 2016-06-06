@@ -577,7 +577,7 @@ functions.mathRoundPlaces = function functions_mathRoundPlaces(number, decimals)
 
 functions.normalizeSourceMap = function functions_normalizeSourceMap(obj, sourceMap) {
     /*
-    Normalize Source Maps.
+    Normalize source maps.
     @param   {Object}  obj        Reusable object most likely created by functions.objFromSourceMap
     @param   {Object}  sourceMap  Source map to normalize.
     @return  {Object}             Normalized source map.

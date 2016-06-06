@@ -351,7 +351,7 @@ Round a number to a certain amount of decimal places.
 
 Type: `function`
 
-Normalize Source Maps.
+Normalize source maps.
 
 ```
 @param   {Object}  obj        Reusable object most likely created by functions.objFromSourceMap
