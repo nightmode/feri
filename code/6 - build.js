@@ -37,20 +37,22 @@ var png = path.join(shared.path.self, 'node_modules', 'optipng-bin', 'vendor', '
 //---------------------
 // Includes: Lazy Load
 //---------------------
-var babel             // require('babel-core')                  // ~ 401 ms
-var css               // require('clean-css')                   // ~  83 ms
-var coffeeScript      // require('coffee-script')               // ~  36 ms
-var ejs               // require('ejs')                         // ~   4 ms
-var generateSourcemap // require('generate-sourcemap')          // ~  19 ms
-var html              // require('html-minifier').minify        // ~   4 ms
-var jade              // require('jade')                        // ~ 363 ms
-var less              // require('less')                        // ~  89 ms
-var markdown          // require('markdown-it')()               // ~  56 ms
-var pako              // require('pako')                        // ~  21 ms
-var pug               // require('pug')                         // ~ 257 ms
-var sassPromise       // promisify(require('node-sass').render) // ~   7 ms
-var stylus            // require('stylus')                      // ~  98 ms
-var js                // require('uglify-js')                   // ~  83 ms
+var babel              // require('babel-core')                     // ~ 401 ms
+var css                // require('clean-css')                      // ~  83 ms
+var coffeeScript       // require('coffee-script')                  // ~  36 ms
+var ejs                // require('ejs')                            // ~   4 ms
+var html               // require('html-minifier').minify           // ~   4 ms
+var jade               // require('jade')                           // ~ 363 ms
+var js                 // require('uglify-js')                      // ~  83 ms
+var less               // require('less')                           // ~  89 ms
+var markdown           // require('markdown-it')()                  // ~  56 ms
+var transferMap        // require('multi-stage-sourcemap').transfer // ~  20 ms
+var pako               // require('pako')                           // ~  21 ms
+var pug                // require('pug')                            // ~ 257 ms
+var sassPromise        // promisify(require('node-sass').render)    // ~   7 ms
+var sourceMapGenerator // require('source-map').SourceMapGenerator  // ~  13 ms
+var stylus             // require('stylus')                         // ~  98 ms
+
 
 //-----------
 // Variables
@@ -303,51 +305,17 @@ build.coffeeScript = function build_coffeeScript(obj) {
                     bare: true
                 })
 
+                var sourceMap = JSON.parse(coffeeObj.v3SourceMap)
+                sourceMap.sourcesContent = [obj.data.replace(/"/g, '\"')]
+
                 obj.data = coffeeObj.js + '//# sourceMappingURL=' + path.basename(obj.dest) + '.map'
 
-                var map = JSON.parse(coffeeObj.v3SourceMap)
+                sourceMap = functions.normalizeSourceMap(obj, sourceMap)
 
-                map.file = path.basename(obj.dest)
-                map.sourceRoot = config.sourceRoot
+                var mapObject = functions.objFromSourceMap(obj, sourceMap)
 
-				var mapSources = obj.source.replace(config.path.source, path.basename(config.path.source))
-
-				if (shared.slash === '/') {
-				    map.sources = [mapSources]
-				} else {
-					// we are on windows
-					map.sources = [mapSources.replace(/\\/g, '/')]
-				}
-
-                return functions.readFile(obj.source).then(function(data) {
-
-                    map.sourcesContent = [data.replace(/"/g, '\"')]
-
-                }).then(function() {
-
-                    map = JSON.stringify(map)
-                    return functions.makeDirPath(obj.dest)
-
-                }).then(function() {
-
-                    return fsWriteFilePromise(obj.dest + '.map', map)
-
-                }).then(function() {
-
-                    if (config.map.sourceToDestTasks.map.indexOf('gz') >= 0) {
-                        // manually kick off a gz task for the new .map file
-                        return build.gz({
-                            'source': obj.source,
-                            'dest': obj.dest + '.map',
-                            'data': '',
-                            'build': true
-                        })
-                    }
-
-                }).then(function() {
-
+                return build.map(mapObject).then(function() {
                     return obj
-
                 })
             } else {
                 obj.data = coffeeScript.compile(obj.data)
@@ -397,7 +365,7 @@ build.css = function build_css(obj) {
         existingSourceMap = existingSourceMap || false
 
         if (existingSourceMap) {
-            // temporarily set any soureMappingURL to a full path for clean-css
+            // temporarily set any sourceMappingURL to a full path for clean-css
             var string = '/*# sourceMappingURL='
             var pos = obj.data.indexOf(string)
 
@@ -420,37 +388,20 @@ build.css = function build_css(obj) {
 
             obj.data = cssMin.styles + '\n/*# sourceMappingURL=' + path.basename(obj.dest) + '.map */'
 
-            var map = JSON.parse(cssMin.sourceMap.toString())
-
-            map.file = path.basename(obj.dest)
-            map.sourceRoot = config.sourceRoot
+            let sourceMap = JSON.parse(cssMin.sourceMap.toString())
 
             if (existingSourceMap) {
-                map.sources = existingSourceMap.sources
-                map.sourcesContent = existingSourceMap.sourcesContent
+                sourceMap.sources = existingSourceMap.sources
+                sourceMap.sourcesContent = existingSourceMap.sourcesContent
             } else {
-                map.sources = [path.basename(obj.source)]
+                sourceMap.sources = [path.basename(obj.source)]
             }
 
-            map = JSON.stringify(map)
+            sourceMap = functions.normalizeSourceMap(obj, sourceMap)
 
-            return functions.makeDirPath(obj.dest).then(function() {
+            let mapObject = functions.objFromSourceMap(obj, sourceMap)
 
-                return fsWriteFilePromise(obj.dest + '.map', map)
-
-            }).then(function() {
-
-               if (config.map.sourceToDestTasks.map.indexOf('gz') >= 0) {
-                    // manually kick off a gz task for the new .map file
-                    return build.gz({
-                        'source': obj.source,
-                        'dest': obj.dest + '.map',
-                        'data': '',
-                        'build': true
-                    })
-                }
-
-            })
+            return build.map(mapObject)
 
         } else {
             obj.data = cssMin.styles
@@ -496,7 +447,7 @@ build.js = function build_js(obj) {
     */
     var buildAlreadySet = obj.build
 
-    var sourcesContent = ''
+    var previousSourceMap = false
 
     return functions.objBuildInMemory(obj).then(function(obj) {
 
@@ -509,7 +460,17 @@ build.js = function build_js(obj) {
             }
 
             if ((config.sourceMaps || config.fileType.js.sourceMaps) && buildAlreadySet) {
-                return functions.useExistingSourceMap(obj.dest)
+                // What if buildAlready set is not set?
+                // Like there is a '.map' file in the source folder.
+                // Is this worth worrying about?
+                if (typeof transferMap !== 'object') {
+                    transferMap = require('multi-stage-sourcemap').transfer
+                }
+
+                return functions.useExistingSourceMap(obj.dest).then(function(existingSourceMap) {
+                    // set parent variable for possible use later
+                    previousSourceMap = existingSourceMap
+                })
             }
         } else {
             // no further chained promises should be called
@@ -517,8 +478,6 @@ build.js = function build_js(obj) {
         }
 
     }).then(function(existingSourceMap) {
-
-        existingSourceMap = existingSourceMap || false
 
         var options = {
             'fromString': true
@@ -537,13 +496,9 @@ build.js = function build_js(obj) {
 
         if (config.sourceMaps || config.fileType.js.sourceMaps) {
             options.outSourceMap = outputFileName + '.map'
-            options.sourceRoot = config.sourceRoot
-            if (existingSourceMap) {
-                existingSourceMap.sourceRoot = '' // remove existing sourceRoot since it will confuse uglifyJs and cause it to generate duplicate source and sourcesContent entries
-                options.inSourceMap = existingSourceMap
 
-                // also set this parent variable in case we want to reuse our original sourcesContent later
-                sourcesContent = existingSourceMap.sourcesContent
+            if (previousSourceMap !== false) {
+                previousSourceMap.sourceRoot = '' // remove pre-existing sourceRoot since we do not want the upcoming transform function using it in path names
             }
         }
 
@@ -551,62 +506,54 @@ build.js = function build_js(obj) {
 
     }).then(function(js) {
 
-        var origData = obj.data
-
-        obj.data = js.code
-
         if (config.sourceMaps || config.fileType.js.sourceMaps) {
-            return Promise.resolve().then(function() {
+            let sourceMap = JSON.parse(js.map)
 
-                return functions.makeDirPath(obj.dest)
+            if (previousSourceMap !== false) {
+                // associate each source path with its corresponding source content value for later
+                let sourcesToContent = {}
 
-            }).then(function() {
-
-                var map = JSON.parse(js.map)
-
-                if (map.sourceRoot !== config.sourceRoot) {
-                    map.sourceRoot = config.sourceRoot
+                for (let i in previousSourceMap.sources) {
+                    sourcesToContent[previousSourceMap.sources[i]] = previousSourceMap.sourcesContent[i]
                 }
 
-                if (map.sources.length === 1 && map.sources[0] === '?') {
-    				var mapSources = obj.source.replace(config.path.source, path.basename(config.path.source))
-    				mapSources = mapSources.replace(config.path.dest, path.basename(config.path.dest))
-    				if (shared.slash === '/') {
-    				    map.sources = [mapSources]
-    				} else {
-    					// we are on windows
-    					map.sources = [mapSources.replace(/\\/g, '/')]
-    				}
+                // transfer the new source map to the previous one
+                // would be nice if uglify could do this without help but issues exist as in version 2.6.2
+                // might be able to remove this code at a later date once uglify is improved
+
+                sourceMap = transferMap({
+                    fromSourceMap: sourceMap,
+                    toSourceMap: previousSourceMap
+                })
+
+                sourceMap = JSON.parse(sourceMap)
+
+                sourceMap.sourcesContent = []
+
+                for (let i in sourceMap.sources) {
+                    sourceMap.sourcesContent.push(sourcesToContent[sourceMap.sources[i]])
                 }
-
-                if (typeof map.sourcesContent === 'undefined') {
-                    if (sourcesContent) {
-                        map.sourcesContent = sourcesContent
-                    } else {
-                        map.sourcesContent = [origData]
-                    }
+            } else {
+                // new source map
+                for (let i in sourceMap.sourcesContent) {
+                    sourceMap.sourcesContent[i] = sourceMap.sourcesContent[i].replace('//# sourceMappingURL=' + path.basename(obj.dest) + '.map', '')
                 }
+            }
 
-                map.file = path.basename(obj.dest)
+            sourceMap = functions.normalizeSourceMap(obj, sourceMap)
 
-                return fsWriteFilePromise(obj.dest + '.map', JSON.stringify(map))
+            var mapObject = functions.objFromSourceMap(obj, sourceMap)
 
-            }).then(function() {
-
-                if (config.map.sourceToDestTasks.map.indexOf('gz') >= 0) {
-                    // manually kick off a gz task for the new .map file
-                    return build.gz({
-                        'source': obj.dest + '.map',
-                        'dest': obj.dest + '.map',
-                        'data': '',
-                        'build': true
-                    })
-                }
-
+            return build.map(mapObject).then(function() {
+                return js
             })
         }
 
-    }).then(function() {
+        return js
+
+    }).then(function(js) {
+
+        obj.data = js.code
 
         return obj
 
@@ -619,7 +566,6 @@ build.jsx = function build_jsx(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-
     var buildAlreadySet = obj.build
 
     return functions.objBuildInMemory(obj).then(function(obj) {
@@ -663,49 +609,20 @@ build.jsx = function build_jsx(obj) {
 
     }).then(function(fromBabel) {
 
-        var origData = obj.data
-
         obj.data = fromBabel.code
 
         if (config.sourceMaps || config.fileType.jsx.sourceMaps) {
+            let sourceMap = fromBabel.map
+
             if (obj.data.indexOf('//# sourceMappingURL=') < 0) {
                 obj.data += '\n' + '//# sourceMappingURL=' + path.basename(obj.dest) + '.map'
             }
 
-            return Promise.resolve().then(function() {
+            sourceMap = functions.normalizeSourceMap(obj, sourceMap)
 
-                return functions.makeDirPath(obj.dest)
+            let mapObject = functions.objFromSourceMap(obj, sourceMap)
 
-            }).then(function() {
-
-                var map = fromBabel.map
-
-                if (map.sources.length === 1 && map.sources[0] === 'unknown') {
-    			 	var mapSources = obj.source.replace(config.path.source, path.basename(config.path.source))
-    			 	mapSources = mapSources.replace(config.path.dest, path.basename(config.path.dest))
-    				if (shared.slash === '/') {
-    				    map.sources = [mapSources]
-    				} else {
-    					// we are on windows
-    					map.sources = [mapSources.replace(/\\/g, '/')]
-    				}
-                }
-
-                return fsWriteFilePromise(obj.dest + '.map', JSON.stringify(map))
-
-            }).then(function() {
-
-                if (config.map.sourceToDestTasks.map.indexOf('gz') >= 0) {
-                    // manually kick off a gz task for the new .map file
-                    return build.gz({
-                        'source': obj.dest + '.map',
-                        'dest': obj.dest + '.map',
-                        'data': '',
-                        'build': true
-                    })
-                }
-
-            })
+            return build.map(mapObject)
         }
 
     }).then(function() {
@@ -896,7 +813,7 @@ build.concat = function build_concat(obj) {
 
         if (obj.build && config.fileType.concat.enabled) {
 
-            var filePaths = ''
+            var filePaths = []
 
             return functions.includePathsConcat(obj.data, obj.source).then(function(includeFiles) {
 
@@ -937,38 +854,46 @@ build.concat = function build_concat(obj) {
                 }
 
                 if (createSourceMaps) {
-                    if (typeof generateSourcemap !== 'object') {
-                        generateSourcemap = require('generate-sourcemap')
+                    if (typeof sourceMapGenerator !== 'object') {
+                        sourceMapGenerator = require('source-map').SourceMapGenerator
                     }
 
-                    var genSourceMap = generateSourcemap(path.basename(obj.dest))
+                    var map = new sourceMapGenerator({
+                        file: path.basename(obj.dest)
+                    })
 
-                    var ranges = []
+                    var totalLines = 0
 
-                    var start = 0
-                    var end   = 0
+                    for (let i in filePaths) {
+                        let lineArray = arrayData[i].split(/\r?\n/)
+                        let linesInFile = arrayData[i].split(/^.*$/gm).length - 1
 
-                    for (var j in filePaths) {
-                        end = start + arrayData[j].split(/^.*$/gm).length // lines in this file
+                        let sourceFile = filePaths[i].replace(config.path.source, path.basename(config.path.source)).replace(/\\/g, '/')
 
-                        ranges.push({
-                            'sourceFile': filePaths[j].replace(config.path.source, path.basename(config.path.source)).replace(/\\/g, '/'),
-                            'start': start,
-                            'end': end
-                        })
+                        for (let x = 0; x < linesInFile; x++) {
+                            totalLines += 1
 
-                        start = end
+                            let line = lineArray[x].trimRight()
+
+                            let col = line.length - line.trimLeft().length
+
+                            let mapping = {
+                                source: sourceFile,
+                                original: { line: x + 1, column: col },
+                                generated: { line: totalLines, column: col }
+                            }
+
+                            map.addMapping(mapping)
+                        }
                     }
 
-                    genSourceMap.addRanges(ranges)
-
-                    var sourceMap = JSON.parse(genSourceMap.getMap())
+                    var sourceMap = JSON.parse(map.toString())
 
                     sourceMap.sourceRoot = config.sourceRoot
                     sourceMap.sourcesContent = []
 
-                    for (var h in arrayData) {
-                        sourceMap.sourcesContent.push(arrayData[h])
+                    for (let i in arrayData) {
+                        sourceMap.sourcesContent.push(arrayData[i])
                     }
 
                     if (fileExtDest === 'js') {
@@ -977,23 +902,9 @@ build.concat = function build_concat(obj) {
                         obj.data += '\n/*# sourceMappingURL=' + path.basename(obj.dest) + '.map */'
                     }
 
-                    return functions.makeDirPath(obj.dest).then(function() {
+                    let mapObject = functions.objFromSourceMap(obj, sourceMap)
 
-                        return fsWriteFilePromise(obj.dest + '.map', JSON.stringify(sourceMap))
-
-                    }).then(function() {
-
-                        if (config.map.sourceToDestTasks.map.indexOf('gz') >= 0) {
-                            // manually kick off a gz task for the new .map file
-                            return build.gz({
-                                'source': obj.dest + '.map',
-                                'dest': obj.dest + '.map',
-                                'data': '',
-                                'build': true
-                            })
-                        }
-
-                    })
+                    return build.map(mapObject)
                 }
 
             })
@@ -1135,40 +1046,26 @@ build.less = function build_less(obj) {
 
                             obj.data = output.css + '\n/*# sourceMappingURL=' + path.basename(obj.dest) + '.map */'
 
-                            var map = JSON.parse(output.map)
+                            var sourceMap = JSON.parse(output.map)
 
-                            map.file = path.basename(obj.dest)
-                            map.sourceRoot = config.sourceRoot
-                            map.sources[0] = obj.source
+                            sourceMap.file = path.basename(obj.dest)
+                            sourceMap.sourceRoot = config.sourceRoot
+                            sourceMap.sources[0] = obj.source
 
-                            return functions.readFiles(map.sources).then(function(dataArray) {
+                            return functions.readFiles(sourceMap.sources).then(function(dataArray) {
 
-                                map.sourcesContent = dataArray
+                                sourceMap.sourcesContent = dataArray
 
                             }).then(function() {
 
                                 var replaceString = path.dirname(config.path.source) + shared.slash
-                                for (var i in map.sources) {
-                                    map.sources[i] = map.sources[i].replace(replaceString, '').replace('\\', '/')
+                                for (var i in sourceMap.sources) {
+                                    sourceMap.sources[i] = sourceMap.sources[i].replace(replaceString, '').replace('\\', '/')
                                 }
-                                map = JSON.stringify(map)
-                                return functions.makeDirPath(obj.dest)
 
-                            }).then(function() {
+                                let mapObject = functions.objFromSourceMap(obj, sourceMap)
 
-                                return fsWriteFilePromise(obj.dest + '.map', map)
-
-                            }).then(function() {
-
-                                if (config.map.sourceToDestTasks.map.indexOf('gz') >= 0) {
-                                    // manually kick off a gz task for the new .map file
-                                    return build.gz({
-                                        'source': obj.source,
-                                        'dest': obj.dest + '.map',
-                                        'data': '',
-                                        'build': true
-                                    })
-                                }
+                                return build.map(mapObject)
 
                             }).then(function() {
 
@@ -1255,42 +1152,22 @@ build.sass = function build_sass(obj) {
                 if (config.sourceMaps || config.fileType.sass.sourceMaps || config.fileType.scss.sourceMaps) {
                     data.css = data.css.toString().replace(/\n\n/g, '\n')
 
-                    var map = JSON.parse(data.map.toString())
+                    var sourceMap = JSON.parse(data.map.toString())
 
-                    for (var i in map.sources) {
-                        map.sources[i] = map.sources[i].replace(/\.\.\//g, '')
-                    }
+                    sourceMap = functions.normalizeSourceMap(obj, sourceMap)
 
-                    map = JSON.stringify(map)
+                    let mapObject = functions.objFromSourceMap(obj, sourceMap)
 
-                    return functions.makeDirPath(obj.dest).then(function() {
-
-                        return fsWriteFilePromise(obj.dest + '.map', map)
-
-                    }).then(function() {
-
-                       if (config.map.sourceToDestTasks.map.indexOf('gz') >= 0) {
-                            // manually kick off a gz task for the new .map file
-                            return build.gz({
-                                'source': obj.source,
-                                'dest': obj.dest + '.map',
-                                'data': '',
-                                'build': true
-                            }).then(function() {
-                                return data.css
-                            })
-                        } else {
-                            return data.css
-                        }
-
+                    return build.map(mapObject).then(function() {
+                        return data
                     })
                 } else {
-                    return data.css
+                    return data
                 }
 
-            }).then(function(css) {
+            }).then(function(data) {
 
-                obj.data = css
+                obj.data = data.css
 
             })
 
@@ -1349,42 +1226,24 @@ build.stylus = function build_stylus(obj) {
 
                             obj.data = css
 
-                            var map = style.sourcemap
+                            var sourceMap = style.sourcemap
 
                             var sources = []
                             var basename = path.basename(config.path.source)
 
-                            for (var i in map.sources) {
-                                sources.push(map.sources[i].replace(basename, config.path.source))
+                            for (var i in sourceMap.sources) {
+                                sources.push(sourceMap.sources[i].replace(basename, config.path.source))
                             }
 
                             return functions.readFiles(sources).then(function(dataArray) {
 
-                                map.sourcesContent = dataArray
+                                sourceMap.sourcesContent = dataArray
 
-                                map = JSON.stringify(map)
+                                let mapObject = functions.objFromSourceMap(obj, sourceMap)
 
-                                return functions.makeDirPath(obj.dest)
-
-                            }).then(function() {
-
-                                return fsWriteFilePromise(obj.dest + '.map', map)
-
-                            }).then(function() {
-
-                               if (config.map.sourceToDestTasks.map.indexOf('gz') >= 0) {
-                                    // manually kick off a gz task for the new .map file
-                                    return build.gz({
-                                        'source': obj.source,
-                                        'dest': obj.dest + '.map',
-                                        'data': '',
-                                        'build': true
-                                    }).then(function() {
-                                        resolve()
-                                    })
-                                } else {
+                                return build.map(mapObject).then(function() {
                                     resolve()
-                                }
+                                })
 
                             })
                         } else {
@@ -1496,6 +1355,38 @@ build.gz = function build_gz(obj) {
         return obj
     }
 } // gz
+
+build.map = function build_map(obj) {
+    /*
+    Build a map file and if needed, also make a gz version of said map file.
+    @param   {Object}          obj  Reusable object originally created by build.processOneBuild
+    @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
+    */
+    // Troubleshooting a JavaScript source map? Try http://sokra.github.io/source-map-visualization/ and https://sourcemaps.io
+    if (obj.build) {
+        return build.finalize(obj).then(function() { // build.finalize ensures our destination file is written to disk
+
+            functions.logWorker('build.map', obj)
+
+            if (config.map.sourceToDestTasks.map.indexOf('gz') >= 0) {
+                // manually kick off a gz task for the new .map file
+                return build.gz({
+                    'source': obj.dest,
+                    'dest': obj.dest,
+                    'data': '',
+                    'build': true
+                })
+            }
+
+        }).then(function() {
+
+            return obj
+
+        })
+    }
+
+    return obj
+} // map
 
 //---------
 // Exports

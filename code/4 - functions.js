@@ -575,6 +575,107 @@ functions.mathRoundPlaces = function functions_mathRoundPlaces(number, decimals)
     return +(Math.round(number + 'e+' + decimals) + 'e-' + decimals)
 } // mathRoundPlaces
 
+functions.normalizeSourceMap = function functions_normalizeSourceMap(obj, sourceMap) {
+    /*
+    Normalize Source Maps.
+    @param   {Object}  obj        Reusable object most likely created by functions.objFromSourceMap
+    @param   {Object}  sourceMap  Source map to normalize.
+    @return  {Object}             Normalized source map.
+    */
+    function missingSource() {
+        let preferredPath = path.basename(config.path.source)
+
+        let source = obj.source
+        source = source.replace(config.path.source, preferredPath)
+        source = source.replace(config.path.dest, preferredPath)
+        source = source.replace(path.basename(config.path.dest), preferredPath)
+
+        if (source.toLowerCase().endsWith('.map')) {
+            source = functions.removeExt(source)
+        }
+
+        if (shared.slash !== '/') {
+            // we are on windows
+            source = [source.replace(/\\/g, '/')]
+        }
+
+        return [source]
+    }
+
+    // an example of a nice source map
+    /*
+    {
+        "version"       : 3,
+        "sources"       : ["source/js/javascript.js"],
+        "names"         : ["context_menu","e","window","event","eTarget","srcElement","target","nodeName","document","oncontextmenu"],
+        "mappings"      : "AAEA,QAASA,cAAaC,GAClB,IAAKA,EAAG,GAAIA,GAAIC,OAAOC,KACvB,IAAIC,GAAWF,OAAY,MAAID,EAAEI,WAAaJ,EAAEK,MAEhD,OAAwB,OAApBF,EAAQG,UAED,EAFX,OANJC,SAASC,cAAgBT",
+        "file"          : "javascript.js",
+        "sourceRoot"    : "/source-maps",
+        "sourcesContent": ["document.oncontextmenu = context_menu;\n \nfunction context_menu(e) {\n    if (!e) var e = window.event;\n    var eTarget = (window.event) ? e.srcElement : e.target;\n \n    if (eTarget.nodeName == \"IMG\") {\n        //context menu attempt on top of an image element\n        return false;\n    }\n}"]
+    }
+    */
+
+    // sources
+    if (Array.isArray(sourceMap.sources) === false) {
+        sourceMap.sources = missingSource()
+    }
+
+    if (sourceMap.sources.length === 0) {
+        sourceMap.sources = missingSource()
+    }
+
+    if (sourceMap.sources.length === 1 &&
+       (sourceMap.sources[0] === 'unknown' || sourceMap.sources[0] === '?' || sourceMap.sources[0] === '')) {
+        sourceMap.sources = missingSource()
+    }
+
+    for (let i in sourceMap.sources) {
+        sourceMap.sources[i] = sourceMap.sources[i].replace(/\.\.\//g, '')
+    }
+
+    // names
+    if (sourceMap.names === undefined) {
+        sourceMap.names = []
+    }
+
+    // mappings
+    if (sourceMap.mappings === undefined) {
+        sourceMap.mappings = ''
+    }
+
+    // file
+    sourceMap.file = path.basename(obj.dest)
+    if (sourceMap.file.toLowerCase().endsWith('.map')) {
+        sourceMap.file = functions.removeExt(sourceMap.file)
+    }
+
+    // source root
+    sourceMap.sourceRoot = config.sourceRoot
+
+    // sources content
+    if (sourceMap.sourcesContent === undefined) {
+        // fall back to obj.data since more specific sources are not available
+        sourceMap.sourcesContent = [obj.data]
+    }
+
+    return sourceMap
+} // normalizeSourceMap
+
+functions.objFromSourceMap = function functions_objFromSourceMap(obj, sourceMap) {
+    /*
+    Create a reusable object based on a source map.
+    @param   {Object}  obj        Reusable object originally created by build.processOneBuild
+    @param   {Object}  sourceMap  Source map to use in the data field of the returned object.
+    @return  {Object}             A reusable object crafted especially for build.map
+    */
+    return {
+        'source': obj.dest + '.map',
+        'dest': obj.dest + '.map',
+        'data': JSON.stringify(sourceMap),
+        'build': true
+    }
+} // objFromSourceMap
+
 functions.occurrences = function functions_occurrences(string, subString, allowOverlapping) {
     /*
     Find out how many characters or strings are in a string.
