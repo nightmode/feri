@@ -527,7 +527,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                     'source': destFile,
                     'dest': destFile,
                     'data': '',
-                    'build': false
+                    'build': true
                 }
 
                 return Promise.resolve().then(function() {
@@ -543,13 +543,13 @@ describe('File -> ../code/6 - build.js\n', function() {
                 }).then(function(map) {
 
                     var desired = {
-                        "version": 3,
-                        "file": "sample.js",
-                        "sources":["dest/sample.js"],
-                        "names":["mellow"],
-                        "mappings": "AAAA,GAAIA,QAAO",
-                        "sourceRoot": "/source-maps",
-                        "sourcesContent":["var mellow=\"yellow\";\n//# sourceMappingURL=sample.js.map"]
+                        'version': 3,
+                        'file': 'sample.js',
+                        'sources': ['source/sample.js'],
+                        'names': ['mellow'],
+                        'mappings': 'AAAA,GAAIA,QAAS',
+                        'sourceRoot': '/source-maps',
+                        'sourcesContent': ["var mellow = 'yellow'"]
                     }
 
                     map = JSON.parse(map)
@@ -972,8 +972,8 @@ describe('File -> ../code/6 - build.js\n', function() {
                         version       : 3,
                         file          : 'all.js',
                         sources       : ['source/test-2/partials/_01.js', 'source/test-2/partials/_02.js'],
-                        names         : ['one', 'two'],
-                        mappings      : 'AAAA,AAAA,GAAAA,KAAA,EACAC,IAAA;AAAA;ACDA;AACA',
+                        names         : [],
+                        mappings      : 'AAAA,GAAA,KAAA,ECAA,IAAA',
                         sourcesContent: ['var one = 1', 'var two = 2'],
                         sourceRoot    : '/source-maps'
                     }
@@ -1024,7 +1024,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                         version       : 3,
                         sources       : ['source/test-3/partials/_01.css', 'source/test-3/partials/_02.css'],
                         names         : [],
-                        mappings      : 'AAAA,KACI,QAAS,MAEb,KCHI,QAAS',
+                        mappings      : 'AAAA,KACI,QAAA,MCDJ,KACI,QAAA',
                         file          : 'all.css',
                         sourceRoot    : '/source-maps',
                         sourcesContent: ['.one {\n    content: "one"\n}', '.two {\n    content: "two"\n}']
@@ -1077,7 +1077,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                         file          : 'all.js',
                         sources       : ['source/test-4/partials/_01.jsx', 'source/test-4/partials/_02.jsx'],
                         names         : [],
-                        mappings      : 'AAAA;AACA,oCCDA,AACA',
+                        mappings      : 'AAAA;ACAA',
                         sourcesContent: ['<div color="blue" />', '<div color="green" />'],
                         sourceRoot    : '/source-maps'
                     }
@@ -1566,6 +1566,69 @@ describe('File -> ../code/6 - build.js\n', function() {
                     expect(exists).to.be(true)
 
                     return functions.removeFile(destFile)
+
+                })
+
+            }) // it
+        }) // describe
+
+        //-----------
+        // build.map
+        //-----------
+        describe('map', function() {
+            it('should build a map file along with a gz version of said file', function() {
+
+                config.path.source = path.join(testPath, 'map', 'source')
+                config.path.dest   = path.join(testPath, 'map', 'dest')
+
+                config.sourceMaps = true
+
+                config.map.sourceToDestTasks.map.push('gz')
+
+                var destMapFile = path.join(config.path.dest, 'treasure.js.map')
+
+                var obj = {
+                    'source': path.join(config.path.source, 'treasure.js'),
+                    'dest': '',
+                    'data': '',
+                    'build': false
+                }
+
+                return Promise.resolve().then(function() {
+
+                    return functions.removeFile(config.path.dest)
+
+                }).then(function() {
+
+                    return build.js(obj)
+
+                }).then(function() {
+
+                    return functions.readFile(destMapFile)
+
+                }).then(function(data) {
+
+                    let desired = {
+                        'version': 3,
+                        'sources': ['source/treasure.js'],
+                        'names': ['treasure','music'],
+                        'mappings': 'AAAA,GAAIA,UAAW,OACXC,MAAQD,SAAW',
+                        'file': 'treasure.js',
+                        'sourceRoot': '/source-maps',
+                        'sourcesContent': ['var treasure = \'gold\'\nvar music = treasure + \' plated records\'']
+                    }
+
+                    data = JSON.parse(data)
+
+                    expect(data).to.eql(desired)
+
+                    return functions.fileExists(destMapFile + '.gz')
+
+                }).then(function(exists) {
+
+                    expect(exists).to.be(true)
+
+                    return functions.removeFile(config.path.dest)
 
                 })
 
