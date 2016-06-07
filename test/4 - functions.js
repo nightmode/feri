@@ -674,7 +674,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 testMap = functions.cloneObj(sourceMap)
                 delete testMap.sources
                 testMap = functions.normalizeSourceMap(obj, testMap)
-                // console.log(testMap)
                 expect(testMap.sources).to.eql(desired)
 
                 // empty array
