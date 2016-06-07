@@ -596,7 +596,7 @@ functions.normalizeSourceMap = function functions_normalizeSourceMap(obj, source
 
         if (shared.slash !== '/') {
             // we are on windows
-            source = [source.replace(/\\/g, '/')]
+            source = source.replace(/\\/g, '/')
         }
 
         return [source]
