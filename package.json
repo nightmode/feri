@@ -36,7 +36,7 @@
     "node-sass": "3.7.0",
     "optipng-bin": "3.1.2",
     "pako": "1.0.1",
-    "pug": "2.0.0-alpha7",
+    "pug": "2.0.0-beta3",
     "rimraf": "2.5.2",
     "source-map": "0.5.6",
     "stylus": "0.54.5",
