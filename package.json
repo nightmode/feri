@@ -25,7 +25,7 @@
     "expect.js": "0.3.1",
     "gifsicle": "3.0.3",
     "glob": "7.0.5",
-    "html-minifier": "2.1.6",
+    "html-minifier": "3.0.1",
     "jade": "1.11.0",
     "jpegtran-bin": "3.0.6",
     "less": "2.7.1",
@@ -37,11 +37,11 @@
     "optipng-bin": "3.1.2",
     "pako": "1.0.1",
     "pug": "2.0.0-beta3",
-    "rimraf": "2.5.2",
+    "rimraf": "2.5.3",
     "source-map": "0.5.6",
     "stylus": "0.54.5",
     "tiny-lr-fork": "0.0.5",
-    "uglify-js": "2.6.4",
+    "uglify-js": "2.7.0",
     "unique-number": "2.0.1"
   },
   "engines": {
