@@ -72,19 +72,19 @@ You could create a file called `all.js.concat` that includes your prized collect
 
 ### Smarter Includes
 
-Feri exposes a variable called `root` into your EJS files. This is super useful for includes because instead of having dot dot slash nightmares like...
+Feri automatically sets an option called `root` for EJS files. This is super useful for avoiding dot dot slash nightmares like...
 
 ```js
 <% include ('../../../../partials/header.ejs') %>
 ```
 
-You can instead use `root` to specify the same path as your source folder and then write beautiful includes like...
+In favor of nice absolute paths like...
 
 ```js
-<% include (root + '/partials/header.ejs') %>
+<% include ('/partials/header.ejs') %>
 ```
 
-Now the include will work from any depth. Even better, the parent file containing the code can be moved without having to update the include path.
+Absolute paths like the example above will work from any depth within your source files directory. No need to update it when the parent file containing the include moves either. Less worry and less maintenance make absolute paths an absolute delight.
 
 ## Gzip (GZ)
 

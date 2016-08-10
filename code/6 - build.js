@@ -966,7 +966,7 @@ build.ejs = function build_ejs(obj) {
 
             var options = {
                 'filename': obj.source, // needed by EJS to figure out includes
-                'root': config.path.source // optinally used by EJS to figure out include file paths like <% include root + '/partials/_header.ejs' %>
+                'root': config.path.source // used by EJS to figure out an absolute path from an include like <% include '/partials/_header.ejs' %>
             }
 
             obj.data = ejs.render(obj.data, options)

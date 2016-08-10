@@ -1421,9 +1421,6 @@ functions.includePathsEjs = function functions_includePathsEjs(data, filePath, i
         var match
         var includes = []
 
-        // root can be used by the EJS engine to figure out include paths so make it available for evaling in this function too
-        var root = config.path.source
-
         while (match = re.exec(data)) {
             match = match[1].trim()
 
@@ -1434,8 +1431,13 @@ functions.includePathsEjs = function functions_includePathsEjs(data, filePath, i
             }
 
             if (match.indexOf(config.path.source) !== 0) {
-                // path must be relative
-                match = path.join(path.dirname(filePath), match)
+                if (match.charAt(0) === '/') {
+                    // include path is absolute so prepend the source directory path
+                    match = config.path.source + match
+                } else {
+                    // path must be relative
+                    match = path.join(path.dirname(filePath), match)
+                }
             }
 
             // add ejs extension if needed

@@ -15,6 +15,7 @@ Incrementally clean, build, and watch with little to no configuration required.
   * [Preconfigured](#preconfigured)
 * [Requirements](#requirements)
 * [Install](#install)
+* [Upgrading](#upgrading)
 * [Command Line](#command-line)
 * [Custom Config File](#custom-config-file)
 * [Extension Specific Information](#extension-specific-information)
@@ -98,6 +99,12 @@ Install Feri locally in your project's [node_modules](https://nodejs.org/api/mod
 ```
 npm install feri
 ```
+
+## Upgrading
+
+### Upgrading from Feri 1.x
+
+If you are using EJS includes like `include(root + '/absolute/path')`, you will need to update all your files to remove the root variable. In the case of the previous example, the new include would look like `include('/absolute/path')`. This change was necessary since EJS added native support for project root folders.
 
 ## Command Line
 
