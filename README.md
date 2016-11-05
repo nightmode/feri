@@ -152,18 +152,12 @@ Learn how to leverage Feri's favorite functions in the full [API documentation](
 
 ## Contribute
 
-Feri and her silly creator [Daniel](https://forestmist.org/about/) would like nothing more than to make the world a better place. ^_^
-
-But wait you ask... how can I help in this endeavor!? In nearly any way you can think of! Not in the mood for heavy thinking? Set your brain phasers to stun and use one of these existing ideas instead!
+Looking to contribute? Here are some ideas on how you can help Feri.
 
  * Are your friends grunting and gulping their way through a broccoli brunch? Tell them about the best non-digestive themed build tool available. Feri!
  * [Translate Feri](docs/multilingual.md#translation-guide) into other languages. Bonus points for Klingon!
  * [Report issues on GitHub](https://github.com/ForestMist/feri/issues) or forget that and post Feri fan art to [DeviantArt](https://deviantart.com) instead!
- * Have a podcast or live event? Invite Daniel to talk about Feri and get free Feri stickers!
- * Turbo-charge Feri's human with [hamburgers and root beer](https://cash.me/$ForestMist)!
  * Pull reqrests to improv spellng in documantations!
-
-Other wacky ideas, job offers, and/or lifetime supplies of [Burgerville](http://www.burgerville.com/) welcome. ^_^
 
 ## License
 
