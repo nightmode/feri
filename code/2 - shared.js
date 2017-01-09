@@ -34,6 +34,7 @@ var shared = {
         'missingMapBuild'  : []  // Keep track of any file types that are missing a config.map.sourceToDestTasks entry during a build pass.
     },
     cli: false, // Running as a command line tool if true. Called as a require if false.
+    global: true, // Installed globally if true. Locally if false.
     help: false, // will be set to true if we are displaying help text on the command line
     language: { // language.base and language.loaded are a duplicate of each other to speed up our default english language usage
         base: { // The default language object that is a fallback in case a value in shared.language.loaded is not available.

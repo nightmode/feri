@@ -24,6 +24,23 @@ try {
     // do nothing
 }
 
+//----------
+// Includes
+//----------
+var chalk = require('chalk') // ~ 20 ms
+var fs    = require('fs')    // ~  1 ms
+var path  = require('path')  // ~  1 ms
+
+//-------------------------
+// Global or Local Install
+//-------------------------
+try {
+    var pathToModules = path.join(shared.path.self, 'node_modules')
+    shared.global = typeof(fs.statSync(pathToModules)) === 'object'
+} catch(e) {
+    shared.global = false
+}
+
 //-----------------------
 // Includes: Self Part 2
 //-----------------------
@@ -32,12 +49,6 @@ var functions = require('./4 - functions.js')
 var clean     = require('./5 - clean.js')
 var build     = require('./6 - build.js')
 var watch     = require('./7 - watch.js')
-
-//----------
-// Includes
-//----------
-var chalk = require('chalk') // ~ 20 ms
-var path  = require('path')  // ~  1 ms
 
 //-----------
 // Variables

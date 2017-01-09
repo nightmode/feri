@@ -25,14 +25,20 @@ var fsWriteFilePromise = promisify(fs.writeFile)                  // ~  1 ms
 //-----------------------------
 // Includes: Paths to Binaries
 //-----------------------------
-// ~ 0 ms instead of ~ 297 ms with require('gifsicle').path
-var gif = path.join(shared.path.self, 'node_modules', 'gifsicle', 'vendor', 'gifsicle')
+var gif = '',
+    jpg = '',
+    png = ''
 
-// ~ 0 ms instead of ~ 297 ms with require('jpegtran-bin').path
-var jpg = path.join(shared.path.self, 'node_modules', 'jpegtran-bin', 'vendor', 'jpegtran')
-
-// ~ 0 ms instead of ~ 287 ms with require('optipng-bin').path
-var png = path.join(shared.path.self, 'node_modules', 'optipng-bin', 'vendor', 'optipng')
+if (shared.global) {
+    // each of these take ~ 0 ms instead of ~ 297 ms when using require('name').path
+    gif = path.join(shared.path.self, 'node_modules', 'gifsicle', 'vendor', 'gifsicle')
+    jpg = path.join(shared.path.self, 'node_modules', 'jpegtran-bin', 'vendor', 'jpegtran')
+    png = path.join(shared.path.self, 'node_modules', 'optipng-bin', 'vendor', 'optipng')
+} else {
+    gif = path.join(shared.path.self, '..', 'gifsicle', 'vendor', 'gifsicle')
+    jpg = path.join(shared.path.self, '..', 'jpegtran-bin', 'vendor', 'jpegtran')
+    png = path.join(shared.path.self, '..', 'optipng-bin', 'vendor', 'optipng')
+}
 
 //---------------------
 // Includes: Lazy Load
