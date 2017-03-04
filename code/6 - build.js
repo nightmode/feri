@@ -975,7 +975,7 @@ build.ejs = function build_ejs(obj) {
                 'root': config.path.source // used by EJS to figure out an absolute path from an include like <% include '/partials/_header.ejs' %>
             }
 
-            obj.data = ejs.render(obj.data, options)
+            obj.data = ejs.render(obj.data, null, options)
         } else {
             // no further chained promises should be called
             throw 'done'
