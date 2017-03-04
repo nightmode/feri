@@ -1307,7 +1307,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                         "file": "style.css",
                         "sources": ["source/style.scss","source/_import.scss"],
                         "sourcesContent": ["@import 'import';", "p {\n    outline: none;\n}"],
-                        "mappings":"ACAA,AAAA,CAAC,AAAC,CACE,OAAO,CAAE,IAAK,CACjB",
+                        "mappings":"ACAA,AAAA,CAAC,AAAC,CACE,OAAO,CAAE,IAAI,CAChB",
                         "names":[]
                     }
 
@@ -1612,7 +1612,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                         'version': 3,
                         'sources': ['source/treasure.js'],
                         'names': ['treasure','music'],
-                        'mappings': 'AAAA,GAAIA,UAAW,OACXC,MAAQD,SAAW',
+                        'mappings': 'AAAA,GAAIA,UAAW,OACXC,MAAQD',
                         'file': 'treasure.js',
                         'sourceRoot': '/source-maps',
                         'sourcesContent': ['var treasure = \'gold\'\nvar music = treasure + \' plated records\'']
