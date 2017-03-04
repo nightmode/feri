@@ -6,7 +6,6 @@ The easy to use build tool for web files.
 
 Incrementally clean, build, and watch with little to no configuration required.
 
-* [Free Stickers!](#freestickers)
 * [Features](#features)
 * [How It Works](#how-it-works)
   * [One Source, One Destination](#one-source-one-destination)
@@ -22,12 +21,6 @@ Incrementally clean, build, and watch with little to no configuration required.
 * [Edge Cases](#edge-cases)
 * [API Documentation](#api-documentation)
 * [Contribute](#contribute)
-
-## Free Stickers!
-
-Do you live in the United States? Get your very own micro pile of Feri stickers for free! Simply contact [Daniel](https://forestmist.org/about) with your address and then stalk your mailbox until the stickers arrive!
-
-Live somewhere else in the world? Contribute to Feri in any way and then contact [Daniel](https://forestmist.org/about) with your address to get your own micro pile of Feri stickers as a thank you. Plus, you'll help Feri travel the world and bring smiles to sticker lovers everywhere. ^\_^
 
 ## Features
 
@@ -154,9 +147,9 @@ Learn how to leverage Feri's favorite functions in the full [API documentation](
 
 Looking to contribute? Here are some ideas on how you can help Feri.
 
- * Are your friends grunting and gulping their way through a broccoli brunch? Tell them about the best non-digestive themed build tool available. Feri!
- * [Translate Feri](docs/multilingual.md#translation-guide) into other languages. Bonus points for Klingon!
- * [Report issues on GitHub](https://github.com/ForestMist/feri/issues) or forget that and post Feri fan art to [DeviantArt](https://deviantart.com) instead!
+ * Are your friends grunting and gulping their way through a broccoli brunch? Tell them about the best non-digestive themed build tool available, Feri.
+ * [Translate Feri](docs/multilingual.md#translation-guide) into other languages. Bonus points for Klingon.
+ * [Report issues on GitHub](https://github.com/ForestMist/feri/issues) or post Feri fan art to [DeviantArt](https://deviantart.com) instead!
  * Pull reqrests to improv spellng in documantations!
 
 ## License
