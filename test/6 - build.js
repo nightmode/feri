@@ -1612,7 +1612,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                         'version': 3,
                         'sources': ['source/treasure.js'],
                         'names': ['treasure','music'],
-                        'mappings': 'AAAA,GAAIA,UAAW,OACXC,MAAQD',
+                        'mappings': 'AAAA,GAAIA,UAAW,OACXC,MAAQD,SAAW',
                         'file': 'treasure.js',
                         'sourceRoot': '/source-maps',
                         'sourcesContent': ['var treasure = \'gold\'\nvar music = treasure + \' plated records\'']
