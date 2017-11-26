@@ -4,7 +4,6 @@
 // Includes
 //----------
 var expect = require('expect.js')
-var fs     = require('fs')
 var path   = require('path')
 
 var shared    = require('../code/2 - shared.js')
@@ -33,11 +32,11 @@ var reWriter = function reWriter(goCrazy, filePath, data) {
     */
     if (goCrazy) {
         data = data || 'changed data'
-        fs.writeFileSync(filePath, data)
-
-        reWriteTimer = setTimeout(function() {
-            reWriter(goCrazy, filePath, data)
-        }, 500)
+        functions.writeFile(filePath, data).then(function() {
+            reWriteTimer = setTimeout(function() {
+                reWriter(goCrazy, filePath, data)
+            }, 500)
+        })
     } else {
         clearTimeout(reWriteTimer)
     }
