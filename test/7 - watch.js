@@ -14,6 +14,13 @@ var build     = require('../code/6 - build.js')
 var watch     = require('../code/7 - watch.js')
 
 //-----------
+// Variables
+//-----------
+var configBackup = functions.cloneObj(config)
+var testPath = path.join(shared.path.self, 'test', 'files', 'watch')
+var reWriteTimer = setTimeout(function() {}, 0)
+
+//-----------
 // Functions
 //-----------
 var reWriter = function reWriter(goCrazy, filePath, data) {
@@ -34,13 +41,6 @@ var reWriter = function reWriter(goCrazy, filePath, data) {
         clearTimeout(reWriteTimer)
     }
 }
-
-//-----------
-// Variables
-//-----------
-var configBackup = functions.cloneObj(config)
-var testPath = path.join(shared.path.self, 'test', 'files', 'watch')
-var reWriteTimer = setTimeout(function() {}, 0)
 
 //------------------------
 // Notes for Test Writers
@@ -66,13 +66,14 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
     beforeEach(function() {
         // runs before each test in this describe block
+        config = functions.restoreObj(config, configBackup)
+
         config.option.concurLimit = 1
         config.option.watch = true
     })
 
     afterEach(function() {
         // runs after each test in this describe block
-        config = functions.restoreObj(config, configBackup)
 
         // remove any event listeners
         watch.emitterDest.removeAllListeners()
