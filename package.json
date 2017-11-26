@@ -1,6 +1,6 @@
 {
   "name": "feri",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "The easy to use build tool for web files.",
   "license": "MIT",
   "author": "Daniel Gagan",
@@ -49,11 +49,11 @@
   },
   "scripts": {
     "test": "npm run test-shared -loglevel silent && npm run test-functions -loglevel silent && npm run test-clean -loglevel silent && npm run test-build -loglevel silent && npm run test-watch -loglevel silent",
-    "test-shared": "mocha \"test/2 - shared.js\"",
-    "test-functions": "mocha \"test/4 - functions.js\"",
-    "test-clean": "mocha \"test/5 - clean.js\"",
-    "test-build": "mocha \"test/6 - build.js\"",
-    "test-watch": "mocha \"test/7 - watch.js\""
+    "test-shared": "mocha \"mocha/2 - shared.js\" --opts \"mocha/mocha.opts\"",
+    "test-functions": "mocha \"mocha/4 - functions.js\" --opts \"mocha/mocha.opts\"",
+    "test-clean": "mocha \"mocha/5 - clean.js\" --opts \"mocha/mocha.opts\"",
+    "test-build": "mocha \"mocha/6 - build.js\" --opts \"mocha/mocha.opts\"",
+    "test-watch": "mocha \"mocha/7 - watch.js\" --opts \"mocha/mocha.opts\""
   },
   "keywords": [
     "clean",
