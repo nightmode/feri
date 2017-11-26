@@ -16,6 +16,7 @@ Incrementally clean, build, and watch with little to no configuration required.
 * [Install](#install)
 * [Upgrading](#upgrading)
 * [Command Line](#command-line)
+* [Quickstart](#quickstart)
 * [Custom Config File](#custom-config-file)
 * [Extension Specific Information](#extension-specific-information)
 * [Edge Cases](#edge-cases)
@@ -108,6 +109,16 @@ feri --help
 ```
 
 Expanded information is available in the [command line](docs/command-line.md) documentation.
+
+## Quickstart
+
+Assuming Feri is installed globally, the quickest way to start a new project is to use the init command.
+
+```
+feri --init
+```
+
+This will create your `source` and `dest` folders along with a default `feri-config.js` file. To make sure everything works, place some files in your source folder. Now run `feri` from the directory where you can see the source and dest folders. Check the dest folder and you should see your built / optimized files. Wash, rinse, repeat.
 
 ## Custom Config File
 
