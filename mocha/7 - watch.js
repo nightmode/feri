@@ -18,7 +18,7 @@ var watch     = require('../code/7 - watch.js')
 // Variables
 //-----------
 var configBackup = functions.cloneObj(config)
-var testPath = path.join(shared.path.self, 'test', 'files', 'watch')
+var testPath = path.join(shared.path.self, 'mocha', 'files', 'watch')
 var reWriteTimer = setTimeout(function() {}, 0)
 
 //-----------

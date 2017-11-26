@@ -16,7 +16,7 @@ var build     = require('../code/6 - build.js')
 //-----------
 var sharedBackup = functions.cloneObj(shared)
 var configBackup = functions.cloneObj(config)
-var testPath = path.join(shared.path.self, 'test', 'files', 'build')
+var testPath = path.join(shared.path.self, 'mocha', 'files', 'build')
 
 //-------------
 // Mocha Tests
@@ -1381,7 +1381,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     var desired = {
                         "version": 3,
-                        "sources": ["test/files/build/stylus/source/_import.styl"],
+                        "sources": ["mocha/files/build/stylus/source/_import.styl"],
                         "names": [],
                         "mappings": "AAAA,KACI,WAAW",
                         "file": "style.css",

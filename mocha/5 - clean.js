@@ -15,7 +15,7 @@ var clean     = require('../code/5 - clean.js')
 // Variables
 //-----------
 var configBackup = functions.cloneObj(config)
-var testPath = path.join(shared.path.self, 'test', 'files', 'clean')
+var testPath = path.join(shared.path.self, 'mocha', 'files', 'clean')
 
 //-------------
 // Mocha Tests

@@ -15,7 +15,7 @@ var functions = require('../code/4 - functions.js')
 //-----------
 var sharedBackup = functions.cloneObj(shared)
 var configBackup = functions.cloneObj(config)
-var testPath = path.join(shared.path.self, 'test', 'files', 'functions')
+var testPath = path.join(shared.path.self, 'mocha', 'files', 'functions')
 
 //-------------
 // Mocha Tests
@@ -388,7 +388,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('findFiles', function() {
             it('should find array of files', function() {
 
-                return functions.findFiles('test/files/functions/findFiles/*.js').then(function(files) {
+                return functions.findFiles('mocha/files/functions/findFiles/*.js').then(function(files) {
 
                     expect(files).to.be.an('array')
                     expect(files).to.not.be.empty()
