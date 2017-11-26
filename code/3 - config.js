@@ -226,7 +226,15 @@ config.thirdParty = {
         'port': 35729
     },
     markdownIt: { // used by build.markdown
-        'linkify': true
+        'breaks': false,
+        'highlight': null,
+        'html': false,
+        'langPrefix': 'language-',
+        'linkify': true,
+        'maxNesting': 100,
+        'quotes': '“”‘’',
+        'typographer': false,
+        'xhtmlOut': false
     }
 }
 
