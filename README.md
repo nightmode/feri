@@ -32,7 +32,6 @@ Incrementally clean, build, and watch with little to no configuration required.
 * Compile and Minify
   * CoffeeScript
   * Embedded JavaScript (EJS)
-  * Jade
   * Less
   * Markdown
   * Pug
