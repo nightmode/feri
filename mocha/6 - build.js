@@ -498,7 +498,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                         "file": "sample.js",
                         "sources": ["source/sample.js"],
                         "names": ["mellow"],
-                        "mappings": "AAAA,GAAIA,QAAS",
+                        "mappings": "AAAA,IAAIA,OAAS",
                         "sourceRoot": "/source-maps",
                         "sourcesContent": ["var mellow = 'yellow'"]
                     }
@@ -547,7 +547,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                         'file': 'sample.js',
                         'sources': ['source/sample.js'],
                         'names': ['mellow'],
-                        'mappings': 'AAAA,GAAIA,QAAS',
+                        'mappings': 'AAAA,IAAIA,OAAS',
                         'sourceRoot': '/source-maps',
                         'sourcesContent': ["var mellow = 'yellow'"]
                     }
@@ -973,7 +973,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                         file          : 'all.js',
                         sources       : ['source/test-2/partials/_01.js', 'source/test-2/partials/_02.js'],
                         names         : [],
-                        mappings      : 'AAAA,GAAA,KAAA,ECAA,IAAA',
+                        mappings      : 'AAAA,IAAA,IAAA,ECAA,IAAA',
                         sourcesContent: ['var one = 1', 'var two = 2'],
                         sourceRoot    : '/source-maps'
                     }
@@ -1612,7 +1612,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                         'version': 3,
                         'sources': ['source/treasure.js'],
                         'names': ['treasure','music'],
-                        'mappings': 'AAAA,GAAIA,UAAW,OACXC,MAAQD,SAAW',
+                        'mappings': 'AAAA,IAAIA,SAAW,OACXC,MAAQD,SAAW',
                         'file': 'treasure.js',
                         'sourceRoot': '/source-maps',
                         'sourcesContent': ['var treasure = \'gold\'\nvar music = treasure + \' plated records\'']

@@ -483,10 +483,10 @@ build.js = function build_js(obj) {
             throw 'done'
         }
 
-    }).then(function(existingSourceMap) {
+    }).then(function() {
 
         var options = {
-            'fromString': true
+            'keep_fnames': true
             /*
             // the following code is great for troubleshooting source maps
             output: {
@@ -501,7 +501,9 @@ build.js = function build_js(obj) {
         var outputFileName = path.basename(obj.dest)
 
         if (config.sourceMaps || config.fileType.js.sourceMaps) {
-            options.outSourceMap = outputFileName + '.map'
+            options.sourceMap = {
+                'url': outputFileName + '.map'
+            }
 
             if (previousSourceMap !== false) {
                 previousSourceMap.sourceRoot = '' // remove pre-existing sourceRoot since we do not want the upcoming transform function using it in path names
@@ -510,10 +512,10 @@ build.js = function build_js(obj) {
 
         return js.minify(obj.data, options)
 
-    }).then(function(js) {
+    }).then(function(jsMin) {
 
         if (config.sourceMaps || config.fileType.js.sourceMaps) {
-            let sourceMap = JSON.parse(js.map)
+            let sourceMap = JSON.parse(jsMin.map)
 
             if (previousSourceMap !== false) {
                 // associate each source path with its corresponding source content value for later
@@ -541,6 +543,10 @@ build.js = function build_js(obj) {
                 }
             } else {
                 // new source map
+                sourceMap.sources = [
+                    path.basename(config.path.source) + '/' + path.basename(obj.source)
+                ]
+
                 for (let i in sourceMap.sourcesContent) {
                     sourceMap.sourcesContent[i] = sourceMap.sourcesContent[i].replace('//# sourceMappingURL=' + path.basename(obj.dest) + '.map', '')
                 }
@@ -551,15 +557,15 @@ build.js = function build_js(obj) {
             var mapObject = functions.objFromSourceMap(obj, sourceMap)
 
             return build.map(mapObject).then(function() {
-                return js
+                return jsMin
             })
         }
 
-        return js
+        return jsMin
 
-    }).then(function(js) {
+    }).then(function(jsMin) {
 
-        obj.data = js.code
+        obj.data = jsMin.code
 
         return obj
 
