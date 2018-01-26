@@ -5,7 +5,6 @@
 //----------
 var os           = require('os')            // ~ 1 ms
 var path         = require('path')          // ~ 1 ms
-var uniqueNumber = require("unique-number") // ~ 2 ms
 
 //-----------
 // Functions
@@ -172,7 +171,7 @@ var shared = {
         }
     },
     suppressWatchEvents: false, // Used to temporarily suppress watch events for command line users until the title "Watching" is displayed. Can also be used to temporarily suppress watch events without having to stop the watch process.
-    uniqueNumber: new uniqueNumber() // An instance of unique-number that is used to ensure unique property names in functions like functions.includePathsEjs.
+    uniqueNumber: 0 // iterate with (++uniqueNumber) or reset to 0
 }
 
 //------------------

@@ -49,18 +49,6 @@ describe('File -> ../code/2 - shared.js\n', function() {
             })
 
         }) // it
-
-        it('uniqueNumber.generate() should return incrementing numbers', function() {
-
-            var test1 = shared.uniqueNumber.generate()
-            var test2 = shared.uniqueNumber.generate()
-
-            expect(test1).to.be.a('number')
-            expect(test2).to.be.a('number')
-
-            expect(test1).not.to.be(test2)
-
-        }) // it
     }) // describe
 
 }) // describe

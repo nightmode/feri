@@ -41,8 +41,7 @@
     "source-map": "0.7.0",
     "stylus": "0.54.5",
     "tiny-lr-fork": "0.0.5",
-    "uglify-js": "3.3.8",
-    "unique-number": "2.0.1"
+    "uglify-js": "3.3.8"
   },
   "engines": {
     "node": ">= 8"

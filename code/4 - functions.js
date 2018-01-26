@@ -15,7 +15,6 @@ var glob         = require('glob')           // ~ 13 ms
 var mkdirp       = require('mkdirp')         // ~  1 ms
 var path         = require('path')           // ~  1 ms
 var promisify    = require("es6-promisify")  // ~  4 ms
-var uniqueNumber = require("unique-number")  // ~  2 ms
 
 //---------------------
 // Includes: Promisify
@@ -66,7 +65,7 @@ functions.cacheReset = function functions_cacheReset() {
         shared.cache[i] = shared.cache[i].constructor()
     }
 
-    shared.uniqueNumber = new uniqueNumber()
+    shared.uniqueNumber = 0
 } // cacheReset
 
 functions.changeExt = function functions_changeExt(filePath, newExtension) {
@@ -114,11 +113,6 @@ functions.cloneObj = function functions_cloneObj(object) {
 
     if (object instanceof RegExp) {
         return new RegExp(object)
-    }
-
-    // unique procedure to support cloning shared.uniqueNumber
-    if (object instanceof uniqueNumber) {
-        return new uniqueNumber()
     }
 
     var objectConstructor = object.constructor()
@@ -1259,7 +1253,7 @@ functions.includePathsConcat = function functions_includePathsConcat(data, fileP
 
     if (typeof includePathsCacheName === 'undefined') {
         cleanup = true
-        includePathsCacheName = 'concat' + shared.uniqueNumber.generate()
+        includePathsCacheName = 'concat' + (++shared.uniqueNumber)
         shared.cache.includeFilesSeen[includePathsCacheName] = [filePath]
     }
 
@@ -1400,7 +1394,7 @@ functions.includePathsEjs = function functions_includePathsEjs(data, filePath, i
 
     if (typeof includePathsCacheName === 'undefined') {
         cleanup = true
-        includePathsCacheName = 'ejs' + shared.uniqueNumber.generate()
+        includePathsCacheName = 'ejs' + (++shared.uniqueNumber)
         shared.cache.includeFilesSeen[includePathsCacheName] = [filePath]
     }
 
@@ -1511,7 +1505,7 @@ functions.includePathsJade = function functions_includePathsJade(data, filePath,
 
     if (typeof includePathsCacheName === 'undefined') {
         cleanup = true
-        includePathsCacheName = 'jade' + shared.uniqueNumber.generate()
+        includePathsCacheName = 'jade' + (++shared.uniqueNumber)
         shared.cache.includeFilesSeen[includePathsCacheName] = [filePath]
     }
 
@@ -1612,7 +1606,7 @@ functions.includePathsLess = function functions_includePathsLess(data, filePath,
 
     if (typeof includePathsCacheName === 'undefined') {
         cleanup = true
-        includePathsCacheName = 'less' + shared.uniqueNumber.generate()
+        includePathsCacheName = 'less' + (++shared.uniqueNumber)
         shared.cache.includeFilesSeen[includePathsCacheName] = [filePath]
     }
 
@@ -1711,7 +1705,7 @@ functions.includePathsPug = function functions_includePathsPug(data, filePath, i
 
     if (typeof includePathsCacheName === 'undefined') {
         cleanup = true
-        includePathsCacheName = 'pug' + shared.uniqueNumber.generate()
+        includePathsCacheName = 'pug' + (++shared.uniqueNumber)
         shared.cache.includeFilesSeen[includePathsCacheName] = [filePath]
     }
 
@@ -1813,7 +1807,7 @@ functions.includePathsSass = function functions_includePathsSass(data, filePath,
 
     if (typeof includePathsCacheName === 'undefined') {
         cleanup = true
-        includePathsCacheName = 'sass' + shared.uniqueNumber.generate()
+        includePathsCacheName = 'sass' + (++shared.uniqueNumber)
         shared.cache.includeFilesSeen[includePathsCacheName] = [filePath]
     }
 
@@ -1951,7 +1945,7 @@ functions.includePathsStylus = function functions_includePathsStylus(data, fileP
 
     if (typeof includePathsCacheName === 'undefined') {
         cleanup = true
-        includePathsCacheName = 'styl' + shared.uniqueNumber.generate()
+        includePathsCacheName = 'styl' + (++shared.uniqueNumber)
         shared.cache.includeFilesSeen[includePathsCacheName] = [filePath]
     }
 
