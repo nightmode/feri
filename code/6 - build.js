@@ -45,7 +45,7 @@ if (shared.global) {
 //---------------------
 var babel              // require('babel-core')                     // ~ 401 ms
 var css                // require('clean-css')                      // ~  83 ms
-var coffeeScript       // require('coffee-script')                  // ~  36 ms
+var coffeeScript       // require('coffeescript')                   // ~  36 ms
 var ejs                // require('ejs')                            // ~   4 ms
 var html               // require('html-minifier').minify           // ~   4 ms
 var jade               // require('jade-legacy')                    // ~ 112 ms
@@ -292,7 +292,7 @@ build.processOneBuild = function build_processOneBuild(filePath) {
 
 build.coffeeScript = function build_coffeeScript(obj) {
     /*
-    CoffeeScript using https://www.npmjs.com/package/coffee-script.
+    CoffeeScript using https://www.npmjs.com/package/coffeescript.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -302,7 +302,7 @@ build.coffeeScript = function build_coffeeScript(obj) {
 
         if (obj.build) {
             if (typeof coffeeScript !== 'object') {
-                coffeeScript = require('coffee-script')
+                coffeeScript = require('coffeescript')
             }
 
             if (config.sourceMaps || config.fileType.coffee.sourceMaps) {

@@ -94,7 +94,7 @@ The following functions do their primary task in memory.
 
 Type: `function`
 
-CoffeeScript using [coffee-script](https://www.npmjs.com/package/coffee-script).
+CoffeeScript using [coffeescript](https://www.npmjs.com/package/coffeescript).
 
 ```
 @param   {Object}   obj  Reusable object originally created by build.processOneBuild
