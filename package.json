@@ -1,6 +1,6 @@
 {
   "name": "feri",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "The easy to use build tool for web files.",
   "license": "MIT",
   "author": "Daniel Gagan",
@@ -16,7 +16,7 @@
     "babel-core": "6.26.0",
     "babel-preset-react": "6.24.1",
     "chalk": "2.3.2",
-    "chokidar": "2.0.2",
+    "chokidar": "1.7.0",
     "clean-css": "4.1.11",
     "coffeescript": "1.12.7",
     "compare-versions": "3.1.0",
