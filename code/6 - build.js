@@ -10,11 +10,11 @@ var functions = require('./4 - functions.js')
 //----------
 // Includes
 //----------
-var chalk     = require('chalk')          // ~ 20 ms
-var fs        = require('fs')             // ~  1 ms
-var glob      = require('glob')           // ~ 13 ms
-var path      = require('path')           // ~  1 ms
-var promisify = require("es6-promisify")  // ~  4 ms
+var chalk     = require('chalk')                   // ~ 20 ms
+var fs        = require('fs')                      // ~  1 ms
+var glob      = require('glob')                    // ~ 13 ms
+var path      = require('path')                    // ~  1 ms
+var promisify = require('es6-promisify').promisify // ~  4 ms
 
 //---------------------
 // Includes: Promisify
