@@ -21,9 +21,9 @@ var querystring = require('querystring') // ~  2 ms
 //---------------------
 // Includes: Lazy Load
 //---------------------
-var chokidar   // require('chokidar')     // ~ 75 ms
-var http       // require('http')         // ~ 17 ms
-var tinyLrFork // require('tiny-lr-fork') // ~ 52 ms
+var chokidar // require('chokidar') // ~ 75 ms
+var http     // require('http')     // ~ 17 ms
+var tinyLr   // require('tiny-lr')  // ~  ? ms
 
 //-----------
 // Variables
@@ -34,7 +34,7 @@ var chokidarDest     = '' // will become a chokidar object when watching the des
 var chokidarSourceFiles = '' // string or array of source files being watched
 var chokidarDestFiles   = '' // string or array of destination files being watched
 
-var livereloadServer = '' // will become a tinyLrFork object when watching the destination folder
+var livereloadServer = '' // will become a tinyLr object when watching the destination folder
 
 var recentFiles = {} // keep track of files that have changed too recently
 
@@ -174,14 +174,14 @@ watch.processWatch = function watch_processWatch(sourceFiles, destFiles) {
                     if (!config.option.livereload) {
                         resolve()
                     } else {
-                        if (typeof tinyLrFork !== 'object') {
-                            tinyLrFork = require('tiny-lr-fork')
+                        if (typeof tinyLr !== 'object') {
+                            tinyLr = require('tiny-lr')
                         }
 
                         // stop the livereload server only
                         watch.stop(false, false, true)
 
-                        livereloadServer = new tinyLrFork.Server()
+                        livereloadServer = new tinyLr.Server()
                         livereloadServer.listen(config.thirdParty.livereload.port, function(err) {
                             if (err) {
                                 if (shared.cli) {
