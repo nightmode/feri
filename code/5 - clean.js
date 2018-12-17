@@ -37,7 +37,7 @@ clean.processClean = function clean_processClean(files, watching) {
     }
 
     return Promise.resolve().then(function() {
-        
+
         if (!watching) {
             // start clean timer
             shared.stats.timeTo.clean = functions.sharedStatsTimeTo(shared.stats.timeTo.clean)
