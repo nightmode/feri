@@ -31,11 +31,11 @@ module.exports = function(feri) {
 }
 ```
 
-By setting `feri.config.langauge` to `sv-se`, we are telling Feri to look in the [language](https://github.com/ForestMist/feri/tree/master/language) directory for a file called `sv-se.json`. Assuming the file exists and is valid, the next time you run Feri you'll be doing so in a certain Muppet Chef's language of choice. Bork bork bork!
+By setting `feri.config.langauge` to `sv-se`, we are telling Feri to look in the [language](https://github.com/kai-nightmode/feri/tree/master/language) directory for a file called `sv-se.json`. Assuming the file exists and is valid, the next time you run Feri you'll be doing so in a certain Muppet Chef's language of choice. Bork bork bork!
 
 ## Translation Guide
 
-In addition to US English, Feri stores all her translations inside the [language](https://github.com/ForestMist/feri/tree/master/language) directory. Files are named by language then country and saved in a JSON format.
+In addition to US English, Feri stores all her translations inside the [language](https://github.com/kai-nightmode/feri/tree/master/language) directory. Files are named by language then country and saved in a JSON format.
 
 To make a new translation, start by copying `en-us.json` to a new file. If you are not sure which language or country abbreviation to use, feel free to name your file `new.json` or similar.
 
@@ -126,11 +126,11 @@ Each word in a group should be padded with enough spaces to equal the longest st
 
 For example, `paddedGroups.build` has two keys, `output` and `copy`. The longest string is `output` at 6 characters. Extra spaces were added `copy` to reach a matching length of 6 characters. Now they both display nicely together.
 
-<img src="https://raw.githubusercontent.com/ForestMist/feri/master/images/translation-guide-build.png" width="918" height="150" alt="">
+<img src="https://raw.githubusercontent.com/kai-nightmode/feri/master/images/translation-guide-build.png" width="918" height="150" alt="">
 
 Same idea for `paddedGroups.stats` except that the longest strings here are 5 characters long. Adding one space to `load` ensures that they all line up nicely when displayed.
 
-<img src="https://raw.githubusercontent.com/ForestMist/feri/master/images/translation-guide-stats.png" width="918" height="227" alt="">
+<img src="https://raw.githubusercontent.com/kai-nightmode/feri/master/images/translation-guide-stats.png" width="918" height="227" alt="">
 
 ### Words
 
@@ -206,8 +206,8 @@ Total 0.392 seconds
 
 Firstly, you are awesome! Thank you. ^_^
 
-If you have not already, try testing your translation with different command line switches like `--republish`, `--watch`, and/or `--livereload` to see how everything looks. Once everything is set you can send a [pull request](https://github.com/ForestMist/feri/pulls) or contact [Daniel](https://forestmist.org/about) for more options.
+If you have not already, try testing your translation with different command line switches like `--republish`, `--watch`, and/or `--livereload` to see how everything looks. Once everything is set you can send a [pull request](https://github.com/kai-nightmode/feri/pulls) or contact [Kai Nightmode](https://twitter.com/kai_nightmode) for more options.
 
 ## License
 
-MIT © [Daniel Gagan](https://forestmist.org)
+MIT © [Kai Nightmode](https://forestmist.org)

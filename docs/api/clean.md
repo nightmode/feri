@@ -48,4 +48,4 @@ Create a promise chain of cleaning tasks based on a single file type.
 
 ## License
 
-MIT © [Daniel Gagan](https://forestmist.org)
+MIT © [Kai Nightmode](https://forestmist.org)

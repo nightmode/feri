@@ -668,4 +668,4 @@ config.thirdParty.markdownIt = {
 
 ## License
 
-MIT © [Daniel Gagan](https://forestmist.org)
+MIT © [Kai Nightmode](https://forestmist.org)

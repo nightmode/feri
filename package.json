@@ -3,10 +3,10 @@
   "version": "3.0.4",
   "description": "The easy to use build tool for web files.",
   "license": "MIT",
-  "author": "Daniel Gagan",
+  "author": "Kai Nightmode",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ForestMist/feri.git"
+    "url": "https://github.com/kai-nightmode/feri.git"
   },
   "main": "code/1 - main.js",
   "bin": {

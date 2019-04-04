@@ -1,6 +1,6 @@
 # Feri
 
-<img src="https://raw.githubusercontent.com/ForestMist/feri/master/images/feri-the-ferret.png" width="420" height="453" align="right" alt="">
+<img src="https://raw.githubusercontent.com/kai-nightmode/feri/master/images/feri-the-ferret.png" width="420" height="453" align="right" alt="">
 
 The easy to use build tool for web files.
 
@@ -160,9 +160,9 @@ Looking to contribute? Here are some ideas on how you can help Feri.
 
  * Are your friends grunting and gulping their way through a broccoli brunch? Tell them about the best non-digestive themed build tool available, Feri.
  * [Translate Feri](docs/multilingual.md#translation-guide) into other languages. Bonus points for Klingon.
- * [Report issues on GitHub](https://github.com/ForestMist/feri/issues) or post Feri fan art to [DeviantArt](https://deviantart.com) instead!
+ * [Report issues on GitHub](https://github.com/kai-nightmode/feri/issues) or post Feri fan art to [DeviantArt](https://deviantart.com) instead!
  * Pull reqrests to improv spellng in documantations!
 
 ## License
 
-MIT © [Daniel Gagan](https://forestmist.org)
+MIT © [Kai Nightmode](https://forestmist.org)

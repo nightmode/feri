@@ -207,7 +207,7 @@ if (shared.cli) {
             console.log('    ' + chalk.gray('Options "--all", "--forcebuild", and "--republish" are even stronger.'))
             console.log()
             console.log('    ' + chalk.gray('Want even more options? Try a custom config file.'))
-            console.log('    ' + chalk.gray('https://github.com/ForestMist/feri#custom-config-file'))
+            console.log('    ' + chalk.gray('https://github.com/kai-nightmode/feri#custom-config-file'))
             console.log()
             console.log('Source:')
             console.log()

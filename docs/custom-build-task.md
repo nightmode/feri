@@ -137,4 +137,4 @@ When building more complex tasks, your best friends will be [functions.objBuildI
 
 ## License
 
-MIT © [Daniel Gagan](https://forestmist.org)
+MIT © [Kai Nightmode](https://forestmist.org)

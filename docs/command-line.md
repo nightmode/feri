@@ -96,4 +96,4 @@ feri --republish /path/to/source /path/to/destination
 
 ## License
 
-MIT © [Daniel Gagan](https://forestmist.org)
+MIT © [Kai Nightmode](https://forestmist.org)
