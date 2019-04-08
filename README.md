@@ -40,7 +40,6 @@ The following changes are likely for the next major release.
 * Clean, Build, and Watch
 * Command Line / API
 * Compile and Minify
-  * CoffeeScript
   * Embedded JavaScript (EJS)
   * Markdown
   * Sass

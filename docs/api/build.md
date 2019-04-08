@@ -16,7 +16,6 @@ The build object is grouped into five categories.
 
 ### Build: In Memory
 
-* [coffeeScript](#buildcoffeescript)
 * [css](#buildcss)
 * [html](#buildhtml)
 * [js](#buildjs)
@@ -85,17 +84,6 @@ Create a promise chain of building tasks based on a single file type.
 ## Build: In Memory
 
 The following functions do their primary task in memory.
-
-### build.coffeeScript
-
-Type: `function`
-
-CoffeeScript using [coffeescript](https://www.npmjs.com/package/coffeescript).
-
-```
-@param   {Object}   obj  Reusable object originally created by build.processOneBuild
-@return  {Promise}  obj  Promise that returns a reusable object.
-```
 
 ### build.css
 

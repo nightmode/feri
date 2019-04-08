@@ -6,25 +6,25 @@ Feri comes with a lot of great build tasks by default but sometimes you need som
 
 Build tasks are defined in [config.map.sourceToDestTasks](api/config.md#configmapsourcetodesttasks). Each extension has an array of one or more tasks. The tasks can be strings or functions. Strings signify that the build task exists in the [build](api/build.md) module. Functions signify a custom build task.
 
-For example, here is the entry for CoffeeScript:
+For example, here is the entry for Markdown:
 
 ```js
-config.map.sourceToDestTasks.coffee = ['coffeeScript', 'js']
+config.map.sourceToDestTasks.md = ['markdown', 'html']
 ```
 
-In the above array, the two strings mean run any `.coffee` files through [build.coffeeScript](api/build.md#buildcoffeescript) and then [build.js](api/build.md#buildjs). The first task transpiles CoffeeScript to JavaScript. The second task minifies the resulting JavaScript.
+In the above array, the two strings mean run any `.md` files through [build.markdown](api/build.md#buildmarkdown) and then [build.html](api/build.md#buildhtml). The first task converts Markdown to HTML. The second task minifies the resulting HTML.
 
-If instead, our source to destination tasks for CoffeeScript looked like...
+If instead, our source to destination tasks for Markdown looked like...
 
 ```js
 function magicSauce() {
     // do magical things
 }
 
-config.map.sourceToDestTasks.coffee = ['coffeeScript', magicSauce]
+config.map.sourceToDestTasks.md = ['markdown', magicSauce]
 ```
 
-We would surmise that any `.coffee` files would first run through [build.coffeeScript](api/build.md#buildcoffeescript) and then a custom build task called `magicSauce`.
+We would surmise that any `.md` files would first run through [build.markdown](api/build.md#buildmarkdown) and then a custom build task called `magicSauce`.
 
 ## Reusable Object Building
 

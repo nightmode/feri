@@ -44,7 +44,6 @@ if (shared.global) {
 // Includes: Lazy Load
 //---------------------
 var css                // require('clean-css')                      // ~  83 ms
-var coffeeScript       // require('coffeescript')                   // ~  36 ms
 var ejs                // require('ejs')                            // ~   4 ms
 var html               // require('html-minifier').minify           // ~   4 ms
 var js                 // require('uglify-js')                      // ~  83 ms
@@ -285,55 +284,6 @@ build.processOneBuild = function build_processOneBuild(filePath) {
 // Build: In Memory
 //------------------
 // The following functions do their primary task in memory.
-
-build.coffeeScript = function build_coffeeScript(obj) {
-    /*
-    CoffeeScript using https://www.npmjs.com/package/coffeescript.
-    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
-    @return  {Promise}  obj  Promise that returns a reusable object.
-    */
-    return functions.objBuildInMemory(obj).then(function(obj) {
-
-        functions.logWorker('build.coffeeScript', obj)
-
-        if (obj.build) {
-            if (typeof coffeeScript !== 'object') {
-                coffeeScript = require('coffeescript')
-            }
-
-            if (config.sourceMaps || config.fileType.coffee.sourceMaps) {
-                var coffeeObj = coffeeScript.compile(obj.data, {
-                    sourceMap: true,
-                    bare: true
-                })
-
-                var sourceMap = JSON.parse(coffeeObj.v3SourceMap)
-                sourceMap.sourcesContent = [obj.data.replace(/"/g, '\"')]
-
-                obj.data = coffeeObj.js + '//# sourceMappingURL=' + path.basename(obj.dest) + '.map'
-
-                sourceMap = functions.normalizeSourceMap(obj, sourceMap)
-
-                var mapObject = functions.objFromSourceMap(obj, sourceMap)
-
-                return build.map(mapObject).then(function() {
-                    return obj
-                })
-            } else {
-                obj.data = coffeeScript.compile(obj.data)
-                return obj
-            }
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
-
-    }).then(function(obj) {
-
-        return obj
-
-    })
-} // coffeeScript
 
 build.css = function build_css(obj) {
     /*

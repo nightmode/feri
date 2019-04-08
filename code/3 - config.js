@@ -58,9 +58,6 @@ var config = {
 // File Type Options
 //-------------------
 config.fileType = {
-    coffee: {
-        'sourceMaps': false // used by build.coffeeScript
-    },
     concat: {
         'enabled': true,
         'sourceMaps': false // used by build.concat
@@ -97,7 +94,6 @@ config.map.destToSourceExt = {
 // Source Extensions to Build Tasks Map
 //--------------------------------------
 config.map.sourceToDestTasks = {
-    'coffee': ['coffeeScript', 'js'],
     'concat': ['concat'],
     'css'   : ['css'],
     'ejs'   : ['ejs', 'html'],

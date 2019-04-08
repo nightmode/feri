@@ -65,20 +65,6 @@ Type: `object`
 
 Parent container for options specific to a single file type.
 
-## config.fileType.coffee
-
-Type: `object`
-
-Options used by [build.coffeeScript](build.md#buildcoffeescript).
-
-```js
-config.fileType.coffee = {
-    'sourceMaps': false
-}
-```
-
-Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
-
 ## config.fileType.concat
 
 Type: `object`
@@ -324,7 +310,6 @@ Array elements for any particular file type can be a `string` or a `function`. A
 
 ```js
 config.map.sourceToDestTasks = {
-    'coffee': ['coffeeScript', 'js'],
     'css'   : ['css'],
     'ejs'   : ['ejs', 'html'],
     'gif'   : ['gif'],
