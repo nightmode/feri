@@ -79,7 +79,7 @@ config.fileType.coffee = {
 }
 ```
 
-Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
 
 ## config.fileType.concat
 
@@ -94,7 +94,7 @@ config.fileType.concat = {
 }
 ```
 
-Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
 
 ## config.fileType.css
 
@@ -108,7 +108,7 @@ config.fileType.css = {
 }
 ```
 
-Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
 
 ## config.fileType.js
 
@@ -122,7 +122,7 @@ config.fileType.js = {
 }
 ```
 
-Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
 
 ## config.fileType.jsx
 
@@ -136,7 +136,7 @@ config.fileType.jsx = {
 }
 ```
 
-Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
 
 ## config.fileType.less
 
@@ -150,7 +150,7 @@ config.fileType.less = {
 }
 ```
 
-Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
 
 ## config.fileType.sass
 
@@ -164,7 +164,7 @@ config.fileType.sass = {
 }
 ```
 
-Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
 
 ## config.fileType.scss
 
@@ -178,7 +178,7 @@ config.fileType.scss = {
 }
 ```
 
-Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
 
 ## config.fileType.styl
 
@@ -192,7 +192,7 @@ config.fileType.styl = {
 }
 ```
 
-Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
 
 ## config.includeFileTypes
 
@@ -554,7 +554,7 @@ Enable source maps for file types that generate CSS or JS files. Defaults to `fa
 config.sourceMaps = false
 ```
 
-Note: Feri will only generate a source map when the file it is based needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
 
 ## config.sourceRoot
 
