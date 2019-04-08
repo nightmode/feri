@@ -801,8 +801,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     path.join(config.path.source, 'index.ejs.concat'),
                     path.join(config.path.source, 'index.md'),
                     path.join(config.path.source, 'index.md.concat'),
-                    path.join(config.path.source, 'index.pug'),
-                    path.join(config.path.source, 'index.pug.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)
@@ -1565,38 +1563,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     var desired = [
                         path.join(config.path.source, 'partials', '_fonts.less'),
                         path.join(config.path.source, 'partials', '_grid.less')
-                    ]
-
-                    expect(returnObj).to.eql(desired)
-
-                })
-
-            }) // it
-        }) // describe
-
-        //----------------------------
-        // functions.includePathsPug
-        //----------------------------
-        describe('includePathsPug', function() {
-            it('should find includes and return our desired object', function() {
-
-                config.path.source = path.join(testPath, 'includePathsPug')
-
-                var file = path.join(config.path.source, 'index.pug')
-
-                return Promise.resolve().then(function() {
-
-                    return functions.readFile(file)
-
-                }).then(function(data) {
-
-                    return functions.includePathsPug(data, file)
-
-                }).then(function(returnObj) {
-
-                    var desired = [
-                        path.join(config.path.source, 'partials', '_header.pug'),
-                        path.join(config.path.source, 'partials', '_footer.pug')
                     ]
 
                     expect(returnObj).to.eql(desired)

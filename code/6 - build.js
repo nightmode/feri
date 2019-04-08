@@ -53,7 +53,6 @@ var less               // require('less')                           // ~  89 ms
 var markdown           // require('markdown-it')()                  // ~  56 ms
 var transferMap        // require('multi-stage-sourcemap').transfer // ~  20 ms
 var pako               // require('pako')                           // ~  21 ms
-var pug                // require('pug')                            // ~ 257 ms
 var sassPromise        // promisify(require('node-sass').render)    // ~   7 ms
 var sourceMapGenerator // require('source-map').SourceMapGenerator  // ~  13 ms
 var stylus             // require('stylus')                         // ~  98 ms
@@ -1074,34 +1073,6 @@ build.less = function build_less(obj) {
 
     })
 } // less
-
-build.pug = function build_pug(obj) {
-    /*
-    Pug using https://www.npmjs.com/package/pug.
-    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
-    @return  {Promise}  obj  Promise that returns a reusable object.
-    */
-    return functions.objBuildWithIncludes(obj, functions.includePathsPug).then(function(obj) {
-
-        functions.logWorker('build.pug', obj)
-
-        if (obj.build) {
-            if (typeof pug !== 'object') {
-                pug = require('pug')
-            }
-
-            obj.data = pug.render(obj.data, {
-                filename: obj.source
-            })
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
-
-        return obj
-
-    })
-} // pug
 
 build.sass = function build_sass(obj) {
     /*

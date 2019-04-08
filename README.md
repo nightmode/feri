@@ -46,7 +46,6 @@ The following changes are likely for the next major release.
   * Embedded JavaScript (EJS)
   * Less
   * Markdown
-  * Pug
   * Sass
   * Stylus
 * Concatenate

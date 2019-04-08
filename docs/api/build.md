@@ -35,7 +35,6 @@ The build object is grouped into five categories.
 * [concat](#buildconcat)
 * [ejs](#buildejs)
 * [less](#buildless)
-* [pug](#buildpug)
 * [sass](#buildsass)
 * [stylus](#buildstylus)
 
@@ -234,17 +233,6 @@ Embedded JavaScript templates using [ejs](https://www.npmjs.com/package/ejs).
 Type: `function`
 
 Less using [less](https://www.npmjs.com/package/less).
-
-```
-@param   {Object}   obj  Reusable object originally created by build.processOneBuild
-@return  {Promise}  obj  Promise that returns a reusable object.
-```
-
-### build.pug
-
-Type: `function`
-
-Pug using [pug](https://www.npmjs.com/package/pug).
 
 ```
 @param   {Object}   obj  Reusable object originally created by build.processOneBuild

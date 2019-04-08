@@ -63,7 +63,6 @@ The functions object is grouped into three categories.
 * [includePathsConcat](#functionsincludepathsconcat)
 * [includePathsEjs](#functionsincludepathsejs)
 * [includePathsLess](#functionsincludepathsless)
-* [includePathsPug](#functionsincludepathspug)
 * [includePathsSass](#functionsincludepathssass)
 * [includePathsStylus](#functionsincludepathsstylus)
 
@@ -83,7 +82,7 @@ Add or append a mapping to config.map.destToSourceExt without harming existing e
 
 ```
 @param  {String}         ext       Extension like 'html'
-@param  {String,Object}  mappings  String like 'ejs' or array of strings like ['ejs', 'md', 'pug']
+@param  {String,Object}  mappings  String like 'ejs' or array of strings like ['ejs', 'md']
 ```
 
 ### functions.cacheReset
@@ -639,19 +638,6 @@ Find Less includes and return an array of matches.
 @param   {String}   filePath                 Source file where data came from.
 @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
 @return  {Promise}                           Promise that returns an array of includes like ['/partials/_fonts.less'] if successful. An error object if not.
-```
-
-### functions.includePathsPug
-
-Type: `function`
-
-Find Pug includes and return an array of matches.
-
-```
-@param   {String}   data                     String to search for include paths.
-@param   {String}   filePath                 Source file where data came from.
-@param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
-@return  {Promise}                           Promise that returns an array of includes like ['/partials/_footer.pug'] if successful. An error object if not.
 ```
 
 ### functions.includePathsSass

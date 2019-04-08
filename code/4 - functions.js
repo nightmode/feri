@@ -42,7 +42,7 @@ functions.addDestToSourceExt = function functions_addDestToSourceExt(ext, mappin
     /*
     Add or append a mapping to config.map.destToSourceExt without harming existing entries.
     @param  {String}         ext       Extension like 'html'
-    @param  {String,Object}  mappings  String like 'ejs' or array of strings like ['ejs', 'md', 'pug']
+    @param  {String,Object}  mappings  String like 'ejs' or array of strings like ['ejs', 'md']
     */
     if (typeof mappings === 'string') {
         mappings = [mappings]
@@ -1591,107 +1591,6 @@ functions.includePathsLess = function functions_includePathsLess(data, filePath,
 
     })
 } // includePathsLess
-
-functions.includePathsPug = function functions_includePathsPug(data, filePath, includePathsCacheName) {
-    /*
-    Find Pug includes and return an array of matches.
-    @param   {String}   data                     String to search for include paths.
-    @param   {String}   filePath                 Source file where data came from.
-    @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
-    @return  {Promise}                           Promise that returns an array of includes like ['/partials/_footer.pug'] if successful. An error object if not.
-    */
-    var cleanup = false
-
-    if (typeof includePathsCacheName === 'undefined') {
-        cleanup = true
-        includePathsCacheName = 'pug' + (++shared.uniqueNumber)
-        shared.cache.includeFilesSeen[includePathsCacheName] = [filePath]
-    }
-
-    return Promise.resolve().then(function() {
-
-        /*
-        Regular Expression should find the name of the include file in each of these lines...
-
-            include one.pug
-            include ./two.pug
-            include partials/three.pug
-            incldue:ignore-this-filter four.md
-
-        Reference, when completed, should be available at http://pug-lang.com/reference/includes/
-        */
-        var re = /^\s*include:?[^ ]* (.*)$/gmi
-
-        var match
-        var includes = []
-
-        while ((match = re.exec(data)) !== null) {
-            match = match[1].trim()
-
-            if (match.indexOf(config.path.source) !== 0) {
-                // path must be relative
-                match = path.join(path.dirname(filePath), match)
-            }
-
-            // add extension if necessary
-            if (!path.extname(match)) {
-                match = match + '.pug'
-            }
-
-            if (shared.cache.includeFilesSeen[includePathsCacheName].indexOf(match) < 0) {
-                shared.cache.includeFilesSeen[includePathsCacheName].push(match)
-                includes.push(match)
-            }
-        }
-
-        if (includes.length > 0) {
-            // now we have an array of includes like ['/full/path/css/_fonts.pug']
-            var promiseArray = []
-
-            for (var i in includes) {
-                (function() {
-                    var ii = i
-                    promiseArray.push(
-                        functions.fileExists(includes[ii]).then(function(exists) {
-                            if (exists) {
-                                return functions.readFile(includes[ii]).then(function(data) {
-                                    return functions.includePathsPug(data, includes[ii], includePathsCacheName).then(function(subIncludes) {
-                                        for (var j in subIncludes) {
-                                            includes.push(subIncludes[j])
-                                        }
-                                    })
-                                })
-                            } else {
-                                delete includes[ii] // leaves an empty space in the array which we will clean up later
-
-                            }
-                        })
-                    )
-                })()
-            } // for
-
-            return Promise.all(promiseArray).then(function() {
-
-                // clean out any empty includes which meant their files could not be found
-                includes = functions.cleanArray(includes)
-
-                return includes
-
-            })
-        } else {
-            return includes
-        }
-
-    }).then(function(includes) {
-
-        if (cleanup) {
-            delete shared.cache.includeFilesSeen[includePathsCacheName]
-        }
-
-        return includes
-
-    })
-} // includePathsPug
 
 functions.includePathsSass = function functions_includePathsSass(data, filePath, includePathsCacheName) {
     /*
