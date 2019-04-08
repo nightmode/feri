@@ -18,7 +18,7 @@ var config = {
     // null values will be populated later
     concurLimit: 1, // 1-3 recommended since node libuv has 4 slots by default
     fileType: null, // object that will hold options for individual file types
-    includeFileTypes: ['ejs', 'jade', 'less', 'pug', 'sass', 'scss', 'styl'], // Used by watch.buildOne to know which file types may use includes.
+    includeFileTypes: ['ejs', 'less', 'pug', 'sass', 'scss', 'styl'], // Used by watch.buildOne to know which file types may use includes.
     includePrefix: '_',   // Files prefixed with this string will not be published directly to the destination directory. Prefixed files can be included inside other files that do get published to destination though.
     glob: { // glob search strings like **/*.gif
         'clean': '', // If specified, use when running clean.processClean without the files parameter.
@@ -94,7 +94,7 @@ config.fileType = {
 config.map.destToSourceExt = {
     'css' : ['less', 'sass', 'scss', 'styl'],
     'gz'  : ['*'],
-    'html': ['ejs', 'jade', 'md', 'pug'],
+    'html': ['ejs', 'md', 'pug'],
     'js'  : ['coffee', 'jsx'],
     'map' : ['*']
 }
@@ -110,7 +110,6 @@ config.map.sourceToDestTasks = {
     'gif'   : ['gif'],
     'htm'   : ['html'],
     'html'  : ['html'],
-    'jade'  : ['jade', 'html'],
     'jpg'   : ['jpg'],
     'jpeg'  : ['jpg'],
     'js'    : ['js'],

@@ -62,7 +62,6 @@ The functions object is grouped into three categories.
 * [includesNewer](#functionsincludesnewer)
 * [includePathsConcat](#functionsincludepathsconcat)
 * [includePathsEjs](#functionsincludepathsejs)
-* [includePathsJade](#functionsincludepathsjade)
 * [includePathsLess](#functionsincludepathsless)
 * [includePathsPug](#functionsincludepathspug)
 * [includePathsSass](#functionsincludepathssass)
@@ -84,7 +83,7 @@ Add or append a mapping to config.map.destToSourceExt without harming existing e
 
 ```
 @param  {String}         ext       Extension like 'html'
-@param  {String,Object}  mappings  String like 'ejs' or array of strings like ['ejs', 'jade', 'md', 'pug']
+@param  {String,Object}  mappings  String like 'ejs' or array of strings like ['ejs', 'md', 'pug']
 ```
 
 ### functions.cacheReset
@@ -100,7 +99,7 @@ Type: `function`
 Change one extension to another.
 
 ```
-@param   {String}  filePath      File path like '/files/index.jade'
+@param   {String}  filePath      File path like '/files/index.md'
 @param   {String}  newExtension  Extension like 'html'
 @return  {String}                File path like '/files/index.html'
 ```
@@ -627,19 +626,6 @@ Find EJS includes and return an array of matches.
 @param   {String}   filePath                 Source file where data came from.
 @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
 @return  {Promise}                           Promise that returns an array of includes like ['/partials/_footer.ejs'] if successful. An error object if not.
-```
-
-### functions.includePathsJade
-
-Type: `function`
-
-Find Jade includes and return an array of matches.
-
-```
-@param   {String}   data                     String to search for include paths.
-@param   {String}   filePath                 Source file where data came from.
-@param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
-@return  {Promise}                           Promise that returns an array of includes like ['/partials/_footer.jade'] if successful. An error object if not.
 ```
 
 ### functions.includePathsLess

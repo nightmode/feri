@@ -1117,31 +1117,6 @@ describe('File -> ../code/6 - build.js\n', function() {
         }) // describe
 
         //------------
-        // build.jade
-        //------------
-        describe('jade', function() {
-            it('should compile a jade file with an include', function() {
-
-                config.path.source = path.join(testPath, 'jade', 'source')
-                config.path.dest   = path.join(testPath, 'jade', 'dest')
-
-                var obj = {
-                    'source': path.join(config.path.source, 'index.jade'),
-                    'dest': '',
-                    'data': '',
-                    'build': false
-                }
-
-                return build.jade(obj).then(function(returnObj) {
-
-                    expect(returnObj.data).to.be('<!DOCTYPE html><html><body><h1>Heading</h1><p>Hello from a jade file with an include.</p></body></html>')
-
-                })
-
-            }) // it
-        }) // describe
-
-        //------------
         // build.less
         //------------
         describe('less', function() {

@@ -99,7 +99,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('changeExt', function() {
             it('should return file path with changed extension', function() {
 
-                var test = functions.changeExt('index.jade', 'html')
+                var test = functions.changeExt('index.md', 'html')
 
                 expect(test).to.be('index.html')
 
@@ -799,8 +799,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     path.join(config.path.source, 'index.html.concat'),
                     path.join(config.path.source, 'index.ejs'),
                     path.join(config.path.source, 'index.ejs.concat'),
-                    path.join(config.path.source, 'index.jade'),
-                    path.join(config.path.source, 'index.jade.concat'),
                     path.join(config.path.source, 'index.md'),
                     path.join(config.path.source, 'index.md.concat'),
                     path.join(config.path.source, 'index.pug'),
@@ -1535,38 +1533,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
                         path.join(config.path.source, 'partials', '_02.ejs'),
                         path.join(config.path.source, 'partials', '_03.ejs'),
                         path.join(config.path.source, 'partials', '_04.ejs')
-                    ]
-
-                    expect(returnObj).to.eql(desired)
-
-                })
-
-            }) // it
-        }) // describe
-
-        //----------------------------
-        // functions.includePathsJade
-        //----------------------------
-        describe('includePathsJade', function() {
-            it('should find includes and return our desired object', function() {
-
-                config.path.source = path.join(testPath, 'includePathsJade')
-
-                var file = path.join(config.path.source, 'index.jade')
-
-                return Promise.resolve().then(function() {
-
-                    return functions.readFile(file)
-
-                }).then(function(data) {
-
-                    return functions.includePathsJade(data, file)
-
-                }).then(function(returnObj) {
-
-                    var desired = [
-                        path.join(config.path.source, 'partials', '_header.jade'),
-                        path.join(config.path.source, 'partials', '_footer.jade')
                     ]
 
                     expect(returnObj).to.eql(desired)

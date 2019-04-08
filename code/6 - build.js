@@ -48,7 +48,6 @@ var css                // require('clean-css')                      // ~  83 ms
 var coffeeScript       // require('coffeescript')                   // ~  36 ms
 var ejs                // require('ejs')                            // ~   4 ms
 var html               // require('html-minifier').minify           // ~   4 ms
-var jade               // require('jade-legacy')                    // ~ 112 ms
 var js                 // require('uglify-js')                      // ~  83 ms
 var less               // require('less')                           // ~  89 ms
 var markdown           // require('markdown-it')()                  // ~  56 ms
@@ -991,34 +990,6 @@ build.ejs = function build_ejs(obj) {
 
     })
 } // ejs
-
-build.jade = function build_jade(obj) {
-    /*
-    Jade using https://www.npmjs.com/package/jade-legacy.
-    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
-    @return  {Promise}  obj  Promise that returns a reusable object.
-    */
-    return functions.objBuildWithIncludes(obj, functions.includePathsJade).then(function(obj) {
-
-        functions.logWorker('build.jade', obj)
-
-        if (obj.build) {
-            if (typeof jade !== 'object') {
-                jade = require('jade-legacy')
-            }
-
-            obj.data = jade.render(obj.data, {
-                filename: obj.source
-            })
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
-
-        return obj
-
-    })
-} // jade
 
 build.less = function build_less(obj) {
     /*

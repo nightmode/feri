@@ -34,7 +34,6 @@ The build object is grouped into five categories.
 
 * [concat](#buildconcat)
 * [ejs](#buildejs)
-* [jade](#buildjade)
 * [less](#buildless)
 * [pug](#buildpug)
 * [sass](#buildsass)
@@ -224,17 +223,6 @@ Concatenate files like `all.js.concat` which can contain globs and/or file path 
 Type: `function`
 
 Embedded JavaScript templates using [ejs](https://www.npmjs.com/package/ejs).
-
-```
-@param   {Object}   obj  Reusable object originally created by build.processOneBuild
-@return  {Promise}  obj  Promise that returns a reusable object.
-```
-
-### build.jade
-
-Type: `function`
-
-Jade using [jade](https://www.npmjs.com/package/jade).
 
 ```
 @param   {Object}   obj  Reusable object originally created by build.processOneBuild
