@@ -1,7 +1,7 @@
 {
   "name": "feri",
   "version": "4.0.0",
-  "description": "The easy to use build tool for web files.",
+  "description": "An easy to use build tool for web files.",
   "license": "MIT",
   "author": "Kai Nightmode",
   "repository": {

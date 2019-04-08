@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/nightmode/feri/master/images/feri-the-ferret.png" width="420" height="453" align="right" alt="">
 
-The easy to use build tool for web files.
+An easy to use build tool for web files.
 
 Incrementally clean, build, and watch with little to no configuration required.
 
