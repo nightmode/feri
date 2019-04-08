@@ -41,7 +41,7 @@
     "uglify-js": "3.5.3"
   },
   "engines": {
-    "node": ">= 8"
+    "node": ">= 11"
   },
   "scripts": {
     "test": "npm run test-shared -loglevel silent && npm run test-functions -loglevel silent && npm run test-clean -loglevel silent && npm run test-build -loglevel silent && npm run test-watch -loglevel silent",
