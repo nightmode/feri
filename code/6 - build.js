@@ -43,7 +43,6 @@ if (shared.global) {
 //---------------------
 // Includes: Lazy Load
 //---------------------
-var babel              // require('babel-core')                     // ~ 401 ms
 var css                // require('clean-css')                      // ~  83 ms
 var coffeeScript       // require('coffeescript')                   // ~  36 ms
 var ejs                // require('ejs')                            // ~   4 ms
@@ -568,78 +567,6 @@ build.js = function build_js(obj) {
 
     })
 } // js
-
-build.jsx = function build_jsx(obj) {
-    /*
-    Transform JSX files to JS using https://www.npmjs.com/package/babel-cli.
-    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
-    @return  {Promise}  obj  Promise that returns a reusable object.
-    */
-    var buildAlreadySet = obj.build
-
-    return functions.objBuildInMemory(obj).then(function(obj) {
-
-        functions.logWorker('build.jsx', obj)
-
-        if (obj.build) {
-
-            if (typeof babel !== 'object') {
-                babel = require('babel-core')
-            }
-
-            if ((config.sourceMaps || config.fileType.jsx.sourceMaps) && buildAlreadySet) {
-                return functions.useExistingSourceMap(obj.dest)
-            }
-
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
-
-    }).then(function(existingSourceMap) {
-
-        existingSourceMap = existingSourceMap || false
-
-        var options = {
-            'presets': ['react']
-        }
-
-        if (config.sourceMaps || config.fileType.jsx.sourceMaps) {
-            options.sourceMaps = true
-            options.sourceMapTarget = path.basename(obj.dest)
-            options.sourceRoot = config.sourceRoot
-
-            if (existingSourceMap) {
-                options.inputSourceMap = existingSourceMap
-            }
-        }
-
-        return babel.transform(obj.data, options)
-
-    }).then(function(fromBabel) {
-
-        obj.data = fromBabel.code
-
-        if (config.sourceMaps || config.fileType.jsx.sourceMaps) {
-            let sourceMap = fromBabel.map
-
-            if (obj.data.indexOf('//# sourceMappingURL=') < 0) {
-                obj.data += '\n' + '//# sourceMappingURL=' + path.basename(obj.dest) + '.map'
-            }
-
-            sourceMap = functions.normalizeSourceMap(obj, sourceMap)
-
-            let mapObject = functions.objFromSourceMap(obj, sourceMap)
-
-            return build.map(mapObject)
-        }
-
-    }).then(function() {
-
-        return obj
-
-    })
-} // jsx
 
 build.markdown = function build_markdown(obj) {
     /*

@@ -71,9 +71,6 @@ config.fileType = {
     js: {
         'sourceMaps': false // used by build.js
     },
-    jsx: {
-        'sourceMaps': false // used by build.jsx
-    },
     sass: {
         'sourceMaps': false // used by build.sass
     },
@@ -92,7 +89,7 @@ config.map.destToSourceExt = {
     'css' : ['sass', 'scss', 'styl'],
     'gz'  : ['*'],
     'html': ['ejs', 'md'],
-    'js'  : ['coffee', 'jsx'],
+    'js'  : ['coffee'],
     'map' : ['*']
 }
 
@@ -110,7 +107,6 @@ config.map.sourceToDestTasks = {
     'jpg'   : ['jpg'],
     'jpeg'  : ['jpg'],
     'js'    : ['js'],
-    'jsx'   : ['jsx'],
     'md'    : ['markdown', 'html'],
     'png'   : ['png'],
     'sass'  : ['sass'],

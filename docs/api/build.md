@@ -20,7 +20,6 @@ The build object is grouped into five categories.
 * [css](#buildcss)
 * [html](#buildhtml)
 * [js](#buildjs)
-* [jsx](#buildjsx)
 * [markdown](#buildmarkdown)
 
 ### Build: On Disk
@@ -125,17 +124,6 @@ Minify HTML using [html-minifier](https://www.npmjs.com/package/html-minifier).
 Type: `function`
 
 Minify JavaScript using [uglify-js](https://www.npmjs.com/package/uglify-js).
-
-```
-@param   {Object}   obj  Reusable object originally created by build.processOneBuild
-@return  {Promise}  obj  Promise that returns a reusable object.
-```
-
-### build.jsx
-
-Type: `function`
-
-Transform JSX files to JS using [babel-cli](https://www.npmjs.com/package/babel-cli).
 
 ```
 @param   {Object}   obj  Reusable object originally created by build.processOneBuild

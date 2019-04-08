@@ -44,7 +44,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 var desired = {
                     'karp' : ['splash', 'stare'],
-                    'js'   : ['coffee', 'jsx', 'tea']
+                    'js'   : ['coffee', 'tea']
                 }
 
                 // add new mapping
@@ -800,7 +800,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     path.join(config.path.source, 'index.ejs'),
                     path.join(config.path.source, 'index.ejs.concat'),
                     path.join(config.path.source, 'index.md'),
-                    path.join(config.path.source, 'index.md.concat'),
+                    path.join(config.path.source, 'index.md.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)
@@ -816,9 +816,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     path.join(config.path.source, 'code.js'),
                     path.join(config.path.source, 'code.js.concat'),
                     path.join(config.path.source, 'code.coffee'),
-                    path.join(config.path.source, 'code.coffee.concat'),
-                    path.join(config.path.source, 'code.jsx'),
-                    path.join(config.path.source, 'code.jsx.concat')
+                    path.join(config.path.source, 'code.coffee.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)
@@ -867,9 +865,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     path.join(config.path.source, 'code.js'),
                     path.join(config.path.source, 'code.js.concat'),
                     path.join(config.path.source, 'code.coffee'),
-                    path.join(config.path.source, 'code.coffee.concat'),
-                    path.join(config.path.source, 'code.jsx'),
-                    path.join(config.path.source, 'code.jsx.concat')
+                    path.join(config.path.source, 'code.coffee.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)

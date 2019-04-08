@@ -13,8 +13,6 @@
     "feri": "code/1 - main.js"
   },
   "dependencies": {
-    "babel-core": "6.26.0",
-    "babel-preset-react": "6.24.1",
     "chalk": "2.4.2",
     "chokidar": "1.7.0",
     "clean-css": "4.2.1",
@@ -57,7 +55,6 @@
     "watch",
     "livereload",
     "minify",
-    "jsx",
     "coffeescript",
     "ejs",
     "markdown",
