@@ -6,7 +6,7 @@
   "author": "Kai Nightmode",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kai-nightmode/feri.git"
+    "url": "https://github.com/nightmode/feri.git"
   },
   "main": "code/1 - main.js",
   "bin": {
