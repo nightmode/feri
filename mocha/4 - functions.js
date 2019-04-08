@@ -837,8 +837,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     path.join(config.path.source, 'style.css.map.concat'),
                     path.join(config.path.source, 'style.css'),
                     path.join(config.path.source, 'style.css.concat'),
-                    path.join(config.path.source, 'style.less'),
-                    path.join(config.path.source, 'style.less.concat'),
                     path.join(config.path.source, 'style.sass'),
                     path.join(config.path.source, 'style.sass.concat'),
                     path.join(config.path.source, 'style.scss'),
@@ -1531,38 +1529,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
                         path.join(config.path.source, 'partials', '_02.ejs'),
                         path.join(config.path.source, 'partials', '_03.ejs'),
                         path.join(config.path.source, 'partials', '_04.ejs')
-                    ]
-
-                    expect(returnObj).to.eql(desired)
-
-                })
-
-            }) // it
-        }) // describe
-
-        //----------------------------
-        // functions.includePathsLess
-        //----------------------------
-        describe('includePathsLess', function() {
-            it('should find includes and return our desired object', function() {
-
-                config.path.source = path.join(testPath, 'includePathsLess')
-
-                var file = path.join(config.path.source, 'style.less')
-
-                return Promise.resolve().then(function() {
-
-                    return functions.readFile(file)
-
-                }).then(function(data) {
-
-                    return functions.includePathsLess(data, file)
-
-                }).then(function(returnObj) {
-
-                    var desired = [
-                        path.join(config.path.source, 'partials', '_fonts.less'),
-                        path.join(config.path.source, 'partials', '_grid.less')
                     ]
 
                     expect(returnObj).to.eql(desired)

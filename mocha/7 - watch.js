@@ -218,13 +218,13 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             config.option.livereload = true
 
-            config.glob.watch.source = '*.less'
+            config.glob.watch.source = '*.css'
             config.glob.watch.dest = '*.css'
 
             config.path.source = path.join(testPath, 'processWatch-2', 'source')
             config.path.dest   = path.join(testPath, 'processWatch-2', 'dest')
 
-            var fileSource = path.join(config.path.source, 'two.less')
+            var fileSource = path.join(config.path.source, 'two.css')
             var fileDest   = path.join(config.path.dest, 'two.css')
 
             return Promise.resolve().then(function() {

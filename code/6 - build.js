@@ -49,7 +49,6 @@ var coffeeScript       // require('coffeescript')                   // ~  36 ms
 var ejs                // require('ejs')                            // ~   4 ms
 var html               // require('html-minifier').minify           // ~   4 ms
 var js                 // require('uglify-js')                      // ~  83 ms
-var less               // require('less')                           // ~  89 ms
 var markdown           // require('markdown-it')()                  // ~  56 ms
 var transferMap        // require('multi-stage-sourcemap').transfer // ~  20 ms
 var pako               // require('pako')                           // ~  21 ms
@@ -989,90 +988,6 @@ build.ejs = function build_ejs(obj) {
 
     })
 } // ejs
-
-build.less = function build_less(obj) {
-    /*
-    Less using https://www.npmjs.com/package/less.
-    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
-    @return  {Promise}  obj  Promise that returns a reusable object.
-    */
-    return functions.objBuildWithIncludes(obj, functions.includePathsLess).then(function(obj) {
-
-        functions.logWorker('build.less', obj)
-
-        if (obj.build) {
-            if (typeof less !== 'object') {
-                less = require('less')
-            }
-
-            return new Promise(function(resolve, reject) {
-                var options = {
-                    filename: path.basename(obj.source),
-                    paths: [path.dirname(obj.source)],
-                    compress: true
-                }
-
-                if (config.sourceMaps || config.fileType.less.sourceMaps) {
-                    options.sourceMap = {
-                        'sourceMapFullFilename': obj.source
-                    }
-                }
-
-                less.render(obj.data, options,
-                function(e, output) {
-                    if (e) {
-                        reject(e)
-                    } else {
-
-                        if (config.sourceMaps || config.fileType.less.sourceMaps) {
-
-                            obj.data = output.css + '\n/*# sourceMappingURL=' + path.basename(obj.dest) + '.map */'
-
-                            var sourceMap = JSON.parse(output.map)
-
-                            sourceMap.file = path.basename(obj.dest)
-                            sourceMap.sourceRoot = config.sourceRoot
-                            sourceMap.sources[0] = obj.source
-
-                            return functions.readFiles(sourceMap.sources).then(function(dataArray) {
-
-                                sourceMap.sourcesContent = dataArray
-
-                            }).then(function() {
-
-                                var replaceString = path.dirname(config.path.source) + shared.slash
-                                for (var i in sourceMap.sources) {
-                                    sourceMap.sources[i] = sourceMap.sources[i].replace(replaceString, '').replace('\\', '/')
-                                }
-
-                                let mapObject = functions.objFromSourceMap(obj, sourceMap)
-
-                                return build.map(mapObject)
-
-                            }).then(function() {
-
-                                resolve()
-
-                            })
-
-                        } else {
-                            obj.data = output.css
-                            resolve()
-                        }
-                    }
-                })
-            }) // promise
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
-
-    }).then(function() {
-
-        return obj
-
-    })
-} // less
 
 build.sass = function build_sass(obj) {
     /*

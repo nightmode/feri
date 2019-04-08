@@ -18,7 +18,7 @@ var config = {
     // null values will be populated later
     concurLimit: 1, // 1-3 recommended since node libuv has 4 slots by default
     fileType: null, // object that will hold options for individual file types
-    includeFileTypes: ['ejs', 'less', 'sass', 'scss', 'styl'], // Used by watch.buildOne to know which file types may use includes.
+    includeFileTypes: ['ejs', 'sass', 'scss', 'styl'], // Used by watch.buildOne to know which file types may use includes.
     includePrefix: '_',   // Files prefixed with this string will not be published directly to the destination directory. Prefixed files can be included inside other files that do get published to destination though.
     glob: { // glob search strings like **/*.gif
         'clean': '', // If specified, use when running clean.processClean without the files parameter.
@@ -74,9 +74,6 @@ config.fileType = {
     jsx: {
         'sourceMaps': false // used by build.jsx
     },
-    less: {
-        'sourceMaps': false // used by build.less
-    },
     sass: {
         'sourceMaps': false // used by build.sass
     },
@@ -92,7 +89,7 @@ config.fileType = {
 // Destination Extensions to Source Extensions
 //---------------------------------------------
 config.map.destToSourceExt = {
-    'css' : ['less', 'sass', 'scss', 'styl'],
+    'css' : ['sass', 'scss', 'styl'],
     'gz'  : ['*'],
     'html': ['ejs', 'md'],
     'js'  : ['coffee', 'jsx'],
@@ -114,7 +111,6 @@ config.map.sourceToDestTasks = {
     'jpeg'  : ['jpg'],
     'js'    : ['js'],
     'jsx'   : ['jsx'],
-    'less'  : ['less'],
     'md'    : ['markdown', 'html'],
     'png'   : ['png'],
     'sass'  : ['sass'],

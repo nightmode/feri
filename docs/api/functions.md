@@ -62,7 +62,6 @@ The functions object is grouped into three categories.
 * [includesNewer](#functionsincludesnewer)
 * [includePathsConcat](#functionsincludepathsconcat)
 * [includePathsEjs](#functionsincludepathsejs)
-* [includePathsLess](#functionsincludepathsless)
 * [includePathsSass](#functionsincludepathssass)
 * [includePathsStylus](#functionsincludepathsstylus)
 
@@ -625,19 +624,6 @@ Find EJS includes and return an array of matches.
 @param   {String}   filePath                 Source file where data came from.
 @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
 @return  {Promise}                           Promise that returns an array of includes like ['/partials/_footer.ejs'] if successful. An error object if not.
-```
-
-### functions.includePathsLess
-
-Type: `function`
-
-Find Less includes and return an array of matches.
-
-```
-@param   {String}   data                     String to search for import paths.
-@param   {String}   filePath                 Source file where data came from.
-@param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
-@return  {Promise}                           Promise that returns an array of includes like ['/partials/_fonts.less'] if successful. An error object if not.
 ```
 
 ### functions.includePathsSass

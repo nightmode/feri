@@ -44,7 +44,6 @@ The following changes are likely for the next major release.
 * Compile and Minify
   * CoffeeScript
   * Embedded JavaScript (EJS)
-  * Less
   * Markdown
   * Sass
   * Stylus
