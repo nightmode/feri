@@ -833,10 +833,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     path.join(config.path.source, 'style.css.map.concat'),
                     path.join(config.path.source, 'style.css'),
                     path.join(config.path.source, 'style.css.concat'),
-                    path.join(config.path.source, 'style.sass'),
-                    path.join(config.path.source, 'style.sass.concat'),
-                    path.join(config.path.source, 'style.scss'),
-                    path.join(config.path.source, 'style.scss.concat'),
                     path.join(config.path.source, 'style.styl'),
                     path.join(config.path.source, 'style.styl.concat')
                 ]
@@ -1442,38 +1438,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     var desired = [
                         path.join(config.path.source, 'partials', '_01.txt'),
                         path.join(config.path.source, 'partials', '_02.txt')
-                    ]
-
-                    expect(returnObj).to.eql(desired)
-
-                })
-
-            }) // it
-        }) // describe
-
-        //----------------------------
-        // functions.includePathsSass
-        //----------------------------
-        describe('includePathsSass', function() {
-            it('should find includes and return our desired object', function() {
-
-                config.path.source = path.join(testPath, 'includePathsSass')
-
-                var file = path.join(config.path.source, 'style.scss')
-
-                return Promise.resolve().then(function() {
-
-                    return functions.readFile(file)
-
-                }).then(function(data) {
-
-                    return functions.includePathsSass(data, file)
-
-                }).then(function(returnObj) {
-
-                    var desired = [
-                        path.join(config.path.source, 'partials', '_fonts.scss'),
-                        path.join(config.path.source, 'partials', '_grid.scss')
                     ]
 
                     expect(returnObj).to.eql(desired)

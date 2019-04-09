@@ -49,7 +49,6 @@ var js                 // require('uglify-js')                      // ~  83 ms
 var markdown           // require('markdown-it')()                  // ~  56 ms
 var transferMap        // require('multi-stage-sourcemap').transfer // ~  20 ms
 var pako               // require('pako')                           // ~  21 ms
-var sassPromise        // promisify(require('node-sass').render)    // ~   7 ms
 var sourceMapGenerator // require('source-map').SourceMapGenerator  // ~  13 ms
 var stylus             // require('stylus')                         // ~  98 ms
 
@@ -833,69 +832,6 @@ build.concat = function build_concat(obj) {
 
     })
 } // concat
-
-build.sass = function build_sass(obj) {
-    /*
-    Sass using https://www.npmjs.com/package/node-sass.
-    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
-    @return  {Promise}  obj  Promise that returns a reusable object.
-    */
-    return functions.objBuildWithIncludes(obj, functions.includePathsSass).then(function(obj) {
-
-        functions.logWorker('build.sass', obj)
-
-        if (obj.build) {
-            if (typeof sassPromise !== 'object') {
-                sassPromise = promisify(require('node-sass').render)
-            }
-
-            var options = {
-                file: obj.source,
-                outputStyle: 'compressed' // without this, node-sass seems to mess up source maps
-            }
-
-            if (config.sourceMaps || config.fileType.sass.sourceMaps || config.fileType.scss.sourceMaps) {
-                options.outFile = obj.dest
-                options.sourceMap = obj.dest + '.map'
-                options.sourceMapContents = true
-                options.sourceMapRoot = config.sourceRoot
-            }
-
-            return sassPromise(options).then(function(data) {
-
-                if (config.sourceMaps || config.fileType.sass.sourceMaps || config.fileType.scss.sourceMaps) {
-                    data.css = data.css.toString().replace(/\n\n/g, '\n')
-
-                    var sourceMap = JSON.parse(data.map.toString())
-
-                    sourceMap = functions.normalizeSourceMap(obj, sourceMap)
-
-                    let mapObject = functions.objFromSourceMap(obj, sourceMap)
-
-                    return build.map(mapObject).then(function() {
-                        return data
-                    })
-                } else {
-                    return data
-                }
-
-            }).then(function(data) {
-
-                obj.data = data.css
-
-            })
-
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
-
-    }).then(function() {
-
-        return obj
-
-    })
-} // sass
 
 build.stylus = function build_stylus(obj) {
     /*

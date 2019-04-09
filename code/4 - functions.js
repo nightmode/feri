@@ -1191,7 +1191,7 @@ functions.includesNewer = function functions_includesNewer(includePaths, fileTyp
     /*
     Figure out if any include files are newer than the modified time of the destination file.
     @param   {Object}   includePaths  Array of file paths like ['/source/_header.file', '/source/_footer.file']
-    @param   {String}   fileType      File type like 'sass', 'stylus', etc...
+    @param   {String}   fileType      File type like 'stylus'.
     @param   {Number}   destTime      Modified time of the destination file.
     @return  {Promise}                Promise that returns true if any includes files are newer.
     */
@@ -1382,145 +1382,6 @@ functions.includePathsConcat = function functions_includePathsConcat(data, fileP
     })
 } // includePathsConcat
 
-functions.includePathsSass = function functions_includePathsSass(data, filePath, includePathsCacheName) {
-    /*
-    Find Sass includes and return an array of matches.
-    @param   {String}   data                     String to search for import paths.
-    @param   {String}   filePath                 File path to where data came from.
-    @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
-    @return  {Promise}                           Promise that returns an array of includes like ['/partials/_fonts.scss'] if successful. An error object if not.
-    */
-
-    var cleanup = false
-
-    if (typeof includePathsCacheName === 'undefined') {
-        cleanup = true
-        includePathsCacheName = 'sass' + (++shared.uniqueNumber)
-        shared.cache.includeFilesSeen[includePathsCacheName] = [filePath]
-    }
-
-    return Promise.resolve().then(function() {
-
-        /*
-        Regular Expression should find the name of the import file in each of these lines...
-
-            @import 'reset'
-            @import "reset";
-            @import 'reset' // comment
-            @import '_reset.scss'
-            @import 'include/fonts'
-            @import 'reset', 'fonts'
-            @import a
-            @import b.sass
-
-        Notes from http://sass-lang.com/guide#topic-5
-
-            Sass builds on top of the current CSS @import but instead of requiring an HTTP request, Sass will take the file that you want to import and combine it with the file you're importing into so you can serve a single CSS file to the web browser.
-
-        Notes from http://sass-lang.com/documentation/file.SASS_REFERENCE.html#import
-
-            It’s also possible to import multiple files in one @import. For example:
-                @import "rounded-corners", "text-shadow";
-        */
-        var re = /^(?:\s)*@import ?(.*)/gmi
-
-        var match
-        var imports = []
-
-        while (match = re.exec(data)) {
-            match = match[1].replace(/['";]/g, '')
-
-            // remove comments
-            match = match.replace(/\/\/.*/, '').replace(/\/\*.*/, '')
-
-            ;(function() {
-                var matchArray = match.split(',')
-
-                var checkFiles = []
-
-                for (var i in matchArray) {
-                    matchArray[i] = matchArray[i].trim()
-
-                    if (matchArray[i].indexOf(config.path.source) !== 0) {
-                        // path must be relative
-                        matchArray[i] = path.join(path.dirname(filePath), matchArray[i])
-                    }
-
-                    if (!path.extname(matchArray[i])) {
-                        // add extensions
-                        checkFiles.push(matchArray[i] + '.scss')
-                        checkFiles.push(matchArray[i] + '.sass')
-                    } else {
-                        checkFiles.push(matchArray[i])
-                    }
-
-                    for (var j in checkFiles) {
-                        if (path.basename(checkFiles[j]).charAt(0) !== '_') {
-                            var fileWithPrefix = path.dirname(checkFiles[j]) + '/_' + path.basename(checkFiles[j])
-                            if (shared.cache.includeFilesSeen[includePathsCacheName].indexOf(fileWithPrefix) < 0) {
-                                shared.cache.includeFilesSeen[includePathsCacheName].push(fileWithPrefix)
-                                imports.push(fileWithPrefix)
-                            }
-                        }
-
-                        if (shared.cache.includeFilesSeen[includePathsCacheName].indexOf(checkFiles[j]) < 0) {
-                            shared.cache.includeFilesSeen[includePathsCacheName].push(checkFiles[j])
-                            imports.push(checkFiles[j])
-                        }
-                    }
-                }
-            })()
-        }
-
-        if (imports.length > 0) {
-            // now we have an array of imports like ['/full/path/css/_fonts.scss']
-            var promiseArray = []
-
-            for (var i in imports) {
-                (function() {
-                    var ii = i
-                    promiseArray.push(
-                        functions.fileExists(imports[ii]).then(function(exists) {
-                            if (exists) {
-                                return functions.readFile(imports[ii]).then(function(data) {
-                                    return functions.includePathsSass(data, imports[ii], includePathsCacheName).then(function(subIncludes) {
-                                        for (var j in subIncludes) {
-                                            imports.push(subIncludes[j])
-                                        }
-                                    })
-                                })
-                            } else {
-                                delete imports[ii] // leaves an empty space in the array which we will clean up later
-
-                            }
-                        })
-                    )
-                })()
-            } // for
-
-            return Promise.all(promiseArray).then(function() {
-
-                // clean out any empty imports which meant their files could not be found
-                imports = functions.cleanArray(imports)
-
-                return imports
-
-            })
-        } else {
-            return imports
-        }
-
-    }).then(function(imports) {
-
-        if (cleanup) {
-            delete shared.cache.includeFilesSeen[includePathsCacheName]
-        }
-
-        return imports
-
-    })
-} // includePathsSass
-
 functions.includePathsStylus = function functions_includePathsStylus(data, filePath, includePathsCacheName) {
     /*
     Find Stylus includes and return an array of matches.
@@ -1701,7 +1562,7 @@ functions.objBuildWithIncludes = function functions_objBuildWithIncludes(obj, in
     /*
     Figure out if a reusable object, which may have include files, needs to be built in memory.
     @param   {Object}    obj              Reusable object originally created by build.processOneBuild
-    @param   {Function}  includeFunction  Function that will parse this particular type of file (sass, stylus, etc...) and return any paths to include files.
+    @param   {Function}  includeFunction  Function that will parse this particular type of file (stylus for example) and return any paths to include files.
     @return  {Promise}                    Promise that returns a reusable object.
     */
     var destTime = 0

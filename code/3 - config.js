@@ -18,7 +18,7 @@ var config = {
     // null values will be populated later
     concurLimit: 1, // 1-3 recommended since node libuv has 4 slots by default
     fileType: null, // object that will hold options for individual file types
-    includeFileTypes: ['sass', 'scss', 'styl'], // Used by watch.buildOne to know which file types may use includes.
+    includeFileTypes: ['styl'], // Used by watch.buildOne to know which file types may use includes.
     includePrefix: '_',   // Files prefixed with this string will not be published directly to the destination directory. Prefixed files can be included inside other files that do get published to destination though.
     glob: { // glob search strings like **/*.gif
         'clean': '', // If specified, use when running clean.processClean without the files parameter.
@@ -68,12 +68,6 @@ config.fileType = {
     js: {
         'sourceMaps': false // used by build.js
     },
-    sass: {
-        'sourceMaps': false // used by build.sass
-    },
-    scss: {
-        'sourceMaps': false // used by build.sass
-    },
     styl: {
         'sourceMaps': false // used by build.stylus
     }
@@ -83,7 +77,7 @@ config.fileType = {
 // Destination Extensions to Source Extensions
 //---------------------------------------------
 config.map.destToSourceExt = {
-    'css' : ['sass', 'scss', 'styl'],
+    'css' : ['styl'],
     'gz'  : ['*'],
     'html': ['md'],
     'js'  : ['coffee'],
@@ -104,8 +98,6 @@ config.map.sourceToDestTasks = {
     'js'    : ['js'],
     'md'    : ['markdown', 'html'],
     'png'   : ['png'],
-    'sass'  : ['sass'],
-    'scss'  : ['sass'],
     'styl'  : ['stylus'],
     // copy only tasks
     '7z'    : ['copy'],
