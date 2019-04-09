@@ -830,9 +830,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     path.join(config.path.source, 'style.css.map'),
                     path.join(config.path.source, 'style.css.map.concat'),
                     path.join(config.path.source, 'style.css'),
-                    path.join(config.path.source, 'style.css.concat'),
-                    path.join(config.path.source, 'style.styl'),
-                    path.join(config.path.source, 'style.styl.concat')
+                    path.join(config.path.source, 'style.css.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)
@@ -1434,38 +1432,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     let desired = [
                         path.join(config.path.source, 'partials', '_01.txt'),
                         path.join(config.path.source, 'partials', '_02.txt')
-                    ]
-
-                    expect(returnObj).to.eql(desired)
-
-                })
-
-            }) // it
-        }) // describe
-
-        //------------------------------
-        // functions.includePathsStylus
-        //------------------------------
-        describe('includePathsStylus', function() {
-            it('should find includes and return our desired object\n', function() {
-
-                config.path.source = path.join(testPath, 'includePathsStylus')
-
-                let file = path.join(config.path.source, 'style.styl')
-
-                return Promise.resolve().then(function() {
-
-                    return functions.readFile(file)
-
-                }).then(function(data) {
-
-                    return functions.includePathsStylus(data, file)
-
-                }).then(function(returnObj) {
-
-                    let desired = [
-                        path.join(config.path.source, 'partials', '_fonts.styl'),
-                        path.join(config.path.source, 'partials', '_grid.styl')
                     ]
 
                     expect(returnObj).to.eql(desired)

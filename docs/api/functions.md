@@ -61,7 +61,6 @@ The functions object is grouped into three categories.
 
 * [includesNewer](#functionsincludesnewer)
 * [includePathsConcat](#functionsincludepathsconcat)
-* [includePathsStylus](#functionsincludepathsstylus)
 
 ### Functions: Reusable Object Building
 
@@ -593,7 +592,7 @@ Figure out if any include files are newer than the modified time of the destinat
 
 ```
 @param   {Object}   includePaths  Array of file paths like ['/source/_header.file', '/source/_footer.file']
-@param   {String}   fileType      File type like 'stylus'.
+@param   {String}   fileType      File type like 'concat'.
 @param   {Number}   destTime      Modified time of the destination file.
 @return  {Promise}                Promise that returns true if any includes files are newer.
 ```
@@ -611,19 +610,6 @@ Find CONCAT includes and return an array of matches.
 @return  {Promise}                           Promise that returns an array of files to concatenate like ['/js/_library.js'] if successful. An error object if not.
 ```
 
-### functions.includePathsStylus
-
-Type: `function`
-
-Find Stylus includes and return an array of matches.
-
-```
-@param   {String}   data                     String to search for includes paths.
-@param   {String}   filePath                 Full file path to where data came from.
-@param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
-@return  {Promise}                           Promise that returns an array of includes like ['/partials/_fonts.styl'] if successful. An error object if not.
-```
-
 ## Functions: Reusable Object Building
 
 ### functions.objBuildWithIncludes
@@ -634,7 +620,7 @@ Figure out if a reusable object, which may have include files, needs to be built
 
 ```
 @param   {Object}    obj              Reusable object originally created by build.processOneBuild
-@param   {Function}  includeFunction  Function that will parse this particular type of file (stylus for example) and return any paths to include files.
+@param   {Function}  includeFunction  Function that will parse this particular type of file (concat for example) and return any paths to include files.
 @return  {Promise}                    Promise that returns a reusable object.
 ```
 

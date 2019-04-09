@@ -1162,7 +1162,7 @@ functions.includesNewer = function functions_includesNewer(includePaths, fileTyp
     /*
     Figure out if any include files are newer than the modified time of the destination file.
     @param   {Object}   includePaths  Array of file paths like ['/source/_header.file', '/source/_footer.file']
-    @param   {String}   fileType      File type like 'stylus'.
+    @param   {String}   fileType      File type like 'concat'.
     @param   {Number}   destTime      Modified time of the destination file.
     @return  {Promise}                Promise that returns true if any includes files are newer.
     */
@@ -1353,179 +1353,6 @@ functions.includePathsConcat = function functions_includePathsConcat(data, fileP
     })
 } // includePathsConcat
 
-functions.includePathsStylus = function functions_includePathsStylus(data, filePath, includePathsCacheName) {
-    /*
-    Find Stylus includes and return an array of matches.
-    @param   {String}   data                     String to search for includes paths.
-    @param   {String}   filePath                 Full file path to where data came from.
-    @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
-    @return  {Promise}                           Promise that returns an array of includes like ['/partials/_fonts.styl'] if successful. An error object if not.
-    */
-    let cleanup = false
-
-    if (typeof includePathsCacheName === 'undefined') {
-        cleanup = true
-        includePathsCacheName = 'styl' + (++shared.uniqueNumber)
-        shared.cache.includeFilesSeen[includePathsCacheName] = [filePath]
-    }
-
-    return Promise.resolve().then(function() {
-
-        /*
-        Regular Expression should match...
-
-            @require "file.styl"
-            @require file.styl
-            @import 'file'
-            @import 'file.css'
-            @import 'mixins/*'
-
-        Notes from https://learnboost.github.io/stylus/docs/import.html
-
-            When using @import without the .css extension, it’s assumed to be a Stylus sheet (e.g., @import "mixins/border-radius").
-
-            @import also supports index styles. This means when you @import blueprint, it will resolve either blueprint.styl or blueprint/index.styl. This is really useful for libraries that want to expose all their features, while still allowing feature subsets to be imported.
-
-            Stylus supports globbing. With it you could import many files using a file mask:
-                @import 'product/*'
-        */
-        let re = /^(?:\s)*@(require|import)([^;\n]*).*$/gmi
-
-        let match
-        let includes = []
-        let globs = []
-
-        while (match = re.exec(data)) {
-            match = match[2].trim()
-
-            try {
-                match = eval(match)
-            } catch(e) {
-                // do nothing
-            }
-
-            if (path.extname(match) === 'css') {
-                // leave CSS @import as is
-            } else {
-                if (match.indexOf(config.path.source) !== 0) {
-                    // path must be relative
-                    match = path.join(path.dirname(filePath), match)
-                }
-
-                if (functions.isGlob(match)) {
-                    // we are dealing with a glob
-                    globs.push(match.replace(/\.styl/i, '') + '.styl')
-                    continue
-                }
-
-                // extension-less imports
-                if (!path.extname(match)) {
-                    // import could be a stylus file
-                    if (shared.cache.includeFilesSeen[includePathsCacheName].indexOf(match + '.styl') < 0) {
-                        // a unique path we haven't seen yet so continue
-                        shared.cache.includeFilesSeen[includePathsCacheName].push(match + '.styl')
-                        includes.push(match + '.styl')
-                    } else {
-                        // already seen this include
-                    }
-
-                    // import could also be an index stylus file in a sub folder
-                    if (shared.cache.includeFilesSeen[includePathsCacheName].indexOf(match + '/index.styl') < 0) {
-                        shared.cache.includeFilesSeen[includePathsCacheName].push(match + '/index.styl')
-                        includes.push(match + '/index.styl')
-                    }
-                } else {
-                    if (shared.cache.includeFilesSeen[includePathsCacheName].indexOf(match) < 0) {
-                        shared.cache.includeFilesSeen[includePathsCacheName].push(match)
-                        includes.push(match)
-                    }
-                }
-            }
-        }
-
-        if (globs.length > 0) {
-
-            let promiseArray = []
-
-            for (let i in globs) {
-                (function() {
-                    let ii = i
-                    let options = {
-                        "nocase"  : true,
-                        "nodir"   : false,
-                        "realpath": true
-                    }
-                    promiseArray.push(
-                        functions.findFiles(globs[ii], options).then(function(files) {
-                            if (files.length > 0) {
-                                for (let j in files) {
-                                    includes.push(files[j])
-                                }
-                            }
-                        })
-                    )
-                })()
-            } // for
-
-            return Promise.all(promiseArray).then(function() {
-                return includes
-            })
-        } else {
-            return includes
-        }
-
-    }).then(function(includes) {
-
-        if (includes.length > 0) {
-            // now we have an array of includes like ['/full/path/css/_fonts.styl']
-
-            let promiseArray = []
-
-            for (let i in includes) {
-                (function() {
-                    let ii = i
-                    promiseArray.push(
-                        functions.fileExists(includes[ii]).then(function(exists) {
-                            if (exists) {
-                                return functions.readFile(includes[ii]).then(function(data) {
-                                    return functions.includePathsStylus(data, includes[ii], includePathsCacheName).then(function(subIncludes) {
-                                        for (let j in subIncludes) {
-                                            includes.push(subIncludes[j])
-                                        }
-                                    })
-                                })
-                            } else {
-                                delete includes[ii] // leaves an empty space in the array which we will clean up later
-
-                            }
-                        })
-                    )
-                })()
-            } // for
-
-            return Promise.all(promiseArray).then(function() {
-
-                // clean out any empty includes which meant their files could not be found
-                includes = functions.cleanArray(includes)
-
-                return includes
-
-            })
-        } else {
-            return includes
-        }
-
-    }).then(function(includes) {
-
-        if (cleanup) {
-            delete shared.cache.includeFilesSeen[includePathsCacheName]
-        }
-
-        return includes
-
-    })
-} // includePathsStylus
-
 //-------------------------------------
 // Functions: Reusable Object Building
 //-------------------------------------
@@ -1533,7 +1360,7 @@ functions.objBuildWithIncludes = function functions_objBuildWithIncludes(obj, in
     /*
     Figure out if a reusable object, which may have include files, needs to be built in memory.
     @param   {Object}    obj              Reusable object originally created by build.processOneBuild
-    @param   {Function}  includeFunction  Function that will parse this particular type of file (stylus for example) and return any paths to include files.
+    @param   {Function}  includeFunction  Function that will parse this particular type of file (concat for example) and return any paths to include files.
     @return  {Promise}                    Promise that returns a reusable object.
     */
     let destTime = 0

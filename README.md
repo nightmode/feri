@@ -41,7 +41,6 @@ The following changes are likely for the next major release.
 * Command Line / API
 * Compile and Minify
   * Markdown
-  * Stylus
 * Concatenate
 * LiveReload
 * Minify

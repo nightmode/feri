@@ -31,7 +31,6 @@ The build object is grouped into five categories.
 ### Build: With Includes
 
 * [concat](#buildconcat)
-* [stylus](#buildstylus)
 
 ### Build: Finishers
 
@@ -184,17 +183,6 @@ The following functions are for file types that may contain includes.
 Type: `function`
 
 Concatenate files like `all.js.concat` which can contain globs and/or file path strings that point to other files.
-
-```
-@param   {Object}   obj  Reusable object originally created by build.processOneBuild
-@return  {Promise}  obj  Promise that returns a reusable object.
-```
-
-### build.stylus
-
-Type: `function`
-
-Stylus using [stylus](https://www.npmjs.com/package/stylus).
 
 ```
 @param   {Object}   obj  Reusable object originally created by build.processOneBuild

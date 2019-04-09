@@ -50,7 +50,6 @@ let markdown           // require('markdown-it')()                  // ~  56 ms
 let transferMap        // require('multi-stage-sourcemap').transfer // ~  20 ms
 let pako               // require('pako')                           // ~  21 ms
 let sourceMapGenerator // require('source-map').SourceMapGenerator  // ~  13 ms
-let stylus             // require('stylus')                         // ~  98 ms
 
 //-----------
 // Variables
@@ -831,88 +830,6 @@ build.concat = function build_concat(obj) {
 
     })
 } // concat
-
-build.stylus = function build_stylus(obj) {
-    /*
-    Stylus using https://www.npmjs.com/package/stylus.
-    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
-    @return  {Promise}  obj  Promise that returns a reusable object.
-    */
-    return functions.objBuildWithIncludes(obj, functions.includePathsStylus).then(function(obj) {
-
-        functions.logWorker('build.stylus', obj)
-
-        if (obj.build) {
-            if (typeof stylus !== 'object') {
-                stylus = require('stylus')
-            }
-
-            return new Promise(function(resolve, reject) {
-
-                let style = stylus(obj.data)
-                    .set('compress', true)
-                    .set('filename', obj.source)
-                    .set('paths', [path.dirname(obj.source)])
-
-                if (config.sourceMaps || config.fileType.styl.sourceMaps) {
-                    style.set('sourcemap', {
-                        'sourceRoot': config.sourceRoot
-                    })
-                }
-
-                style.render(function(err, css) {
-                    if (err) {
-                        functions.log(err)
-                        reject(err)
-                    } else {
-                        if (config.sourceMaps || config.fileType.styl.sourceMaps) {
-                            let string = '/*# sourceMappingURL='
-                            let pos = css.indexOf(string)
-
-                            if (pos > 0) {
-                                css = css.substr(0, pos) + '\n' + string + path.basename(obj.dest) + '.map */'
-                            }
-
-                            obj.data = css
-
-                            let sourceMap = style.sourcemap
-
-                            let sources = []
-                            let basename = path.basename(config.path.source)
-
-                            for (let i in sourceMap.sources) {
-                                sources.push(sourceMap.sources[i].replace(basename, config.path.source))
-                            }
-
-                            return functions.readFiles(sources).then(function(dataArray) {
-
-                                sourceMap.sourcesContent = dataArray
-
-                                let mapObject = functions.objFromSourceMap(obj, sourceMap)
-
-                                return build.map(mapObject).then(function() {
-                                    resolve()
-                                })
-
-                            })
-                        } else {
-                            obj.data = css
-                            resolve()
-                        }
-                    }
-                }) // style.render
-            })
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
-
-    }).then(function() {
-
-        return obj
-
-    })
-} // stylus
 
 //------------------
 // Build: Finishers
