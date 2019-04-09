@@ -3,8 +3,8 @@
 //----------
 // Includes
 //----------
-var os           = require('os')            // ~ 1 ms
-var path         = require('path')          // ~ 1 ms
+var os   = require('os')   // ~ 1 ms
+var path = require('path') // ~ 1 ms
 
 //-----------
 // Functions

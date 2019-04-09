@@ -13,7 +13,6 @@
     "feri": "code/1 - main.js"
   },
   "dependencies": {
-    "chalk": "2.4.2",
     "chokidar": "1.7.0",
     "clean-css": "4.2.1",
     "compare-versions": "3.4.0",

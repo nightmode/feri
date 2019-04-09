@@ -3,13 +3,13 @@
 //----------------
 // Includes: Self
 //----------------
+var color  = require('./color.js')
 var shared = require('./2 - shared.js')
 
 //----------
 // Includes
 //----------
-var chalk = require('chalk') // ~ 20 ms
-var path  = require('path')  // ~  1 ms
+var path = require('path') // ~ 1 ms
 
 //-----------
 // Variables

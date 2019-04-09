@@ -3,6 +3,7 @@
 //----------------
 // Includes: Self
 //----------------
+var color     = require('./color.js')
 var shared    = require('./2 - shared.js')
 var config    = require('./3 - config.js')
 var functions = require('./4 - functions.js')
@@ -12,11 +13,10 @@ var build     = require('./6 - build.js')
 //----------
 // Includes
 //----------
-var chalk       = require('chalk')       // ~ 20 ms
-var events      = require('events')      // ~  1 ms
-var mkdirp      = require('mkdirp')      // ~  1 ms
-var path        = require('path')        // ~  1 ms
-var querystring = require('querystring') // ~  2 ms
+var events      = require('events')      // ~ 1 ms
+var mkdirp      = require('mkdirp')      // ~ 1 ms
+var path        = require('path')        // ~ 1 ms
+var querystring = require('querystring') // ~ 2 ms
 
 //---------------------
 // Includes: Lazy Load
@@ -165,7 +165,7 @@ watch.processWatch = function watch_processWatch(sourceFiles, destFiles) {
 
             return new Promise(function(resolve, reject) {
 
-                functions.log(chalk.gray('\n' + shared.language.display('words.watch') + '\n'), false)
+                functions.log(color.gray('\n' + shared.language.display('words.watch') + '\n'), false)
 
                 return watch.watchSource(sourceFiles).then(function() {
                     //------------
@@ -191,7 +191,7 @@ watch.processWatch = function watch_processWatch(sourceFiles, destFiles) {
                             } else {
                                 return watch.watchDest(destFiles).then(function() {
 
-                                    functions.log(chalk.gray(shared.language.display('message.listeningOnPort').replace('{software}', 'LiveReload').replace('{port}', config.thirdParty.livereload.port)))
+                                    functions.log(color.gray(shared.language.display('message.listeningOnPort').replace('{software}', 'LiveReload').replace('{port}', config.thirdParty.livereload.port)))
 
                                     resolve()
 
@@ -301,7 +301,7 @@ watch.updateLiveReloadServer = function watch_updateLiveReloadServer(now) {
             request.write(postData)
             request.end()
 
-            functions.log(chalk.gray(shared.language.display('message.watchRefreshed').replace('{software}', 'LiveReload') + '\n'))
+            functions.log(color.gray(shared.language.display('message.watchRefreshed').replace('{software}', 'LiveReload') + '\n'))
             resolve(true)
         }
     })
@@ -354,7 +354,7 @@ watch.watchDest = function watch_watchDest(files) {
             if (!shared.suppressWatchEvents) {
                 var ext = path.extname(file).replace('.', '')
                 if (config.livereloadFileTypes.indexOf(ext) >= 0) {
-                    functions.log(chalk.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
+                    functions.log(color.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
 
                     // emit an event
                     watch.emitterDest.emit('add', file)
@@ -368,7 +368,7 @@ watch.watchDest = function watch_watchDest(files) {
             if (!shared.suppressWatchEvents) {
                 var ext = path.extname(file).replace('.', '').toLowerCase()
                 if (config.livereloadFileTypes.indexOf(ext) >= 0) {
-                    functions.log(chalk.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
+                    functions.log(color.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
 
                     // emit an event
                     watch.emitterDest.emit('change', file)
@@ -392,7 +392,7 @@ watch.watchDest = function watch_watchDest(files) {
             if (readyCalled === false) {
                 readyCalled = true
 
-                functions.log(chalk.gray(shared.language.display('message.watchingDirectory').replace('{directory}', '/' + path.basename(config.path.dest))))
+                functions.log(color.gray(shared.language.display('message.watchingDirectory').replace('{directory}', '/' + path.basename(config.path.dest))))
 
                 watch.emitterDest.emit('ready')
 
@@ -450,7 +450,7 @@ watch.watchSource = function watch_watchSource(files) {
         chokidarSource
         .on('addDir', function(file) {
             if (!shared.suppressWatchEvents) {
-                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.addDirectory')))
+                functions.log(color.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.addDirectory')))
 
                 // emit an event
                 watch.emitterSource.emit('add directory', file)
@@ -465,7 +465,7 @@ watch.watchSource = function watch_watchSource(files) {
         })
         .on('unlinkDir', function(file) {
             if (!shared.suppressWatchEvents) {
-                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removedDirectory')))
+                functions.log(color.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removedDirectory')))
 
                 // emit an event
                 watch.emitterSource.emit('removed directory', file)
@@ -475,7 +475,7 @@ watch.watchSource = function watch_watchSource(files) {
         })
         .on('add', function(file) {
             if (!shared.suppressWatchEvents) {
-                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
+                functions.log(color.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
 
                 // emit an event
                 watch.emitterSource.emit('add', file)
@@ -486,7 +486,7 @@ watch.watchSource = function watch_watchSource(files) {
         .on('change', function(file) {
             if (!shared.suppressWatchEvents) {
                 if (watch.notTooRecent(file)) {
-                    functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
+                    functions.log(color.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
 
                     // emit an event
                     watch.emitterSource.emit('change', file)
@@ -494,14 +494,14 @@ watch.watchSource = function watch_watchSource(files) {
                     watch.buildOne(file)
                 } else {
                     if (config.option.debug) {
-                        functions.log(chalk.yellow(shared.language.display('message.fileChangedTooRecently').replace('{file}', functions.trimSource(file).replace(/\\/g, '/'))))
+                        functions.log(color.yellow(shared.language.display('message.fileChangedTooRecently').replace('{file}', functions.trimSource(file).replace(/\\/g, '/'))))
                     }
                 }
             }
         })
         .on('unlink', function(file) {
             if (!shared.suppressWatchEvents) {
-                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed')))
+                functions.log(color.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed')))
 
                 // emit an event
                 watch.emitterSource.emit('removed', file)
@@ -523,7 +523,7 @@ watch.watchSource = function watch_watchSource(files) {
             if (readyCalled === false) {
                 readyCalled = true
 
-                functions.log(chalk.gray(shared.language.display('message.watchingDirectory').replace('{directory}', '/' + path.basename(config.path.source))))
+                functions.log(color.gray(shared.language.display('message.watchingDirectory').replace('{directory}', '/' + path.basename(config.path.source))))
 
                 recentFiles = {} // reset recentFiles in case any changes happened while we were loading
 

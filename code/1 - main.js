@@ -10,6 +10,7 @@ var time = new Date().getTime()
 //-----------------------
 // Includes: Self Part 1
 //-----------------------
+var color  = require('./color.js')
 var shared = require('./2 - shared.js')
 
 //-------------------------
@@ -27,9 +28,8 @@ try {
 //----------
 // Includes
 //----------
-var chalk = require('chalk') // ~ 20 ms
-var fs    = require('fs')    // ~  1 ms
-var path  = require('path')  // ~  1 ms
+var fs   = require('fs')   // ~  1 ms
+var path = require('path') // ~  1 ms
 
 //-------------------------
 // Global or Local Install
@@ -44,8 +44,8 @@ try {
 //-----------------------
 // Includes: Self Part 2
 //-----------------------
-var config    = require('./3 - config.js')
-var functions = require('./4 - functions.js')
+var config    = require('./3 - config.js')    // ~  3 ms
+var functions = require('./4 - functions.js') // ~ 20 ms
 var clean     = require('./5 - clean.js')
 var build     = require('./6 - build.js')
 var watch     = require('./7 - watch.js')
@@ -153,16 +153,16 @@ if (shared.cli) {
             //-------------------------------
             let localVersion = require('../package.json').version
 
-            console.log('\n' + chalk.cyan('Feri') + chalk.gray(' version ') + chalk.cyan(localVersion))
+            console.log('\n' + color.cyan('Feri') + color.gray(' version ') + color.cyan(localVersion))
 
             return functions.upgradeAvailable().then(function(upgradeVersion) {
 
                 var message = ''
 
                 if (upgradeVersion) {
-                    message += '\n' + chalk.gray('    Upgrade to version ')
-                    message += chalk.cyan(upgradeVersion) + chalk.gray(' -> ')
-                    message += chalk.green('npm install -g feri') + '\n'
+                    message += '\n' + color.gray('    Upgrade to version ')
+                    message += color.cyan(upgradeVersion) + color.gray(' -> ')
+                    message += color.green('npm install -g feri') + '\n'
                 }
 
                 console.log(message)
@@ -177,7 +177,7 @@ if (shared.cli) {
             console.log()
             console.log('Usage:')
             console.log()
-            console.log('    ' + chalk.cyan('feri [options] [source] [destination]'))
+            console.log('    ' + color.cyan('feri [options] [source] [destination]'))
             console.log()
             console.log('Options:')
             console.log()
@@ -201,34 +201,34 @@ if (shared.cli) {
             console.log('    -v, --version        version')
             console.log('    -h, --help           help')
             console.log()
-            console.log('    ' + chalk.gray('Negating options like "--noclean" are stronger than their counterparts.'))
-            console.log('    ' + chalk.gray('For example, "feri --clean --noclean" would result in not cleaning.'))
+            console.log('    ' + color.gray('Negating options like "--noclean" are stronger than their counterparts.'))
+            console.log('    ' + color.gray('For example, "feri --clean --noclean" would result in not cleaning.'))
             console.log()
-            console.log('    ' + chalk.gray('Options "--all", "--forcebuild", and "--republish" are even stronger.'))
+            console.log('    ' + color.gray('Options "--all", "--forcebuild", and "--republish" are even stronger.'))
             console.log()
-            console.log('    ' + chalk.gray('Want even more options? Try a custom config file.'))
-            console.log('    ' + chalk.gray('https://github.com/nightmode/feri#custom-config-file'))
+            console.log('    ' + color.gray('Want even more options? Try a custom config file.'))
+            console.log('    ' + color.gray('https://github.com/nightmode/feri#custom-config-file'))
             console.log()
             console.log('Source:')
             console.log()
             console.log('    Optional source directory to build files from.')
-            console.log('    ' + chalk.gray('Defaults to "./source"'))
+            console.log('    ' + color.gray('Defaults to "./source"'))
             console.log()
             console.log('Destination:')
             console.log()
             console.log('    Optional destination directory to build files to.')
-            console.log('    ' + chalk.gray('Defaults to "./dest"'))
+            console.log('    ' + color.gray('Defaults to "./dest"'))
             console.log()
             console.log('Examples:')
             console.log()
-            console.log('    ' + chalk.gray('// clean, build, and stats are enabled by default'))
-            console.log('    ' + chalk.cyan('feri'))
+            console.log('    ' + color.gray('// clean, build, and stats are enabled by default'))
+            console.log('    ' + color.cyan('feri'))
             console.log()
-            console.log('    ' + chalk.gray('// clean, do not build, then watch'))
-            console.log('    ' + chalk.cyan('feri --nobuild --watch'))
+            console.log('    ' + color.gray('// clean, do not build, then watch'))
+            console.log('    ' + color.cyan('feri --nobuild --watch'))
             console.log()
-            console.log('    ' + chalk.gray('// republish from a specific source folder to a specific destination'))
-            console.log('    ' + chalk.cyan('feri --republish /source /destination'))
+            console.log('    ' + color.gray('// republish from a specific source folder to a specific destination'))
+            console.log('    ' + color.cyan('feri --republish /source /destination'))
             console.log()
 
         } else if (commandLineOptions.length > 0) {
@@ -343,7 +343,7 @@ if (shared.cli) {
             } else {
 
                 if (configFileExists) {
-                    functions.log(chalk.gray(shared.language.display('message.usingConfigFile').replace('{file}', '"feri-config.js"')), false)
+                    functions.log(color.gray(shared.language.display('message.usingConfigFile').replace('{file}', '"feri-config.js"')), false)
                 }
 
                 var p = Promise.resolve()
@@ -385,22 +385,22 @@ if (shared.cli) {
                     if (!config.option.stats) {
                         functions.log('', false)
                     } else {
-                        functions.log(chalk.gray('\n' + shared.language.display('words.stats') + '\n'), false)
+                        functions.log(color.gray('\n' + shared.language.display('words.stats') + '\n'), false)
 
                         if (shared.stats.timeTo.load > 0) {
-                            functions.log(chalk.gray(shared.language.display('paddedGroups.stats.load')) + ' ' + chalk.cyan(shared.stats.timeTo.load))
+                            functions.log(color.gray(shared.language.display('paddedGroups.stats.load')) + ' ' + color.cyan(shared.stats.timeTo.load))
                         }
 
                         if (shared.stats.timeTo.clean > 0) {
-                            functions.log(chalk.gray(shared.language.display('paddedGroups.stats.clean')) + ' ' + chalk.cyan(shared.stats.timeTo.clean))
+                            functions.log(color.gray(shared.language.display('paddedGroups.stats.clean')) + ' ' + color.cyan(shared.stats.timeTo.clean))
                         }
 
                         if (shared.stats.timeTo.build > 0) {
-                            functions.log(chalk.gray(shared.language.display('paddedGroups.stats.build')) + ' ' + chalk.cyan(shared.stats.timeTo.build))
+                            functions.log(color.gray(shared.language.display('paddedGroups.stats.build')) + ' ' + color.cyan(shared.stats.timeTo.build))
                         }
 
                         if (shared.stats.timeTo.watch > 0) {
-                            functions.log(chalk.gray(shared.language.display('paddedGroups.stats.watch')) + ' ' + chalk.cyan(shared.stats.timeTo.watch))
+                            functions.log(color.gray(shared.language.display('paddedGroups.stats.watch')) + ' ' + color.cyan(shared.stats.timeTo.watch))
                         }
 
                         var totalTime = shared.stats.timeTo.load + shared.stats.timeTo.clean + shared.stats.timeTo.build + shared.stats.timeTo.watch
@@ -408,7 +408,7 @@ if (shared.cli) {
                         totalTime = functions.mathRoundPlaces(totalTime, 3)
 
                         functions.log('', false)
-                        functions.log(chalk.gray(shared.language.display('paddedGroups.stats.total')) + ' ' + chalk.cyan(totalTime) + chalk.gray(' ' + shared.language.display('words.seconds') + '\n'))
+                        functions.log(color.gray(shared.language.display('paddedGroups.stats.total')) + ' ' + color.cyan(totalTime) + color.gray(' ' + shared.language.display('words.seconds') + '\n'))
                     }
 
                 }).then(function() {
@@ -417,7 +417,7 @@ if (shared.cli) {
                     // Watching
                     //----------
                     if (config.option.watch) {
-                        functions.log(chalk.gray(shared.language.display('words.watching')) + '\n', false)
+                        functions.log(color.gray(shared.language.display('words.watching')) + '\n', false)
 
                         shared.suppressWatchEvents = false
                     }
@@ -435,10 +435,10 @@ if (shared.cli) {
         functions.logError(err)
 
         var message = shared.language.display('error.halted') + '\n'
-        message = message.replace('{software}', chalk.cyan('Feri'))
-        message = message.replace('{version}', chalk.green(require('../package.json').version))
+        message = message.replace('{software}', color.cyan('Feri'))
+        message = message.replace('{version}', color.green(require('../package.json').version))
 
-        functions.log(chalk.gray(message), false)
+        functions.log(color.gray(message), false)
         throw err
 
     })

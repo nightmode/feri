@@ -3,6 +3,7 @@
 //----------------
 // Includes: Self
 //----------------
+var color     = require('./color.js')
 var shared    = require('./2 - shared.js')
 var config    = require('./3 - config.js')
 var functions = require('./4 - functions.js')
@@ -10,11 +11,10 @@ var functions = require('./4 - functions.js')
 //----------
 // Includes
 //----------
-var chalk = require('chalk') // ~ 20 ms
-var fs    = require('fs')    // ~  1 ms
-var glob  = require('glob')  // ~ 13 ms
-var path  = require('path')  // ~  1 ms
-var util  = require('util')  // ~  1 ms
+var fs   = require('fs')   // ~  1 ms
+var glob = require('glob') // ~ 13 ms
+var path = require('path') // ~  1 ms
+var util = require('util') // ~  1 ms
 
 //---------------------
 // Includes: Promisify
@@ -100,7 +100,7 @@ build.processBuild = function build_processBuild(files, watching) {
 
         if (!watching) {
             // display title
-            functions.log(chalk.gray('\n' + shared.language.display('words.build') + '\n'), false)
+            functions.log(color.gray('\n' + shared.language.display('words.build') + '\n'), false)
         }
 
         var filesType = typeof files
@@ -147,10 +147,10 @@ build.processBuild = function build_processBuild(files, watching) {
                         array[i] = '.' + array[i]
                     }
 
-                    functions.log('\n    ' + chalk.gray(shared.language.display('message.missingSourceToDestTasks') + '\n        ' + array.sort().join('\n        ')), false)
+                    functions.log('\n    ' + color.gray(shared.language.display('message.missingSourceToDestTasks') + '\n        ' + array.sort().join('\n        ')), false)
                 }
             } else {
-                functions.log(chalk.gray(shared.language.display('words.done') + '.'))
+                functions.log(color.gray(shared.language.display('words.done') + '.'))
             }
 
             //------------

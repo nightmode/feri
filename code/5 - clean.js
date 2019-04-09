@@ -3,6 +3,7 @@
 //----------------
 // Includes: Self
 //----------------
+var color     = require('./color.js')
 var shared    = require('./2 - shared.js')
 var config    = require('./3 - config.js')
 var functions = require('./4 - functions.js')
@@ -10,8 +11,7 @@ var functions = require('./4 - functions.js')
 //----------
 // Includes
 //----------
-var chalk = require('chalk') // ~ 20 ms
-var path  = require('path')  // ~  1 ms
+var path = require('path') // ~ 1 ms
 
 //-----------
 // Variables
@@ -60,7 +60,7 @@ clean.processClean = function clean_processClean(files, watching) {
 
         if (!watching) {
             // display title
-            functions.log(chalk.gray('\n' + shared.language.display('words.clean') + '\n'), false)
+            functions.log(color.gray('\n' + shared.language.display('words.clean') + '\n'), false)
         }
 
         if (config.option.republish && !watching) {
@@ -119,9 +119,9 @@ clean.processClean = function clean_processClean(files, watching) {
             shared.stats.timeTo.clean = functions.sharedStatsTimeTo(shared.stats.timeTo.clean)
 
             if (filesCleaned.length === 0) {
-                functions.log(chalk.gray(shared.language.display('words.done') + '.'))
+                functions.log(color.gray(shared.language.display('words.done') + '.'))
             } else if (filesCleaned[0] === config.path.dest) {
-                functions.log(chalk.gray('/' + path.basename(config.path.dest) + ' ' + shared.language.display('words.removed')))
+                functions.log(color.gray('/' + path.basename(config.path.dest) + ' ' + shared.language.display('words.removed')))
             }
         }
 

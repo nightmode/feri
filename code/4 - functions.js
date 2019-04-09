@@ -3,13 +3,13 @@
 //----------------
 // Includes: Self
 //----------------
+var color  = require('./color.js')
 var shared = require('./2 - shared.js')
 var config = require('./3 - config.js')
 
 //----------
 // Includes
 //----------
-var chalk  = require('chalk')  // ~ 20 ms
 var fs     = require('fs')     // ~  1 ms
 var glob   = require('glob')   // ~ 13 ms
 var mkdirp = require('mkdirp') // ~  1 ms
@@ -427,7 +427,7 @@ functions.initFeri = function initFeri() {
 
     }).then(function() {
 
-        functions.log('\n' + chalk.gray(shared.language.display('words.done') + '.\n'), false)
+        functions.log('\n' + color.gray(shared.language.display('words.done') + '.\n'), false)
 
     })
 } // initFeri
@@ -492,10 +492,10 @@ functions.logError = function functions_logError(error) {
     if (displayError) {
         if (typeof error.stack === 'string') {
             // error is an object
-            console.warn('\n' + chalk.red(error.stack) + '\n')
+            console.warn('\n' + color.red(error.stack) + '\n')
         } else {
             // error is a string
-            console.warn('\n' + chalk.gray('Error: ') + chalk.red(error) + '\n')
+            console.warn('\n' + color.gray('Error: ') + color.red(error) + '\n')
         }
     }
 } // logError
@@ -515,7 +515,7 @@ functions.logOutput = function functions_logOutput(destFilePath, message) {
         file = file.replace(/\\/g, '/')
     }
 
-    functions.log(chalk.gray(shared.language.display('paddedGroups.build.' + message)) + ' ' + chalk.cyan(file))
+    functions.log(color.gray(shared.language.display('paddedGroups.build.' + message)) + ' ' + color.cyan(file))
 } // logOutput
 
 functions.logWorker = function functions_logWorker(workerName, obj) {
@@ -527,7 +527,7 @@ functions.logWorker = function functions_logWorker(workerName, obj) {
     if (config.option.debug) {
         var data = (obj.data === '') ? '' : 'yes'
 
-        functions.log(chalk.gray('\n' + workerName + ' -> called'))
+        functions.log(color.gray('\n' + workerName + ' -> called'))
         functions.log('source = ' + obj.source)
         functions.log('dest   = ' + obj.dest)
         functions.log('data   = ' + data)
@@ -852,7 +852,7 @@ functions.removeDest = function functions_removeDest(filePath, log, isDir) {
                     message = 'words.removedDirectory'
                 }
 
-                functions.log(chalk.gray(filePath.replace(config.path.dest, '/' + path.basename(config.path.dest)).replace(/\\/g, '/') + ' ' + shared.language.display(message)))
+                functions.log(color.gray(filePath.replace(config.path.dest, '/' + path.basename(config.path.dest)).replace(/\\/g, '/') + ' ' + shared.language.display(message)))
             }
             return true
         })
@@ -1232,7 +1232,7 @@ functions.includesNewer = function functions_includesNewer(includePaths, fileTyp
 
         return Promise.all(includesMap).then(function() {
             if (newer) {
-                functions.log(chalk.gray(shared.language.display('message.includesNewer').replace('{extension}', fileType.toUpperCase())))
+                functions.log(color.gray(shared.language.display('message.includesNewer').replace('{extension}', fileType.toUpperCase())))
                 return true
             }
             return false
