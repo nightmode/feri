@@ -952,35 +952,6 @@ functions.setLanguage = function functions_setLanguage(lang) {
     return functions.readFile(file).then(function(data) {
         shared.language.loaded = JSON.parse(data)
 
-        // the following code is longer needed now that we have a translation guide (published 2015-11-26)
-        /*
-        var currentLen, longestLen, padding
-
-        for (var i in shared.language.loaded.paddedGroups) {
-            currentLen = 0
-            longestLen = 0
-            padding = ''
-
-            // loop through once to find the longest string
-            for (var j in shared.language.loaded.paddedGroups[i]) {
-                currentLen = shared.language.loaded.paddedGroups[i][j].length
-                if (currentLen > longestLen) {
-                    longestLen = currentLen
-                }
-            }
-
-            longestLen = longestLen + 1
-
-            padding = Array(longestLen + 1).join(' ')
-
-            // now loop through again and pad any strings up to the longest length
-            for (var k in shared.language.loaded.paddedGroups[i]) {
-                shared.language.loaded.paddedGroups[i][k] = (shared.language.loaded.paddedGroups[i][k] + padding).substring(0, longestLen)
-            }
-            // now these items will line up nicely in columns when displayed
-        }
-        */
-
         return true
     })
 } // setLanguage
