@@ -58,7 +58,7 @@ Now our finished directory structure looks like:
 /source/_two.js
 ```
 
-Not too hard and if we are working with other developers, they will see the CONCAT file and know what is going on. All without having to consult a build tool's configuration. *cough* [grunt](http://gruntjs.com/) *cough* [gulp](http://gulpjs.com/) *cough*
+Not too hard and if we are working with other developers, they will see the CONCAT file and know what is going on. All without having to consult a build tool's configuration.
 
 ### Source Maps
 

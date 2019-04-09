@@ -162,11 +162,11 @@ Learn how to leverage Feri's favorite functions in the full [API documentation](
 
 ## Contribute
 
-Looking to contribute? Here are some ideas on how you can help Feri.
+Looking to contribute? Here are some ideas.
 
- * Are your friends grunting and gulping their way through a broccoli brunch? Tell them about the best non-digestive themed build tool available, Feri.
- * [Translate Feri](docs/multilingual.md#translation-guide) into other languages. Bonus points for Klingon.
- * [Report issues on GitHub](https://github.com/nightmode/feri/issues) or post Feri fan art to [DeviantArt](https://deviantart.com) instead!
+ * Tell your friends about the build tool with the cute logo, Feri.
+ * [Translate Feri](docs/multilingual.md#translation-guide) into other languages. tlhIngan maH!
+ * [Report issues on GitHub](https://github.com/nightmode/feri/issues)
  * Pull reqrests to improv spellng in documantations!
 
 ## License
