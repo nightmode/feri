@@ -9,20 +9,20 @@ var config = require('./3 - config.js')
 //----------
 // Includes
 //----------
-var chalk        = require('chalk')                   // ~ 20 ms
-var fs           = require('fs')                      // ~  1 ms
-var glob         = require('glob')                    // ~ 13 ms
-var mkdirp       = require('mkdirp')                  // ~  1 ms
-var path         = require('path')                    // ~  1 ms
-var promisify    = require('es6-promisify').promisify // ~  4 ms
+var chalk  = require('chalk')  // ~ 20 ms
+var fs     = require('fs')     // ~  1 ms
+var glob   = require('glob')   // ~ 13 ms
+var mkdirp = require('mkdirp') // ~  1 ms
+var path   = require('path')   // ~  1 ms
+var util   = require('util')   // ~  1 ms
 
 //---------------------
 // Includes: Promisify
 //---------------------
-var fsReadFilePromise  = promisify(fs.readFile)       // ~  1 ms
-var fsStatPromise      = promisify(fs.stat)           // ~  1 ms
-var fsWriteFilePromise = promisify(fs.writeFile)      // ~  1 ms
-var rimrafPromise      = promisify(require('rimraf')) // ~ 13 ms
+var fsReadFilePromise  = util.promisify(fs.readFile)       // ~  1 ms
+var fsStatPromise      = util.promisify(fs.stat)           // ~  1 ms
+var fsWriteFilePromise = util.promisify(fs.writeFile)      // ~  1 ms
+var rimrafPromise      = util.promisify(require('rimraf')) // ~ 14 ms
 
 //---------------------
 // Includes: Lazy Load
