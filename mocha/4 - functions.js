@@ -493,7 +493,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('inSource', function() {
             it('should return true for a source file path', function() {
 
-                var test = functions.inSource(path.join(config.path.source, 'index.ejs'))
+                var test = functions.inSource(path.join(config.path.source, 'index.md'))
 
                 expect(test).to.be(true)
 
@@ -797,8 +797,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 arrayDesired = [
                     path.join(config.path.source, 'index.html'),
                     path.join(config.path.source, 'index.html.concat'),
-                    path.join(config.path.source, 'index.ejs'),
-                    path.join(config.path.source, 'index.ejs.concat'),
                     path.join(config.path.source, 'index.md'),
                     path.join(config.path.source, 'index.md.concat')
                 ]
@@ -1421,53 +1419,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
     describe('Functions: Includes', function() {
 
-        //-------------------------
-        // functions.includesNewer
-        //-------------------------
-        describe('includesNewer', function() {
-            it('should confirm include files are newer than a past date', function() {
-
-                var file1 = path.join(testPath, 'includesNewer', 'partials', '_header.ejs')
-                var file2 = path.join(testPath, 'includesNewer', 'partials', '_footer.ejs')
-
-                var includes = [file1, file2]
-
-                return Promise.resolve().then(function() {
-
-                    // check if includes are newer than a past date
-                    return functions.includesNewer(includes, 'ejs', 207187200, false)
-
-                }).then(function(includesNewer) {
-
-                    expect(includesNewer).to.be(true)
-
-                })
-
-            }) // it
-
-            it('should confirm include files are not newer than right now', function() {
-
-                var file1 = path.join(testPath, 'includesNewer', 'partials', '_header.ejs')
-                var file2 = path.join(testPath, 'includesNewer', 'partials', '_footer.ejs')
-
-                var includes = [file1, file2]
-
-                return Promise.resolve().then(function() {
-
-                    var now = new Date().getTime()
-
-                    // check if includes are newer than now
-                    return functions.includesNewer(includes, 'ejs', now, false)
-
-                }).then(function(includesNewer) {
-
-                    expect(includesNewer).to.be(false)
-
-                })
-
-            }) // it
-        }) // describe
-
         //------------------------------
         // functions.includePathsConcat
         //------------------------------
@@ -1491,40 +1442,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     var desired = [
                         path.join(config.path.source, 'partials', '_01.txt'),
                         path.join(config.path.source, 'partials', '_02.txt')
-                    ]
-
-                    expect(returnObj).to.eql(desired)
-
-                })
-
-            }) // it
-        }) // describe
-
-        //---------------------------
-        // functions.includePathsEjs
-        //---------------------------
-        describe('includePathsEjs', function() {
-            it('should find includes and return our desired object', function() {
-
-                config.path.source = path.join(testPath, 'includePathsEjs')
-
-                var file = path.join(config.path.source, 'index.ejs')
-
-                return Promise.resolve().then(function() {
-
-                    return functions.readFile(file)
-
-                }).then(function(data) {
-
-                    return functions.includePathsEjs(data, file)
-
-                }).then(function(returnObj) {
-
-                    var desired = [
-                        path.join(config.path.source, 'partials', '_01.ejs'),
-                        path.join(config.path.source, 'partials', '_02.ejs'),
-                        path.join(config.path.source, 'partials', '_03.ejs'),
-                        path.join(config.path.source, 'partials', '_04.ejs')
                     ]
 
                     expect(returnObj).to.eql(desired)
@@ -1601,177 +1518,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
     }) // describe
 
     describe('Functions: Reusable Object Building', function() {
-
-        //--------------------------------
-        // functions.objBuildWithIncludes
-        //--------------------------------
-        describe('objBuildWithIncludes', function() {
-
-            it('should set obj.build to true if obj.data is populated', function() {
-
-                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
-                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
-
-                var obj = {
-                    source: path.join(config.path.source, 'index.ejs'),
-                    dest  : '',
-                    data  : '...',
-                    build : false
-                }
-
-                return functions.makeDirPath(config.path.dest, true).then(function() {
-
-                    return functions.objBuildWithIncludes(obj, functions.includePathsEjs)
-
-                }).then(function(obj) {
-
-                    expect(obj.build).to.be(true)
-
-                    // remove empty directory
-                    return functions.removeFile(config.path.dest)
-
-                })
-
-            }) // it
-
-            it('should get back an error if passed an obj.dest path that is in the source directory', function() {
-
-                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
-                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
-
-                var obj = {
-                    source: path.join(config.path.source, 'index.ejs'),
-                    dest  : path.join(config.path.source, 'index.ejs'),
-                    data  : '',
-                    build : false
-                }
-
-                return functions.objBuildWithIncludes(obj, null).catch(function(err) {
-
-                    return err
-
-                }).then(function(err) {
-
-                    expect(err).to.be('functions.objBuildWithIncludes -> Destination points to a source directory.')
-
-                })
-
-            }) // it
-
-            it('should set obj.build to true and populate obj.data if obj.dest is provided', function() {
-
-                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
-                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
-
-                var obj = {
-                    source: path.join(config.path.source, 'index.ejs'),
-                    dest  : path.join(config.path.dest, 'index.html'),
-                    data  : '',
-                    build : false
-                }
-
-                return functions.makeDirPath(obj.dest).then(function() {
-
-                    // create our dest file with some sample data
-                    return functions.writeFile(obj.dest, 'sample data')
-
-                }).then(function() {
-
-                        return functions.objBuildWithIncludes(obj, functions.includePathsEjs)
-
-                }).then(function(returnObj) {
-
-                    expect(returnObj.data).to.be('sample data')
-                    expect(returnObj.build).to.be(true)
-
-                    return functions.removeFile(config.path.dest)
-
-                })
-
-            }) // it
-
-            it('should get back objDesired if only obj.source is specified', function() {
-
-                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
-                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
-
-                var obj = {
-                    source: path.join(config.path.source, 'index.ejs'),
-                    dest  : '',
-                    data  : '',
-                    build : false
-                }
-
-                var objDesired = {
-                    source: obj.source,
-                    dest  : path.join(testPath, 'objBuildWithIncludes', 'dest', 'index.html'),
-                    data  : '<!doctype html>\n<html lang="en">\n<head>\n    <meta charset="utf-8">\n    <title>...</title>\n</head>\n<body>\n\n    <%- include(\'partials/_hello.ejs\') %>\n\n</body>\n</html>',
-                    build : true
-                }
-
-                return functions.objBuildWithIncludes(obj, functions.includePathsEjs).then(function(returnObj) {
-
-                    expect(returnObj).to.eql(objDesired)
-
-                })
-
-            }) // it
-
-            it('should get back objDesired when config.option.forcebuild is true', function() {
-
-                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
-                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
-
-                var sourceFile = path.join(config.path.source, 'index.ejs')
-                var destFile = path.join(config.path.dest, 'index.html')
-
-                var obj = {
-                    source: sourceFile,
-                    dest  : '',
-                    data  : '',
-                    build : false
-                }
-
-                var objDesired = {
-                    source: sourceFile,
-                    dest  : destFile,
-                    data  : '<!doctype html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"utf-8\">\n    <title>...</title>\n</head>\n<body>\n\n    <%- include(\'partials/_hello.ejs\') %>\n\n</body>\n</html>',
-                    build : true
-                }
-
-                return functions.removeFile(config.path.dest).then(function() {
-
-                    return functions.makeDirPath(destFile)
-
-                }).then(function() {
-
-                    return functions.objBuildWithIncludes(obj, functions.includePathsEjs)
-
-                }).then(function(returnObj) {
-
-                    return functions.writeFile(returnObj.dest, returnObj.data)
-
-                }).then(function() {
-
-                    // now a newer destination file exists
-
-                    config.option.forcebuild = true
-
-                    return functions.objBuildWithIncludes(obj, functions.includePathsEjs)
-
-                }).then(function(returnObj) {
-
-                    expect(returnObj).to.eql(objDesired)
-
-                }).then(function() {
-
-                    // remove empty directory
-                    return functions.removeFile(config.path.dest)
-
-                })
-
-            }) // it
-        }) // describe
 
         //----------------------------
         // functions.objBuildInMemory

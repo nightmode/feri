@@ -61,7 +61,6 @@ The functions object is grouped into three categories.
 
 * [includesNewer](#functionsincludesnewer)
 * [includePathsConcat](#functionsincludepathsconcat)
-* [includePathsEjs](#functionsincludepathsejs)
 * [includePathsSass](#functionsincludepathssass)
 * [includePathsStylus](#functionsincludepathsstylus)
 
@@ -81,7 +80,7 @@ Add or append a mapping to config.map.destToSourceExt without harming existing e
 
 ```
 @param  {String}         ext       Extension like 'html'
-@param  {String,Object}  mappings  String like 'ejs' or array of strings like ['ejs', 'md']
+@param  {String,Object}  mappings  String like 'md' or array of strings like ['md']
 ```
 
 ### functions.cacheReset
@@ -262,7 +261,7 @@ Type: `function`
 Find out if a path is in the source directory.
 
 ```
-@param   {String}   filePath  Full file path like '/var/projects/a/source/index.ejs'
+@param   {String}   filePath  Full file path like '/var/projects/a/source/index.md'
 @return  {Boolean}            True if the file path is in the source directory.
 ```
 
@@ -594,8 +593,8 @@ Type: `function`
 Figure out if any include files are newer than the modified time of the destination file.
 
 ```
-@param   {Object}   includePaths  Array of file paths like ['/source/_header.ejs', '/source/_footer.ejs']
-@param   {String}   fileType      File type like 'ejs', 'sass', 'stylus', etc...
+@param   {Object}   includePaths  Array of file paths like ['/source/_header.file', '/source/_footer.file']
+@param   {String}   fileType      File type like 'sass', 'stylus', etc...
 @param   {Number}   destTime      Modified time of the destination file.
 @return  {Promise}                Promise that returns true if any includes files are newer.
 ```
@@ -611,19 +610,6 @@ Find CONCAT includes and return an array of matches.
 @param   {String}   filePath                 Source file where data came from.
 @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
 @return  {Promise}                           Promise that returns an array of files to concatenate like ['/js/_library.js'] if successful. An error object if not.
-```
-
-### functions.includePathsEjs
-
-Type: `function`
-
-Find EJS includes and return an array of matches.
-
-```
-@param   {String}   data                     String to search for include paths.
-@param   {String}   filePath                 Source file where data came from.
-@param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
-@return  {Promise}                           Promise that returns an array of includes like ['/partials/_footer.ejs'] if successful. An error object if not.
 ```
 
 ### functions.includePathsSass
@@ -662,7 +648,7 @@ Figure out if a reusable object, which may have include files, needs to be built
 
 ```
 @param   {Object}    obj              Reusable object originally created by build.processOneBuild
-@param   {Function}  includeFunction  Function that will parse this particular type of file (ejs, sass, stylus, etc...) and return any paths to include files.
+@param   {Function}  includeFunction  Function that will parse this particular type of file (sass, stylus, etc...) and return any paths to include files.
 @return  {Promise}                    Promise that returns a reusable object.
 ```
 

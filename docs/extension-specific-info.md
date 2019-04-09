@@ -1,7 +1,6 @@
 # Feri - Extension Specific Information
 
 * [Concatenate (CONCAT)](#concatenate-concat)
-* [Embedded JavaScript (EJS)](#embedded-javascript-ejs)
 * [Gzip (GZ)](#gzip-gz)
 
 ## Concatenate (CONCAT)
@@ -67,24 +66,6 @@ Assuming an option like `config.sourceMaps` is enabled, CONCAT files will genera
 ### Twilight Zone
 
 You could create a file called `all.js.concat` that includes your prized collection of [OS/2 Warp](https://en.wikipedia.org/wiki/OS/2) binaries but... why?! Surely there are better ways to generate error messages.
-
-## Embedded JavaScript (EJS)
-
-### Smarter Includes
-
-Feri automatically sets an option called `root` for EJS files. This is super useful for avoiding dot dot slash nightmares like...
-
-```js
-<% include ('../../../../partials/header.ejs') %>
-```
-
-In favor of nice absolute paths like...
-
-```js
-<% include ('/partials/header.ejs') %>
-```
-
-Absolute paths like the example above will work from any depth within your source files directory. No need to update it when the parent file containing the include moves either. Less worry and less maintenance make absolute paths an absolute delight.
 
 ## Gzip (GZ)
 

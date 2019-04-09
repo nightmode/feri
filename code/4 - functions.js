@@ -42,7 +42,7 @@ functions.addDestToSourceExt = function functions_addDestToSourceExt(ext, mappin
     /*
     Add or append a mapping to config.map.destToSourceExt without harming existing entries.
     @param  {String}         ext       Extension like 'html'
-    @param  {String,Object}  mappings  String like 'ejs' or array of strings like ['ejs', 'md']
+    @param  {String,Object}  mappings  String like 'md' or array of strings like ['md']
     */
     if (typeof mappings === 'string') {
         mappings = [mappings]
@@ -435,7 +435,7 @@ functions.initFeri = function initFeri() {
 functions.inSource = function functions_inSource(filePath) {
     /*
     Find out if a path is in the source directory.
-    @param   {String}   filePath  Full file path like '/var/projects/a/source/index.ejs'
+    @param   {String}   filePath  Full file path like '/var/projects/a/source/index.html'
     @return  {Boolean}            True if the file path is in the source directory.
     */
     return filePath.indexOf(config.path.source) === 0
@@ -1190,8 +1190,8 @@ functions.writeFile = function functions_writeFile(filePath, data, encoding) {
 functions.includesNewer = function functions_includesNewer(includePaths, fileType, destTime) {
     /*
     Figure out if any include files are newer than the modified time of the destination file.
-    @param   {Object}   includePaths  Array of file paths like ['/source/_header.ejs', '/source/_footer.ejs']
-    @param   {String}   fileType      File type like 'ejs', 'sass', 'stylus', etc...
+    @param   {Object}   includePaths  Array of file paths like ['/source/_header.file', '/source/_footer.file']
+    @param   {String}   fileType      File type like 'sass', 'stylus', etc...
     @param   {Number}   destTime      Modified time of the destination file.
     @return  {Promise}                Promise that returns true if any includes files are newer.
     */
@@ -1381,117 +1381,6 @@ functions.includePathsConcat = function functions_includePathsConcat(data, fileP
 
     })
 } // includePathsConcat
-
-functions.includePathsEjs = function functions_includePathsEjs(data, filePath, includePathsCacheName) {
-    /*
-    Find EJS includes and return an array of matches.
-    @param   {String}   data                     String to search for include paths.
-    @param   {String}   filePath                 Source file where data came from.
-    @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
-    @return  {Promise}                           Promise that returns an array of includes like ['/partials/_footer.ejs'] if successful. An error object if not.
-    */
-    var cleanup = false
-
-    if (typeof includePathsCacheName === 'undefined') {
-        cleanup = true
-        includePathsCacheName = 'ejs' + (++shared.uniqueNumber)
-        shared.cache.includeFilesSeen[includePathsCacheName] = [filePath]
-    }
-
-    return Promise.resolve().then(function() {
-
-        /*
-        Regular Expression should find the name of the include file in each of these lines...
-
-            <%- include('one', {a: 'b'}) %>
-            <% include('two') %>
-            <% include 'three.ejs' %>
-            <% include four.ejs %>
-
-        Reference at https://github.com/tj/ejs#includes
-        */
-        var re = /(?:<%[-= ]*include[( ]*)([^,)%]*)(?:,?.*%>)/gi
-
-        var match
-        var includes = []
-
-        while (match = re.exec(data)) {
-            match = match[1].trim()
-
-            try {
-                match = eval(match).trim()
-            } catch(e) {
-                // could not eval match
-            }
-
-            if (match.indexOf(config.path.source) !== 0) {
-                if (match.charAt(0) === '/') {
-                    // include path is absolute so prepend the source directory path
-                    match = config.path.source + match
-                } else {
-                    // path must be relative
-                    match = path.join(path.dirname(filePath), match)
-                }
-            }
-
-            // add ejs extension if needed
-            if (!path.extname(match)) {
-                match = match + '.ejs'
-            }
-
-            if (shared.cache.includeFilesSeen[includePathsCacheName].indexOf(match) < 0) {
-                shared.cache.includeFilesSeen[includePathsCacheName].push(match)
-                includes.push(match)
-            }
-        }
-
-        if (includes.length > 0) {
-            // now we have an array of includes like ['/full/path/partials/_header.ejs']
-            var promiseArray = []
-
-            for (var i in includes) {
-                (function() {
-                    var ii = i
-                    promiseArray.push(
-                        functions.fileExists(includes[ii]).then(function(exists) {
-                            if (exists) {
-                                return functions.readFile(includes[ii]).then(function(data) {
-                                    return functions.includePathsEjs(data, includes[ii], includePathsCacheName).then(function(subIncludes) {
-                                        for (var j in subIncludes) {
-                                            includes.push(subIncludes[j])
-                                        }
-                                    })
-                                })
-                            } else {
-                                delete includes[ii] // leaves an empty space in the array which we will clean up later
-                            }
-                        })
-                    )
-                })()
-            } // for
-
-            return Promise.all(promiseArray).then(function() {
-
-                // clean out any empty includes which meant their files could not be found
-                includes = functions.cleanArray(includes)
-
-                return includes
-
-            })
-        } else {
-            return includes
-        }
-
-    }).then(function(includes) {
-
-        if (cleanup) {
-            delete shared.cache.includeFilesSeen[includePathsCacheName]
-        }
-
-        return includes
-
-    })
-} // includePathsEjs
 
 functions.includePathsSass = function functions_includePathsSass(data, filePath, includePathsCacheName) {
     /*
@@ -1812,7 +1701,7 @@ functions.objBuildWithIncludes = function functions_objBuildWithIncludes(obj, in
     /*
     Figure out if a reusable object, which may have include files, needs to be built in memory.
     @param   {Object}    obj              Reusable object originally created by build.processOneBuild
-    @param   {Function}  includeFunction  Function that will parse this particular type of file (ejs, sass, stylus, etc...) and return any paths to include files.
+    @param   {Function}  includeFunction  Function that will parse this particular type of file (sass, stylus, etc...) and return any paths to include files.
     @return  {Promise}                    Promise that returns a reusable object.
     */
     var destTime = 0

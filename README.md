@@ -40,7 +40,6 @@ The following changes are likely for the next major release.
 * Clean, Build, and Watch
 * Command Line / API
 * Compile and Minify
-  * Embedded JavaScript (EJS)
   * Markdown
   * Sass
   * Stylus
@@ -150,7 +149,7 @@ Feri thinks you should be able to grab nearly any npm module and make a [custom 
 
 ## Extension Specific Information
 
-Additional [extension specific information](docs/extension-specific-info.md) is available for `concat` files, `ejs` includes, and `gz` files.
+Additional [extension specific information](docs/extension-specific-info.md) is available for `concat` files and `gz` files.
 
 ## Edge Cases
 

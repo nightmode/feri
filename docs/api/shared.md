@@ -223,7 +223,7 @@ shared.suppressWatchEvents = false // default
 
 Type: `number`
 
-Iterate with `(++shared.uniqueNumber)` or reset back to 0. Used to ensure unique property names in functions like [functions.includePathsEjs](functions.md#functionsincludepathsejs).
+Iterate with `(++shared.uniqueNumber)` or reset back to 0.
 
 ## License
 

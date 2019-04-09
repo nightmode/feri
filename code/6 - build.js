@@ -44,7 +44,6 @@ if (shared.global) {
 // Includes: Lazy Load
 //---------------------
 var css                // require('clean-css')                      // ~  83 ms
-var ejs                // require('ejs')                            // ~   4 ms
 var html               // require('html-minifier').minify           // ~   4 ms
 var js                 // require('uglify-js')                      // ~  83 ms
 var markdown           // require('markdown-it')()                  // ~  56 ms
@@ -834,37 +833,6 @@ build.concat = function build_concat(obj) {
 
     })
 } // concat
-
-build.ejs = function build_ejs(obj) {
-    /*
-    Embedded JavaScript templates using https://www.npmjs.com/package/ejs.
-    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
-    @return  {Promise}  obj  Promise that returns a reusable object.
-    */
-    return functions.objBuildWithIncludes(obj, functions.includePathsEjs).then(function(obj) {
-
-        functions.logWorker('build.ejs', obj)
-
-        if (obj.build) {
-            if (typeof ejs !== 'object') {
-                ejs = require('ejs')
-            }
-
-            var options = {
-                'filename': obj.source, // needed by EJS to figure out includes
-                'root': config.path.source // used by EJS to figure out an absolute path from an include like <% include '/partials/_header.ejs' %>
-            }
-
-            obj.data = ejs.render(obj.data, null, options)
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
-
-        return obj
-
-    })
-} // ejs
 
 build.sass = function build_sass(obj) {
     /*

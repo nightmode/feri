@@ -83,7 +83,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 return Promise.resolve().then(function() {
 
-                    return build.processBuild('*.ejs')
+                    return build.processBuild('*.md')
 
                 }).then(function() {
 
@@ -842,31 +842,6 @@ describe('File -> ../code/6 - build.js\n', function() {
                     expect(data).to.eql(objDesired)
 
                     return functions.removeFile(config.path.dest)
-
-                })
-
-            }) // it
-        }) // describe
-
-        //-----------
-        // build.ejs
-        //-----------
-        describe('ejs', function() {
-            it('should compile an ejs file with an include', function() {
-
-                config.path.source = path.join(testPath, 'ejs', 'source')
-                config.path.dest   = path.join(testPath, 'ejs', 'dest')
-
-                var obj = {
-                    'source': path.join(config.path.source, 'index.ejs'),
-                    'dest': '',
-                    'data': '',
-                    'build': false
-                }
-
-                return build.ejs(obj).then(function(returnObj) {
-
-                    expect(returnObj.data).to.be('<html>\n<body>\n\n    Hello from an ejs file with an include.\n\n</body>\n</html>')
 
                 })
 

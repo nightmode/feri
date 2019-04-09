@@ -31,7 +31,6 @@ The build object is grouped into five categories.
 ### Build: With Includes
 
 * [concat](#buildconcat)
-* [ejs](#buildejs)
 * [sass](#buildsass)
 * [stylus](#buildstylus)
 
@@ -186,17 +185,6 @@ The following functions are for file types that may contain includes.
 Type: `function`
 
 Concatenate files like `all.js.concat` which can contain globs and/or file path strings that point to other files.
-
-```
-@param   {Object}   obj  Reusable object originally created by build.processOneBuild
-@return  {Promise}  obj  Promise that returns a reusable object.
-```
-
-### build.ejs
-
-Type: `function`
-
-Embedded JavaScript templates using [ejs](https://www.npmjs.com/package/ejs).
 
 ```
 @param   {Object}   obj  Reusable object originally created by build.processOneBuild
