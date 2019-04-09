@@ -3,20 +3,20 @@
 //----------
 // Includes
 //----------
-var expect = require('expect.js')
-var path   = require('path')
+const expect = require('expect.js')
+const path   = require('path')
 
-var shared    = require('../code/2 - shared.js')
-var config    = require('../code/3 - config.js')
-var functions = require('../code/4 - functions.js')
-var build     = require('../code/6 - build.js')
+let   shared    = require('../code/2 - shared.js')
+let   config    = require('../code/3 - config.js')
+const functions = require('../code/4 - functions.js')
+const build     = require('../code/6 - build.js')
 
 //-----------
 // Variables
 //-----------
-var sharedBackup = functions.cloneObj(shared)
-var configBackup = functions.cloneObj(config)
-var testPath = path.join(shared.path.self, 'mocha', 'files', 'build')
+const sharedBackup = functions.cloneObj(shared)
+const configBackup = functions.cloneObj(config)
+const testPath = path.join(shared.path.self, 'mocha', 'files', 'build')
 
 //-------------
 // Mocha Tests
@@ -47,8 +47,8 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'processBuild', 'source')
                 config.path.dest   = path.join(testPath, 'processBuild', 'dest')
 
-                var destFile1 = path.join(config.path.dest, 'index.html')
-                var destFile2 = path.join(config.path.dest, 'sample.html')
+                let destFile1 = path.join(config.path.dest, 'index.html')
+                let destFile2 = path.join(config.path.dest, 'sample.html')
 
                 return Promise.resolve().then(function() {
 
@@ -60,7 +60,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 }).then(function(files) {
 
-                    var objDesired = [destFile1, destFile2]
+                    let objDesired = [destFile1, destFile2]
 
                     expect(files).to.eql(objDesired)
 
@@ -79,7 +79,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'processBuild', 'source')
                 config.path.dest   = path.join(testPath, 'processBuild', 'dest')
 
-                var destFile = path.join(config.path.dest, 'sample.html')
+                let destFile = path.join(config.path.dest, 'sample.html')
 
                 return Promise.resolve().then(function() {
 
@@ -91,7 +91,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 }).then(function(files) {
 
-                    var objDesired = [destFile]
+                    let objDesired = [destFile]
 
                     expect(files).to.eql(objDesired)
 
@@ -108,7 +108,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'processBuild', 'source')
                 config.path.dest   = path.join(testPath, 'processBuild', 'dest')
 
-                var destFile = path.join(config.path.dest, 'index.html')
+                let destFile = path.join(config.path.dest, 'index.html')
 
                 return Promise.resolve().then(function() {
 
@@ -122,7 +122,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 }).then(function(files) {
 
-                    var objDesired = [destFile]
+                    let objDesired = [destFile]
 
                     expect(files).to.eql(objDesired)
 
@@ -144,11 +144,11 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'processFiles', 'source')
                 config.path.dest   = path.join(testPath, 'processFiles', 'dest')
 
-                var sourceFile1 = path.join(config.path.source, 'index.html')
-                var sourceFile2 = path.join(config.path.source, 'readme.txt')
+                let sourceFile1 = path.join(config.path.source, 'index.html')
+                let sourceFile2 = path.join(config.path.source, 'readme.txt')
 
-                var destFile1 = path.join(config.path.dest, 'index.html')
-                var destFile2 = path.join(config.path.dest, 'readme.txt')
+                let destFile1 = path.join(config.path.dest, 'index.html')
+                let destFile2 = path.join(config.path.dest, 'readme.txt')
 
                 return Promise.resolve().then(function() {
 
@@ -160,7 +160,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 }).then(function(o) {
 
-                    var desiredObj = [destFile1, destFile2]
+                    let desiredObj = [destFile1, destFile2]
 
                     expect(o).to.eql(desiredObj)
 
@@ -180,8 +180,8 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'processOneBuild', 'source')
                 config.path.dest   = path.join(testPath, 'processOneBuild', 'dest')
 
-                var sourceFile = path.join(config.path.source, 'sample.txt')
-                var destFile = path.join(config.path.dest, 'sample.txt')
+                let sourceFile = path.join(config.path.source, 'sample.txt')
+                let destFile = path.join(config.path.dest, 'sample.txt')
 
                 return Promise.resolve().then(function() {
 
@@ -217,7 +217,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'css', 'source')
                 config.path.dest   = path.join(testPath, 'css', 'dest')
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'style.css'),
                     'dest': '',
                     'data': '',
@@ -239,9 +239,9 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 config.sourceMaps = true
 
-                var destMapFile = path.join(config.path.dest, 'style.css.map')
+                let destMapFile = path.join(config.path.dest, 'style.css.map')
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'style.css'),
                     'dest': '',
                     'data': '',
@@ -265,7 +265,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 }).then(function(map) {
 
-                    var desired = {
+                    let desired = {
                         "version": 3,
                         "sources": ["style.css"],
                         "names": [],
@@ -295,7 +295,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'html', 'source')
                 config.path.dest   = path.join(testPath, 'html', 'dest')
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'index.html'),
                     'dest': '',
                     'data': '',
@@ -320,13 +320,13 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'js', 'source')
                 config.path.dest   = path.join(testPath, 'js', 'dest')
 
-                var sourceFile = path.join(config.path.source, 'sample.js')
-                var destFile = path.join(config.path.dest, 'sample.js')
+                let sourceFile = path.join(config.path.source, 'sample.js')
+                let destFile = path.join(config.path.dest, 'sample.js')
 
-                var destFileSize = 0
-                var sourceFileSize = 0
+                let destFileSize = 0
+                let sourceFileSize = 0
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'sample.js'),
                     'dest': '',
                     'data': '',
@@ -372,12 +372,12 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 config.sourceMaps = true
 
-                var destMapFile = path.join(config.path.dest, 'sample.js.map')
+                let destMapFile = path.join(config.path.dest, 'sample.js.map')
 
-                var sourceFile = path.join(config.path.source, 'sample.js')
-                var destFile = path.join(config.path.dest, 'sample.js')
+                let sourceFile = path.join(config.path.source, 'sample.js')
+                let destFile = path.join(config.path.dest, 'sample.js')
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'sample.js'),
                     'dest': '',
                     'data': '',
@@ -406,7 +406,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 }).then(function(map) {
 
-                    var desired = {
+                    let desired = {
                         "version": 3,
                         "file": "sample.js",
                         "sources": ["source/sample.js"],
@@ -433,10 +433,10 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 config.sourceMaps = true
 
-                var destFile = path.join(config.path.dest, 'sample.js')
-                var destMapFile = path.join(config.path.dest, 'sample.js.map')
+                let destFile = path.join(config.path.dest, 'sample.js')
+                let destMapFile = path.join(config.path.dest, 'sample.js.map')
 
-                var obj = {
+                let obj = {
                     'source': destFile,
                     'dest': destFile,
                     'data': '',
@@ -455,7 +455,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 }).then(function(map) {
 
-                    var desired = {
+                    let desired = {
                         'version': 3,
                         'file': 'sample.js',
                         'sources': ['source/sample.js'],
@@ -485,7 +485,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'markdown', 'source')
                 config.path.dest   = path.join(testPath, 'markdown', 'dest')
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'sample.md'),
                     'dest': '',
                     'data': '',
@@ -517,9 +517,9 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'copy', 'source')
                 config.path.dest   = path.join(testPath, 'copy', 'dest')
 
-                var destFile = path.join(config.path.dest, 'small.data')
+                let destFile = path.join(config.path.dest, 'small.data')
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'small.data'),
                     'dest': '',
                     'data': '',
@@ -560,13 +560,13 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'gif', 'source')
                 config.path.dest   = path.join(testPath, 'gif', 'dest')
 
-                var sourceFile = path.join(config.path.source, 'karp.gif')
-                var destFile = path.join(config.path.dest, 'karp.gif')
+                let sourceFile = path.join(config.path.source, 'karp.gif')
+                let destFile = path.join(config.path.dest, 'karp.gif')
 
-                var destFileSize = 0
-                var sourceFileSize = 0
+                let destFileSize = 0
+                let sourceFileSize = 0
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'karp.gif'),
                     'dest': '',
                     'data': '',
@@ -615,13 +615,13 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'jpg', 'source')
                 config.path.dest   = path.join(testPath, 'jpg', 'dest')
 
-                var sourceFile = path.join(config.path.source, 'tassadar.jpg')
-                var destFile = path.join(config.path.dest, 'tassadar.jpg')
+                let sourceFile = path.join(config.path.source, 'tassadar.jpg')
+                let destFile = path.join(config.path.dest, 'tassadar.jpg')
 
-                var destFileSize = 0
-                var sourceFileSize = 0
+                let destFileSize = 0
+                let sourceFileSize = 0
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'tassadar.jpg'),
                     'dest': '',
                     'data': '',
@@ -670,13 +670,13 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'png', 'source')
                 config.path.dest   = path.join(testPath, 'png', 'dest')
 
-                var sourceFile = path.join(config.path.source, 'logo.png')
-                var destFile = path.join(config.path.dest, 'logo.png')
+                let sourceFile = path.join(config.path.source, 'logo.png')
+                let destFile = path.join(config.path.dest, 'logo.png')
 
-                var destFileSize = 0
-                var sourceFileSize = 0
+                let destFileSize = 0
+                let sourceFileSize = 0
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'logo.png'),
                     'dest': '',
                     'data': '',
@@ -728,7 +728,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'concat', 'source')
                 config.path.dest   = path.join(testPath, 'concat', 'dest')
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'test-1', 'all.txt.concat'),
                     'dest': '',
                     'data': '',
@@ -750,9 +750,9 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 config.sourceMaps = true
 
-                var destMapFile = path.join(config.path.dest, 'test-2', 'all.js.map')
+                let destMapFile = path.join(config.path.dest, 'test-2', 'all.js.map')
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'test-2', 'all.js.concat'),
                     'dest': '',
                     'data': '',
@@ -777,7 +777,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     data = JSON.parse(data)
 
-                    var objDesired = {
+                    let objDesired = {
                         version       : 3,
                         file          : 'all.js',
                         sources       : ['source/test-2/partials/_01.js', 'source/test-2/partials/_02.js'],
@@ -802,9 +802,9 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 config.sourceMaps = true
 
-                var destMapFile = path.join(config.path.dest, 'test-3', 'all.css.map')
+                let destMapFile = path.join(config.path.dest, 'test-3', 'all.css.map')
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'test-3', 'all.css.concat'),
                     'dest': '',
                     'data': '',
@@ -829,7 +829,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                     data = JSON.parse(data)
 
-                    var objDesired = {
+                    let objDesired = {
                         version       : 3,
                         sources       : ['source/test-3/partials/_01.css', 'source/test-3/partials/_02.css'],
                         names         : [],
@@ -857,7 +857,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'stylus', 'source')
                 config.path.dest   = path.join(testPath, 'stylus', 'dest')
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'style.styl'),
                     'dest': '',
                     'data': '',
@@ -879,9 +879,9 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 config.sourceMaps = true
 
-                var destMapFile = path.join(config.path.dest, 'style.css.map')
+                let destMapFile = path.join(config.path.dest, 'style.css.map')
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'style.styl'),
                     'dest': '',
                     'data': '',
@@ -905,7 +905,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 }).then(function(map) {
 
-                    var desired = {
+                    let desired = {
                         "version": 3,
                         "sources": ["mocha/files/build/stylus/source/_import.styl"],
                         "names": [],
@@ -942,9 +942,9 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'finalize', 'source')
                 config.path.dest   = path.join(testPath, 'finalize', 'dest')
 
-                var destFile = path.join(config.path.dest, 'hello.txt')
+                let destFile = path.join(config.path.dest, 'hello.txt')
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'hello.txt'),
                     'dest': '',
                     'data': '',
@@ -978,7 +978,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'finalize', 'source')
                 config.path.dest   = path.join(testPath, 'finalize', 'dest')
 
-                var obj = {
+                let obj = {
                     source: path.join(config.path.source, 'hello.txt'),
                     dest  : path.join(config.path.source, 'hello.txt'),
                     data  : '...',
@@ -1001,7 +1001,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'finalize', 'source')
                 config.path.dest   = path.join(testPath, 'finalize', 'dest')
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'hello.txt'),
                     'dest': path.join(config.path.dest, 'hello.txt'),
                     'data': '',
@@ -1025,9 +1025,9 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'finalize', 'source')
                 config.path.dest   = path.join(testPath, 'finalize', 'dest')
 
-                var destFile = path.join(config.path.dest, 'hello.txt')
+                let destFile = path.join(config.path.dest, 'hello.txt')
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'hello.txt'),
                     'dest': '',
                     'data': 'hello from the data field',
@@ -1066,9 +1066,9 @@ describe('File -> ../code/6 - build.js\n', function() {
                 config.path.source = path.join(testPath, 'gz', 'source')
                 config.path.dest   = path.join(testPath, 'gz', 'dest')
 
-                var destFile = path.join(config.path.dest, 'sample.txt.gz')
+                let destFile = path.join(config.path.dest, 'sample.txt.gz')
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'sample.txt'),
                     'dest': path.join(config.path.dest, 'sample.txt'),
                     'data': '',
@@ -1111,9 +1111,9 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 config.map.sourceToDestTasks.map.push('gz')
 
-                var destMapFile = path.join(config.path.dest, 'treasure.js.map')
+                let destMapFile = path.join(config.path.dest, 'treasure.js.map')
 
-                var obj = {
+                let obj = {
                     'source': path.join(config.path.source, 'treasure.js'),
                     'dest': '',
                     'data': '',

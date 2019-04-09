@@ -3,42 +3,42 @@
 //----------------
 // Includes: Self
 //----------------
-var color     = require('./color.js')
-var shared    = require('./2 - shared.js')
-var config    = require('./3 - config.js')
-var functions = require('./4 - functions.js')
-var clean     = require('./5 - clean.js')
-var build     = require('./6 - build.js')
+const color     = require('./color.js')
+const shared    = require('./2 - shared.js')
+const config    = require('./3 - config.js')
+const functions = require('./4 - functions.js')
+const clean     = require('./5 - clean.js')
+const build     = require('./6 - build.js')
 
 //----------
 // Includes
 //----------
-var events      = require('events')      // ~ 1 ms
-var mkdirp      = require('mkdirp')      // ~ 1 ms
-var path        = require('path')        // ~ 1 ms
-var querystring = require('querystring') // ~ 2 ms
+const events      = require('events')      // ~ 1 ms
+const mkdirp      = require('mkdirp')      // ~ 1 ms
+const path        = require('path')        // ~ 1 ms
+const querystring = require('querystring') // ~ 2 ms
 
 //---------------------
 // Includes: Lazy Load
 //---------------------
-var chokidar // require('chokidar') // ~ 75 ms
-var http     // require('http')     // ~ 17 ms
-var tinyLr   // require('tiny-lr')  // ~  ? ms
+let chokidar // require('chokidar') // ~ 75 ms
+let http     // require('http')     // ~ 17 ms
+let tinyLr   // require('tiny-lr')  // ~  ? ms
 
 //-----------
 // Variables
 //-----------
-var chokidarSource   = '' // will become a chokidar object when watching the source folder
-var chokidarDest     = '' // will become a chokidar object when watching the destination folder
+let chokidarSource   = '' // will become a chokidar object when watching the source folder
+let chokidarDest     = '' // will become a chokidar object when watching the destination folder
 
-var chokidarSourceFiles = '' // string or array of source files being watched
-var chokidarDestFiles   = '' // string or array of destination files being watched
+let chokidarSourceFiles = '' // string or array of source files being watched
+let chokidarDestFiles   = '' // string or array of destination files being watched
 
-var livereloadServer = '' // will become a tinyLr object when watching the destination folder
+let livereloadServer = '' // will become a tinyLr object when watching the destination folder
 
-var recentFiles = {} // keep track of files that have changed too recently
+let recentFiles = {} // keep track of files that have changed too recently
 
-var watch = {
+const watch = {
     'emitterDest'  : new events.EventEmitter(),
     'emitterSource': new events.EventEmitter()
 }
@@ -46,7 +46,7 @@ var watch = {
 //-------------------
 // Private Functions
 //-------------------
-var lazyLoadChokidar = function watch_lazyLoadChokidar () {
+const lazyLoadChokidar = function watch_lazyLoadChokidar () {
     if (typeof chokidar !== 'object') {
         chokidar = require('chokidar')
     }
@@ -63,11 +63,11 @@ watch.buildOne = function watch_buildOne(fileName) {
     */
     return Promise.resolve().then(function() {
 
-        var ext = functions.fileExtension(fileName)
+        let ext = functions.fileExtension(fileName)
 
-        var checkConcatFiles = false
+        let checkConcatFiles = false
 
-        var isInclude = path.basename(fileName).substr(0, config.includePrefix.length) === config.includePrefix
+        let isInclude = path.basename(fileName).substr(0, config.includePrefix.length) === config.includePrefix
 
         if (isInclude) {
             if (config.includeFileTypes.indexOf(ext) >= 0) {
@@ -113,11 +113,11 @@ watch.notTooRecent = function watch_notTooRecent(file) {
     @param   {String}   file  File path like '/path/readme.txt'
     @return  {Boolean}        True if a file was not active recently.
     */
-    var time = new Date().getTime()
-    var expireTime = time - 300
+    let time = new Date().getTime()
+    let expireTime = time - 300
 
     // clean out old entries in recentFiles
-    for (var x in recentFiles) {
+    for (let x in recentFiles) {
         if (recentFiles[x] < expireTime) {
             // remove this entry
             delete recentFiles[x]
@@ -148,7 +148,7 @@ watch.processWatch = function watch_processWatch(sourceFiles, destFiles) {
             // start watch timer
             shared.stats.timeTo.watch = functions.sharedStatsTimeTo(shared.stats.timeTo.watch)
 
-            var configPathsAreGood = functions.configPathsAreGood()
+            let configPathsAreGood = functions.configPathsAreGood()
             if (configPathsAreGood !== true) {
                 throw new Error(configPathsAreGood)
             }
@@ -275,11 +275,11 @@ watch.updateLiveReloadServer = function watch_updateLiveReloadServer(now) {
                 http = require('http')
             }
 
-            var postData = '{"files": ' + JSON.stringify(shared.livereload.changedFiles) + '}'
+            let postData = '{"files": ' + JSON.stringify(shared.livereload.changedFiles) + '}'
 
             shared.livereload.changedFiles = []
 
-            var requestOptions = {
+            let requestOptions = {
                 'port'  : config.thirdParty.livereload.port,
                 'path'  : '/changed',
                 'method': 'POST',
@@ -289,7 +289,7 @@ watch.updateLiveReloadServer = function watch_updateLiveReloadServer(now) {
                 }
             }
 
-            var request = http.request(requestOptions)
+            let request = http.request(requestOptions)
 
             request.on('error', function(err) {
                 if (shared.cli) {
@@ -317,7 +317,7 @@ watch.watchDest = function watch_watchDest(files) {
 
         lazyLoadChokidar()
 
-        var filesType = typeof files
+        let filesType = typeof files
 
         if (filesType === 'object') {
             // we already have a specified list to work from
@@ -341,7 +341,7 @@ watch.watchDest = function watch_watchDest(files) {
             files = config.path.dest + shared.slash + files
         }
 
-        var readyCalled = false
+        let readyCalled = false
 
         watch.stop(false, true, false) // stop watching dest
 
@@ -352,7 +352,7 @@ watch.watchDest = function watch_watchDest(files) {
         chokidarDest
         .on('add', function(file) {
             if (!shared.suppressWatchEvents) {
-                var ext = path.extname(file).replace('.', '')
+                let ext = path.extname(file).replace('.', '')
                 if (config.livereloadFileTypes.indexOf(ext) >= 0) {
                     functions.log(color.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
 
@@ -366,7 +366,7 @@ watch.watchDest = function watch_watchDest(files) {
         })
         .on('change', function(file) {
             if (!shared.suppressWatchEvents) {
-                var ext = path.extname(file).replace('.', '').toLowerCase()
+                let ext = path.extname(file).replace('.', '').toLowerCase()
                 if (config.livereloadFileTypes.indexOf(ext) >= 0) {
                     functions.log(color.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
 
@@ -415,7 +415,7 @@ watch.watchSource = function watch_watchSource(files) {
 
         lazyLoadChokidar()
 
-        var filesType = typeof files
+        let filesType = typeof files
 
         if (filesType === 'object') {
             // we already have a specified list to work from
@@ -439,7 +439,7 @@ watch.watchSource = function watch_watchSource(files) {
             files = config.path.source + shared.slash + files
         }
 
-        var readyCalled = false
+        let readyCalled = false
 
         watch.stop(true, false, false) // stop watching source
 

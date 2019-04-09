@@ -77,8 +77,8 @@ To enable Gzip versions of your destination files, add the following to your [cu
 
 ```js
 // add gz build task for the following extensions
-var types = ['css', 'html', 'js']
-for (var i in types) {
+let types = ['css', 'html', 'js']
+for (let i in types) {
     feri.config.map.sourceToDestTasks[types[i]].push('gz')
 }
 ```

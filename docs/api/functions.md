@@ -260,7 +260,7 @@ Type: `function`
 Find out if a path is in the source directory.
 
 ```
-@param   {String}   filePath  Full file path like '/var/projects/a/source/index.md'
+@param   {String}   filePath  Full file path like '/projects/a/source/index.md'
 @return  {Boolean}            True if the file path is in the source directory.
 ```
 

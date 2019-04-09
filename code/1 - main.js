@@ -5,13 +5,13 @@
 //-------------------
 // Load Timer: Begin
 //-------------------
-var time = new Date().getTime()
+const time = new Date().getTime()
 
 //-----------------------
 // Includes: Self Part 1
 //-----------------------
-var color  = require('./color.js')
-var shared = require('./2 - shared.js')
+const color  = require('./color.js')
+const shared = require('./2 - shared.js')
 
 //-------------------------
 // Command Line or Require
@@ -28,14 +28,14 @@ try {
 //----------
 // Includes
 //----------
-var fs   = require('fs')   // ~  1 ms
-var path = require('path') // ~  1 ms
+const fs   = require('fs')   // ~  1 ms
+const path = require('path') // ~  1 ms
 
 //-------------------------
 // Global or Local Install
 //-------------------------
 try {
-    var pathToModules = path.join(shared.path.self, 'node_modules')
+    let pathToModules = path.join(shared.path.self, 'node_modules')
     shared.global = typeof(fs.statSync(pathToModules)) === 'object'
 } catch(e) {
     shared.global = false
@@ -44,16 +44,16 @@ try {
 //-----------------------
 // Includes: Self Part 2
 //-----------------------
-var config    = require('./3 - config.js')    // ~  3 ms
-var functions = require('./4 - functions.js') // ~ 20 ms
-var clean     = require('./5 - clean.js')
-var build     = require('./6 - build.js')
-var watch     = require('./7 - watch.js')
+const config    = require('./3 - config.js')    // ~  3 ms
+const functions = require('./4 - functions.js') // ~ 20 ms
+const clean     = require('./5 - clean.js')
+const build     = require('./6 - build.js')
+const watch     = require('./7 - watch.js')
 
 //-----------
 // Variables
 //-----------
-var feri = {
+const feri = {
     'action': {
         'clean': clean.processClean,
         'build': build.processBuild,
@@ -70,12 +70,12 @@ var feri = {
 //-----------
 // Functions
 //-----------
-var inOptions = function inOptions(search) {
+const inOptions = function inOptions(search) {
     /*
     Find out if the options variable has any occurence of what we are searching for.
     @param  {Object}  search  Array of strings like ['--clean', '-c']
     */
-    for (var i in search) {
+    for (let i in search) {
         if (commandLineOptions.indexOf(search[i]) >= 0) {
             return true
         }
@@ -87,13 +87,17 @@ var inOptions = function inOptions(search) {
 //-------------------------
 // Command Line or Require
 //-------------------------
+let commandLineOptions,
+    configFile,
+    configFileExists
+    
 if (shared.cli) {
     //--------------
     // Command Line
     //--------------
-    var commandLineOptions = process.argv.slice(2)
-    var configFile = path.join(shared.path.pwd, 'feri-config.js')
-    var configFileExists = false
+    commandLineOptions = process.argv.slice(2)
+    configFile = path.join(shared.path.pwd, 'feri-config.js')
+    configFileExists = false
 
     // enable console logging since we are running as a command line program
     shared.log = true
@@ -125,9 +129,9 @@ if (shared.cli) {
         // Command Line Options: Source and Destination
         //----------------------------------------------
         (function() {
-            var foundSource = false
+            let foundSource = false
 
-            for (var i in commandLineOptions) {
+            for (let i in commandLineOptions) {
                 if (commandLineOptions[i].charAt(0) !== '-') {
                     // found a path
                     if (foundSource === false) {
@@ -157,7 +161,7 @@ if (shared.cli) {
 
             return functions.upgradeAvailable().then(function(upgradeVersion) {
 
-                var message = ''
+                let message = ''
 
                 if (upgradeVersion) {
                     message += '\n' + color.gray('    Upgrade to version ')
@@ -346,7 +350,7 @@ if (shared.cli) {
                     functions.log(color.gray(shared.language.display('message.usingConfigFile').replace('{file}', '"feri-config.js"')), false)
                 }
 
-                var p = Promise.resolve()
+                let p = Promise.resolve()
 
                 p = p.then(function() {
 
@@ -403,7 +407,7 @@ if (shared.cli) {
                             functions.log(color.gray(shared.language.display('paddedGroups.stats.watch')) + ' ' + color.cyan(shared.stats.timeTo.watch))
                         }
 
-                        var totalTime = shared.stats.timeTo.load + shared.stats.timeTo.clean + shared.stats.timeTo.build + shared.stats.timeTo.watch
+                        let totalTime = shared.stats.timeTo.load + shared.stats.timeTo.clean + shared.stats.timeTo.build + shared.stats.timeTo.watch
 
                         totalTime = functions.mathRoundPlaces(totalTime, 3)
 
@@ -434,7 +438,7 @@ if (shared.cli) {
 
         functions.logError(err)
 
-        var message = shared.language.display('error.halted') + '\n'
+        let message = shared.language.display('error.halted') + '\n'
         message = message.replace('{software}', color.cyan('Feri'))
         message = message.replace('{version}', color.green(require('../package.json').version))
 

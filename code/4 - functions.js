@@ -3,37 +3,37 @@
 //----------------
 // Includes: Self
 //----------------
-var color  = require('./color.js')
-var shared = require('./2 - shared.js')
-var config = require('./3 - config.js')
+const color  = require('./color.js')
+const shared = require('./2 - shared.js')
+const config = require('./3 - config.js')
 
 //----------
 // Includes
 //----------
-var fs     = require('fs')     // ~  1 ms
-var glob   = require('glob')   // ~ 13 ms
-var mkdirp = require('mkdirp') // ~  1 ms
-var path   = require('path')   // ~  1 ms
-var util   = require('util')   // ~  1 ms
+const fs     = require('fs')     // ~  1 ms
+const glob   = require('glob')   // ~ 13 ms
+const mkdirp = require('mkdirp') // ~  1 ms
+const path   = require('path')   // ~  1 ms
+const util   = require('util')   // ~  1 ms
 
 //---------------------
 // Includes: Promisify
 //---------------------
-var fsReadFilePromise  = util.promisify(fs.readFile)       // ~  1 ms
-var fsStatPromise      = util.promisify(fs.stat)           // ~  1 ms
-var fsWriteFilePromise = util.promisify(fs.writeFile)      // ~  1 ms
-var rimrafPromise      = util.promisify(require('rimraf')) // ~ 14 ms
+const fsReadFilePromise  = util.promisify(fs.readFile)       // ~  1 ms
+const fsStatPromise      = util.promisify(fs.stat)           // ~  1 ms
+const fsWriteFilePromise = util.promisify(fs.writeFile)      // ~  1 ms
+const rimrafPromise      = util.promisify(require('rimraf')) // ~ 14 ms
 
 //---------------------
 // Includes: Lazy Load
 //---------------------
-var compareVersions // require('compare-versions') // ~  3 ms
-var https           // require('https')            // ~ 33 ms
+let compareVersions // require('compare-versions') // ~  3 ms
+let https           // require('https')            // ~ 33 ms
 
 //-----------
 // Variables
 //-----------
-var functions = {}
+let functions = {}
 
 //-----------
 // Functions
@@ -61,7 +61,7 @@ functions.cacheReset = function functions_cacheReset() {
     /*
     Reset shared.cache and shared.uniqueNumber for a new pass through a set of files.
     */
-    for (var i in shared.cache) {
+    for (let i in shared.cache) {
         shared.cache[i] = shared.cache[i].constructor()
     }
 
@@ -85,9 +85,9 @@ functions.cleanArray = function functions_cleanArray(array) {
     @return  {Object}         Cleaned array like [1,3]
     */
     // This function comes from http://stackoverflow.com/questions/281264/remove-empty-elements-from-an-array-in-javascript
-    var len = array.length
+    let len = array.length
 
-    for (var i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
         array[i] && array.push(array[i]) // copy non-empty values to the end of the array
     }
 
@@ -115,9 +115,9 @@ functions.cloneObj = function functions_cloneObj(object) {
         return new RegExp(object)
     }
 
-    var objectConstructor = object.constructor()
+    let objectConstructor = object.constructor()
 
-    for (var key in object) {
+    for (let key in object) {
         // call self recursively
         objectConstructor[key] = functions.cloneObj(object[key])
     }
@@ -135,14 +135,14 @@ functions.configPathsAreGood = function functions_configPathsAreGood() {
     config.path.source = path.resolve(config.path.source)
     config.path.dest = path.resolve(config.path.dest)
 
-    var source = config.path.source.toLowerCase()
-    var dest = config.path.dest.toLowerCase()
+    let source = config.path.source.toLowerCase()
+    let dest = config.path.dest.toLowerCase()
 
-    var sourceSlash = source + shared.slash
-    var destSlash = dest + shared.slash
+    let sourceSlash = source + shared.slash
+    let destSlash = dest + shared.slash
 
-    var protect = false
-    var test = ''
+    let protect = false
+    let test = ''
 
     if (source === dest || sourceSlash.indexOf(destSlash) === 0 || destSlash.indexOf(sourceSlash) === 0) {
         // source and destination are the same or in each others path
@@ -160,11 +160,11 @@ functions.configPathsAreGood = function functions_configPathsAreGood() {
             }
         }
 
-        var env = [process.env.ProgramFiles,
+        let env = [process.env.ProgramFiles,
                    process.env['ProgramFiles(x86)'],
                    path.dirname(process.env.USERPROFILE)]
 
-        for (var i in env) {
+        for (let i in env) {
             if (typeof env[i] === 'string') {
                 test = env[i].toLowerCase()
 
@@ -226,8 +226,8 @@ functions.figureOutPath = function functions_figureOutPath(filePath) {
     @param   {String}  filePath  File path like '/full/path/to/folder' or '/relative/path'
     @return  {String}            File path like '/fully/resolved/relative/path'
     */
-    var pos = 0
-    var str = '/'
+    let pos = 0
+    let str = '/'
 
     filePath = path.normalize(filePath)
 
@@ -265,7 +265,7 @@ functions.filesExist = function functions_filesExist(filePaths) {
     @param   {Object}   filePaths  Array of file paths like ['/source/index.html', '/source/about.html']
     @return  {Promise}             Promise that returns an array of booleans. True if a particular file exists.
     */
-    var files = filePaths.map(function(file) {
+    let files = filePaths.map(function(file) {
         return functions.fileExists(file)
     })
 
@@ -298,7 +298,7 @@ functions.filesExistAndTime = function functions_filesExistAndTime(source, dest)
     @param   {String}  dest    Destination file path like '/dest/favicon.ico'
     @return  {Promise}         Promise that returns an object like { source: { exists: true, mtime: 123456789 }, dest: { exists: false, mtime: 0 } }
     */
-    var files = [source, dest].map(function(file) {
+    let files = [source, dest].map(function(file) {
         return fsStatPromise(file).then(function(stat) {
             return {
                 'exists': true,
@@ -408,7 +408,7 @@ functions.initFeri = function initFeri() {
 
     }).then(function() {
 
-        var configFile = path.join(shared.path.pwd, 'feri-config.js')
+        let configFile = path.join(shared.path.pwd, 'feri-config.js')
 
         return functions.fileExists(configFile).then(function(exists) {
 
@@ -435,7 +435,7 @@ functions.initFeri = function initFeri() {
 functions.inSource = function functions_inSource(filePath) {
     /*
     Find out if a path is in the source directory.
-    @param   {String}   filePath  Full file path like '/var/projects/a/source/index.html'
+    @param   {String}   filePath  Full file path like '/projects/a/source/index.html'
     @return  {Boolean}            True if the file path is in the source directory.
     */
     return filePath.indexOf(config.path.source) === 0
@@ -471,8 +471,8 @@ functions.logError = function functions_logError(error) {
     Log a stack trace or simple text string depending on the type of object passed in.
     @param  {Object,String}  err  Error object or simple string describing the error.
     */
-    var message = error.message || error
-    var displayError = false
+    let message = error.message || error
+    let displayError = false
 
     if (shared.log) {
         if (message === '') {
@@ -506,7 +506,7 @@ functions.logOutput = function functions_logOutput(destFilePath, message) {
     @param  {String}  destFilePath  Full path to a destination file.
     @param  {String}  [message]     Optional and defaults to 'output'.
     */
-    var file = destFilePath.replace(path.dirname(config.path.dest), '')
+    let file = destFilePath.replace(path.dirname(config.path.dest), '')
 
     message = message || 'output'
 
@@ -525,7 +525,7 @@ functions.logWorker = function functions_logWorker(workerName, obj) {
     @param  {Object}  obj         Reusable object originally created by build.processOneBuild
     */
     if (config.option.debug) {
-        var data = (obj.data === '') ? '' : 'yes'
+        let data = (obj.data === '') ? '' : 'yes'
 
         functions.log(color.gray('\n' + workerName + ' -> called'))
         functions.log('source = ' + obj.source)
@@ -686,10 +686,10 @@ functions.occurrences = function functions_occurrences(string, subString, allowO
         return string.length + 1
     }
 
-    var n = 0
-    var pos = 0
+    let n = 0
+    let pos = 0
 
-    var step = (allowOverlapping) ? 1 : subString.length
+    let step = (allowOverlapping) ? 1 : subString.length
 
     while (true) {
         pos = string.indexOf(subString, pos)
@@ -713,22 +713,22 @@ functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath)
     */
     filePath = functions.destToSource(filePath)
 
-    var destExt = functions.fileExtension(filePath)
-    var sources = [filePath]
+    let destExt = functions.fileExtension(filePath)
+    let sources = [filePath]
 
     if (functions.fileExtension(filePath) !== 'concat' && config.fileType.concat.enabled) {
         sources.push(filePath + '.concat')
     }
 
     if (config.map.destToSourceExt.hasOwnProperty(destExt)) {
-        var proceed = false
+        let proceed = false
 
         if (destExt === 'map') {
             if (config.sourceMaps) {
                 proceed = true
             } else {
                 try {
-                    var parentFileType = functions.fileExtension(functions.removeExt(filePath))
+                    let parentFileType = functions.fileExtension(functions.removeExt(filePath))
 
                     if (config.fileType[parentFileType].sourceMaps) {
                         proceed = true
@@ -739,7 +739,7 @@ functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath)
             }
         } else if (destExt === 'gz') {
             try {
-                var parentFileType = functions.fileExtension(functions.removeExt(filePath))
+                let parentFileType = functions.fileExtension(functions.removeExt(filePath))
 
                 if (config.map.sourceToDestTasks[parentFileType].indexOf('gz') >= 0) {
                     proceed = true
@@ -753,12 +753,12 @@ functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath)
         }
 
         if (proceed) {
-            var ext = ''
-            var filePathMinusOneExt = ''
+            let ext = ''
+            let filePathMinusOneExt = ''
 
-            var len = config.map.destToSourceExt[destExt].length
+            let len = config.map.destToSourceExt[destExt].length
 
-            for (var i = 0; i < len; i++) {
+            for (let i = 0; i < len; i++) {
                 ext = config.map.destToSourceExt[destExt][i]
 
                 if (ext === '*') {
@@ -773,7 +773,7 @@ functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath)
                         sources = sources.concat(functions.possibleSourceFiles(filePathMinusOneExt))
                     }
                 } else {
-                    var sourceFilePath = functions.changeExt(filePath, ext)
+                    let sourceFilePath = functions.changeExt(filePath, ext)
                     sources.push(sourceFilePath)
                     if (config.fileType.concat.enabled) {
                         sources.push(sourceFilePath + '.concat') // check for a file like code.js.concat
@@ -807,12 +807,12 @@ functions.readFiles = function functions_readFiles(filePaths, encoding) {
     */
     encoding = encoding || 'utf8'
 
-    var len = filePaths.length
-    var p = Promise.resolve([])
+    let len = filePaths.length
+    let p = Promise.resolve([])
 
-    for (var i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
         (function() {
-            var file = filePaths[i]
+            let file = filePaths[i]
             p = p.then(function(dataArray) {
                 return functions.readFile(file, encoding).then(function(data) {
                     dataArray.push(data)
@@ -846,7 +846,7 @@ functions.removeDest = function functions_removeDest(filePath, log, isDir) {
 
         return rimrafPromise(filePath).then(function() {
             if (log) {
-                var message = 'words.removed'
+                let message = 'words.removed'
 
                 if (isDir) {
                     message = 'words.removedDirectory'
@@ -889,9 +889,9 @@ functions.removeFiles = function functions_removeFile(files) {
         files = [files]
     }
 
-    var promiseArray = []
+    let promiseArray = []
 
-    for (var i in files) {
+    for (let i in files) {
         promiseArray.push(functions.removeFile(files[i]))
     }
 
@@ -907,11 +907,11 @@ functions.restoreObj = function functions_restoreObj(obj, fromObj) {
     @param  {Object}    fromObj Object to restore from.
     @return {Object}            Object that is a restore of the original. Not a reference.
     */
-    for (var i in obj) {
+    for (let i in obj) {
         delete obj[i]
     }
 
-    for (var key in fromObj) {
+    for (let key in fromObj) {
         obj[key] = functions.cloneObj(fromObj[key])
     }
 
@@ -947,7 +947,7 @@ functions.setLanguage = function functions_setLanguage(lang) {
         config.language = lang
     }
 
-    var file = path.join(shared.path.self, 'language', (config.language + '.json'))
+    let file = path.join(shared.path.self, 'language', (config.language + '.json'))
 
     return functions.readFile(file).then(function(data) {
         shared.language.loaded = JSON.parse(data)
@@ -991,16 +991,16 @@ functions.sourceToDest = function functions_sourceToDest(source) {
     @param   {String}  source  File path like '/source/index.html'
     @return  {String}          File path like '/dest/index.html'
     */
-    var sourceExt = functions.fileExtension(source)
+    let sourceExt = functions.fileExtension(source)
 
-    var dest = source.replace(config.path.source, config.path.dest)
+    let dest = source.replace(config.path.source, config.path.dest)
 
     if (sourceExt === 'concat') {
         sourceExt = functions.fileExtension(functions.removeExt(source))
         dest = functions.removeExt(dest)
     }
 
-    for (var destExt in config.map.destToSourceExt) {
+    for (let destExt in config.map.destToSourceExt) {
         if (config.map.destToSourceExt[destExt].indexOf(sourceExt) >= 0) {
             dest = functions.changeExt(dest, destExt)
             break
@@ -1073,7 +1073,7 @@ functions.upgradeAvailable = function functions_upgradeAvailable(specifyRemoteVe
                 // explicitly treat incoming data as utf8 (avoids issues with multi-byte chars)
                 response.setEncoding('utf8')
 
-                var data = ''
+                let data = ''
 
                 response.on('data', function(chunk) {
                     data += chunk
@@ -1093,7 +1093,7 @@ functions.upgradeAvailable = function functions_upgradeAvailable(specifyRemoteVe
 
     }).then(function(data) {
 
-        var remoteVersion = '0.0.0'
+        let remoteVersion = '0.0.0'
 
         try {
             remoteVersion = JSON.parse(data).version
@@ -1101,7 +1101,7 @@ functions.upgradeAvailable = function functions_upgradeAvailable(specifyRemoteVe
             // do nothing
         }
 
-        var localVersion = require('../package.json').version
+        let localVersion = require('../package.json').version
 
         if (typeof compareVersions !== 'object') {
             compareVersions = require('compare-versions')
@@ -1129,7 +1129,7 @@ functions.useExistingSourceMap = function functions_useExistingSourceMap(filePat
     */
     filePath += '.map'
 
-    var removeFile = false
+    let removeFile = false
 
     return functions.fileExistsAndTime(filePath).then(function(mapFile) {
 
@@ -1175,7 +1175,7 @@ functions.writeFile = function functions_writeFile(filePath, data, encoding) {
     @param   {String}   [encoding]  Optional and defaults to 'utf8'
     @return  {Promise}              Promise that returns true if the file was written otherwise an error.
     */
-    var options = {
+    let options = {
         'encoding': encoding || 'utf8'
     }
 
@@ -1197,16 +1197,16 @@ functions.includesNewer = function functions_includesNewer(includePaths, fileTyp
     */
     return Promise.resolve().then(function() {
 
-        var newer = false
+        let newer = false
 
-        var includesMap = includePaths.map(function(include) {
+        let includesMap = includePaths.map(function(include) {
             if (newer) {
                 // one of the promises must have set rebuild = true so return early
                 return true
             }
 
             // make an object friendly property version of the file name by removing forward slashes and periods
-            var fileName = include.replace(/[\/\.]/g, '')
+            let fileName = include.replace(/[\/\.]/g, '')
 
             if (!shared.cache.includesNewer.hasOwnProperty(fileType)) {
                 shared.cache.includesNewer[fileType] = {}
@@ -1249,7 +1249,7 @@ functions.includePathsConcat = function functions_includePathsConcat(data, fileP
     @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
     @return  {Promise}                           Promise that returns an array of files to concatenate like ['/js/_library.js'] if successful. An error object if not.
     */
-    var cleanup = false
+    let cleanup = false
 
     if (typeof includePathsCacheName === 'undefined') {
         cleanup = true
@@ -1259,23 +1259,23 @@ functions.includePathsConcat = function functions_includePathsConcat(data, fileP
 
     return Promise.resolve().then(function() {
 
-        var dataArray = data.split(/[\r\n]+/g)
+        let dataArray = data.split(/[\r\n]+/g)
 
-        var includes = []
+        let includes = []
 
         // the order of our concat file matters so find them out using a sequential promise chain
 
-        var p = Promise.resolve([])
+        let p = Promise.resolve([])
 
-        for (var a in dataArray) {
+        for (let a in dataArray) {
             (function() {
-                var match = dataArray[a].trim()
+                let match = dataArray[a].trim()
 
                 if (match.substring(0, 2) === '//' || match.length === 0) {
                     // skip over comments and empty lines
                 } else {
                     p = p.then(function() {
-                        var matchIsGlob = functions.isGlob(match)
+                        let matchIsGlob = functions.isGlob(match)
 
                         if (match.indexOf(config.path.source) !== 0) {
                             // path must be relative
@@ -1283,7 +1283,7 @@ functions.includePathsConcat = function functions_includePathsConcat(data, fileP
                         }
 
                         if (matchIsGlob) {
-                            var options = {
+                            let options = {
                                 "nocase"  : true,
                                 "nodir"   : false,
                                 "realpath": true
@@ -1292,7 +1292,7 @@ functions.includePathsConcat = function functions_includePathsConcat(data, fileP
                             return functions.findFiles(match, options).then(function(files) {
 
                                 if (files.length > 0) {
-                                    for (var j in files) {
+                                    for (let j in files) {
                                         if (shared.cache.includeFilesSeen[includePathsCacheName].indexOf(files[j]) < 0) {
                                             // a unique path we haven't seen yet
                                             shared.cache.includeFilesSeen[includePathsCacheName].push(files[j])
@@ -1325,18 +1325,18 @@ functions.includePathsConcat = function functions_includePathsConcat(data, fileP
         if (includes.length > 0) {
             // now we have an array of includes like ['/full/path/to/_file.js']
 
-            var promiseArray = []
+            let promiseArray = []
 
-            for (var i in includes) {
+            for (let i in includes) {
                 (function() {
-                    var ii = i
+                    let ii = i
                     promiseArray.push(
                         functions.fileExists(includes[ii]).then(function(exists) {
                             if (exists) {
                                 if (functions.fileExtension(includes[ii]) === 'concat') {
                                     return functions.readFile(includes[ii]).then(function(data) {
                                         return functions.includePathsConcat(data, includes[ii], includePathsCacheName).then(function(subIncludes) {
-                                            for (var j in subIncludes) {
+                                            for (let j in subIncludes) {
                                                 includes.push(subIncludes[j])
                                             }
                                         })
@@ -1367,7 +1367,7 @@ functions.includePathsConcat = function functions_includePathsConcat(data, fileP
         if (cleanup) {
             delete shared.cache.includeFilesSeen[includePathsCacheName]
 
-            for (var j in includes) {
+            for (let j in includes) {
                 if (functions.fileExtension(includes[j]) === 'concat') {
                     delete includes[j]
                 }
@@ -1390,7 +1390,7 @@ functions.includePathsStylus = function functions_includePathsStylus(data, fileP
     @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
     @return  {Promise}                           Promise that returns an array of includes like ['/partials/_fonts.styl'] if successful. An error object if not.
     */
-    var cleanup = false
+    let cleanup = false
 
     if (typeof includePathsCacheName === 'undefined') {
         cleanup = true
@@ -1418,11 +1418,11 @@ functions.includePathsStylus = function functions_includePathsStylus(data, fileP
             Stylus supports globbing. With it you could import many files using a file mask:
                 @import 'product/*'
         */
-        var re = /^(?:\s)*@(require|import)([^;\n]*).*$/gmi
+        let re = /^(?:\s)*@(require|import)([^;\n]*).*$/gmi
 
-        var match
-        var includes = []
-        var globs = []
+        let match
+        let includes = []
+        let globs = []
 
         while (match = re.exec(data)) {
             match = match[2].trim()
@@ -1474,12 +1474,12 @@ functions.includePathsStylus = function functions_includePathsStylus(data, fileP
 
         if (globs.length > 0) {
 
-            var promiseArray = []
+            let promiseArray = []
 
-            for (var i in globs) {
+            for (let i in globs) {
                 (function() {
-                    var ii = i
-                    var options = {
+                    let ii = i
+                    let options = {
                         "nocase"  : true,
                         "nodir"   : false,
                         "realpath": true
@@ -1487,7 +1487,7 @@ functions.includePathsStylus = function functions_includePathsStylus(data, fileP
                     promiseArray.push(
                         functions.findFiles(globs[ii], options).then(function(files) {
                             if (files.length > 0) {
-                                for (var j in files) {
+                                for (let j in files) {
                                     includes.push(files[j])
                                 }
                             }
@@ -1508,17 +1508,17 @@ functions.includePathsStylus = function functions_includePathsStylus(data, fileP
         if (includes.length > 0) {
             // now we have an array of includes like ['/full/path/css/_fonts.styl']
 
-            var promiseArray = []
+            let promiseArray = []
 
-            for (var i in includes) {
+            for (let i in includes) {
                 (function() {
-                    var ii = i
+                    let ii = i
                     promiseArray.push(
                         functions.fileExists(includes[ii]).then(function(exists) {
                             if (exists) {
                                 return functions.readFile(includes[ii]).then(function(data) {
                                     return functions.includePathsStylus(data, includes[ii], includePathsCacheName).then(function(subIncludes) {
-                                        for (var j in subIncludes) {
+                                        for (let j in subIncludes) {
                                             includes.push(subIncludes[j])
                                         }
                                     })
@@ -1565,8 +1565,8 @@ functions.objBuildWithIncludes = function functions_objBuildWithIncludes(obj, in
     @param   {Function}  includeFunction  Function that will parse this particular type of file (stylus for example) and return any paths to include files.
     @return  {Promise}                    Promise that returns a reusable object.
     */
-    var destTime = 0
-    var sourceExt = functions.fileExtension(obj.source)
+    let destTime = 0
+    let sourceExt = functions.fileExtension(obj.source)
 
     obj.build = false
 

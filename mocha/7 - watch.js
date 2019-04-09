@@ -3,28 +3,28 @@
 //----------
 // Includes
 //----------
-var expect = require('expect.js')
-var fs     = require('fs')
-var path   = require('path')
+const expect = require('expect.js')
+const fs     = require('fs')
+const path   = require('path')
 
-var shared    = require('../code/2 - shared.js')
-var config    = require('../code/3 - config.js')
-var functions = require('../code/4 - functions.js')
-var clean     = require('../code/5 - clean.js')
-var build     = require('../code/6 - build.js')
-var watch     = require('../code/7 - watch.js')
+const shared    = require('../code/2 - shared.js')
+let   config    = require('../code/3 - config.js')
+const functions = require('../code/4 - functions.js')
+const clean     = require('../code/5 - clean.js')
+const build     = require('../code/6 - build.js')
+const watch     = require('../code/7 - watch.js')
 
 //-----------
 // Variables
 //-----------
-var configBackup = functions.cloneObj(config)
-var testPath = path.join(shared.path.self, 'mocha', 'files', 'watch')
-var reWriteTimer = setTimeout(function() {}, 0)
+const configBackup = functions.cloneObj(config)
+const testPath     = path.join(shared.path.self, 'mocha', 'files', 'watch')
+let   reWriteTimer = setTimeout(function() {}, 0)
 
 //-----------
 // Functions
 //-----------
-var reWriter = function reWriter(goCrazy, filePath, data) {
+const reWriter = function reWriter(goCrazy, filePath, data) {
     /*
     Keep on writing a file until chokidar notices us.
     @param  {Boolean}  goCrazy   Start or continue to write a file every 500 ms until someone stops us!
@@ -92,8 +92,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
             config.path.source = path.join(testPath, 'buildOne', 'source')
             config.path.dest   = path.join(testPath, 'buildOne', 'dest')
 
-            var fileSource = path.join(config.path.source, 'buildOne.txt')
-            var fileDest = path.join(config.path.dest, 'buildOne.txt')
+            let fileSource = path.join(config.path.source, 'buildOne.txt')
+            let fileDest = path.join(config.path.dest, 'buildOne.txt')
 
             return Promise.resolve().then(function() {
 
@@ -130,7 +130,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             watch.notTooRecent('notTooRecent1.txt')
             setTimeout(function() {
-                var bool = watch.notTooRecent('notTooRecent1.txt')
+                let bool = watch.notTooRecent('notTooRecent1.txt')
                 expect(bool).to.be(true)
                 done()
             }, 350)
@@ -140,7 +140,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
         it('should return false for file activity in quick succession', function() {
 
             watch.notTooRecent('notTooRecent2.txt')
-            var bool = watch.notTooRecent('notTooRecent2.txt')
+            let bool = watch.notTooRecent('notTooRecent2.txt')
             expect(bool).to.be(false)
 
         }) // it
@@ -157,8 +157,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
             config.path.source = path.join(testPath, 'processWatch-1', 'source')
             config.path.dest   = path.join(testPath, 'processWatch-1', 'dest')
 
-            var fileSource = path.join(config.path.source, 'one.html')
-            var fileDest   = path.join(config.path.dest, 'one.html')
+            let fileSource = path.join(config.path.source, 'one.html')
+            let fileDest   = path.join(config.path.dest, 'one.html')
 
             return Promise.resolve().then(function() {
 
@@ -168,8 +168,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 return new Promise(function(resolve, reject) {
 
-                    var check1 = false
-                    var check2 = false
+                    let check1 = false
+                    let check2 = false
 
                     function check() {
                         if (check1 && check2) {
@@ -224,8 +224,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
             config.path.source = path.join(testPath, 'processWatch-2', 'source')
             config.path.dest   = path.join(testPath, 'processWatch-2', 'dest')
 
-            var fileSource = path.join(config.path.source, 'two.css')
-            var fileDest   = path.join(config.path.dest, 'two.css')
+            let fileSource = path.join(config.path.source, 'two.css')
+            let fileDest   = path.join(config.path.dest, 'two.css')
 
             return Promise.resolve().then(function() {
 
@@ -235,8 +235,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 return new Promise(function(resolve, reject) {
 
-                    var check1 = false
-                    var check2 = false
+                    let check1 = false
+                    let check2 = false
 
                     function check() {
                         if (check1 && check2) {
@@ -287,11 +287,11 @@ describe('File -> ../code/7 - watch.js\n', function() {
             config.path.source = path.join(testPath, 'processWatch-3', 'source')
             config.path.dest   = path.join(testPath, 'processWatch-3', 'dest')
 
-            var fileSource = path.join(config.path.source, 'three.js')
-            var fileDest   = path.join(config.path.dest, 'three.js')
+            let fileSource = path.join(config.path.source, 'three.js')
+            let fileDest   = path.join(config.path.dest, 'three.js')
 
-            var ignoreFileSource = path.join(config.path.source, 'three.html')
-            var ignoreFileDest   = path.join(config.path.dest, 'three.html')
+            let ignoreFileSource = path.join(config.path.source, 'three.html')
+            let ignoreFileDest   = path.join(config.path.dest, 'three.html')
 
             return Promise.resolve().then(function() {
 
@@ -301,8 +301,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 return new Promise(function(resolve, reject) {
 
-                    var check1 = false
-                    var check2 = false
+                    let check1 = false
+                    let check2 = false
 
                     function check() {
                         if (check1 && check2) {
@@ -329,7 +329,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                     return functions.writeFile(ignoreFileSource, 'changed data').then(function() {
 
-                        reWriter(true, fileSource, 'var peanut = "butter"')
+                        reWriter(true, fileSource, 'let peanut = "butter"')
 
                     })
 
@@ -366,11 +366,11 @@ describe('File -> ../code/7 - watch.js\n', function() {
             config.path.source = path.join(testPath, 'processWatch-4', 'source')
             config.path.dest   = path.join(testPath, 'processWatch-4', 'dest')
 
-            var fileSource = path.join(config.path.source, 'four.js')
-            var fileDest   = path.join(config.path.dest, 'four.js')
+            let fileSource = path.join(config.path.source, 'four.js')
+            let fileDest   = path.join(config.path.dest, 'four.js')
 
-            var ignoreFileSource = path.join(config.path.source, 'four.html')
-            var ignoreFileDest   = path.join(config.path.dest, 'four.html')
+            let ignoreFileSource = path.join(config.path.source, 'four.html')
+            let ignoreFileDest   = path.join(config.path.dest, 'four.html')
 
             return Promise.resolve().then(function() {
 
@@ -380,8 +380,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 return new Promise(function(resolve, reject) {
 
-                    var check1 = false
-                    var check2 = false
+                    let check1 = false
+                    let check2 = false
 
                     function check() {
                         if (check1 && check2) {
@@ -408,7 +408,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                     return functions.writeFile(ignoreFileSource, 'changed data').then(function() {
 
-                        reWriter(true, fileSource, 'var jelly = "time"')
+                        reWriter(true, fileSource, 'let jelly = "time"')
 
                     })
 
@@ -469,7 +469,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
             config.path.source = path.join(testPath, 'watchDest', 'source')
             config.path.dest   = path.join(testPath, 'watchDest', 'dest')
 
-            var fileDest = path.join(config.path.dest, 'watchDest.html')
+            let fileDest = path.join(config.path.dest, 'watchDest.html')
 
             return Promise.resolve().then(function() {
 
@@ -508,7 +508,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
             config.path.source = path.join(testPath, 'watchSource', 'source')
             config.path.dest   = path.join(testPath, 'watchSource', 'dest')
 
-            var fileSource = path.join(config.path.source, 'watchSource.html')
+            let fileSource = path.join(config.path.source, 'watchSource.html')
 
             return Promise.resolve().then(function() {
 

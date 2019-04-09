@@ -109,7 +109,7 @@ Return a string from `shared.language.loaded` if available otherwise return the 
 Example
 
 ```js
-var message = shared.language.display('error.missingSource')
+let message = shared.language.display('error.missingSource')
 // message is 'Missing source file.'
 ```
 

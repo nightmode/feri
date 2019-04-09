@@ -3,20 +3,20 @@
 //----------
 // Includes
 //----------
-var os   = require('os')   // ~ 1 ms
-var path = require('path') // ~ 1 ms
+const os   = require('os')   // ~ 1 ms
+const path = require('path') // ~ 1 ms
 
 //-----------
 // Functions
 //-----------
-var propertyAccessor = function propertyAccessor(object, keys) {
+const propertyAccessor = function propertyAccessor(object, keys) {
     /*
     Retrieve an object property with a dot notation string.
     @param   {Object}  object   Object to access.
     @param   {String}  keys     Property to access using 0 or more dots for notation.
     @return  {*}
     */
-    var array = keys.split('.')
+    let array = keys.split('.')
     while (array.length && (object = object[array.shift()]));
     return object
 }
@@ -24,7 +24,7 @@ var propertyAccessor = function propertyAccessor(object, keys) {
 //-----------
 // Variables
 //-----------
-var shared = {
+const shared = {
     // null values will be populated later
     cache: {
         'errorsSeen'       : [], // Keep track of which error messages have been displayed to a command line user. Used by functions.logError to show individual errors only once.
@@ -92,7 +92,7 @@ var shared = {
             @param   {String}  keys  String like 'error.missingSource'
             @return  {String}        String like 'Missing source file.'
             */
-            var alreadyLoaded = propertyAccessor(shared.language.loaded, keys)
+            let alreadyLoaded = propertyAccessor(shared.language.loaded, keys)
 
             if (typeof alreadyLoaded === 'string') {
                 return alreadyLoaded

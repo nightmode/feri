@@ -3,19 +3,19 @@
 //----------
 // Includes
 //----------
-var expect = require('expect.js')
-var path   = require('path')
+const expect = require('expect.js')
+const path   = require('path')
 
-var shared    = require('../code/2 - shared.js')
-var config    = require('../code/3 - config.js')
-var functions = require('../code/4 - functions.js')
-var clean     = require('../code/5 - clean.js')
+const shared    = require('../code/2 - shared.js')
+let   config    = require('../code/3 - config.js')
+const functions = require('../code/4 - functions.js')
+const clean     = require('../code/5 - clean.js')
 
 //-----------
 // Variables
 //-----------
-var configBackup = functions.cloneObj(config)
-var testPath = path.join(shared.path.self, 'mocha', 'files', 'clean')
+const configBackup = functions.cloneObj(config)
+const testPath = path.join(shared.path.self, 'mocha', 'files', 'clean')
 
 //-------------
 // Mocha Tests
@@ -60,7 +60,7 @@ describe('File -> ../code/5 - clean.js\n', function() {
 
             }).then(function(files) {
 
-                var objDesired = [
+                let objDesired = [
                     path.join(config.path.dest, 'css', 'style.css'),
                     path.join(config.path.dest, 'index.html'),
                 ]
@@ -73,8 +73,8 @@ describe('File -> ../code/5 - clean.js\n', function() {
 
         it('should clean up based on a glob search', function() {
 
-            var kodoFile = path.join(config.path.dest, 'kodo.txt')
-            var podoFile = path.join(config.path.dest, 'podo.txt')
+            let kodoFile = path.join(config.path.dest, 'kodo.txt')
+            let podoFile = path.join(config.path.dest, 'podo.txt')
 
             return Promise.resolve().then(function() {
 
@@ -97,7 +97,7 @@ describe('File -> ../code/5 - clean.js\n', function() {
             }).then(function(files) {
 
                 // check return to make sur
-                var objDesired = [
+                let objDesired = [
                     path.join(config.path.dest, 'css', 'style.css'),
                     path.join(config.path.dest, 'index.html'),
                     podoFile
@@ -115,9 +115,9 @@ describe('File -> ../code/5 - clean.js\n', function() {
 
         it('should clean up based on an array of paths', function() {
 
-            var kodoFile = path.join(config.path.dest, 'kodo.txt')
-            var podoFile = path.join(config.path.dest, 'podo.txt')
-            var odoFile = path.join(config.path.dest, 'odo.txt')
+            let kodoFile = path.join(config.path.dest, 'kodo.txt')
+            let podoFile = path.join(config.path.dest, 'podo.txt')
+            let odoFile = path.join(config.path.dest, 'odo.txt')
 
             return Promise.resolve().then(function() {
 
@@ -145,7 +145,7 @@ describe('File -> ../code/5 - clean.js\n', function() {
             }).then(function(files) {
 
                 // check return to make sur
-                var objDesired = [
+                let objDesired = [
                     path.join(config.path.dest, 'css', 'style.css'),
                     path.join(config.path.dest, 'index.html'),
                     odoFile

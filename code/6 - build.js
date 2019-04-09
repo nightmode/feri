@@ -3,29 +3,29 @@
 //----------------
 // Includes: Self
 //----------------
-var color     = require('./color.js')
-var shared    = require('./2 - shared.js')
-var config    = require('./3 - config.js')
-var functions = require('./4 - functions.js')
+const color     = require('./color.js')
+const shared    = require('./2 - shared.js')
+const config    = require('./3 - config.js')
+const functions = require('./4 - functions.js')
 
 //----------
 // Includes
 //----------
-var fs   = require('fs')   // ~  1 ms
-var glob = require('glob') // ~ 13 ms
-var path = require('path') // ~  1 ms
-var util = require('util') // ~  1 ms
+const fs   = require('fs')   // ~  1 ms
+const glob = require('glob') // ~ 13 ms
+const path = require('path') // ~  1 ms
+const util = require('util') // ~  1 ms
 
 //---------------------
 // Includes: Promisify
 //---------------------
-var execPromise        = util.promisify(require('child_process').exec) // ~ 10 ms
-var fsWriteFilePromise = util.promisify(fs.writeFile)                  // ~ 1 ms
+const execPromise        = util.promisify(require('child_process').exec) // ~ 10 ms
+const fsWriteFilePromise = util.promisify(fs.writeFile)                  // ~ 1 ms
 
 //-----------------------------
 // Includes: Paths to Binaries
 //-----------------------------
-var gif = '',
+let gif = '',
     jpg = '',
     png = ''
 
@@ -43,20 +43,19 @@ if (shared.global) {
 //---------------------
 // Includes: Lazy Load
 //---------------------
-var css                // require('clean-css')                      // ~  83 ms
-var html               // require('html-minifier').minify           // ~   4 ms
-var js                 // require('uglify-js')                      // ~  83 ms
-var markdown           // require('markdown-it')()                  // ~  56 ms
-var transferMap        // require('multi-stage-sourcemap').transfer // ~  20 ms
-var pako               // require('pako')                           // ~  21 ms
-var sourceMapGenerator // require('source-map').SourceMapGenerator  // ~  13 ms
-var stylus             // require('stylus')                         // ~  98 ms
-
+let css                // require('clean-css')                      // ~  83 ms
+let html               // require('html-minifier').minify           // ~   4 ms
+let js                 // require('uglify-js')                      // ~  83 ms
+let markdown           // require('markdown-it')()                  // ~  56 ms
+let transferMap        // require('multi-stage-sourcemap').transfer // ~  20 ms
+let pako               // require('pako')                           // ~  21 ms
+let sourceMapGenerator // require('source-map').SourceMapGenerator  // ~  13 ms
+let stylus             // require('stylus')                         // ~  98 ms
 
 //-----------
 // Variables
 //-----------
-var build = {}
+const build = {}
 
 //----------------------------
 // Build: Command and Control
@@ -83,7 +82,7 @@ build.processBuild = function build_processBuild(files, watching) {
             shared.stats.timeTo.build = functions.sharedStatsTimeTo(shared.stats.timeTo.build)
         }
 
-        var configPathsAreGood = functions.configPathsAreGood()
+        let configPathsAreGood = functions.configPathsAreGood()
         if (configPathsAreGood !== true) {
             throw new Error(configPathsAreGood)
         }
@@ -103,7 +102,7 @@ build.processBuild = function build_processBuild(files, watching) {
             functions.log(color.gray('\n' + shared.language.display('words.build') + '\n'), false)
         }
 
-        var filesType = typeof files
+        let filesType = typeof files
 
         if (filesType === 'object') {
             // we already have a specified list to work from
@@ -139,11 +138,11 @@ build.processBuild = function build_processBuild(files, watching) {
                 //------------------------
                 // Missing Build Mappings
                 //------------------------
-                var array = shared.cache.missingMapBuild.slice()
-                var len = array.length
+                let array = shared.cache.missingMapBuild.slice()
+                let len = array.length
 
                 if (len > 0) {
-                    for (var i = 0; i < len; i++) {
+                    for (let i = 0; i < len; i++) {
                         array[i] = '.' + array[i]
                     }
 
@@ -169,7 +168,7 @@ build.processFiles = function build_processFiles(files) {
     @param   {Object,String}  files  Array of paths like ['/source/path1', '/source/path2'] or a string like '/source/path'
     @return  {Promise}               Promise that returns an array of file path strings for the files built like ['/dest/css/style.css', '/dest/index.html']
     */
-    var filesBuilt = [] // keep track of any files built
+    let filesBuilt = [] // keep track of any files built
 
     return new Promise(function(resolve, reject) {
 
@@ -179,9 +178,9 @@ build.processFiles = function build_processFiles(files) {
 
         functions.cacheReset()
 
-        var allFiles = []    // array of promises
-        var current  = 0     // number of operations running currently
-        var resolved = false // true if all tasks have been queued
+        let allFiles = []    // array of promises
+        let current  = 0     // number of operations running currently
+        let resolved = false // true if all tasks have been queued
 
         function proceed() {
             current--
@@ -196,7 +195,7 @@ build.processFiles = function build_processFiles(files) {
 
         function queue() {
             while (current < config.concurLimit && files.length > 0) {
-                var file = files.shift()
+                let file = files.shift()
 
                 allFiles.push(Promise.resolve(file).then(function(file) {
                     return build.processOneBuild(file).then(function(filePath) {
@@ -232,23 +231,23 @@ build.processOneBuild = function build_processOneBuild(filePath) {
     @param   {String}   filePath  Full path to a file like '/web/source/rss.xml'
     @return  {Promise}            Promise that returns a file path string if something was built otherwise undefined.
     */
-    var fileExt = functions.fileExtension(filePath)
+    let fileExt = functions.fileExtension(filePath)
 
     // reusable object that will be passed between build functions
-    var object = {
+    let object = {
         'source': filePath,
         'dest': '',
         'data': '',
         'build': false
     }
 
-    var p = Promise.resolve(object)
+    let p = Promise.resolve(object)
 
     // figure out which array of functions apply to this file type
     if (config.map.sourceToDestTasks.hasOwnProperty(fileExt)) {
-        var len = config.map.sourceToDestTasks[fileExt].length
+        let len = config.map.sourceToDestTasks[fileExt].length
 
-        for (var i = 0; i < len; i++) {
+        for (let i = 0; i < len; i++) {
             if (typeof config.map.sourceToDestTasks[fileExt][i] === 'string') {
                 // built-in build task
                 p = p.then(build[config.map.sourceToDestTasks[fileExt][i]])
@@ -289,9 +288,9 @@ build.css = function build_css(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    var buildAlreadySet = obj.build
+    let buildAlreadySet = obj.build
 
-    var sourceBaseName = path.basename(config.path.source)
+    let sourceBaseName = path.basename(config.path.source)
 
     return functions.objBuildInMemory(obj).then(function(obj) {
 
@@ -316,15 +315,15 @@ build.css = function build_css(obj) {
 
         if (existingSourceMap) {
             // temporarily set any sourceMappingURL to a full path for clean-css
-            var string = '/*# sourceMappingURL='
-            var pos = obj.data.indexOf(string)
+            let string = '/*# sourceMappingURL='
+            let pos = obj.data.indexOf(string)
 
             if (pos > 0) {
                 obj.data = obj.data.substr(0, pos) + '\n' + string + path.dirname(obj.dest) + shared.slash + path.basename(obj.dest) + '.map */'
             }
         }
 
-        var options = functions.cloneObj(config.thirdParty.cleanCss)
+        let options = functions.cloneObj(config.thirdParty.cleanCss)
 
         if (config.sourceMaps || config.fileType.css.sourceMaps) {
             options.sourceMap = true
@@ -332,7 +331,7 @@ build.css = function build_css(obj) {
             options.target = path.dirname(obj.dest)
         }
 
-        var cssMin = new css(options).minify(obj.data)
+        let cssMin = new css(options).minify(obj.data)
 
         if (config.sourceMaps || config.fileType.css.sourceMaps) {
 
@@ -395,9 +394,9 @@ build.js = function build_js(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    var buildAlreadySet = obj.build
+    let buildAlreadySet = obj.build
 
-    var previousSourceMap = false
+    let previousSourceMap = false
 
     return functions.objBuildInMemory(obj).then(function(obj) {
 
@@ -429,7 +428,7 @@ build.js = function build_js(obj) {
 
     }).then(function() {
 
-        var options = {
+        let options = {
             'keep_fnames': true
             /*
             // the following code is great for troubleshooting source maps
@@ -442,7 +441,7 @@ build.js = function build_js(obj) {
             */
         }
 
-        var outputFileName = path.basename(obj.dest)
+        let outputFileName = path.basename(obj.dest)
 
         if (config.sourceMaps || config.fileType.js.sourceMaps) {
             options.sourceMap = {
@@ -498,7 +497,7 @@ build.js = function build_js(obj) {
 
             sourceMap = functions.normalizeSourceMap(obj, sourceMap)
 
-            var mapObject = functions.objFromSourceMap(obj, sourceMap)
+            let mapObject = functions.objFromSourceMap(obj, sourceMap)
 
             return build.map(mapObject).then(function() {
                 return jsMin
@@ -567,10 +566,10 @@ build.copy = function build_copy(obj) {
 
                     return new Promise(function(resolve, reject) {
 
-                        var sourceFile = fs.createReadStream(obj.source)
+                        let sourceFile = fs.createReadStream(obj.source)
                         sourceFile.on('error', reject)
 
-                        var destFile = fs.createWriteStream(obj.dest)
+                        let destFile = fs.createWriteStream(obj.dest)
                         destFile.on('error', reject)
                         destFile.on('finish', resolve)
 
@@ -662,7 +661,7 @@ build.png = function build_png(obj) {
         functions.logWorker('build.png', obj)
 
         if (obj.build) {
-            var cmd = '"' + png + '" -clobber -o2 -strip all -out "' + obj.dest + '" "' + obj.source + '"'
+            let cmd = '"' + png + '" -clobber -o2 -strip all -out "' + obj.dest + '" "' + obj.source + '"'
             return execPromise(cmd).then(function() {
                 // get rid of the possible .bak file optipng makes when overwriting an existing dest file with a different source file
                 return functions.removeDest(obj.dest + '.bak', false)
@@ -697,7 +696,7 @@ build.concat = function build_concat(obj) {
 
         if (obj.build && config.fileType.concat.enabled) {
 
-            var filePaths = []
+            let filePaths = []
 
             return functions.includePathsConcat(obj.data, obj.source).then(function(includeFiles) {
 
@@ -710,11 +709,11 @@ build.concat = function build_concat(obj) {
                 // empty obj.data in preparation to populate it with include file contents
                 obj.data = ''
 
-                var fileExtDest = functions.fileExtension(obj.dest)
+                let fileExtDest = functions.fileExtension(obj.dest)
 
-                var arrayDataLength = arrayData.length - 1
+                let arrayDataLength = arrayData.length - 1
 
-                for (var i in arrayData) {
+                for (let i in arrayData) {
                     obj.data += arrayData[i]
 
                     if (i < arrayDataLength) {
@@ -727,9 +726,9 @@ build.concat = function build_concat(obj) {
                     }
                 }
 
-                var createSourceMaps = false
+                let createSourceMaps = false
 
-                var configConcatMaps = config.sourceMaps || config.fileType.concat.sourceMaps
+                let configConcatMaps = config.sourceMaps || config.fileType.concat.sourceMaps
 
                 if (fileExtDest === 'js' && (configConcatMaps || config.fileType.js.sourceMaps)) {
                     createSourceMaps = true
@@ -742,11 +741,11 @@ build.concat = function build_concat(obj) {
                         sourceMapGenerator = require('source-map').SourceMapGenerator
                     }
 
-                    var map = new sourceMapGenerator({
+                    let map = new sourceMapGenerator({
                         file: path.basename(obj.dest)
                     })
 
-                    var totalLines = 0
+                    let totalLines = 0
 
                     for (let i in filePaths) {
                         let lineArray = arrayData[i].split(/\r?\n/)
@@ -771,7 +770,7 @@ build.concat = function build_concat(obj) {
                         }
                     }
 
-                    var sourceMap = JSON.parse(map.toString())
+                    let sourceMap = JSON.parse(map.toString())
 
                     sourceMap.sourceRoot = config.sourceRoot
                     sourceMap.sourcesContent = []
@@ -799,16 +798,16 @@ build.concat = function build_concat(obj) {
 
     }).then(function() {
 
-        var fileExtSource = path.basename(obj.source).split('.').reverse()[1] // for example, return 'js' for a file named 'file.js.concat'
+        let fileExtSource = path.basename(obj.source).split('.').reverse()[1] // for example, return 'js' for a file named 'file.js.concat'
 
         // now return a chain of build tasks just like build.processOneBuild but don't add build.finalize since that will run after our final return anyway
-        var p = Promise.resolve(obj)
+        let p = Promise.resolve(obj)
 
         // figure out which array of functions apply to this file type
         if (config.map.sourceToDestTasks.hasOwnProperty(fileExtSource)) {
-            var len = config.map.sourceToDestTasks[fileExtSource].length
+            let len = config.map.sourceToDestTasks[fileExtSource].length
 
-            for (var i = 0; i < len; i++) {
+            for (let i = 0; i < len; i++) {
                 if (typeof config.map.sourceToDestTasks[fileExtSource][i] === 'string') {
                     // built-in build task
                     p = p.then(build[config.map.sourceToDestTasks[fileExtSource][i]])
@@ -850,7 +849,7 @@ build.stylus = function build_stylus(obj) {
 
             return new Promise(function(resolve, reject) {
 
-                var style = stylus(obj.data)
+                let style = stylus(obj.data)
                     .set('compress', true)
                     .set('filename', obj.source)
                     .set('paths', [path.dirname(obj.source)])
@@ -867,8 +866,8 @@ build.stylus = function build_stylus(obj) {
                         reject(err)
                     } else {
                         if (config.sourceMaps || config.fileType.styl.sourceMaps) {
-                            var string = '/*# sourceMappingURL='
-                            var pos = css.indexOf(string)
+                            let string = '/*# sourceMappingURL='
+                            let pos = css.indexOf(string)
 
                             if (pos > 0) {
                                 css = css.substr(0, pos) + '\n' + string + path.basename(obj.dest) + '.map */'
@@ -876,12 +875,12 @@ build.stylus = function build_stylus(obj) {
 
                             obj.data = css
 
-                            var sourceMap = style.sourcemap
+                            let sourceMap = style.sourcemap
 
-                            var sources = []
-                            var basename = path.basename(config.path.source)
+                            let sources = []
+                            let basename = path.basename(config.path.source)
 
-                            for (var i in sourceMap.sources) {
+                            for (let i in sourceMap.sources) {
                                 sources.push(sourceMap.sources[i].replace(basename, config.path.source))
                             }
 

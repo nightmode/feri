@@ -3,17 +3,17 @@
 //----------
 // Includes
 //----------
-var expect = require('expect.js')
-var path   = require('path')
+const expect = require('expect.js')
+const path   = require('path')
 
-var shared    = require('../code/2 - shared.js')
-var config    = require('../code/3 - config.js')
-var functions = require('../code/4 - functions.js')
+const shared    = require('../code/2 - shared.js')
+let   config    = require('../code/3 - config.js')
+const functions = require('../code/4 - functions.js')
 
 //-----------
 // Variables
 //-----------
-var configBackup = functions.cloneObj(config)
+const configBackup = functions.cloneObj(config)
 
 //-------------
 // Mocha Tests

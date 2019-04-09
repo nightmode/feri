@@ -3,20 +3,20 @@
 //----------------
 // Includes: Self
 //----------------
-var color     = require('./color.js')
-var shared    = require('./2 - shared.js')
-var config    = require('./3 - config.js')
-var functions = require('./4 - functions.js')
+const color     = require('./color.js')
+const shared    = require('./2 - shared.js')
+const config    = require('./3 - config.js')
+const functions = require('./4 - functions.js')
 
 //----------
 // Includes
 //----------
-var path = require('path') // ~ 1 ms
+const path = require('path') // ~ 1 ms
 
 //-----------
 // Variables
 //-----------
-var clean = {}
+const clean = {}
 
 //----------------------------
 // Clean: Command and Control
@@ -43,7 +43,7 @@ clean.processClean = function clean_processClean(files, watching) {
             shared.stats.timeTo.clean = functions.sharedStatsTimeTo(shared.stats.timeTo.clean)
         }
 
-        var configPathsAreGood = functions.configPathsAreGood()
+        let configPathsAreGood = functions.configPathsAreGood()
         if (configPathsAreGood !== true) {
             throw new Error(configPathsAreGood)
         }
@@ -65,7 +65,7 @@ clean.processClean = function clean_processClean(files, watching) {
 
         if (config.option.republish && !watching) {
             // remove all files from inside the dest directory
-            var options = {
+            let options = {
                 "nocase"  : true,
                 "nodir"   : false,
                 "realpath": true
@@ -79,13 +79,13 @@ clean.processClean = function clean_processClean(files, watching) {
         } else {
             // incremental cleanup
 
-            var filesType = typeof files
+            let filesType = typeof files
 
             if (filesType === 'object') {
                 // we already have a specified list to work from
                 return clean.processFiles(files, watching)
             } else {
-                var options = {
+                let options = {
                     "nocase"  : true,
                     "nodir"   : false,
                     "realpath": true
@@ -138,7 +138,7 @@ clean.processFiles = function clean_processFiles(files, watching) {
     */
     watching = watching || false
 
-    var filesCleaned = [] // keep track of any files cleaned
+    let filesCleaned = [] // keep track of any files cleaned
 
     functions.cacheReset()
 
@@ -147,9 +147,9 @@ clean.processFiles = function clean_processFiles(files, watching) {
             files = [files]
         }
 
-        var allFiles = []    // array of promises
-        var current  = 0     // number of operations running currently
-        var resolved = false // true if all tasks have been queued
+        let allFiles = []    // array of promises
+        let current  = 0     // number of operations running currently
+        let resolved = false // true if all tasks have been queued
 
         function proceed() {
             current--
@@ -164,7 +164,7 @@ clean.processFiles = function clean_processFiles(files, watching) {
 
         function queue() {
             while (current < config.concurLimit && files.length > 0) {
-                var file = files.shift()
+                let file = files.shift()
 
                 allFiles.push(Promise.resolve(file).then(function(file) {
                     return clean.processOneClean(file).then(function(filePath) {
@@ -206,9 +206,9 @@ clean.processOneClean = function clean_processOneClean(filePath) {
             if (!destExists) {
                 throw 'done'
             } else {
-                var prefix = path.basename(filePath).substr(0, config.includePrefix.length)
+                let prefix = path.basename(filePath).substr(0, config.includePrefix.length)
 
-                var fileExt = functions.fileExtension(filePath)
+                let fileExt = functions.fileExtension(filePath)
 
                 if (prefix === config.includePrefix || fileExt === 'concat') {
                     // prefixed files are includes and should not be in the destination folder
@@ -225,7 +225,7 @@ clean.processOneClean = function clean_processOneClean(filePath) {
 
             // if we got this far we know the destination file exists and it is not an include
 
-            var obj = {
+            let obj = {
                 destFile: filePath,
                 destExt: fileExt,
                 sourceExists: false
@@ -233,13 +233,13 @@ clean.processOneClean = function clean_processOneClean(filePath) {
 
             obj.sourceFiles = functions.possibleSourceFiles(filePath)
 
-            var len = obj.sourceFiles.length
+            let len = obj.sourceFiles.length
 
-            var p = Promise.resolve()
+            let p = Promise.resolve()
 
-            for (var i = 0; i < len; i++) {
+            for (let i = 0; i < len; i++) {
                 (function() {
-                    var possibleSourceFile = obj.sourceFiles[i]
+                    let possibleSourceFile = obj.sourceFiles[i]
 
                     p = p.then(function(exists) {
                         if (exists) {

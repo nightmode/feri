@@ -3,18 +3,18 @@
 //----------------
 // Includes: Self
 //----------------
-var color  = require('./color.js')
-var shared = require('./2 - shared.js')
+const color  = require('./color.js')
+const shared = require('./2 - shared.js')
 
 //----------
 // Includes
 //----------
-var path = require('path') // ~ 1 ms
+const path = require('path') // ~ 1 ms
 
 //-----------
 // Variables
 //-----------
-var config = {
+const config = {
     // null values will be populated later
     concurLimit: 1, // 1-3 recommended since node libuv has 4 slots by default
     fileType: null, // object that will hold options for individual file types

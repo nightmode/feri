@@ -15,14 +15,14 @@ Welcome to Feri Land! A magical place where you get access to all the wonderful 
 
 Assuming Feri is installed locally in your project's node_modules folder, you can require her with the following:
 
-    var feri = require('feri')
+    const feri = require('feri')
 
 ## Lay of the Land
 
 When you require Feri, you are actually requiring her [code/1 - main.js](../../code/1 - main.js) file. Inside this file you'll notice that Feri is sharing every module she uses herself, plus a convenience object called action.
 
 ```js
-var feri = {
+const feri = {
     'action': {
         'clean': clean.processClean,
         'build': build.processBuild,
