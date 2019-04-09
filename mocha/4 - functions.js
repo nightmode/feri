@@ -44,14 +44,14 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 var desired = {
                     'karp' : ['splash', 'stare'],
-                    'js'   : ['coffee', 'tea']
+                    'html'   : ['md', 'htm']
                 }
 
                 // add new mapping
                 functions.addDestToSourceExt('karp', ['splash', 'stare'])
 
                 // append to existing mapping
-                functions.addDestToSourceExt('js', 'tea')
+                functions.addDestToSourceExt('html', 'htm')
 
                 expect(config.map.destToSourceExt.karp).to.eql(desired.karp)
 
@@ -812,9 +812,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 arrayDesired = [
                     path.join(config.path.source, 'code.js'),
-                    path.join(config.path.source, 'code.js.concat'),
-                    path.join(config.path.source, 'code.coffee'),
-                    path.join(config.path.source, 'code.coffee.concat')
+                    path.join(config.path.source, 'code.js.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)
@@ -857,9 +855,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     path.join(config.path.source, 'code.js.map'),
                     path.join(config.path.source, 'code.js.map.concat'),
                     path.join(config.path.source, 'code.js'),
-                    path.join(config.path.source, 'code.js.concat'),
-                    path.join(config.path.source, 'code.coffee'),
-                    path.join(config.path.source, 'code.coffee.concat')
+                    path.join(config.path.source, 'code.js.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)

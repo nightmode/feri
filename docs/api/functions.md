@@ -387,7 +387,7 @@ Figure out all the possible source files for any given destination file path.
 
 ```
 @param   {String}  filepath  File path like '/dest/code.js'
-@return  {Object}            Array of possible source files like ['/source/code.js', '/source/code.coffee']
+@return  {Object}            Array of possible source files.
 ```
 
 ### functions.readFile

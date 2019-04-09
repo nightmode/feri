@@ -8,7 +8,6 @@ The clean module lives in the file [code/3 - config.js](../../code/3 - config.js
 
 * [concurLimit](#configconcurlimit)
 * [fileType](#configfiletype)
-  * [coffee](#configfiletypecoffee)
   * [concat](#configfiletypeconcat)
   * [css](#configfiletypecss)
   * [js](#configfiletypejs)
@@ -261,7 +260,6 @@ config.map.destToSourceExt = {
     'css' : ['styl'],
     'gz'  : ['*'],
     'html': ['md'],
-    'js'  : ['coffee'],
     'map' : ['*']
 }
 ```

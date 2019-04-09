@@ -80,7 +80,6 @@ config.map.destToSourceExt = {
     'css' : ['styl'],
     'gz'  : ['*'],
     'html': ['md'],
-    'js'  : ['coffee'],
     'map' : ['*']
 }
 
