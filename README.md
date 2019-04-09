@@ -102,9 +102,9 @@ npm install feri
 
 ## Upgrading
 
-### Upgrading from Feri 1.x
+### Upgrading from Feri 3.x
 
-If you are using EJS includes like `include(root + '/absolute/path')`, you will need to update all your files to remove the root variable. In the case of the previous example, the new include would look like `include('/absolute/path')`. This change was necessary since EJS added native support for project root folders.
+...
 
 ## Command Line
 
