@@ -1068,7 +1068,7 @@ functions.upgradeAvailable = function functions_upgradeAvailable(specifyRemoteVe
 
             https.get({
                 host: 'raw.githubusercontent.com',
-                path: '/ForestMist/feri/master/package.json'
+                path: '/nightmode/feri/master/package.json'
             }, function(response) {
                 // explicitly treat incoming data as utf8 (avoids issues with multi-byte chars)
                 response.setEncoding('utf8')

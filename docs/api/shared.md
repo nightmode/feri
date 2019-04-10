@@ -165,7 +165,7 @@ Present working directory.
 
 Type: `string`
 
-Full path to ourself like `/Users/daniel/project/node_modules/feri`.
+Full path to ourself like `/Users/nightmode/project/node_modules/feri`.
 
 ## shared.slash
 
@@ -227,4 +227,4 @@ Iterate with `(++shared.uniqueNumber)` or reset back to 0. Used to ensure unique
 
 ## License
 
-MIT © [Daniel Gagan](https://forestmist.org)
+MIT © [Kai Nightmode](https://forestmist.org)

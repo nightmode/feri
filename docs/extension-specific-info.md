@@ -110,4 +110,4 @@ Note: Feri will only generate a file like `index.html.gz` when `index.html` need
 
 ## License
 
-MIT © [Daniel Gagan](https://forestmist.org)
+MIT © [Kai Nightmode](https://forestmist.org)

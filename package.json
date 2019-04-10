@@ -1,12 +1,12 @@
 {
   "name": "feri",
-  "version": "3.0.4",
+  "version": "3.0.6",
   "description": "The easy to use build tool for web files.",
   "license": "MIT",
-  "author": "Daniel Gagan",
+  "author": "Kai Nightmode",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ForestMist/feri.git"
+    "url": "https://github.com/nightmode/feri.git"
   },
   "main": "code/1 - main.js",
   "bin": {
@@ -15,7 +15,7 @@
   "dependencies": {
     "babel-core": "6.26.0",
     "babel-preset-react": "6.24.1",
-    "chalk": "2.4.1",
+    "chalk": "2.4.2",
     "chokidar": "1.7.0",
     "clean-css": "4.2.1",
     "coffeescript": "1.12.7",
@@ -25,23 +25,23 @@
     "expect.js": "0.3.1",
     "gifsicle": "4.0.1",
     "glob": "7.1.3",
-    "html-minifier": "3.5.21",
+    "html-minifier": "4.0.0",
     "jade-legacy": "1.11.1",
     "jpegtran-bin": "4.0.0",
     "less": "3.9.0",
     "markdown-it": "8.4.2",
     "mkdirp": "0.5.1",
-    "mocha": "5.2.0",
+    "mocha": "6.0.2",
     "multi-stage-sourcemap": "0.3.1",
     "node-sass": "4.11.0",
     "optipng-bin": "5.1.0",
-    "pako": "1.0.7",
+    "pako": "1.0.10",
     "pug": "2.0.3",
-    "rimraf": "2.6.2",
+    "rimraf": "2.6.3",
     "source-map": "0.7.3",
     "stylus": "0.54.5",
     "tiny-lr": "1.1.1",
-    "uglify-js": "3.4.9"
+    "uglify-js": "3.5.3"
   },
   "engines": {
     "node": ">= 8"

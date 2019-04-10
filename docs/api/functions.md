@@ -732,4 +732,4 @@ Figure out if a reusable object needs to be written to disk and if so, prepare f
 
 ## License
 
-MIT © [Daniel Gagan](https://forestmist.org)
+MIT © [Kai Nightmode](https://forestmist.org)

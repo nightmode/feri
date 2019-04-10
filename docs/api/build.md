@@ -324,4 +324,4 @@ Build a map file and if needed, also make a gz version of said map file.
 
 ## License
 
-MIT © [Daniel Gagan](https://forestmist.org)
+MIT © [Kai Nightmode](https://forestmist.org)
