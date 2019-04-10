@@ -2,7 +2,7 @@
 
 Watch is all about watching the source and destination folders for changes. Initiating the proper clean or build tasks in response to file system events.
 
-The watch module lives in the file [code/7 - watch.js](../../code/7 - watch.js)
+The watch module lives in the file [code/7 - watch.js](../../code/7%20-%20watch.js)
 
 ## Watch Object
 

@@ -2,7 +2,7 @@
 
 Functions is the module that many other modules depend on. A treasure trove of helpers.
 
-The functions module lives in the file [code/4 - functions.js](../../code/4 - functions.js)
+The functions module lives in the file [code/4 - functions.js](../../code/4%20-%20functions.js)
 
 ## Functions Object
 
