@@ -19,7 +19,7 @@ Assuming Feri is installed locally in your project's node_modules folder, you ca
 
 ## Lay of the Land
 
-When you require Feri, you are actually requiring her [code/1 - main.js](../../code/1 - main.js) file. Inside this file you'll notice that Feri is sharing every module she uses herself, plus a convenience object called action.
+When you require Feri, you are actually requiring her [code/1 - main.js](../../code/1%20-%20main.js) file. Inside this file you'll notice that Feri is sharing every module she uses herself, plus a convenience object called action.
 
 ```js
 var feri = {
