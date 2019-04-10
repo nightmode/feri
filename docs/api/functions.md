@@ -252,7 +252,7 @@ Return glob options updated to ignore include prefixed files.
 
 Type: `function`
 
-If needed, create the source and destination folders along with a [feri-config.js](../../README.md#custom-config-file) file in the present working directory.
+If needed, create the source and destination folders along with a [feri.js](../../README.md#custom-config-file) file in the present working directory.
 
 ```
 @return  {Promise}

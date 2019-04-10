@@ -22,10 +22,10 @@ Don't see your favorite language? Check out the [translation guide](#translation
 
 Specifying a language is accomplished with a [custom config file](../README.md#custom-config-file).
 
-For example, if we wanted to work in Swedish we would create a `feri-config.js` file in our project directory with the following code in it:
+For example, if we wanted to work in Swedish we would create a `feri.js` file in our project directory with the following code in it:
 
 ```js
-// feri-config.js
+// feri.js
 module.exports = function(feri) {
     feri.config.language = 'sv-se'
 }
