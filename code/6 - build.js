@@ -15,12 +15,14 @@ const fs   = require('fs')   // ~  1 ms
 const glob = require('glob') // ~ 13 ms
 const path = require('path') // ~  1 ms
 const util = require('util') // ~  1 ms
+const zlib = require('zlib') // ~  6 ms
 
 //---------------------
 // Includes: Promisify
 //---------------------
 const execPromise        = util.promisify(require('child_process').exec) // ~ 10 ms
-const fsWriteFilePromise = util.promisify(fs.writeFile)                  // ~ 1 ms
+const fsWriteFilePromise = util.promisify(fs.writeFile) // ~ 1 ms
+const gzipPromise        = util.promisify(zlib.gzip)    // ~ 1 ms
 
 //-----------------------------
 // Includes: Paths to Binaries
@@ -48,7 +50,6 @@ let html               // require('html-minifier').minify           // ~   4 ms
 let js                 // require('uglify-js')                      // ~  83 ms
 let markdown           // require('markdown-it')()                  // ~  56 ms
 let transferMap        // require('multi-stage-sourcemap').transfer // ~  20 ms
-let pako               // require('pako')                           // ~  21 ms
 let sourceMapGenerator // require('source-map').SourceMapGenerator  // ~  13 ms
 
 //-----------
@@ -890,27 +891,17 @@ build.gz = function build_gz(obj) {
 
             functions.logWorker('build.gz', obj)
 
-            if (shared.slash === '/') {
-                return execPromise('gzip -9 -k -n -f "' + obj.dest + '"')
-            } else {
-                // we are on windows
-                if (typeof pako !== 'object') {
-                    pako = require('pako')
-                }
+            return functions.readFile(obj.dest).then(function(data) {
 
-                return functions.readFile(obj.dest).then(function(data) {
-
-                    return pako.gzip(data, {
-                        level: 9,
-                        to: 'string'
-                    })
-
-                }).then(function(data) {
-
-                    return fsWriteFilePromise(obj.dest + '.gz', data, 'binary')
-
+                return gzipPromise(data, {
+                    level: 9
                 })
-            }
+
+            }).then(function(data) {
+
+                return fsWriteFilePromise(obj.dest + '.gz', data, 'binary')
+
+            })
 
         }).then(function() {
 
