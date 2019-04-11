@@ -27,8 +27,7 @@ const rimrafPromise      = util.promisify(require('rimraf')) // ~ 14 ms
 //---------------------
 // Includes: Lazy Load
 //---------------------
-let compareVersions // require('compare-versions') // ~  3 ms
-let https           // require('https')            // ~ 33 ms
+let https // require('https') // ~ 33 ms
 
 //-----------
 // Variables
@@ -1074,6 +1073,9 @@ functions.upgradeAvailable = function functions_upgradeAvailable(specifyRemoteVe
 
     }).then(function(data) {
 
+        let desiredPlaces = [0,1,2] // array used for iterating only
+
+        let localVersion = require('../package.json').version
         let remoteVersion = '0.0.0'
 
         try {
@@ -1082,17 +1084,43 @@ functions.upgradeAvailable = function functions_upgradeAvailable(specifyRemoteVe
             // do nothing
         }
 
-        let localVersion = require('../package.json').version
+        // create arrays
+        localVersion  = localVersion.split('.')
+        remoteVersion = remoteVersion.split('.')
 
-        if (typeof compareVersions !== 'object') {
-            compareVersions = require('compare-versions')
+        // trim arrays
+        localVersion  = localVersion.slice(0, 3)
+        remoteVersion = remoteVersion.slice(0, 3)
+
+        // pad arrays that are not three places
+        desiredPlaces.forEach(function(i) {
+            if (typeof localVersion[i] === 'undefined') {
+                localVersion.push('0')
+            }
+
+            if (typeof remoteVersion[i] === 'undefined') {
+                remoteVersion.push('0')
+            }
+        })
+
+        // convert strings to integers
+        desiredPlaces.forEach(function(i) {
+            localVersion[i] = parseInt(localVersion[i], 10) || 0
+            remoteVersion[i] = parseInt(remoteVersion[i], 10) || 0
+        })
+
+        for (let i of desiredPlaces) {
+            if (localVersion[i] > remoteVersion[i]) {
+                // local version is newer
+                break
+            } else if (remoteVersion[i] > localVersion[i]) {
+                // remote version is newer
+                return remoteVersion.join('.')
+            }
+            // if you made it here, both version numbers for this place are the same, keep checking until out of places
         }
 
-        if (compareVersions(remoteVersion, localVersion) > 0) {
-            return remoteVersion
-        } else {
-            return false
-        }
+        return false
 
     }).catch(function(err) {
 
