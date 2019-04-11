@@ -980,6 +980,47 @@ describe('File -> ../code/6 - build.js\n', function() {
         }) // describe
 
         //----------
+        // build.br
+        //----------
+        describe('br', function() {
+            it('should create a brotli version of an existing file', function() {
+
+                config.path.source = path.join(testPath, 'br', 'source')
+                config.path.dest   = path.join(testPath, 'br', 'dest')
+
+                let destFile = path.join(config.path.dest, 'sample.txt.br')
+
+                let obj = {
+                    'source': path.join(config.path.source, 'sample.txt'),
+                    'dest': path.join(config.path.dest, 'sample.txt'),
+                    'data': '',
+                    'build': true
+                }
+
+                return Promise.resolve().then(function() {
+
+                    return functions.removeFile(destFile)
+
+                }).then(function() {
+
+                    return build.br(obj)
+
+                }).then(function() {
+
+                    return functions.fileExists(destFile)
+
+                }).then(function(exists) {
+
+                    expect(exists).to.be(true)
+
+                    return functions.removeFile(destFile)
+
+                })
+
+            }) // it
+        }) // describe
+
+        //----------
         // build.gz
         //----------
         describe('gz', function() {
@@ -1024,14 +1065,14 @@ describe('File -> ../code/6 - build.js\n', function() {
         // build.map
         //-----------
         describe('map', function() {
-            it('should build a map file along with a gz version of said file', function() {
+            it('should build a map file along with br and gz versions of said file', function() {
 
                 config.path.source = path.join(testPath, 'map', 'source')
                 config.path.dest   = path.join(testPath, 'map', 'dest')
 
                 config.sourceMaps = true
 
-                config.map.sourceToDestTasks.map.push('gz')
+                config.map.sourceToDestTasks.map.push('br', 'gz')
 
                 let destMapFile = path.join(config.path.dest, 'treasure.js.map')
 
@@ -1069,6 +1110,12 @@ describe('File -> ../code/6 - build.js\n', function() {
                     data = JSON.parse(data)
 
                     expect(data).to.eql(desired)
+
+                    return functions.fileExists(destMapFile + '.br')
+
+                }).then(function(exists) {
+
+                    expect(exists).to.be(true)
 
                     return functions.fileExists(destMapFile + '.gz')
 

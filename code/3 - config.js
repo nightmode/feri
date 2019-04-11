@@ -74,6 +74,7 @@ config.fileType = {
 // Destination Extensions to Source Extensions
 //---------------------------------------------
 config.map.destToSourceExt = {
+    'br'  : ['*'],
     'gz'  : ['*'],
     'html': ['md'],
     'map' : ['*']
@@ -98,6 +99,7 @@ config.map.sourceToDestTasks = {
     'ai'    : ['copy'],
     'asp'   : ['copy'],
     'aspx'  : ['copy'],
+    'br'    : ['copy'],
     'c'     : ['copy'],
     'cfm'   : ['copy'],
     'cfc'   : ['copy'],

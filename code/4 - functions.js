@@ -747,8 +747,18 @@ functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath)
             } catch(e) {
                 // do nothing
             }
+        } else if (destExt === 'br') {
+            try {
+                let parentFileType = functions.fileExtension(functions.removeExt(filePath))
+
+                if (config.map.sourceToDestTasks[parentFileType].indexOf('br') >= 0) {
+                    proceed = true
+                }
+            } catch(e) {
+                // do nothing
+            }
         } else {
-            // file is not a GZ or MAP file type
+            // file is not a BR, GZ, or MAP file type
             proceed = true
         }
 

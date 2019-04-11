@@ -35,6 +35,7 @@ The build object is grouped into five categories.
 ### Build: Finishers
 
 * [finalize](#buildfinalize)
+* [br](#buildbr)
 * [gz](#buildgz)
 * [map](#buildmap)
 
@@ -204,11 +205,22 @@ Finalize by writing memory to disk or copying source to dest, if needed.
 @return  {Promise}  obj  Promise that returns a reusable object.
 ```
 
+### build.br
+
+Type: `function`
+
+Create a brotli compressed version of a file to live alongside the original.
+
+```
+@param   {Object}          obj  Reusable object originally created by build.processOneBuild
+@return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
+```
+
 ### build.gz
 
 Type: `function`
 
-Create a gzipped version of a file to live alongside the original.
+Create a gzipped compressed version of a file to live alongside the original.
 
 ```
 @param   {Object}          obj  Reusable object originally created by build.processOneBuild
@@ -219,7 +231,7 @@ Create a gzipped version of a file to live alongside the original.
 
 Type: `function`
 
-Build a map file and if needed, also make a gz version of said map file.
+Build a map file and if needed, also make a br and/or gz version of said map file.
 
 ```
 @param   {Object}          obj  Reusable object originally created by build.processOneBuild

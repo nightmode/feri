@@ -20,9 +20,10 @@ const zlib = require('zlib') // ~  6 ms
 //---------------------
 // Includes: Promisify
 //---------------------
+const brotliPromise      = util.promisify(zlib.brotliCompress) // ~ 1 ms
 const execPromise        = util.promisify(require('child_process').exec) // ~ 10 ms
 const fsWriteFilePromise = util.promisify(fs.writeFile) // ~ 1 ms
-const gzipPromise        = util.promisify(zlib.gzip)    // ~ 1 ms
+const gzipPromise        = util.promisify(zlib.gzip) // ~ 1 ms
 
 //-----------------------------
 // Includes: Paths to Binaries
@@ -880,9 +881,45 @@ build.finalize = function build_finalize(obj) {
     })
 } // finalize
 
+build.br = function build_br(obj) {
+    /*
+    Create a brotli compressed version of a file to live alongside the original.
+    @param   {Object}          obj  Reusable object originally created by build.processOneBuild
+    @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
+    */
+    if (obj.build) {
+        return build.finalize(obj).then(function() { // build.finalize ensures our destination file is ready to be compressed
+
+            functions.logWorker('build.br', obj)
+
+            return functions.readFile(obj.dest).then(function(data) {
+
+                return brotliPromise(data, {
+                    params: {
+                        // the default compression level is 11 which is exactly what we want
+                        [zlib.constants.BROTLI_PARAM_SIZE_HINT]: data.length
+                    }
+                })
+
+            }).then(function(data) {
+
+                return fsWriteFilePromise(obj.dest + '.br', data, 'binary')
+
+            })
+
+        }).then(function() {
+
+            return obj
+
+        })
+    } else {
+        return obj
+    }
+} // br
+
 build.gz = function build_gz(obj) {
     /*
-    Create a gzipped version of a file to live alongside the original.
+    Create a gzip compressed version of a file to live alongside the original.
     @param   {Object}          obj  Reusable object originally created by build.processOneBuild
     @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
     */
@@ -915,7 +952,7 @@ build.gz = function build_gz(obj) {
 
 build.map = function build_map(obj) {
     /*
-    Build a map file and if needed, also make a gz version of said map file.
+    Build a map file and if needed, also make a br and/or gz version of said map file.
     @param   {Object}          obj  Reusable object originally created by build.processOneBuild
     @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
     */
@@ -924,6 +961,18 @@ build.map = function build_map(obj) {
         return build.finalize(obj).then(function() { // build.finalize ensures our destination file is written to disk
 
             functions.logWorker('build.map', obj)
+
+            if (config.map.sourceToDestTasks.map.indexOf('br') >= 0) {
+                // manually kick off a br task for the new .map file
+                return build.br({
+                    'source': obj.dest,
+                    'dest': obj.dest,
+                    'data': '',
+                    'build': true
+                })
+            }
+
+        }).then(function() {
 
             if (config.map.sourceToDestTasks.map.indexOf('gz') >= 0) {
                 // manually kick off a gz task for the new .map file
