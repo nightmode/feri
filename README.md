@@ -121,7 +121,7 @@ Assuming Feri is installed globally, the quickest way to start a new project is 
 feri --init
 ```
 
-This will create your `source` and `dest` folders along with a default `feri-config.js` file. To make sure everything works, place some files in your source folder. Now run `feri` from the directory where you can see the source and dest folders. Check the dest folder and you should see your built / optimized files. Wash, rinse, repeat.
+This will create your `source` and `dest` folders along with a default `feri-config.js` file. To make sure everything works, place some files in your source folder. Now run `feri` from the directory where you can see the source and dest folders. Check the dest folder and you should see your built / optimized files.
 
 ## Custom Config File
 
