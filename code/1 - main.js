@@ -356,7 +356,7 @@ if (shared.cli) {
             } else {
 
                 if (configFileExists) {
-                    functions.log(chalk.gray(shared.language.display('message.usingConfigFile').replace('{file}', '"' + path.basename(configFile) + '"')), false)
+                    functions.log(color.gray(shared.language.display('message.usingConfigFile').replace('{file}', '"' + path.basename(configFile) + '"')), false)
                 }
 
                 let p = Promise.resolve()
