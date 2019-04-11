@@ -2,7 +2,7 @@
 
 Build is the module dedicated to building destination files.
 
-The build module lives in the file [code/6 - build.js](../../code/6 - build.js)
+The build module lives in the file [code/6 - build.js](../../code/6%20-%20build.js)
 
 ## Build Object
 

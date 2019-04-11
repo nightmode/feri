@@ -2,7 +2,7 @@
 
 Config holds all the variables that may be set by the command line, a custom config file for the command line, or programatically.
 
-The clean module lives in the file [code/3 - config.js](../../code/3 - config.js)
+The clean module lives in the file [code/3 - config.js](../../code/3%20-%20config.js)
 
 ## Config Object
 

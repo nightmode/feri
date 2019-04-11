@@ -54,7 +54,7 @@ Special options can override other options, do multiple things at once, or are o
 -a, --all            clean, build, watch, livereload, stats
 -f, --forcebuild     overwrite destination files without consideration
 -r, --republish      remove all destination files and then build
--i, --init           create source, destination, and feri-config.js
+-i, --init           create source, destination, and feri.js
 -d, --debug          enable verbose console logging
 -v, --version        version
 -h, --help           help

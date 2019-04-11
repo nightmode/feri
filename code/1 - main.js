@@ -90,13 +90,13 @@ const inOptions = function inOptions(search) {
 let commandLineOptions,
     configFile,
     configFileExists
-    
+
 if (shared.cli) {
     //--------------
     // Command Line
     //--------------
     commandLineOptions = process.argv.slice(2)
-    configFile = path.join(shared.path.pwd, 'feri-config.js')
+    configFile = path.join(shared.path.pwd, 'feri.js')
     configFileExists = false
 
     // enable console logging since we are running as a command line program
@@ -104,9 +104,18 @@ if (shared.cli) {
 
     return Promise.resolve().then(function() {
 
-        // check for a feri-config.js file
+        // check for a feri.js file
         return functions.fileExists(configFile).then(function(exists) {
             configFileExists = exists
+
+            if (configFileExists === false) {
+                // check for a feri-config.js file
+                configFile = path.join(shared.path.pwd, 'feri-config.js')
+
+                return functions.fileExists(configFile).then(function(exists) {
+                    configFileExists = exists
+                })
+            }
         })
 
     }).then(function() {
@@ -200,7 +209,7 @@ if (shared.cli) {
             console.log('    -a, --all            clean, build, watch, livereload, stats')
             console.log('    -f, --forcebuild     overwrite destination files without consideration')
             console.log('    -r, --republish      remove all destination files and then build')
-            console.log('    -i, --init           create source, destination, and feri-config.js')
+            console.log('    -i, --init           create source, destination, and feri.js')
             console.log('    -d, --debug          enable verbose console logging')
             console.log('    -v, --version        version')
             console.log('    -h, --help           help')
@@ -347,7 +356,7 @@ if (shared.cli) {
             } else {
 
                 if (configFileExists) {
-                    functions.log(color.gray(shared.language.display('message.usingConfigFile').replace('{file}', '"feri-config.js"')), false)
+                    functions.log(chalk.gray(shared.language.display('message.usingConfigFile').replace('{file}', '"' + path.basename(configFile) + '"')), false)
                 }
 
                 let p = Promise.resolve()
