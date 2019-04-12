@@ -402,14 +402,16 @@ describe('File -> ../code/4 - functions.js\n', function() {
         // functions.initFeri
         //--------------------
         describe('initFeri', function() {
-            it('should create source and destination folders along with a feri.js file', function() {
+            it('should create source and destination folders along with a custom config file', function() {
 
                 shared.path.pwd = path.join(testPath, 'initFeri')
 
                 config.path.source = path.join(testPath, 'initFeri', 'source')
                 config.path.dest   = path.join(testPath, 'initFeri', 'dest')
 
-                let configFile = path.join(testPath, 'initFeri', 'feri.js')
+                let configFileName = (shared.slash === '\\') ? 'feri-config.js' : 'feri.js'
+
+                let configFile = path.join(testPath, 'initFeri', configFileName)
 
                 let files = [config.path.source, config.path.dest, configFile]
 
@@ -431,14 +433,16 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
             }) // it
 
-            it('should create source and destination folders but not touch an existing feri.js file', function() {
+            it('should create source and destination folders but not touch an existing custom config file', function() {
 
                 shared.path.pwd = path.join(testPath, 'initFeri', 'existingConfig')
 
                 config.path.source = path.join(shared.path.pwd, 'source')
                 config.path.dest   = path.join(shared.path.pwd, 'dest')
 
-                let configFile = path.join(shared.path.pwd, 'feri.js')
+                let configFileName = (shared.slash === '\\') ? 'feri-config.js' : 'feri.js'
+
+                let configFile = path.join(shared.path.pwd, configFileName)
 
                 let files = [config.path.source, config.path.dest, configFile]
 

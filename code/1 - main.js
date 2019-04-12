@@ -209,7 +209,8 @@ if (shared.cli) {
             console.log('    -a, --all            clean, build, watch, livereload, stats')
             console.log('    -f, --forcebuild     overwrite destination files without consideration')
             console.log('    -r, --republish      remove all destination files and then build')
-            console.log('    -i, --init           create source, destination, and feri.js')
+
+            console.log('    -i, --init           create source, destination, and custom config file')
             console.log('    -d, --debug          enable verbose console logging')
             console.log('    -v, --version        version')
             console.log('    -h, --help           help')
