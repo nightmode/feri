@@ -389,7 +389,7 @@ functions.globOptions = function functions_globOptions() {
 
 functions.initFeri = function initFeri() {
     /*
-    If needed, create the source and destination folders along with a feri.js file in the present working directory.
+    If needed, create the source and destination folders along with a custom config file in the present working directory.
     @return  {Promise}
     */
     return Promise.resolve().then(function() {
@@ -409,15 +409,20 @@ functions.initFeri = function initFeri() {
     }).then(function() {
 
         var configFile = path.join(shared.path.pwd, 'feri.js')
+        var configFileAlt = path.join(shared.path.pwd, 'feri-config.js')
 
-        return functions.fileExists(configFile).then(function(exists) {
+        return functions.filesExist([configFile, configFileAlt]).then(function(exists) {
 
-            if (exists) {
+            if (exists.indexOf(true) >= 0) {
                 // do nothing
                 return
             }
 
-            return functions.readFile(path.join(shared.path.self, 'templates', 'feri.js')).then(function(data) {
+            return functions.readFile(path.join(shared.path.self, 'templates', 'custom-config.js')).then(function(data) {
+
+                if (shared.slash === '\\') {
+                    configFile = configFileAlt
+                }
 
                 return functions.writeFile(configFile, data)
 

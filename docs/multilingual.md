@@ -22,16 +22,15 @@ Don't see your favorite language? Check out the [translation guide](#translation
 
 Specifying a language is accomplished with a [custom config file](../README.md#custom-config-file).
 
-For example, if we wanted to work in Swedish we would create a `feri.js` file in our project directory with the following code in it:
+For example, if we wanted to work in Swedish we would create a custom config file in our project directory with the following code in it:
 
 ```js
-// feri.js
 module.exports = function(feri) {
     feri.config.language = 'sv-se'
 }
 ```
 
-By setting `feri.config.langauge` to `sv-se`, we are telling Feri to look in the [language](https://github.com/nightmode/feri/tree/master/language) directory for a file called `sv-se.json`. Assuming the file exists and is valid, the next time you run Feri you'll be doing so in a certain Muppet Chef's language of choice. Bork bork bork!
+By setting `feri.config.langauge` to `sv-se`, we are telling Feri to look in the [language](https://github.com/nightmode/feri/tree/master/language) directory for a file called `sv-se.json`. Assuming the language file exists and is valid, the next time you run Feri you'll be doing so in a certain Muppet Chef's language of choice. Bork bork bork!
 
 ## Translation Guide
 

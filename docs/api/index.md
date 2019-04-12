@@ -53,7 +53,7 @@ For more information, see the [Shared](shared.md) documentation.
 
 ### Config
 
-Config holds all the variables that may be set by the command line, a custom config file for the command line, or programatically.
+Config holds all the variables that may be set by the command line, a [custom config file](../../README.md#custom-config-file) for the command line, or programatically.
 
 For more information, see the [Config](config.md) documentation.
 

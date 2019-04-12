@@ -1,6 +1,6 @@
 # Feri - Config
 
-Config holds all the variables that may be set by the command line, a custom config file for the command line, or programatically.
+Config holds all the variables that may be set by the command line, a [custom config file](../../README.md#custom-config-file) for the command line, or programatically.
 
 The clean module lives in the file [code/3 - config.js](../../code/3%20-%20config.js)
 
@@ -304,7 +304,7 @@ Specify a language Feri that should use. The language should map to a json file 
 config.language = 'en-us'
 ```
 
-Note: API users should use [functions.setLanguage](functions.md#functionssetlanguage) to change both this variable and [share.language.loaded](share.md#sharedlanguageloaded) at the same time. Command line users only need to set `config.langauge` in a custom config file.
+Note: API users should use [functions.setLanguage](functions.md#functionssetlanguage) to change both this variable and [share.language.loaded](share.md#sharedlanguageloaded) at the same time. Command line users only need to set `config.langauge` in a [custom config file](../../README.md#custom-config-file).
 
 ## config.livereloadFileTypes
 
