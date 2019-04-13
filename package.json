@@ -56,6 +56,7 @@
     "gif",
     "jpg",
     "png",
-    "source maps"
+    "gzip",
+    "brotli"
   ]
 }
