@@ -1445,6 +1445,53 @@ describe('File -> ../code/4 - functions.js\n', function() {
             }) // it
         }) // describe
 
+        //-------------------------
+        // functions.includesNewer
+        //-------------------------
+        describe('includesNewer', function() {
+            it('should confirm include files are newer than a past date', function() {
+
+                let file1 = path.join(testPath, 'includesNewer', 'includes', '_header.txt')
+                let file2 = path.join(testPath, 'includesNewer', 'includes', '_footer.txt')
+
+                let includes = [file1, file2]
+
+                return Promise.resolve().then(function() {
+
+                    // check if includes are newer than a past date
+                    return functions.includesNewer(includes, 'concat', 207187200, false)
+
+                }).then(function(includesNewer) {
+
+                    expect(includesNewer).to.be(true)
+
+                })
+
+            }) // it
+
+            it('should confirm include files are not newer than right now\n', function() {
+
+                let file1 = path.join(testPath, 'includesNewer', 'includes', '_header.txt')
+                let file2 = path.join(testPath, 'includesNewer', 'includes', '_footer.txt')
+
+                let includes = [file1, file2]
+
+                return Promise.resolve().then(function() {
+
+                    let now = new Date().getTime()
+
+                    // check if includes are newer than now
+                    return functions.includesNewer(includes, 'concat', now, false)
+
+                }).then(function(includesNewer) {
+
+                    expect(includesNewer).to.be(false)
+
+                })
+
+            }) // it
+        }) // describe
+
     }) // describe
 
     describe('Functions: Reusable Object Building', function() {
@@ -1770,6 +1817,180 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 }).then(function() {
 
                     // remove dest folder
+                    return functions.removeFile(config.path.dest)
+
+                })
+
+            }) // it
+        }) // describe
+
+        //--------------------------------
+        // functions.objBuildWithIncludes
+        //--------------------------------
+        describe('objBuildWithIncludes', function() {
+
+            it('should set obj.build to true if obj.data is populated', function() {
+
+                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
+                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
+
+                let obj = {
+                    source: path.join(config.path.source, 'all.txt.concat'),
+                    dest  : '',
+                    data  : '...',
+                    build : false
+                }
+
+                return functions.makeDirPath(config.path.dest, true).then(function() {
+
+                    return functions.objBuildWithIncludes(obj, functions.includePathsConcat)
+
+                }).then(function(obj) {
+
+                    expect(obj.build).to.be(true)
+
+                    // remove empty directory
+                    return functions.removeFile(config.path.dest)
+
+                })
+
+            }) // it
+
+            it('should get back an error if passed an obj.dest path that is in the source directory', function() {
+
+                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
+                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
+
+                let obj = {
+                    source: path.join(config.path.source, 'all.txt.concat'),
+                    dest  : path.join(config.path.source, 'all.txt.concat'),
+                    data  : '',
+                    build : false
+                }
+
+                return functions.objBuildWithIncludes(obj, null).catch(function(err) {
+
+                    return err
+
+                }).then(function(err) {
+
+                    expect(err).to.be('functions.objBuildWithIncludes -> Destination points to a source directory.')
+
+                })
+
+            }) // it
+
+            it('should set obj.build to true and populate obj.data if obj.dest is provided', function() {
+
+                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
+                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
+
+                let obj = {
+                    source: path.join(config.path.source, 'all.txt.concat'),
+                    dest  : path.join(config.path.dest, 'all.txt'),
+                    data  : '',
+                    build : false
+                }
+
+                return functions.makeDirPath(obj.dest).then(function() {
+
+                    // create our dest file with some sample data
+                    return functions.writeFile(obj.dest, 'sample data')
+
+                }).then(function() {
+
+                        return functions.objBuildWithIncludes(obj, functions.includePathsConcat)
+
+                }).then(function(returnObj) {
+
+                    expect(returnObj.data).to.be('sample data')
+                    expect(returnObj.build).to.be(true)
+
+                    return functions.removeFile(config.path.dest)
+
+                })
+
+            }) // it
+
+            it('should get back objDesired if only obj.source is specified', function() {
+
+                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
+                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
+
+                let sourceFile = path.join(config.path.source, 'all.txt.concat')
+                let destFile = path.join(config.path.dest, 'all.txt')
+
+                let obj = {
+                    source: sourceFile,
+                    dest  : '',
+                    data  : '',
+                    build : false
+                }
+
+                let objDesired = {
+                    source: sourceFile,
+                    dest  : destFile,
+                    data  : 'includes/*.txt',
+                    build : true
+                }
+
+                return functions.objBuildWithIncludes(obj, functions.includePathsConcat).then(function(returnObj) {
+
+                    expect(returnObj).to.eql(objDesired)
+
+                })
+
+            }) // it
+
+            it('should get back objDesired when config.option.forcebuild is true', function() {
+
+                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
+                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
+
+                let sourceFile = path.join(config.path.source, 'all.txt.concat')
+                let destFile = path.join(config.path.dest, 'all.txt')
+
+                let obj = {
+                    source: sourceFile,
+                    dest  : '',
+                    data  : '',
+                    build : false
+                }
+
+                let objDesired = {
+                    source: sourceFile,
+                    dest  : destFile,
+                    data  : 'includes/*.txt',
+                    build : true
+                }
+
+                return functions.removeFile(config.path.dest).then(function() {
+
+                    return functions.makeDirPath(destFile)
+
+                }).then(function() {
+
+                    return functions.objBuildWithIncludes(obj, functions.includePathsConcat)
+
+                }).then(function(returnObj) {
+
+                    return functions.writeFile(returnObj.dest, returnObj.data)
+
+                }).then(function() {
+
+                    // now a newer destination file exists
+
+                    config.option.forcebuild = true
+
+                    return functions.objBuildWithIncludes(obj, functions.includePathsConcat)
+
+                }).then(function(returnObj) {
+
+                    expect(returnObj).to.eql(objDesired)
+
+                }).then(function() {
+
+                    // remove empty directory
                     return functions.removeFile(config.path.dest)
 
                 })
