@@ -13,7 +13,6 @@ The following changes are likely for the next major release.
 * Upgrade to Async/Await.
 * Upgrade to Streams.
 * Reduce dependencies drastically.
-* Drop support for source maps which have been a maintenance nightmare.
 * Reposition Feri as a focused, opinionated tool that can be extended. Not an everything included tool.
 
 ## Quick Links
