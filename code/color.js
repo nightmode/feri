@@ -5,6 +5,11 @@
 //-------------
 // A simplification of https://github.com/chalk/ansi-styles so we do not require a dependency.
 
+//----------
+// Includes
+//----------
+const os = require('os')
+
 //-----------
 // Variables
 //-----------
@@ -20,8 +25,18 @@ const colors = {
     cyan:    [36, 39],
     white:   [37, 39],
     gray:    [90, 39],
-    grey:    [90, 39]
+    grey:    [90, 39],
+    // bright colors
+    redBright:     [91, 39],
+    greenBright:   [92, 39],
+    yellowBright:  [93, 39],
+    blueBright:    [94, 39],
+    magentaBright: [95, 39],
+    cyanBright:    [96, 39],
+    whiteBright:   [97, 39]
 }
+
+const platform = os.platform()
 
 //-----------
 // Functions
@@ -37,6 +52,17 @@ function setupColors() {
         color[hue] = function (info) {
             return showColor(hue, info)
         }
+    }
+
+    if (platform === 'win32' || platform === 'win64') {
+        // use brigher versions of these colors
+        color.red     = color.redBright
+        color.green   = color.greenBright
+        color.yellow  = color.yellowBright
+        color.blue    = color.blueBright
+        color.magenta = color.magentaBright
+        color.cyan    = color.cyanBright
+        color.white   = color.whiteBright
     }
 } // setupColors
 
