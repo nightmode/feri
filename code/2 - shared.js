@@ -33,6 +33,10 @@ const shared = {
         'missingMapBuild'  : []  // Keep track of any file types that are missing a config.map.sourceToDestTasks entry during a build pass.
     },
     cli: false, // Running as a command line tool if true. Called as a require if false.
+    extension: {
+        'calmTimer': null, // Variable used by watch.updateExtensionServer to update 300 ms after the last destination file change.
+        'changedFiles': [] // Keeps track of which destination files were changed in order to relay those to the extension server.
+    },
     global: true, // Installed globally if true. Locally if false.
     help: false, // will be set to true if we are displaying help text on the command line
     language: { // language.base and language.loaded are a duplicate of each other to speed up our default english language usage
@@ -150,10 +154,6 @@ const shared = {
                 "watching"        : "Watching"
             }
         }
-    },
-    livereload: {
-        'calmTimer'   : null, // Variable used by watch.updateLiveReloadServer to update the LiveReload server 300 ms after the last destination file change.
-        'changedFiles': [], // Keeps track of which destination files were changed in order to relay those to the LiveReload server.
     },
     log: false, // will be set to true if we are running as a command line in order to allow console logging
     platform: os.platform(),

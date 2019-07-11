@@ -15,7 +15,7 @@ module.exports = function(feri) {
     // feri.config.option.clean      = true
     // feri.config.option.build      = true
     // feri.config.option.watch      = true
-    // feri.config.option.livereload = true
+    // feri.config.option.extensions = true
 
     // paths
     // feri.config.path.source = 'source'

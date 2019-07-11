@@ -543,18 +543,6 @@ config.thirdParty.htmlMinifier = {
 }
 ```
 
-## config.thirdParty.livereload
-
-Type: `object`
-
-Options for [tiny-lr-fork](https://www.npmjs.com/package/tiny-lr-fork). Used by various [watch](watch.md) functions.
-
-```js
-config.thirdParty.livereload = {
-    'port': 35729
-}
-```
-
 ## config.thirdParty.markdownIt
 
 Type: `object`

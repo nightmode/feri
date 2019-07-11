@@ -28,7 +28,7 @@ Options come in three flavours: Common, Negating, and Special.
 -c, --clean          clean the destination directory
 -b, --build          build source files to destination
 -w, --watch          watch source to clean and build as needed
--l, --livereload     monitor destination directory for livereload
+-e, --extensions     monitor destination directory for extensions
 -s, --stats          display statistics
 ```
 
@@ -40,7 +40,7 @@ Feri will clean, build, and display statistics by default. If you like those beh
 -nc, --noclean       no clean
 -nb, --nobuild       no build
 -nw, --nowatch       no watch
--nl, --nolivereload  no livereload
+-ne, --noextensions  no extensions
 -ns, --nostats       no statistics
 ```
 
@@ -51,7 +51,7 @@ Negating options override their counterparts. For example, `feri --clean --nocle
 Special options can override other options, do multiple things at once, or are otherwise uniquely awesome.
 
 ```
--a, --all            clean, build, watch, livereload, stats
+-a, --all            clean, build, watch, extensions, stats
 -f, --forcebuild     overwrite destination files without consideration
 -r, --republish      remove all destination files and then build
 -i, --init           create source, destination, and custom config file

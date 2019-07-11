@@ -98,7 +98,7 @@ Much like the Error section before it, placeholders are used so a string like:
 Will display like:
 
 ```
-LiveReload refreshed.
+Extensions refreshed.
 ```
 
 ### Padded Groups
@@ -205,7 +205,7 @@ Total 0.392 seconds
 
 Firstly, you are awesome! Thank you. ^_^
 
-If you have not already, try testing your translation with different command line switches like `--republish`, `--watch`, and/or `--livereload` to see how everything looks. Once everything is set you can send a [pull request](https://github.com/nightmode/feri/pulls) or contact [Kai Nightmode](https://twitter.com/kai_nightmode) for more options.
+If you have not already, try testing your translation with different command line switches like `--republish`, `--watch`, and/or `--extensions` to see how everything looks. Once everything is set you can send a [pull request](https://github.com/nightmode/feri/pulls) or contact [Kai Nightmode](https://twitter.com/kai_nightmode) for more options.
 
 ## License
 

@@ -197,19 +197,18 @@ if (shared.cli) {
             console.log('    -c, --clean          clean the destination directory')
             console.log('    -b, --build          build source files to destination')
             console.log('    -w, --watch          watch source to clean and build as needed')
-            console.log('    -l, --livereload     monitor destination directory for livereload')
+            console.log('    -e, --extensions     monitor destination directory for extensions')
             console.log('    -s, --stats          display statistics')
             console.log()
             console.log('    -nc, --noclean       no clean')
             console.log('    -nb, --nobuild       no build')
             console.log('    -nw, --nowatch       no watch')
-            console.log('    -nl, --nolivereload  no livereload')
+            console.log('    -ne, --noextensions  no extensions')
             console.log('    -ns, --nostats       no statistics')
             console.log()
-            console.log('    -a, --all            clean, build, watch, livereload, stats')
+            console.log('    -a, --all            clean, build, watch, extensions, stats')
             console.log('    -f, --forcebuild     overwrite destination files without consideration')
             console.log('    -r, --republish      remove all destination files and then build')
-
             console.log('    -i, --init           create source, destination, and custom config file')
             console.log('    -d, --debug          enable verbose console logging')
             console.log('    -v, --version        version')
@@ -271,13 +270,13 @@ if (shared.cli) {
             //-----------------------------
             // Command Line Options: Watch
             //-----------------------------
-            if (inOptions(['--livereload', '-l'])) {
-                config.option.livereload = true
-                config.option.watch = true // livereload on so better turn on watch too
+            if (inOptions(['--extensions', '-e'])) {
+                config.option.extensions = true
+                config.option.watch = true // extensions on so better turn on watch too
             }
 
-            if (inOptions(['--nolivereload', '-nl'])) {
-                config.option.livereload = false
+            if (inOptions(['--noextensions', '-ne'])) {
+                config.option.extensions = false
             }
 
             if (inOptions(['--watch', '-w'])) {
@@ -286,7 +285,7 @@ if (shared.cli) {
 
             if (inOptions(['--nowatch', '-nw'])) {
                 config.option.watch = false
-                config.option.livereload = false // no watch, no point in livereload
+                config.option.extensions = false // no watch, no point in extensions
             }
 
             //-----------------------------
@@ -308,7 +307,7 @@ if (shared.cli) {
                 config.option.clean = true
                 config.option.watch = true
                 config.option.stats = true
-                config.option.livereload = true
+                config.option.extensions = true
             }
 
             //-----------------------------------

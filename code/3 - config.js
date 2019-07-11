@@ -17,6 +17,11 @@ const path = require('path') // ~ 1 ms
 const config = {
     // null values will be populated later
     concurLimit: 1, // 1-3 recommended since node libuv has 4 slots by default
+    extension: { // web browser extension support
+        defaultDocument: 'index.html', // will be passed once to each extension client upon connection
+        fileTypes: ['css', 'html', 'js'], // only inform extension clients about changes to these file types
+        port: 4000 // websocket server port
+    },
     fileType: null, // object that will hold options for individual file types
     includeFileTypes: [], // Used by watch.buildOne to know which file types may use includes.
     includePrefix: '_',   // Files prefixed with this string will not be published directly to the destination directory. Prefixed files can be included inside other files that do get published to destination though.
@@ -29,7 +34,6 @@ const config = {
         }
     },
     language: 'en-us', // should map to a json file in the language directory
-    livereloadFileTypes: ['css', 'html', 'js', 'php'], // Only refresh the livereload client if one of these file types has been changed.
     map: {
         'destToSourceExt'  : null, // object of destination file extensions and their possible source file types
         'sourceToDestTasks': null  // object of file extensions, each with an array of building functions
@@ -40,7 +44,7 @@ const config = {
         'debug'              : false,
         'forcebuild'         : false,
         'init'               : false,
-        'livereload'         : false,
+        'extensions'         : false,
         'republish'          : false,
         'stats'              : true,
         'watch'              : false
@@ -194,9 +198,6 @@ config.thirdParty = {
             'output'            : 'rootRelative',
             'removeEmptyQueries': true
         }
-    },
-    livereload: { // used by watch.*
-        'port': 35729
     },
     markdownIt: { // used by build.markdown
         'breaks': false,
