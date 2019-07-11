@@ -6,16 +6,6 @@ An easy to use build tool for web files.
 
 Incrementally clean, build, and watch with little to no configuration required.
 
-## Future of Feri
-
-The following changes are likely for the next major release.
-
-* Upgrade to Async/Await.
-* Upgrade to Streams.
-* Reduce dependencies drastically.
-* Drop support for source maps which have been a maintenance nightmare.
-* Reposition Feri as a focused, opinionated tool that can be extended. Not an everything included tool.
-
 ## Quick Links
 
 * [Features](#features)
@@ -42,7 +32,6 @@ The following changes are likely for the next major release.
 * Compile and Minify
   * Markdown
 * Concatenate
-* LiveReload
 * Minify
   * HTML
   * CSS

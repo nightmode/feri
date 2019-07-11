@@ -8,7 +8,7 @@
 
 ### Introduction and Example
 
-Feri thinks you should be able to look through your source folder and with a tiny bit of imagination, know exactly what your destination folder will look like. One of the ways Feri does this is by supporting a special file called CONCAT.
+Feri thinks you should be able to look through your source folder and with a bit of imagination, know exactly what your destination folder will look like. One of the ways Feri does this is by supporting a special file called CONCAT.
 
 A concatenate file is simply a list of file path strings or globs that point to other files. For example, if you had a directory structure like:
 
