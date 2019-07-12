@@ -387,7 +387,8 @@ watch.watchDest = function watch_watchDest(files) {
                 files = files.substring(1)
             }
 
-            files = config.path.dest + shared.slash + files
+            // chokidar will be happier without backslashes
+            files = config.path.dest.replace(/\\/g, '/') + '/' + files
         }
 
         return watch.stop(false, true, false) // stop watching dest
@@ -400,7 +401,7 @@ watch.watchDest = function watch_watchDest(files) {
 
             chokidarDestFiles = files
 
-            chokidarDest = chokidar.watch(null, config.thirdParty.chokidar)
+            chokidarDest = chokidar.watch([], config.thirdParty.chokidar)
 
             chokidarDest
             .on('add', function(file) {
@@ -497,14 +498,15 @@ watch.watchSource = function watch_watchSource(files) {
                     files = files.substring(1)
                 }
 
-                files = config.path.source + shared.slash + files
+                // chokidar will be happier without backslashes
+                files = config.path.source.replace(/\\/g, '/') + '/' + files
             }
 
             let readyCalled = false
 
             chokidarSourceFiles = files
 
-            chokidarSource = chokidar.watch(null, config.thirdParty.chokidar)
+            chokidarSource = chokidar.watch([], config.thirdParty.chokidar)
 
             chokidarSource
             .on('addDir', function(file) {

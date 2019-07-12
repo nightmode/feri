@@ -13,7 +13,7 @@
     "feri": "code/1 - main.js"
   },
   "dependencies": {
-    "chokidar": "1.7.0",
+    "chokidar": "3.0.2",
     "clean-css": "4.2.1",
     "gifsicle": "4.0.1",
     "glob": "7.1.4",
