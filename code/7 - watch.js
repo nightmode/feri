@@ -113,6 +113,67 @@ watch.buildOne = function watch_buildOne(fileName) {
     })
 } // buildOne
 
+watch.extensionServer = function watch_extensionServer() {
+    /*
+    Extension server for clients.
+    @return  {Promise}
+    */
+
+    return Promise.resolve().then(function() {
+
+        if (config.option.extensions) {
+            lazyLoadWebSocket()
+
+            // stop the extension server only
+            return watch.stop(false, false, true)
+        }
+
+    }).then(function() {
+
+        if (config.option.extensions) {
+            return new Promise(function(resolve, reject) {
+                extensionServer = new WebSocket.Server({ port: config.extension.port }, function(err) {
+                    if (err) {
+                        if (shared.cli) {
+                            console.error(err)
+                        }
+                        reject(err)
+                    } else {
+                        extensionServer.on('connection', function connection(server) {
+                            server._pingAttempt = 0
+
+                            server.on('message', function incoming(message) {
+                                if (message === 'ping') {
+                                    // reply with pong
+                                    server.send('pong')
+                                } else if (message === 'pong') {
+                                    // client responded to a ping so reset _pingAttempt
+                                    server._pingAttempt = 0
+                                }
+                            })
+
+                            server.on('close', function close(o) {
+                                // do nothing
+                            })
+
+                            // send the default document once
+                            server.send(JSON.stringify({ defaultDocument: config.extension.defaultDocument }))
+                        })
+
+                        // check clients for dropped connections every 10 seconds
+                        extensionServerTimer = setInterval(watch.checkExtensionClients, 10000)
+
+                        // extension server is running
+                        functions.log(color.gray(shared.language.display('message.listeningOnPort').replace('{software}', 'Extension server').replace('{port}', config.extension.port)))
+
+                        resolve()
+                    }
+                })
+            })
+        }
+    })
+} // extensionServer
+
 watch.notTooRecent = function watch_notTooRecent(file) {
     /*
     Suppress subsequent file change notifications if they happen within 300 ms of a previous event.
@@ -141,7 +202,7 @@ watch.notTooRecent = function watch_notTooRecent(file) {
 
 watch.processWatch = function watch_processWatch(sourceFiles, destFiles) {
     /*
-    Watch both source and destination folders for activity.
+    Watch the source folder. Optionally watch the destination folder and start an extension server.
     @param   {String,Object}  [sourceFiles]  Optional. Glob search string for watching source files like '*.html' or array of full paths like ['/source/about.html', '/source/index.html']
     @param   {String,Object}  [destFiles]    Optional. Glob search string for watching destination files like '*.css' or array of full paths like ['/dest/fonts.css', '/dest/grid.css']
     @return  {Promise}
@@ -175,68 +236,23 @@ watch.processWatch = function watch_processWatch(sourceFiles, destFiles) {
 
                 return watch.watchSource(sourceFiles).then(function() {
 
-                    //------------------
-                    // Extension Server
-                    //------------------
                     if (!config.option.extensions) {
                         resolve()
                     } else {
-                        lazyLoadWebSocket()
-
-                        // stop the extension server only
-                        return watch.stop(false, false, true)
-                    }
-
-                }).then(function() {
-
-                    if (config.option.extensions) {
-                        extensionServer = new WebSocket.Server({ port: config.extension.port }, function(err) {
-                            if (err) {
-                                if (shared.cli) {
-                                    console.error(err)
-                                }
-                                reject(err)
-                            } else {
-                                extensionServer.on('connection', function connection(server) {
-                                    server._pingAttempt = 0
-
-                                    server.on('message', function incoming(message) {
-                                        if (message === 'ping') {
-                                            // reply with pong
-                                            server.send('pong')
-                                        } else if (message === 'pong') {
-                                            // client responded to a ping so reset _pingAttempt
-                                            server._pingAttempt = 0
-                                        }
-                                    })
-
-                                    server.on('close', function close(o) {
-                                        // do nothing
-                                    })
-
-                                    // send the default document once
-                                    server.send(JSON.stringify({ defaultDocument: config.extension.defaultDocument }))
-                                })
-
-                                // check clients for dropped connections every 10 seconds
-                                extensionServerTimer = setInterval(watch.checkExtensionClients, 10000)
-
-                                return watch.watchDest(destFiles).then(function() {
-
-                                    functions.log(color.gray(shared.language.display('message.listeningOnPort').replace('{software}', 'Extension server').replace('{port}', config.extension.port)))
-
-                                    resolve()
-
-                                }).catch(function(err) {
-
-                                    reject(err)
-
-                                })
-                            }
-                        }) // function
+                        return watch.watchDest(destFiles).then(function() {
+                            resolve()
+                        }).catch(function(err) {
+                            reject(err)
+                        })
                     } // if
 
-                })
+                }) // function
+
+            }).then(function() {
+
+                if (config.option.extensions) {
+                    return watch.extensionServer()
+                }
 
             }).then(function() {
 
@@ -249,7 +265,7 @@ watch.processWatch = function watch_processWatch(sourceFiles, destFiles) {
 
 watch.stop = function watch_stop(stopSource, stopDest, stopExtensions) {
     /*
-    Stop watching the source and/or destination folders. Also stop the extensions server.
+    Stop watching the source and/or destination folders. Optionally stop the extensions server.
     @param   {Boolean}  [stopSource]      Optional and defaults to true. If true, stop watching the source folder.
     @param   {Boolean}  [stopDest]        Optional and defaults to true. If true, stop watching the destination folder.
     @param   {Boolean}  [stopExtensions]  Optional and defaults to true. If true, stop the extensions server.
@@ -310,32 +326,32 @@ watch.updateExtensionServer = function watch_updateExtensionServer(now) {
     /*
     Update the extension server with a list of changed files.
     @param   {Boolean}  now  True meaning we have already waited 300 ms for events to settle.
-    @return  {Promise}       Promise that returns true if everything is ok otherwise an error.
+    @return  {Undefined}
     */
-    return new Promise(function(resolve, reject) {
+    return Promise.resolve().then(function() {
         now = now || false
 
         if (!now) {
             // will proceed 300 ms from now in order for things to settle
             clearTimeout(shared.extension.calmTimer)
+
             shared.extension.calmTimer = setTimeout(function() {
                 watch.updateExtensionServer(true)
             }, 300)
-            resolve(true)
         } else {
-            let fileList = '{"files": ' + JSON.stringify(shared.extension.changedFiles) + '}'
+            if (shared.extension.changedFiles.length > 0) {
+                let fileList = '{"files": ' + JSON.stringify(shared.extension.changedFiles) + '}'
 
-            shared.extension.changedFiles = []
+                shared.extension.changedFiles = []
 
-            extensionServer.clients.forEach(function each(client) {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(fileList)
-                }
-            })
+                extensionServer.clients.forEach(function each(client) {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(fileList)
+                    }
+                })
 
-            functions.log(color.gray(shared.language.display('message.watchRefreshed').replace('{software}', 'Extension server') + '\n'))
-
-            resolve(true)
+                functions.log(color.gray(shared.language.display('message.watchRefreshed').replace('{software}', 'Extension server') + '\n'))
+            }
         }
     })
 } // updateExtensionServer

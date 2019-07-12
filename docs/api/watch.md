@@ -80,6 +80,16 @@ return feri.action.watch().then(function() {
 // display 'A directory called /source/css was just removed.'
 ```
 
+## watch.extensionServer
+
+Type: `function`
+
+Extension server for clients.
+
+```
+@return  {Undefined}
+```
+
 ## watch.notTooRecent
 
 Type: `function`
@@ -95,7 +105,7 @@ Suppress subsequent file change notifications if they happen within 300 ms of a 
 
 Type: `function`
 
-Watch both source and destination folders for activity.
+Watch the source folder. Optionally watch the destination folder and start an extension server.
 
 ```
 @param   {String,Object}  [sourceFiles]  Optional. Glob search string for watching source files like '*.html' or array of full paths like ['/source/about.html', '/source/index.html']
@@ -120,7 +130,7 @@ Note: This function is also aliased as `feri.action.watch`.
 
 Type: `function`
 
-Stop watching the source and/or destination folders. Also stop the LiveReload server.
+Stop watching the source and/or destination folders. Optionally stop the LiveReload server.
 
 ```
 @param  {Boolean}  [stopSource]      Optional and defaults to true. If true, stop watching the source folder.

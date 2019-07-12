@@ -36,7 +36,7 @@
     "node": ">= 11"
   },
   "scripts": {
-    "test": "npm run test-shared -loglevel silent && npm run test-functions -loglevel silent && npm run test-clean -loglevel silent && npm run test-build -loglevel silent",
+    "test": "npm run test-shared -loglevel silent && npm run test-functions -loglevel silent && npm run test-clean -loglevel silent && npm run test-build -loglevel silent && npm run test-watch -loglevel silent",
     "test-shared": "mocha \"mocha/2 - shared.js\" --opts \"mocha/mocha.opts\"",
     "test-functions": "mocha \"mocha/4 - functions.js\" --opts \"mocha/mocha.opts\"",
     "test-clean": "mocha \"mocha/5 - clean.js\" --opts \"mocha/mocha.opts\"",

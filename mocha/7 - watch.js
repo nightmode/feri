@@ -3,9 +3,10 @@
 //----------
 // Includes
 //----------
-const expect = require('expect.js')
-const fs     = require('fs')
-const path   = require('path')
+const expect    = require('expect.js')
+const fs        = require('fs')
+const path      = require('path')
+const WebSocket = require('ws')
 
 const shared    = require('../code/2 - shared.js')
 let   config    = require('../code/3 - config.js')
@@ -122,6 +123,95 @@ describe('File -> ../code/7 - watch.js\n', function() {
         }) // it
     }) // describe
 
+    //-----------------------
+    // watch.extensionServer
+    //-----------------------
+    describe('extensionServer', function() {
+        it('should accept connection by client', function() {
+
+            config.option.extensions = true
+
+            return Promise.resolve().then(function() {
+
+                return watch.extensionServer()
+
+            }).then(function() {
+
+                return new Promise(function(resolve, reject) {
+                    let sock = new WebSocket('ws://localhost:' + config.extension.port)
+
+                    sock.onopen = function(event) {
+                        // one time event
+                        resolve()
+                    }
+                })
+
+            })
+        }) // it
+
+        it('client should receive default document', function() {
+            config.option.extensions = true
+
+            return Promise.resolve().then(function() {
+
+                return watch.extensionServer()
+
+            }).then(function() {
+
+                return new Promise(function(resolve, reject) {
+                    let sock = new WebSocket('ws://localhost:' + config.extension.port)
+
+                    sock.onmessage = function (event) {
+                        let data = event.data
+
+                        try {
+                            data = JSON.parse(data)
+                        } catch(e) {
+                            // do nothing
+                        }
+
+                        if (data.hasOwnProperty('defaultDocument')) {
+                            if (typeof data.defaultDocument === 'string') {
+                                let defaultDocument = data.defaultDocument.trim()
+
+                                expect(defaultDocument).to.be(config.extension.defaultDocument)
+                                resolve()
+                            }
+                        }
+                    }
+                })
+
+            })
+        }) // it
+
+        it('ping from client should return a pong', function() {
+            config.option.extensions = true
+
+            return Promise.resolve().then(function() {
+
+                return watch.extensionServer()
+
+            }).then(function() {
+
+                return new Promise(function(resolve, reject) {
+                    let sock = new WebSocket('ws://localhost:' + config.extension.port)
+
+                    sock.onopen = function(event) {
+                        // one time event
+                        sock.send("ping")
+                    }
+
+                    sock.onmessage = function (event) {
+                        if (event.data === 'pong') {
+                            resolve()
+                        }
+                    }
+                })
+
+            })
+        }) // it
+    }) // describe
+
     //--------------------
     // watch.notTooRecent
     //--------------------
@@ -152,7 +242,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
     describe('processWatch', function() {
         it('should see events for both source and destination', function() {
 
-            config.option.livereload = true
+            config.option.extensions = true
 
             config.path.source = path.join(testPath, 'processWatch-1', 'source')
             config.path.dest   = path.join(testPath, 'processWatch-1', 'dest')
@@ -216,7 +306,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
         it('should use config.glob.watch strings if available', function() {
 
-            config.option.livereload = true
+            config.option.extensions = true
 
             config.glob.watch.source = '*.css'
             config.glob.watch.dest = '*.css'
@@ -282,7 +372,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
         it('should use glob search strings as parameters', function() {
 
-            config.option.livereload = true
+            config.option.extensions = true
 
             config.path.source = path.join(testPath, 'processWatch-3', 'source')
             config.path.dest   = path.join(testPath, 'processWatch-3', 'dest')
@@ -361,7 +451,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
         it('should use arrays with file path strings as parameters', function() {
 
-            config.option.livereload = true
+            config.option.extensions = true
 
             config.path.source = path.join(testPath, 'processWatch-4', 'source')
             config.path.dest   = path.join(testPath, 'processWatch-4', 'dest')
@@ -442,19 +532,53 @@ describe('File -> ../code/7 - watch.js\n', function() {
     //------------
     // watch.stop
     //------------
-    // Stop watching the source and/or destination folders. Also stop the livereload server.
+    // Stop watching the source and/or destination folders. Also stop the extensions server.
     // No need to test since it will be tested by watch.processWatch, watch.watchDest, and watch.watchSource.
 
-    //------------------------------
-    // watch.updateLiveReloadServer
-    //------------------------------
-    describe('updateLiveReloadServer', function() {
-        it('should not return an error', function() {
+    //-----------------------------
+    // watch.updateExtensionServer
+    //-----------------------------
+    describe('updateExtensionServer', function() {
+        it('should send a list of changed files to extension clients', function() {
 
-            watch.updateLiveReloadServer('now').then(function(updated) {
-                expect(updated).to.be(true)
+            config.option.extensions = true
+
+            return Promise.resolve().then(function() {
+
+                return watch.extensionServer()
+
+            }).then(function() {
+
+                return new Promise(function(resolve, reject) {
+                    let sock = new WebSocket('ws://localhost:' + config.extension.port)
+
+                    sock.onopen = function(event) {
+                        // one time event
+
+                        // simulate changed files
+                        shared.extension.changedFiles = ['index.html']
+
+                        watch.updateExtensionServer('now')
+                    }
+
+                    sock.onmessage = function (event) {
+                        let data = event.data
+
+                        try {
+                            data = JSON.parse(data)
+                        } catch(e) {
+                            // do nothing
+                        }
+
+                        if (data.hasOwnProperty('files')) {
+                            if (Array.isArray(data.files) && data.files.length === 1 && data.files[0] === 'index.html') {
+                                resolve()
+                            }
+                        }
+                    }
+                })
+
             })
-
         }) // it
     }) // describe
 
@@ -464,7 +588,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
     describe('watchDest', function() {
         it('should notice an event in the destination folder', function() {
 
-            config.option.livereload = true
+            config.option.extensions = true
 
             config.path.source = path.join(testPath, 'watchDest', 'source')
             config.path.dest   = path.join(testPath, 'watchDest', 'dest')
