@@ -326,7 +326,7 @@ watch.updateExtensionServer = function watch_updateExtensionServer(now) {
     /*
     Update the extension server with a list of changed files.
     @param   {Boolean}  now  True meaning we have already waited 300 ms for events to settle.
-    @return  {Undefined}
+    @return  {Promise}
     */
     return Promise.resolve().then(function() {
         now = now || false

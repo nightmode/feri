@@ -6,9 +6,9 @@
 const os   = require('os')   // ~ 1 ms
 const path = require('path') // ~ 1 ms
 
-//-----------
-// Functions
-//-----------
+//-------------------
+// Private Functions
+//-------------------
 const propertyAccessor = function propertyAccessor(object, keys) {
     /*
     Retrieve an object property with a dot notation string.
