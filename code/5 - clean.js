@@ -23,7 +23,7 @@ const clean = {}
 //----------------------------
 // The following functions control cleaning, setting up promise chains and concurrency.
 
-clean.processClean = function clean_processClean(files, watching) {
+clean.processClean = async function clean_processClean(files, watching) {
     /*
     Remove the destination directory or start a more complex incremental cleanup.
     @param   {String,Object}  [files]     Optional. Glob search string like '*.html' or array of full paths like ['/web/dest/about.html', '/web/dest/index.html']
@@ -32,102 +32,95 @@ clean.processClean = function clean_processClean(files, watching) {
     */
     watching = watching || false
 
+    let filesCleaned = [] // keep track of any files cleaned
+
     if (!config.option.clean && !watching) {
         return Promise.resolve()
     }
 
-    return Promise.resolve().then(function() {
+    if (!watching) {
+        // start clean timer
+        shared.stats.timeTo.clean = functions.sharedStatsTimeTo(shared.stats.timeTo.clean)
+    }
 
-        if (!watching) {
-            // start clean timer
-            shared.stats.timeTo.clean = functions.sharedStatsTimeTo(shared.stats.timeTo.clean)
+    let configPathsAreGood = functions.configPathsAreGood()
+
+    if (configPathsAreGood !== true) {
+        throw new Error(configPathsAreGood)
+    }
+
+    let exists = await functions.fileExists(config.path.source)
+
+    if (exists === false) {
+        throw new Error(shared.language.display('error.missingSourceDirectory'))
+    }
+
+    if (!watching) {
+        // display title
+        functions.log(color.gray('\n' + shared.language.display('words.clean') + '\n'), false)
+    }
+
+    if (config.option.republish && !watching) {
+        // remove all files from inside the dest directory
+        let options = {
+            "nocase"  : true,
+            "nodir"   : false,
+            "realpath": true
         }
 
-        let configPathsAreGood = functions.configPathsAreGood()
-        if (configPathsAreGood !== true) {
-            throw new Error(configPathsAreGood)
-        }
+        let findFiles = await functions.findFiles(config.path.dest + '/{*,.*}', options)
 
-    }).then(function() {
+        await functions.removeFiles(findFiles)
 
-        return functions.fileExists(config.path.source).then(function(exists) {
-            if (exists === false) {
-                throw new Error(shared.language.display('error.missingSourceDirectory'))
-            }
-        })
+        filesCleaned = [config.path.dest]
+    } else {
+        // incremental cleanup
 
-    }).then(function() {
+        let filesType = typeof files
 
-        if (!watching) {
-            // display title
-            functions.log(color.gray('\n' + shared.language.display('words.clean') + '\n'), false)
-        }
-
-        if (config.option.republish && !watching) {
-            // remove all files from inside the dest directory
+        if (filesType === 'object') {
+            // we already have a specified list to work from
+            filesCleaned = clean.processFiles(files, watching)
+        } else {
             let options = {
                 "nocase"  : true,
                 "nodir"   : false,
                 "realpath": true
             }
 
-            return functions.findFiles(config.path.dest + '/{*,.*}', options).then(function(files) {
-                return functions.removeFiles(files).then(function() {
-                    return [config.path.dest]
-                })
-            })
-        } else {
-            // incremental cleanup
-
-            let filesType = typeof files
-
-            if (filesType === 'object') {
-                // we already have a specified list to work from
-                return clean.processFiles(files, watching)
+            if (filesType === 'string') {
+                if (files.charAt(0) === '/') {
+                    files = files.replace('/', '')
+                }
             } else {
-                let options = {
-                    "nocase"  : true,
-                    "nodir"   : false,
-                    "realpath": true
-                }
-
-                if (filesType === 'string') {
-                    if (files.charAt(0) === '/') {
-                        files = files.replace('/', '')
-                    }
+                if (config.glob.clean !== '') {
+                    files = config.glob.clean
                 } else {
-                    if (config.glob.clean !== '') {
-                        files = config.glob.clean
-                    } else {
-                        files = '**/*'
-                    }
+                    files = '**/*'
                 }
+            }
 
-                return functions.findFiles(config.path.dest + '/' + files, options).then(function(files) {
-                    if (files.length > 0) {
-                        return clean.processFiles(files, watching)
-                    } else {
-                        return []
-                    }
-                })
+            let findFiles = await functions.findFiles(config.path.dest + '/' + files, options)
+
+            if (files.length > 0) {
+                filesCleaned = await clean.processFiles(findFiles, watching)
+            } else {
+                filesCleaned = []
             }
         }
+    }
 
-    }).then(function(filesCleaned) {
+    if (!watching) {
+        shared.stats.timeTo.clean = functions.sharedStatsTimeTo(shared.stats.timeTo.clean)
 
-        if (!watching) {
-            shared.stats.timeTo.clean = functions.sharedStatsTimeTo(shared.stats.timeTo.clean)
-
-            if (filesCleaned.length === 0) {
-                functions.log(color.gray(shared.language.display('words.done') + '.'))
-            } else if (filesCleaned[0] === config.path.dest) {
-                functions.log(color.gray('/' + path.basename(config.path.dest) + ' ' + shared.language.display('words.removed')))
-            }
+        if (filesCleaned.length === 0) {
+            functions.log(color.gray(shared.language.display('words.done') + '.'))
+        } else if (filesCleaned[0] === config.path.dest) {
+            functions.log(color.gray('/' + path.basename(config.path.dest) + ' ' + shared.language.display('words.removed')))
         }
+    }
 
-        return filesCleaned
-
-    })
+    return filesCleaned
 } // processClean
 
 clean.processFiles = function clean_processFiles(files, watching) {

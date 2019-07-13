@@ -364,29 +364,27 @@ build.css = function build_css(obj) {
     })
 } // css
 
-build.html = function build_html(obj) {
+build.html = async function build_html(obj) {
     /*
     Minify HTML using https://www.npmjs.com/package/html-minifier.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    return functions.objBuildInMemory(obj).then(function(obj) {
+    obj = await functions.objBuildInMemory(obj)
 
-        functions.logWorker('build.html', obj)
+    functions.logWorker('build.html', obj)
 
-        if (obj.build) {
-            if (typeof html !== 'object') {
-                html = require('html-minifier').minify
-            }
-
-            obj.data = html(obj.data, config.thirdParty.htmlMinifier)
-            return obj
-        } else {
-            // no further chained promises should be called
-            throw 'done'
+    if (obj.build) {
+        if (typeof html !== 'object') {
+            html = require('html-minifier').minify
         }
 
-    })
+        obj.data = html(obj.data, config.thirdParty.htmlMinifier)
+        return obj
+    } else {
+        // no further chained promises should be called
+        throw 'done'
+    }
 } // html
 
 build.js = function build_js(obj) {
@@ -516,32 +514,30 @@ build.js = function build_js(obj) {
     })
 } // js
 
-build.markdown = function build_markdown(obj) {
+build.markdown = async function build_markdown(obj) {
     /*
     Markdown using https://www.npmjs.com/package/markdown-it.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    return functions.objBuildInMemory(obj).then(function(obj) {
+    obj = await functions.objBuildInMemory(obj)
 
-        functions.logWorker('build.markdown', obj)
+    functions.logWorker('build.markdown', obj)
 
-        if (obj.build) {
-            if (typeof markdown !== 'object') {
-                markdown = require('markdown-it')()
-            }
-
-            markdown.options = config.thirdParty.markdownIt
-
-            obj.data = markdown.render(obj.data)
-
-            return obj
-        } else {
-            // no further chained promises should be called
-            throw 'done'
+    if (obj.build) {
+        if (typeof markdown !== 'object') {
+            markdown = require('markdown-it')()
         }
 
-    })
+        markdown.options = config.thirdParty.markdownIt
+
+        obj.data = markdown.render(obj.data)
+
+        return obj
+    } else {
+        // no further chained promises should be called
+        throw 'done'
+    }
 } // markdown
 
 //----------------
@@ -549,135 +545,114 @@ build.markdown = function build_markdown(obj) {
 //----------------
 // The following functions like working on disk based files.
 
-build.copy = function build_copy(obj) {
+build.copy = async function build_copy(obj) {
     /*
     Copy source to destination.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    return Promise.resolve().then(function() {
+    functions.logWorker('build.copy', obj)
 
-        functions.logWorker('build.copy', obj)
+    if (obj.data === '') {
+        obj = await functions.objBuildOnDisk(obj)
 
-        if (obj.data === '') {
+        if (obj.build) {
 
-            return functions.objBuildOnDisk(obj).then(function() {
+            await new Promise(function(resolve, reject) {
 
-                if (obj.build) {
+                let sourceFile = fs.createReadStream(obj.source)
+                sourceFile.on('error', reject)
 
-                    return new Promise(function(resolve, reject) {
+                let destFile = fs.createWriteStream(obj.dest)
+                destFile.on('error', reject)
+                destFile.on('finish', resolve)
 
-                        let sourceFile = fs.createReadStream(obj.source)
-                        sourceFile.on('error', reject)
-
-                        let destFile = fs.createWriteStream(obj.dest)
-                        destFile.on('error', reject)
-                        destFile.on('finish', resolve)
-
-                        // copy source to dest
-                        sourceFile.pipe(destFile)
-
-                    }).then(function() {
-
-                        functions.logOutput(obj.dest, 'copy')
-
-                    })
-
-                } else {
-                    // obj.build is false so no further chained promises should be called
-                    throw 'done'
-                }
+                // copy source to dest
+                sourceFile.pipe(destFile)
 
             })
 
+            functions.logOutput(obj.dest, 'copy')
+
         } else {
-            // do nothing and let build.finalize take care of writing obj.data
+            // obj.build is false so no further chained promises should be called
+            throw 'done'
         }
+    } else {
+        // do nothing and let build.finalize take care of writing obj.data
+    }
 
-    }).then(function() {
-
-        return obj
-
-    })
+    return obj
 } // copy
 
-build.gif = function build_gif(obj) {
+build.gif = async function build_gif(obj) {
     /*
     Losslessly optimize GIF files using https://www.npmjs.com/package/gifsicle.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    return functions.objBuildOnDisk(obj).then(function(obj) {
+    obj = await functions.objBuildOnDisk(obj)
 
-        functions.logWorker('build.gif', obj)
+    functions.logWorker('build.gif', obj)
 
-        if (obj.build) {
-            return execPromise('"' + gif + '" --output "' + obj.dest + '" --optimize=3 --no-extensions "' + obj.source + '"')
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
+    if (obj.build) {
+        await execPromise('"' + gif + '" --output "' + obj.dest + '" --optimize=3 --no-extensions "' + obj.source + '"')
+    } else {
+        // no further chained promises should be called
+        throw 'done'
+    }
 
-    }).then(function() {
+    functions.logOutput(obj.dest)
 
-        functions.logOutput(obj.dest)
-        return obj
-
-    })
+    return obj
 } // gif
 
-build.jpg = function build_jpg(obj) {
+build.jpg = async function build_jpg(obj) {
     /*
     Losslessly optimize JPG files using https://www.npmjs.com/package/jpegtran-bin.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    return functions.objBuildOnDisk(obj).then(function(obj) {
+    obj = await functions.objBuildOnDisk(obj)
 
-        functions.logWorker('build.jpg', obj)
+    functions.logWorker('build.jpg', obj)
 
-        if (obj.build) {
-            return execPromise('"' + jpg + '" -copy none -optimize -progressive -outfile "' +  obj.dest + '" "' + obj.source + '"')
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
+    if (obj.build) {
+        await execPromise('"' + jpg + '" -copy none -optimize -progressive -outfile "' +  obj.dest + '" "' + obj.source + '"')
+    } else {
+        // no further chained promises should be called
+        throw 'done'
+    }
 
-    }).then(function() {
+    functions.logOutput(obj.dest)
 
-        functions.logOutput(obj.dest)
-        return obj
-
-    })
+    return obj
 } // jpg
 
-build.png = function build_png(obj) {
+build.png = async function build_png(obj) {
     /*
     Losslessly optimize PNG files using https://www.npmjs.com/package/optipng-bin.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    return functions.objBuildOnDisk(obj).then(function(obj) {
+    obj = await functions.objBuildOnDisk(obj)
 
-        functions.logWorker('build.png', obj)
+    functions.logWorker('build.png', obj)
 
-        if (obj.build) {
-            let cmd = '"' + png + '" -clobber -o2 -strip all -out "' + obj.dest + '" "' + obj.source + '"'
-            return execPromise(cmd).then(function() {
-                // get rid of the possible .bak file optipng makes when overwriting an existing dest file with a different source file
-                return functions.removeDest(obj.dest + '.bak', false)
-            })
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
+    if (obj.build) {
+        let cmd = '"' + png + '" -clobber -o2 -strip all -out "' + obj.dest + '" "' + obj.source + '"'
+        await execPromise(cmd)
 
-    }).then(function() {
+        // get rid of the possible .bak file optipng makes when overwriting an existing dest file with a different source file
+        await functions.removeDest(obj.dest + '.bak', false)
+    } else {
+        // no further chained promises should be called
+        throw 'done'
+    }
 
-        functions.logOutput(obj.dest)
-        return obj
+    functions.logOutput(obj.dest)
 
-    })
+    return obj
 } // png
 
 //----------------------
@@ -840,117 +815,91 @@ build.concat = function build_concat(obj) {
 // Unlike most build functions, they don't bother to check if a source file is
 // newer than a destination file since that should have been handled already.
 
-build.finalize = function build_finalize(obj) {
+build.finalize = async function build_finalize(obj) {
     /*
     Finalize by writing memory to disk or copying source to dest, if needed.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    return Promise.resolve().then(function() {
-        functions.logWorker('build.finalize', obj)
+    functions.logWorker('build.finalize', obj)
 
-        if (obj.data !== '') {
-            // write obj.data to dest
+    if (obj.data !== '') {
+        // write obj.data to dest
 
-            if (obj.dest === '') {
-                obj.dest = functions.sourceToDest(obj.source)
-            } else if (functions.inSource(obj.dest)) {
-                // obj.dest points to a file in the source directory which could be dangerous
-                throw 'build.finalize -> ' + shared.language.display('error.destPointsToSource')
-            }
-
-            return functions.makeDirPath(obj.dest).then(function() {
-
-                return fsWriteFilePromise(obj.dest, obj.data)
-
-            }).then(function() {
-
-                obj.data = ''
-
-                functions.logOutput(obj.dest)
-
-                return obj
-
-            })
-        } else if (obj.dest === '') {
-            // copy source to dest
-            return build.copy(obj)
-        } else {
-            return obj
+        if (obj.dest === '') {
+            obj.dest = functions.sourceToDest(obj.source)
+        } else if (functions.inSource(obj.dest)) {
+            // obj.dest points to a file in the source directory which could be dangerous
+            throw 'build.finalize -> ' + shared.language.display('error.destPointsToSource')
         }
-    })
+
+        await functions.makeDirPath(obj.dest)
+
+        await fsWriteFilePromise(obj.dest, obj.data)
+
+        obj.data = ''
+
+        functions.logOutput(obj.dest)
+
+        return obj
+    } else if (obj.dest === '') {
+        // copy source to dest
+        return build.copy(obj)
+    } else {
+        return obj
+    }
 } // finalize
 
-build.br = function build_br(obj) {
+build.br = async function build_br(obj) {
     /*
     Create a brotli compressed version of a file to live alongside the original.
     @param   {Object}          obj  Reusable object originally created by build.processOneBuild
     @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
     */
     if (obj.build) {
-        return build.finalize(obj).then(function() { // build.finalize ensures our destination file is ready to be compressed
+        obj = await build.finalize(obj) // build.finalize ensures our destination file is ready to be compressed
 
-            functions.logWorker('build.br', obj)
+        functions.logWorker('build.br', obj)
 
-            return functions.readFile(obj.dest).then(function(data) {
+        let data = await functions.readFile(obj.dest)
 
-                return brotliPromise(data, {
-                    params: {
-                        // the default compression level is 11 which is exactly what we want
-                        [zlib.constants.BROTLI_PARAM_SIZE_HINT]: data.length
-                    }
-                })
-
-            }).then(function(data) {
-
-                return fsWriteFilePromise(obj.dest + '.br', data, 'binary')
-
-            })
-
-        }).then(function() {
-
-            return obj
-
+        let dataCompress = await brotliPromise(data, {
+            params: {
+                // the default compression level is 11 which is exactly what we want
+                [zlib.constants.BROTLI_PARAM_SIZE_HINT]: data.length
+            }
         })
-    } else {
-        return obj
+
+        await fsWriteFilePromise(obj.dest + '.br', dataCompress, 'binary')
     }
+
+    return obj
 } // br
 
-build.gz = function build_gz(obj) {
+build.gz = async function build_gz(obj) {
     /*
     Create a gzip compressed version of a file to live alongside the original.
     @param   {Object}          obj  Reusable object originally created by build.processOneBuild
     @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
     */
     if (obj.build) {
-        return build.finalize(obj).then(function() { // build.finalize ensures our destination file is ready to be compressed
+        obj = await build.finalize(obj) // build.finalize ensures our destination file is ready to be compressed
 
-            functions.logWorker('build.gz', obj)
+        functions.logWorker('build.gz', obj)
 
-            return functions.readFile(obj.dest).then(function(data) {
+        let data = await functions.readFile(obj.dest)
 
-                return gzipPromise(data, {
-                    level: 9
-                })
-
-            }).then(function(data) {
-
-                return fsWriteFilePromise(obj.dest + '.gz', data, 'binary')
-
-            })
-
-        }).then(function() {
-
-            return obj
-
+        let dataCompress = await gzipPromise(data, {
+            level: 9
         })
-    } else {
-        return obj
+
+        await fsWriteFilePromise(obj.dest + '.gz', data, 'binary')
     }
+
+    return obj
 } // gz
 
-build.map = function build_map(obj) {
+build.map = async function build_map(obj) {
     /*
     Build a map file and if needed, also make a br and/or gz version of said map file.
     @param   {Object}          obj  Reusable object originally created by build.processOneBuild
@@ -958,37 +907,29 @@ build.map = function build_map(obj) {
     */
     // Troubleshooting a JavaScript source map? Try http://sokra.github.io/source-map-visualization/ and https://sourcemaps.io
     if (obj.build) {
-        return build.finalize(obj).then(function() { // build.finalize ensures our destination file is written to disk
+        obj = await build.finalize(obj) // build.finalize ensures our destination file is written to disk
 
-            functions.logWorker('build.map', obj)
+        functions.logWorker('build.map', obj)
 
-            if (config.map.sourceToDestTasks.map.indexOf('br') >= 0) {
-                // manually kick off a br task for the new .map file
-                return build.br({
-                    'source': obj.dest,
-                    'dest': obj.dest,
-                    'data': '',
-                    'build': true
-                })
-            }
+        if (config.map.sourceToDestTasks.map.indexOf('br') >= 0) {
+            // manually kick off a br task for the new .map file
+            await build.br({
+                'source': obj.dest,
+                'dest': obj.dest,
+                'data': '',
+                'build': true
+            })
+        }
 
-        }).then(function() {
-
-            if (config.map.sourceToDestTasks.map.indexOf('gz') >= 0) {
-                // manually kick off a gz task for the new .map file
-                return build.gz({
-                    'source': obj.dest,
-                    'dest': obj.dest,
-                    'data': '',
-                    'build': true
-                })
-            }
-
-        }).then(function() {
-
-            return obj
-
-        })
+        if (config.map.sourceToDestTasks.map.indexOf('gz') >= 0) {
+            // manually kick off a gz task for the new .map file
+            await build.gz({
+                'source': obj.dest,
+                'dest': obj.dest,
+                'data': '',
+                'build': true
+            })
+        }
     }
 
     return obj

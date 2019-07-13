@@ -386,54 +386,41 @@ functions.globOptions = function functions_globOptions() {
     }
 } // globOptions
 
-functions.initFeri = function initFeri() {
+functions.initFeri = async function initFeri() {
     /*
     If needed, create the source and destination folders along with a custom config file in the present working directory.
     @return  {Promise}
     */
-    return Promise.resolve().then(function() {
 
-        // make sure config.path.source is an absolute path in case it was set programmatically
-        config.path.source = functions.figureOutPath(config.path.source)
+    // make sure config.path.source is an absolute path in case it was set programmatically
+    config.path.source = functions.figureOutPath(config.path.source)
 
-        return functions.makeDirPath(config.path.source, true)
+    await functions.makeDirPath(config.path.source, true)
 
-    }).then(function() {
+    // make sure config.path.dest is an absolute path in case it was set programmatically
+    config.path.dest = functions.figureOutPath(config.path.dest)
 
-        // make sure config.path.dest is an absolute path in case it was set programmatically
-        config.path.dest = functions.figureOutPath(config.path.dest)
+    await functions.makeDirPath(config.path.dest, true)
 
-        return functions.makeDirPath(config.path.dest, true)
+    let configFile = path.join(shared.path.pwd, 'feri.js')
+    let configFileAlt = path.join(shared.path.pwd, 'feri-config.js')
 
-    }).then(function() {
+    let exists = await functions.filesExist([configFile, configFileAlt])
 
-        let configFile = path.join(shared.path.pwd, 'feri.js')
-        let configFileAlt = path.join(shared.path.pwd, 'feri-config.js')
+    if (exists.indexOf(true) >= 0) {
+        // do nothing
+        return
+    }
 
-        return functions.filesExist([configFile, configFileAlt]).then(function(exists) {
+    let data = await functions.readFile(path.join(shared.path.self, 'templates', 'custom-config.js'))
 
-            if (exists.indexOf(true) >= 0) {
-                // do nothing
-                return
-            }
+    if (shared.slash === '\\') {
+        configFile = configFileAlt
+    }
 
-            return functions.readFile(path.join(shared.path.self, 'templates', 'custom-config.js')).then(function(data) {
+    await functions.writeFile(configFile, data)
 
-                if (shared.slash === '\\') {
-                    configFile = configFileAlt
-                }
-
-                return functions.writeFile(configFile, data)
-
-            })
-
-        }) // return
-
-    }).then(function() {
-
-        functions.log('\n' + color.gray(shared.language.display('words.done') + '.\n'), false)
-
-    })
+    functions.log('\n' + color.gray(shared.language.display('words.done') + '.\n'), false)
 } // initFeri
 
 functions.inSource = function functions_inSource(filePath) {
@@ -842,7 +829,7 @@ functions.readFiles = function functions_readFiles(filePaths, encoding) {
     return p
 } // readFiles
 
-functions.removeDest = function functions_removeDest(filePath, log, isDir) {
+functions.removeDest = async function functions_removeDest(filePath, log, isDir) {
     /*
     Remove file or folder if unrelated to the source directory.
     @param   {String}   filePath  Path to a file or folder.
@@ -853,24 +840,23 @@ functions.removeDest = function functions_removeDest(filePath, log, isDir) {
     log = (log === false) ? false : true
     isDir = (isDir === true) ? true : false
 
-    return Promise.resolve().then(function() {
-        if (filePath.indexOf(config.path.source) >= 0) {
-            throw 'functions.removeDest -> ' + shared.language.display('error.removeDest') + ' -> ' + filePath
+    if (filePath.indexOf(config.path.source) >= 0) {
+        throw 'functions.removeDest -> ' + shared.language.display('error.removeDest') + ' -> ' + filePath
+    }
+
+    await rimrafPromise(filePath)
+
+    if (log) {
+        let message = 'words.removed'
+
+        if (isDir) {
+            message = 'words.removedDirectory'
         }
 
-        return rimrafPromise(filePath).then(function() {
-            if (log) {
-                let message = 'words.removed'
+        functions.log(color.gray(filePath.replace(config.path.dest, '/' + path.basename(config.path.dest)).replace(/\\/g, '/') + ' ' + shared.language.display(message)))
+    }
 
-                if (isDir) {
-                    message = 'words.removedDirectory'
-                }
-
-                functions.log(color.gray(filePath.replace(config.path.dest, '/' + path.basename(config.path.dest)).replace(/\\/g, '/') + ' ' + shared.language.display(message)))
-            }
-            return true
-        })
-    })
+    return true
 } // removeDest
 
 functions.removeExt = function functions_removeExt(filePath) {
@@ -1135,7 +1121,7 @@ functions.upgradeAvailable = function functions_upgradeAvailable(specifyRemoteVe
 
 } // upgradeAvailable
 
-functions.useExistingSourceMap = function functions_useExistingSourceMap(filePath) {
+functions.useExistingSourceMap = async function functions_useExistingSourceMap(filePath) {
     /*
     Use an existing source map if it was modified recently otherwise remove it.
     @param   {String}   filePath  Path to a file that may also have a separate '.map' file associated with it.
@@ -1145,40 +1131,33 @@ functions.useExistingSourceMap = function functions_useExistingSourceMap(filePat
 
     let removeFile = false
 
-    return functions.fileExistsAndTime(filePath).then(function(mapFile) {
+    let sourceMap = false
 
-        if (mapFile.exists) {
-            // map file already exists but has it been generated recently?
-            if (mapFile.mtime < (new Date().getTime() - 5000)) {
-                // map file is older than 5 seconds and most likely not just built
-                // remove old map file so the build tool calling this function can genereate a new one
+    let mapFile = await functions.fileExistsAndTime(filePath)
+
+    if (mapFile.exists) {
+        // map file already exists but has it been generated recently?
+        if (mapFile.mtime < (new Date().getTime() - 5000)) {
+            // map file is older than 5 seconds and most likely not just built
+            // remove old map file so the build tool calling this function can genereate a new one
+            removeFile = true
+        } else {
+            let data = await functions.readFile(filePath)
+
+            try {
+                sourceMap = JSON.parse(data)
+            } catch(e) {
                 removeFile = true
-            } else {
-                return functions.readFile(filePath).then(function(data) {
-                    try {
-                        let sourceMap = JSON.parse(data)
-                        return sourceMap
-                    } catch(e) {
-                        removeFile = true
-                        return false
-                    }
-                })
             }
-        } else {
-            return false
         }
+    }
 
-    }).then(function(sourceMap) {
+    if (removeFile) {
+        await functions.removeDest(filePath, false)
+        sourceMap = false
+    }
 
-        if (removeFile) {
-            return functions.removeDest(filePath, false).then(function() {
-                return false
-            })
-        } else {
-            return sourceMap
-        }
-
-    })
+    return sourceMap
 } // useExistingSourceMap
 
 functions.writeFile = function functions_writeFile(filePath, data, encoding) {
@@ -1399,7 +1378,7 @@ functions.includePathsConcat = function functions_includePathsConcat(data, fileP
 //-------------------------------------
 // Functions: Reusable Object Building
 //-------------------------------------
-functions.objBuildWithIncludes = function functions_objBuildWithIncludes(obj, includeFunction) {
+functions.objBuildWithIncludes = async function functions_objBuildWithIncludes(obj, includeFunction) {
     /*
     Figure out if a reusable object, which may have include files, needs to be built in memory.
     @param   {Object}    obj              Reusable object originally created by build.processOneBuild
@@ -1411,87 +1390,79 @@ functions.objBuildWithIncludes = function functions_objBuildWithIncludes(obj, in
 
     obj.build = false
 
-    return Promise.resolve().then(function() {
+    let includesNewer = false
 
-        if (obj.data !== '') {
-            // a previous promise has filled in the data variable so we should rebuild this file
-            obj.build = true
-        } else if (obj.dest !== '') {
-            // make sure obj.dest does not point to a file in the source directory
-            if (functions.inSource(obj.dest)) {
-                throw 'functions.objBuildWithIncludes -> ' + shared.language.display('error.destPointsToSource')
-            } else {
-                // read dest file into memory
-                return fsReadFilePromise(obj.dest, { encoding: 'utf8' }).then(function(data) {
-                    obj.data = data
-                    obj.build = true
-                }).catch(function(err) {
-                    throw 'functions.objBuildWithIncludes -> ' + shared.language.display('error.missingDest')
-                })
-            }
+    if (obj.data !== '') {
+        // a previous promise has filled in the data variable so we should rebuild this file
+        obj.build = true
+    } else if (obj.dest !== '') {
+        // make sure obj.dest does not point to a file in the source directory
+        if (functions.inSource(obj.dest)) {
+            throw 'functions.objBuildWithIncludes -> ' + shared.language.display('error.destPointsToSource')
         } else {
-            // just a source file to work from
+            // read dest file into memory
+            try {
+                let data = await fsReadFilePromise(obj.dest, { encoding: 'utf8' })
 
-            // figure out dest
-            obj.dest = functions.sourceToDest(obj.source)
-
-            if (config.option.forcebuild) {
+                obj.data = data
                 obj.build = true
-            } else {
-                // check to see if the source file is newer than a possible dest file
-                return functions.filesExistAndTime(obj.source, obj.dest).then(function(files) {
-                    if (!files.source.exists) {
-                        // missing source file
-                        throw 'functions.objBuildWithIncludes -> ' + shared.language.display('error.missingSource')
-                    }
-
-                    if (files.dest.exists) {
-                        // source and dest exist so compare their times
-                        if (files.source.mtime > files.dest.mtime) {
-                            obj.build = true
-                        }
-
-                        destTime = files.dest.mtime // save destTime so we can check includes against it to see if they are newer
-                    } else {
-                        // dest file does not exist so build it
-                        obj.build = true
-                    }
-                })
+            } catch(err) {
+                throw 'functions.objBuildWithIncludes -> ' + shared.language.display('error.missingDest')
             }
         }
+    } else {
+        // just a source file to work from
 
-    }).then(function() {
+        // figure out dest
+        obj.dest = functions.sourceToDest(obj.source)
 
-        if (obj.data === '') {
-            // read the source because we are either rebuilding or we need to check to see if any include files are newer than our dest file
-            return fsReadFilePromise(obj.source, { encoding: 'utf8' }).then(function(data) {
-                obj.data = data
-            })
-        }
-
-    }).then(function() {
-
-        if (!obj.build) {
-            // check includes to see if any of them are newer
-            return Promise.resolve().then(function() {
-                return includeFunction(obj.data, obj.source).then(function(includes) {
-                    return functions.includesNewer(includes, sourceExt, destTime)
-                })
-            })
-        }
-
-    }).then(function(includesNewer) {
-
-        if (obj.build || includesNewer) {
+        if (config.option.forcebuild) {
             obj.build = true
+        } else {
+            // check to see if the source file is newer than a possible dest file
+            let files = await functions.filesExistAndTime(obj.source, obj.dest)
+
+            if (!files.source.exists) {
+                // missing source file
+                throw 'functions.objBuildWithIncludes -> ' + shared.language.display('error.missingSource')
+            }
+
+            if (files.dest.exists) {
+                // source and dest exist so compare their times
+                if (files.source.mtime > files.dest.mtime) {
+                    obj.build = true
+                }
+
+                destTime = files.dest.mtime // save destTime so we can check includes against it to see if they are newer
+            } else {
+                // dest file does not exist so build it
+                obj.build = true
+            }
         }
+    }
 
-        return obj
+    if (obj.data === '') {
+        // read the source because we are either rebuilding or we need to check to see if any include files are newer than our dest file
+        let data = await fsReadFilePromise(obj.source, { encoding: 'utf8' })
 
-    })
+        obj.data = data
+    }
+
+    if (!obj.build) {
+        // check includes to see if any of them are newer
+        let includes = await includeFunction(obj.data, obj.source)
+
+        includesNewer = functions.includesNewer(includes, sourceExt, destTime)
+    }
+
+    if (obj.build || includesNewer) {
+        obj.build = true
+    }
+
+    return obj
 } // objBuildWithIncludes
 
-functions.objBuildInMemory = function functions_objBuildInMemory(obj) {
+functions.objBuildInMemory = async function functions_objBuildInMemory(obj) {
     /*
     Figure out if a reusable object needs to be built in memory.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
@@ -1499,70 +1470,64 @@ functions.objBuildInMemory = function functions_objBuildInMemory(obj) {
     */
     obj.build = false
 
-    return Promise.resolve().then(function() {
-
-        if (obj.data !== '') {
-            // a previous promise has filled in the data variable so we should rebuild this file
-            obj.build = true
-        } else if (obj.dest !== '') {
-            // make sure obj.dest does not point to a file in the source directory
-            if (functions.inSource(obj.dest)) {
-                throw 'functions.objBuildInMemory -> ' + shared.language.display('error.destPointsToSource')
-            } else {
-                // read dest file into memory
-                return fsReadFilePromise(obj.dest, { encoding: 'utf8' }).then(function(data) {
-                    obj.data = data
-                    obj.build = true
-                }).catch(function(err) {
-                    throw 'functions.objBuildInMemory -> ' + shared.language.display('error.missingDest')
-                })
-            }
+    if (obj.data !== '') {
+        // a previous promise has filled in the data variable so we should rebuild this file
+        obj.build = true
+    } else if (obj.dest !== '') {
+        // make sure obj.dest does not point to a file in the source directory
+        if (functions.inSource(obj.dest)) {
+            throw 'functions.objBuildInMemory -> ' + shared.language.display('error.destPointsToSource')
         } else {
-            // just a source file to work from
+            // read dest file into memory
+            try {
+                let data = await fsReadFilePromise(obj.dest, { encoding: 'utf8' })
 
-            // figure out dest
-            obj.dest = functions.sourceToDest(obj.source)
-
-            if (config.option.forcebuild) {
+                obj.data = data
                 obj.build = true
-            } else {
-                // check to see if the source file is newer than a possible dest file
-                return functions.filesExistAndTime(obj.source, obj.dest).then(function(files) {
-                    if (!files.source.exists) {
-                        // missing source file
-                        throw 'functions.objBuildInMemory -> ' + shared.language.display('error.missingSource')
-                    }
-
-                    if (files.dest.exists) {
-                        // source and dest exist so compare their times
-                        if (files.source.mtime > files.dest.mtime) {
-                            obj.build = true
-                        }
-                    } else {
-                        // dest file does not exist so build it
-                        obj.build = true
-                    }
-                })
+            } catch(err) {
+                throw 'functions.objBuildInMemory -> ' + shared.language.display('error.missingDest')
             }
         }
+    } else {
+        // just a source file to work from
 
-    }).then(function() {
+        // figure out dest
+        obj.dest = functions.sourceToDest(obj.source)
 
-        if (obj.build && obj.data === '') {
-            // read source file into memory
-            return fsReadFilePromise(obj.source, { encoding: 'utf8' }).then(function(data) {
-                obj.data = data
-            })
+        if (config.option.forcebuild) {
+            obj.build = true
+        } else {
+            // check to see if the source file is newer than a possible dest file
+            let files = await functions.filesExistAndTime(obj.source, obj.dest)
+
+            if (!files.source.exists) {
+                // missing source file
+                throw 'functions.objBuildInMemory -> ' + shared.language.display('error.missingSource')
+            }
+
+            if (files.dest.exists) {
+                // source and dest exist so compare their times
+                if (files.source.mtime > files.dest.mtime) {
+                    obj.build = true
+                }
+            } else {
+                // dest file does not exist so build it
+                obj.build = true
+            }
         }
+    }
 
-    }).then(function() {
+    if (obj.build && obj.data === '') {
+        // read source file into memory
+        let data = await fsReadFilePromise(obj.source, { encoding: 'utf8' })
 
-        return obj
+        obj.data = data
+    }
 
-    })
+    return obj
 } // objBuildInMemory
 
-functions.objBuildOnDisk = function functions_objBuildOnDisk(obj) {
+functions.objBuildOnDisk = async function functions_objBuildOnDisk(obj) {
     /*
     Figure out if a reusable object needs to be written to disk and if so, prepare for a command line program to use it next.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
@@ -1570,80 +1535,74 @@ functions.objBuildOnDisk = function functions_objBuildOnDisk(obj) {
     */
     obj.build = false
 
-    return Promise.resolve().then(function() {
+    if (obj.data !== '') {
+        // a previous promise has filled in the data variable so we should rebuild this file
+        obj.build = true
 
-        if (obj.data !== '') {
-            // a previous promise has filled in the data variable so we should rebuild this file
-            obj.build = true
-
-            if (obj.dest === '') {
-                obj.dest = functions.sourceToDest(obj.source)
-            } else {
-                // make sure obj.dest does not point to a file in the source directory
-                if (functions.inSource(obj.dest)) {
-                    throw 'functions.objBuildOnDisk -> ' + shared.language.display('error.destPointsToSource')
-                }
-            }
-
-            // write to dest file
-            return functions.makeDirPath(obj.dest).then(function() {
-                return fsWriteFilePromise(obj.dest, obj.data)
-            }).then(function() {
-                obj.data = ''
-
-                // set source to dest so any command line programs after this will compile dest to dest
-                obj.source = obj.dest
-            })
-        } else if (obj.dest !== '') {
-            // dest file is already in place
-            return functions.fileExists(obj.dest).then(function(exists) {
-                if (exists) {
-                    obj.build = true
-
-                    // set source to dest so any command line programs after this will compile dest to dest
-                    obj.source = obj.dest
-                } else {
-                    obj.dest = ''
-                    return functions.objBuildOnDisk(obj)
-                }
-            })
-        } else {
-            // just a source file to work from
-
-            // figure out dest
+        if (obj.dest === '') {
             obj.dest = functions.sourceToDest(obj.source)
-
-            if (config.option.forcebuild) {
-                obj.build = true
-                return functions.makeDirPath(obj.dest)
-            } else {
-                // check to see if the source file is newer than a possible dest file
-                return functions.filesExistAndTime(obj.source, obj.dest).then(function(files) {
-                    if (!files.source.exists) {
-                        // missing source file
-                        throw 'functions.objBuildOnDisk -> ' + shared.language.display('error.missingSource')
-                    }
-
-                    if (files.dest.exists) {
-                        // source and dest exist so compare their times
-                        if (files.source.mtime > files.dest.mtime) {
-                            obj.build = true
-                        }
-                    } else {
-                        // dest file does not exist so build it
-                        obj.build = true
-
-                        return functions.makeDirPath(obj.dest)
-                    }
-                })
+        } else {
+            // make sure obj.dest does not point to a file in the source directory
+            if (functions.inSource(obj.dest)) {
+                throw 'functions.objBuildOnDisk -> ' + shared.language.display('error.destPointsToSource')
             }
         }
 
-    }).then(function() {
+        // write to dest file
+        await functions.makeDirPath(obj.dest)
 
-        return obj
+        await fsWriteFilePromise(obj.dest, obj.data)
 
-    })
+        obj.data = ''
+
+        // set source to dest so any command line programs after this will compile dest to dest
+        obj.source = obj.dest
+    } else if (obj.dest !== '') {
+        // dest file is already in place
+        let exists = await functions.fileExists(obj.dest)
+
+        if (exists) {
+            obj.build = true
+
+            // set source to dest so any command line programs after this will compile dest to dest
+            obj.source = obj.dest
+        } else {
+            obj.dest = ''
+            obj = functions.objBuildOnDisk(obj)
+        }
+    } else {
+        // just a source file to work from
+
+        // figure out dest
+        obj.dest = functions.sourceToDest(obj.source)
+
+        if (config.option.forcebuild) {
+            obj.build = true
+            await functions.makeDirPath(obj.dest)
+        } else {
+            // check to see if the source file is newer than a possible dest file
+            let files = await functions.filesExistAndTime(obj.source, obj.dest)
+
+            if (!files.source.exists) {
+                // missing source file
+                throw 'functions.objBuildOnDisk -> ' + shared.language.display('error.missingSource')
+            }
+
+            if (files.dest.exists) {
+                // source and dest exist so compare their times
+                if (files.source.mtime > files.dest.mtime) {
+                    obj.build = true
+                }
+            } else {
+                // dest file does not exist so build it
+                obj.build = true
+
+                await functions.makeDirPath(obj.dest)
+            }
+        }
+    }
+
+    return obj
 } // objBuildOnDisk
 
 //---------

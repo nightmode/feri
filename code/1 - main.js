@@ -70,31 +70,11 @@ const feri = {
 //-----------
 // Functions
 //-----------
-const inOptions = function inOptions(search) {
+const commandLine = async function commandLine() {
     /*
-    Find out if the options variable has any occurence of what we are searching for.
-    @param  {Object}  search  Array of strings like ['--clean', '-c']
+    Command Line checks, options, and startup procedures.
+    @return  {Promise}
     */
-    for (let i in search) {
-        if (commandLineOptions.indexOf(search[i]) >= 0) {
-            return true
-        }
-    }
-
-    return false
-} // inOptions
-
-//-------------------------
-// Command Line or Require
-//-------------------------
-let commandLineOptions,
-    configFile,
-    configFileExists
-
-if (shared.cli) {
-    //--------------
-    // Command Line
-    //--------------
     commandLineOptions = process.argv.slice(2)
     configFile = path.join(shared.path.pwd, 'feri.js')
     configFileExists = false
@@ -102,23 +82,16 @@ if (shared.cli) {
     // enable console logging since we are running as a command line program
     shared.log = true
 
-    return Promise.resolve().then(function() {
-
+    try {
         // check for a feri.js file
-        return functions.fileExists(configFile).then(function(exists) {
-            configFileExists = exists
+        configFileExists = await functions.fileExists(configFile)
 
-            if (configFileExists === false) {
-                // check for a feri-config.js file
-                configFile = path.join(shared.path.pwd, 'feri-config.js')
+        if (configFileExists === false) {
+            // check for a feri-config.js file
+            configFile = path.join(shared.path.pwd, 'feri-config.js')
 
-                return functions.fileExists(configFile).then(function(exists) {
-                    configFileExists = exists
-                })
-            }
-        })
-
-    }).then(function() {
+            configFileExists = await functions.fileExists(configFile)
+        }
 
         if (configFileExists) {
             try {
@@ -129,10 +102,8 @@ if (shared.cli) {
         }
 
         if (config.language !== 'en-us') {
-            return functions.setLanguage()
+            await functions.setLanguage()
         }
-
-    }).then(function() {
 
         //----------------------------------------------
         // Command Line Options: Source and Destination
@@ -168,20 +139,19 @@ if (shared.cli) {
 
             console.log('\n' + color.cyan('Feri') + color.gray(' version ') + color.cyan(localVersion))
 
-            return functions.upgradeAvailable().then(function(upgradeVersion) {
+            let upgradeVersion = await functions.upgradeAvailable()
 
+            if (upgradeVersion) {
                 let message = ''
 
-                if (upgradeVersion) {
-                    message += '\n' + color.gray('    Upgrade to version ')
-                    message += color.cyan(upgradeVersion) + color.gray(' -> ')
-                    message += color.green('npm install -g feri') + '\n'
-                }
+                message += '\n' + color.gray('    Upgrade to version ')
+                message += color.cyan(upgradeVersion) + color.gray(' -> ')
+                message += color.green('npm install -g feri') + '\n'
 
                 console.log(message)
-
-            })
-
+            } else {
+                console.log()
+            }
         } else if (inOptions(['--help', '-h'])) {
             shared.help = true
             //----------------------------
@@ -243,7 +213,6 @@ if (shared.cli) {
             console.log('    ' + color.gray('// republish from a specific source folder to a specific destination'))
             console.log('    ' + color.cyan('feri --republish /source /destination'))
             console.log()
-
         } else if (commandLineOptions.length > 0) {
             //-----------------------------
             // Command Line Options: Clean
@@ -341,109 +310,87 @@ if (shared.cli) {
             }
         } // if
 
-    }).then(function() {
         //-----------------
         // Load Timer: End
         //-----------------
         shared.stats.timeTo.load = functions.sharedStatsTimeTo(time)
 
         if (!shared.help) {
-
             if (config.option.init) {
-
-                return functions.initFeri()
-
+                await functions.initFeri()
             } else {
-
                 if (configFileExists) {
                     functions.log(color.gray(shared.language.display('message.usingConfigFile').replace('{file}', '"' + path.basename(configFile) + '"')), false)
                 }
 
-                let p = Promise.resolve()
+                //-------
+                // Clean
+                //-------
+                if (config.option.clean) {
+                    await clean.processClean()
+                }
 
-                p = p.then(function() {
+                //-------
+                // Build
+                //-------
+                if (config.option.build) {
+                    await build.processBuild()
+                }
 
-                    //-------
-                    // Clean
-                    //-------
-                    if (config.option.clean) {
-                        return clean.processClean()
+                //-------
+                // Watch
+                //-------
+                if (config.option.watch) {
+                    shared.suppressWatchEvents = true // suppress watch events until the title "Watching" is displayed
+
+                    await watch.processWatch()
+                }
+
+                //-------
+                // Stats
+                //-------
+                if (!config.option.stats) {
+                    functions.log('', false)
+                } else {
+                    functions.log(color.gray('\n' + shared.language.display('words.stats') + '\n'), false)
+
+                    if (shared.stats.timeTo.load > 0) {
+                        functions.log(color.gray(shared.language.display('paddedGroups.stats.load')) + ' ' + color.cyan(shared.stats.timeTo.load))
                     }
 
-                }).then(function() {
-
-                    //-------
-                    // Build
-                    //-------
-                    if (config.option.build) {
-                        return build.processBuild()
+                    if (shared.stats.timeTo.clean > 0) {
+                        functions.log(color.gray(shared.language.display('paddedGroups.stats.clean')) + ' ' + color.cyan(shared.stats.timeTo.clean))
                     }
 
-                }).then(function() {
-
-                    //-------
-                    // Watch
-                    //-------
-                    if (config.option.watch) {
-                        shared.suppressWatchEvents = true // suppress watch events until the title "Watching" is displayed
-
-                        return watch.processWatch()
+                    if (shared.stats.timeTo.build > 0) {
+                        functions.log(color.gray(shared.language.display('paddedGroups.stats.build')) + ' ' + color.cyan(shared.stats.timeTo.build))
                     }
 
-                }).then(function() {
-
-                    //-------
-                    // Stats
-                    //-------
-                    if (!config.option.stats) {
-                        functions.log('', false)
-                    } else {
-                        functions.log(color.gray('\n' + shared.language.display('words.stats') + '\n'), false)
-
-                        if (shared.stats.timeTo.load > 0) {
-                            functions.log(color.gray(shared.language.display('paddedGroups.stats.load')) + ' ' + color.cyan(shared.stats.timeTo.load))
-                        }
-
-                        if (shared.stats.timeTo.clean > 0) {
-                            functions.log(color.gray(shared.language.display('paddedGroups.stats.clean')) + ' ' + color.cyan(shared.stats.timeTo.clean))
-                        }
-
-                        if (shared.stats.timeTo.build > 0) {
-                            functions.log(color.gray(shared.language.display('paddedGroups.stats.build')) + ' ' + color.cyan(shared.stats.timeTo.build))
-                        }
-
-                        if (shared.stats.timeTo.watch > 0) {
-                            functions.log(color.gray(shared.language.display('paddedGroups.stats.watch')) + ' ' + color.cyan(shared.stats.timeTo.watch))
-                        }
-
-                        let totalTime = shared.stats.timeTo.load + shared.stats.timeTo.clean + shared.stats.timeTo.build + shared.stats.timeTo.watch
-
-                        totalTime = functions.mathRoundPlaces(totalTime, 3)
-
-                        functions.log('', false)
-                        functions.log(color.gray(shared.language.display('paddedGroups.stats.total')) + ' ' + color.cyan(totalTime) + color.gray(' ' + shared.language.display('words.seconds') + '\n'))
+                    if (shared.stats.timeTo.watch > 0) {
+                        functions.log(color.gray(shared.language.display('paddedGroups.stats.watch')) + ' ' + color.cyan(shared.stats.timeTo.watch))
                     }
 
-                }).then(function() {
+                    let totalTime = shared.stats.timeTo.load + shared.stats.timeTo.clean + shared.stats.timeTo.build + shared.stats.timeTo.watch
 
-                    //----------
-                    // Watching
-                    //----------
-                    if (config.option.watch) {
-                        functions.log(color.gray(shared.language.display('words.watching')) + '\n', false)
+                    totalTime = functions.mathRoundPlaces(totalTime, 3)
 
-                        shared.suppressWatchEvents = false
-                    }
+                    functions.log('', false)
+                    functions.log(color.gray(shared.language.display('paddedGroups.stats.total')) + ' ' + color.cyan(totalTime) + color.gray(' ' + shared.language.display('words.seconds') + '\n'))
+                }
 
-                })
+                //----------
+                // Watching
+                //----------
+                if (config.option.watch) {
+                    functions.log(color.gray(shared.language.display('words.watching')) + '\n', false)
 
-                return p
-
+                    shared.suppressWatchEvents = false
+                }
             } // if (config.option.init)
 
         } // if (!shared.help)
 
-    }).catch(function(err) {
+    } catch(err) {
 
         functions.logError(err)
 
@@ -454,7 +401,38 @@ if (shared.cli) {
         functions.log(color.gray(message), false)
         throw err
 
-    })
+    }
+} // commandLine
+
+const inOptions = function inOptions(search) {
+    /*
+    Find out if the options variable has any occurence of what we are searching for.
+    @param  {Object}  search  Array of strings like ['--clean', '-c']
+    */
+    for (let i in search) {
+        if (commandLineOptions.indexOf(search[i]) >= 0) {
+            return true
+        }
+    }
+
+    return false
+} // inOptions
+
+//-------------------------
+// Command Line or Require
+//-------------------------
+let commandLineOptions,
+    configFile,
+    configFileExists
+
+if (shared.cli) {
+    //--------------
+    // Command Line
+    //--------------
+    (async function() {
+        await commandLine()
+    })()
+
 } else {
     //---------
     // Require
