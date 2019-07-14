@@ -42,6 +42,7 @@ const shared = {
     language: { // language.base and language.loaded are a duplicate of each other to speed up our default english language usage
         base: { // The default language object that is a fallback in case a value in shared.language.loaded is not available.
             "error": {
+                "concatInclude"         : "Warning: Concat files can use includes but should never be an include themselves.",
                 "configPaths"           : "Source and destination should be unique and not nested within each other.",
                 "destPointsToSource"    : "Destination points to a source directory.",
                 "destProtected"         : "Destination should not be a protected location like {path}.",
