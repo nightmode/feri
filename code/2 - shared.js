@@ -107,6 +107,7 @@ const shared = {
         },
         loaded: { // The active language translation. Defaults to english but can be replaced by functions.setLanguage.
             "error": {
+                "concatInclude"         : "Warning: Concat files can use includes but should never be an include themselves.",
                 "configPaths"           : "Source and destination should be unique and not nested within each other.",
                 "destPointsToSource"    : "Destination points to a source directory.",
                 "destProtected"         : "Destination should not be a protected location like {path}.",
