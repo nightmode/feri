@@ -1452,7 +1452,7 @@ functions.objBuildWithIncludes = async function functions_objBuildWithIncludes(o
         // check includes to see if any of them are newer
         let includes = await includeFunction(obj.data, obj.source)
 
-        includesNewer = functions.includesNewer(includes, sourceExt, destTime)
+        includesNewer = await functions.includesNewer(includes, sourceExt, destTime)
     }
 
     if (obj.build || includesNewer) {
