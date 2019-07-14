@@ -87,19 +87,35 @@ watch.buildOne = async function watch_buildOne(fileName) {
     }
 
     if (checkConcatFiles && config.fileType.concat.enabled) {
+        if (ext !== '') {
+            ext = '.' + ext
+        }
+
         if (ext === 'concat') {
-            files = [fileName]
-        } else {
-            if (ext !== '') {
-                ext = '.' + ext
+            // files = [fileName]
+            ext = functions.fileExtension(functions.removeExt(fileName))
+        }
+
+        // .concat files can concat almost anything so check all name.ext.concat files
+        files = await functions.findFiles(config.path.source + '/**/*' + ext + '.concat')
+
+        if (files.length > 0) {
+            for (let x in files) {
+                let data = await functions.readFile(files[x])
+
+                let includeFiles = await functions.includePathsConcat(data, files[x])
+
+                // delete the concat file we were looking at since no include matched the fileName that was changed
+                if (includeFiles.indexOf(fileName) < 0) {
+                    delete files[x]
+                }
             }
 
-            // .concat files can concat almost anything so check all name.ext.concat files
-            files = await functions.findFiles(config.path.source + '/**/*' + ext + '.concat')
+            files = files.filter(Boolean) // remove empty items
+        }
 
-            if (!isInclude) {
-                files.unshift(fileName)
-            }
+        if (!isInclude) {
+            files.unshift(fileName)
         }
     }
 
