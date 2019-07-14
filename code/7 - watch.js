@@ -69,13 +69,13 @@ watch.buildOne = async function watch_buildOne(fileName) {
     */
     let ext = functions.fileExtension(fileName)
 
-    let checkConcatFiles = false
-
     let files = []
 
-    let isInclude = path.basename(fileName).substr(0, config.includePrefix.length) === config.includePrefix
+    let checkConcatFiles = false
 
-    if (isInclude) {
+    const isIncludePrefixFile = path.basename(fileName).substr(0, config.includePrefix.length) === config.includePrefix
+
+    if (isIncludePrefixFile) {
         if (config.includeFileTypes.indexOf(ext) >= 0) {
             // included file could be in any of this type of file so check them all
             files = await functions.findFiles(config.path.source + "/**/*." + ext)
@@ -83,43 +83,47 @@ watch.buildOne = async function watch_buildOne(fileName) {
             checkConcatFiles = true
         }
     } else {
+        // not an include prefixed file
+        files.push(fileName) // this file should be built
         checkConcatFiles = true
     }
 
     if (checkConcatFiles && config.fileType.concat.enabled) {
-        if (ext !== '') {
-            ext = '.' + ext
-        }
 
         if (ext === 'concat') {
-            // files = [fileName]
+            if (isIncludePrefixFile) {
+                // concat files that are also _ prefixed include files will not trigger a rebuild of their parent concat file when modified
+                // only a modification of the parent concat file or the modification of any non-concat included files would trigger a rebuild
+                // in other words, avoid creating files like _edgeCase.js.concat
+                functions.log(color.red(shared.language.display('error.concatInclude')))
+                functions.log(color.gray('https://github.com/nightmode/feri/blob/master/docs/extension-specific-info.md#twilight-zone') + '\n')
+            }
+
             ext = functions.fileExtension(functions.removeExt(fileName))
         }
 
-        // .concat files can concat almost anything so check all name.ext.concat files
-        files = await functions.findFiles(config.path.source + '/**/*' + ext + '.concat')
+        // .concat files can concat almost anything so check all fileName.ext.concat files
+        let possibleFiles = await functions.findFiles(config.path.source + '/**/*.' + ext + '.concat')
 
-        if (files.length > 0) {
-            for (let x in files) {
-                let data = await functions.readFile(files[x])
+        if (possibleFiles.length > 0) {
+            for (let x in possibleFiles) {
+                let data = await functions.readFile(possibleFiles[x])
 
-                let includeFiles = await functions.includePathsConcat(data, files[x])
+                let includeFiles = await functions.includePathsConcat(data, possibleFiles[x])
 
-                // delete the concat file we were looking at since no include matched the fileName that was changed
-                if (includeFiles.indexOf(fileName) < 0) {
-                    delete files[x]
+                if (includeFiles.indexOf(fileName) >= 0) {
+                    files.push(possibleFiles[x])
                 }
             }
-
-            files = files.filter(Boolean) // remove empty items
-        }
-
-        if (!isInclude) {
-            files.unshift(fileName)
         }
     }
 
     if (files.length > 0) {
+        files = files.filter(function(y) {
+            // filter out any _ prefixed includes
+            return path.basename(y).substr(0, config.includePrefix.length) !== config.includePrefix
+        })
+
         return build.processBuild(files, true)
     }
 } // buildOne
