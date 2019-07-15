@@ -6,17 +6,16 @@ An easy to use build tool for web files.
 
 Incrementally clean, build, and watch with little to no configuration required.
 
-## Quick Links
+## Navigation
 
 * [Features](#features)
-* [How It Works](#how-it-works)
+* [Core Concepts](#core-concepts)
   * [One Source, One Destination](#one-source-one-destination)
-  * [Extension Based](#extension-based)
+  * [File Extension Based](#file-extension-based)
   * [Include Files](#include-files)
-  * [Preconfigured](#preconfigured)
-* [Requirements](#requirements)
+  * [Customizable](#customizable)
 * [Install](#install)
-* [Upgrading](#upgrading)
+* [Upgrade](#upgrade)
 * [Command Line](#command-line)
 * [Quickstart](#quickstart)
 * [Custom Config File](#custom-config-file)
@@ -28,69 +27,78 @@ Incrementally clean, build, and watch with little to no configuration required.
 ## Features
 
 * Clean, Build, and Watch
-* Command Line / API
-* Compile and Minify
-  * Markdown
+* Command Line and API
 * Concatenate
-* Minify
-  * HTML
-  * CSS
-  * JavaScript
-* Optimize
-  * GIF
-  * JPG
-  * PNG
+* GIF, JPG, and PNG
+* HTML, CSS, and JavaScript
+* Linux, macOS, and Windows
+* Markdown
 * [Multilingual](docs/multilingual.md)
-* Multi-platform
-* Promise Based
-* Source Maps
 
-## How It Works
+## Core Concepts
 
 ### One Source, One Destination
 
-Feri is based on the simple premise of having one source and one destination directory.
+A single source directory which builds/compiles/minifies into a single destination directory.
 
-Since source and destination folders are linked, cleaning is a breeze. If a destination file does not have a source equivalent, remove the destination file.
+**Clean**: Destination files that do not have a source equivalent are removed during cleaning.
 
-Likewise, knowing which source files need to be built is simple. If a source file is missing a destination equivalent, build the source file. If a source file is newer than a destination equivalent, build the source file. If a destination file is newer, no build is needed.
+**Build**: If a source file is missing a destination equivalent, build the file. If a source file is newer than a destination equivalent, build the file.
 
-Watching is accomplished by running the appropriate clean or build function in reaction to file system changes. With some added smarts to know that a modified include file should trigger a check all files that may depend on the include for possible rebuilding.
+**Watch**: Run a clean or build task in reaction to file system changes.
 
-### Extension Based
+### File Extension Based
 
-Feri has a plan of action for each file type. CSS files get minified. JPG files are losslessly optimized, and so on. Each extension can have its own unique build process but all files of that type are treated equally. This greatly reduces the complexity when compared to systems which have you define every action to every file, over and over again.
+A single plan of action for each file type. CSS files are minified. JPG files are losslessly optimized. Markdown files are compiled, then minified, and so on. Each extension can have its own unique build process but all files of that type are treated equally.
 
 ### Include Files
-Any file prefixed with an underscore ( _ ) is considered an include file. Include files do not get directly published from source to destination but can be included in other files that do.
+Any file prefixed with an underscore ( _ ) is considered an include file. Include files do not get directly published from source to destination. Instead, include files contents are only published when a file that can leverage includes is published.
 
-### Preconfigured
+### Customizable
 
-Feri comes preconfigured with sensible defaults that get you up and running fast. For some, you'll never have to touch a thing. For others, you'll thrill at how easy it is to make a Feri config file with all your favorite settings. Others still will cackle with mad abandonment once they harness the unrestricted power of Feri's API to make their own wild creations!
-
-## Requirements
-
-[Node](https://nodejs.org/en/) version 11.0.0 or greater.
+Although capable as is, Feri is designed to be extremely customizable. Using the API or a custom config file allows you to not only change options but even replace core functions.
 
 ## Install
 
-Install Feri globally for command line use.
+Make sure you have [Node](https://nodejs.org/en/) version 11.0.0 or greater. Depending on your operating system, you may also need to install python or other tools used by dependencies that need to be compiled.
+
+Install globally as a command line tool, accessible from anywhere.
 
 ```
 npm install -g feri
 ```
 
-Install Feri locally in your project's [node_modules](https://nodejs.org/api/modules.html#modules_loading_from_node_modules_folders) folder for API use.
+Install locally in your project's [node_modules](https://nodejs.org/api/modules.html#modules_loading_from_node_modules_folders) folder for API use and/or command line use from within your project folder only.
 
 ```
 npm install feri
 ```
 
-## Upgrading
+## Upgrade
 
-### Upgrading from Feri 3.x
+You can upgrade to the latest version of Feri by re-running the global or local install commands.
 
-...
+If you are unsure if an upgrade is available, run the following.
+
+```
+feri --version
+```
+
+The above command will provide additional upgrade guidance if a newer version is available. Otherwise, it will just list the currently installed version.
+
+### Upgrade from Version 3
+
+Two potentially critical things to be aware of.
+
+* The dependency `livereload` has been replaced by a new extension server.
+* Many dependencies have been removed.
+    * If you still want to work with CoffeeScript, EJS, Jade, JSX, Less, Pug, Sass, and/or Stylus, you'll need to create your own custom build task.
+
+Custom config files using the boolean `feri.config.option.livereload` should be changed to `feri.config.option.extensions`.
+
+API use for anything `livereload` related should be changed to a `extension` or `extensions` equivalent depending on where you are in the plumbing.
+
+Command line options like `--livereload` and `--nolivereload` have new equivalents `--extensions` and `--noextensions`.
 
 ## Command Line
 

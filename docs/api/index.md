@@ -39,7 +39,7 @@ const feri = {
 module.exports = feri
 ```
 
-The action object exists solely to enable cool statements like `feri.action.clean()` instead of `feri.clean.processClean()`. Both will accomplish the same thing so feel free to use whichever style you prefer.
+The action object exists solely to enable cool statements like `feri.action.clean()` instead of `feri.clean.processClean()`. Both will accomplish the same thing so use whichever style you prefer.
 
 Now that we know about all the modules being exported, let's go over each in a bit more detail.
 
