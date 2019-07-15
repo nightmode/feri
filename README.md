@@ -17,12 +17,14 @@ Incrementally clean, build, and watch with little to no configuration required.
 * [Install](#install)
 * [Upgrade](#upgrade)
 * [Command Line](#command-line)
-* [Quickstart](#quickstart)
-* [Custom Config File](#custom-config-file)
-* [Extension Specific Information](#extension-specific-information)
-* [Edge Cases](#edge-cases)
-* [API Documentation](#api-documentation)
-* [Contribute](#contribute)
+* [Quickstart Guide](#quickstart-guide)
+* Advanced
+  * ...
+  * [Custom Config File](#custom-config-file)
+  * [Extension Specific Information](#extension-specific-information)
+  * [Edge Cases](#edge-cases)
+  * [API](#api)
+* [Support](#contribute)
 
 ## Features
 
@@ -62,13 +64,13 @@ Although capable as is, Feri is designed to be extremely customizable. Using the
 
 Make sure you have [Node](https://nodejs.org/en/) version 11.0.0 or greater. Depending on your operating system, you may also need to install python or other tools used by dependencies that need to be compiled.
 
-Install globally as a command line tool, accessible from anywhere.
+Install Feri globally as a command line tool, accessible from anywhere.
 
 ```
 npm install -g feri
 ```
 
-Install locally in your project's [node_modules](https://nodejs.org/api/modules.html#modules_loading_from_node_modules_folders) folder for API use and/or command line use from within your project folder only.
+Install Feri locally in your project's [node_modules](https://nodejs.org/api/modules.html#modules_loading_from_node_modules_folders) folder for API use and/or command line use from within your project only.
 
 ```
 npm install feri
@@ -76,15 +78,21 @@ npm install feri
 
 ## Upgrade
 
-You can upgrade to the latest version of Feri by re-running the global or local install commands.
+You can always upgrade to the latest version of Feri by re-running the global or local install commands.
 
-If you are unsure if an upgrade is available, run the following.
+If you are unsure if an upgrade is available, run the following for a global install.
 
 ```
 feri --version
 ```
 
-The above command will provide additional upgrade guidance if a newer version is available. Otherwise, it will just list the currently installed version.
+Or the following for a local install.
+
+```
+npx feri --version
+```
+
+The above commands will provide additional upgrade information if a newer version is available. Otherwise, just the currently installed version will be listed.
 
 ### Upgrade from Version 3
 
@@ -96,21 +104,27 @@ Two potentially critical things to be aware of.
 
 Custom config files using the boolean `feri.config.option.livereload` should be changed to `feri.config.option.extensions`.
 
-API use for anything `livereload` related should be changed to a `extension` or `extensions` equivalent depending on where you are in the plumbing.
+API use for anything `livereload` related should be changed to an `extension` or `extensions` equivalent depending on where you are in the plumbing.
 
-Command line options like `--livereload` and `--nolivereload` have new equivalents `--extensions` and `--noextensions`.
+Command line options like `--livereload` and `--nolivereload` have new equivalents like `--extensions` and `--noextensions`.
 
 ## Command Line
 
-Assuming Feri is installed globally, you can see what command line options are available with:
+If installed globally, you can see what command line options are available with:
 
 ```
 feri --help
 ```
 
-Expanded information is available in the [command line](docs/command-line.md) documentation.
+Or locally with:
 
-## Quickstart
+```
+npx feri --help
+```
+
+More information is available in the [command line](docs/command-line.md) documentation.
+
+## Quickstart Guide
 
 Assuming Feri is installed globally, the quickest way to start a new project is to use the init command.
 
@@ -118,7 +132,19 @@ Assuming Feri is installed globally, the quickest way to start a new project is 
 feri --init
 ```
 
-This will create your `source` and `dest` folders along with a custom config file. To make sure everything works, place some files in your source folder. Now run `feri` from the directory where you can see the source and dest folders. Check the dest folder and you should see your built / optimized files.
+This will create a `source` and `dest` folder along with a custom config file. To make sure everything works, place some files in your source folder. Now run `feri` from the directory where you can see the source and dest folders. After a short time, your published files should appear in the dest folder.
+
+You'll need to run `feri` everytime you want to clean and/or build new files. Once you are comfortable with that pattern, try running the following command instead.
+
+```
+feri --watch
+```
+
+Now Feri will stay active, watching your source folder for changes and automatically run the appropriate clean or build tasks depending on your activity in the source folder. Neat!
+
+## Advanced
+
+...
 
 ## Custom Config File
 
@@ -149,19 +175,21 @@ Additional [extension specific information](docs/extension-specific-info.md) is 
 
 An index murder mystery!? Find out more in this melodramatic issue of [Edge Cases](docs/edge-cases.md).
 
-## API Documentation
+## API
 
-Learn how to leverage Feri's favorite functions in the full [API documentation](docs/api/index.md).
+Learn how to leverage Feri's favorite functions in the full [API](docs/api/index.md).
 
-## Contribute
+## Support
 
-Looking to contribute? Here are some ideas.
+Help [support this project](https://www.patreon.com/nightmode) for as little as $1 a month on Patreon. Help me wake up every morning with a smile on my face because you went the extra mile for someone who likes to do the same.
 
- * Tell your friends about the build tool with the cute logo, Feri.
+In addition to Patreon, here are some other ways you can help support this project.
+
  * [Translate Feri](docs/multilingual.md#translation-guide) into other languages. tlhIngan maH!
  * [Report issues on GitHub](https://github.com/nightmode/feri/issues)
+ * Social media, meetups, fan art, papercraft, or nearly anything else you can share.
  * Pull reqrests to improv spellng in documantations!
 
 ## License
 
-MIT © [Kai Nightmode](https://forestmist.org)
+MIT © [Kai Nightmode](https://twitter.com/kai_nightmode)

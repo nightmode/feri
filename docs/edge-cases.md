@@ -14,4 +14,4 @@ So, if your files are a fighting, you now know why and how to break 'em up!
 
 ## License
 
-MIT © [Kai Nightmode](https://forestmist.org)
+MIT © [Kai Nightmode](https://twitter.com/kai_nightmode)

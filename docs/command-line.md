@@ -4,6 +4,8 @@ Once Feri is installed globally you can call her from any location as `feri`.
 
 Feri will clean, build, and display statistics by default. She will also assume your source folder is "./source" and your destination folder is "./dest" unless you tell her otherwise.
 
+## Navigation
+
 * [Usage](#usage)
 * [Options](#options)
 * [Source](#source)
@@ -96,4 +98,4 @@ feri --republish /path/to/source /path/to/destination
 
 ## License
 
-MIT © [Kai Nightmode](https://forestmist.org)
+MIT © [Kai Nightmode](https://twitter.com/kai_nightmode)

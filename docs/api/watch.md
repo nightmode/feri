@@ -173,4 +173,4 @@ Watch source directory for changes and kick off the appropriate response tasks a
 
 ## License
 
-MIT © [Kai Nightmode](https://forestmist.org)
+MIT © [Kai Nightmode](https://twitter.com/kai_nightmode)

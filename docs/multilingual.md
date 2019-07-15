@@ -209,4 +209,4 @@ If you have not already, try testing your translation with different command lin
 
 ## License
 
-MIT © [Kai Nightmode](https://forestmist.org)
+MIT © [Kai Nightmode](https://twitter.com/kai_nightmode)

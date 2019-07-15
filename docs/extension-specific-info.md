@@ -114,4 +114,4 @@ Note: Feri will only generate a file like `index.html.gz` when `index.html` need
 
 ## License
 
-MIT © [Kai Nightmode](https://forestmist.org)
+MIT © [Kai Nightmode](https://twitter.com/kai_nightmode)

@@ -240,4 +240,4 @@ Build a map file and if needed, also make a br and/or gz version of said map fil
 
 ## License
 
-MIT © [Kai Nightmode](https://forestmist.org)
+MIT © [Kai Nightmode](https://twitter.com/kai_nightmode)

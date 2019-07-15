@@ -227,4 +227,4 @@ Iterate with `(++shared.uniqueNumber)` or reset back to 0.
 
 ## License
 
-MIT © [Kai Nightmode](https://forestmist.org)
+MIT © [Kai Nightmode](https://twitter.com/kai_nightmode)

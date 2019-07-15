@@ -557,4 +557,4 @@ config.thirdParty.markdownIt = {
 
 ## License
 
-MIT © [Kai Nightmode](https://forestmist.org)
+MIT © [Kai Nightmode](https://twitter.com/kai_nightmode)

@@ -83,4 +83,4 @@ For more information, see the [Watch](watch.md) documentation.
 
 ## License
 
-MIT © [Kai Nightmode](https://forestmist.org)
+MIT © [Kai Nightmode](https://twitter.com/kai_nightmode)
