@@ -128,6 +128,23 @@ watch.buildOne = async function watch_buildOne(fileName) {
     }
 } // buildOne
 
+watch.checkExtensionClients = function watch_checkExtensionClients() {
+    /*
+    Ping clients to make sure they are still connected. Terminate clients which have not responded to three or more pings.
+    */
+    extensionServer.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN) {
+            if (client._pingAttempt >= 3) {
+                // disconnected client
+                client.terminate()
+            } else {
+                client._pingAttempt += 1
+                client.send('ping')
+            }
+        }
+    })
+} // checkExtensionClients
+
 watch.extensionServer = async function watch_extensionServer() {
     /*
     Extension server for clients.
@@ -291,23 +308,6 @@ watch.stop = function watch_stop(stopSource, stopDest, stopExtensions) {
         }
     })
 } // stop
-
-watch.checkExtensionClients = function watch_checkExtensionClients() {
-    /*
-    Ping clients to make sure they are still connected. Terminate clients which have not responded to three or more pings.
-    */
-    extensionServer.clients.forEach(function each(client) {
-        if (client.readyState === WebSocket.OPEN) {
-            if (client._pingAttempt >= 3) {
-                // disconnected client
-                client.terminate()
-            } else {
-                client._pingAttempt += 1
-                client.send('ping')
-            }
-        }
-    })
-} // checkExtensionClients
 
 watch.updateExtensionServer = async function watch_updateExtensionServer(now) {
     /*
