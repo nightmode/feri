@@ -1,6 +1,6 @@
-# Feri - API Documentation
+# Feri - API
 
-Welcome to Feri Land! A magical place where you get access to all the wonderful tools that Feri uses behind the scenes. If you can think it, you can create it!
+Feri is designed to be extremely customizable. That means you get full access to the same API she uses herself behind the scenes. Call on existing functions, create your own, or even replace core functionality with your own custom creation.
 
 ## Modules
 
@@ -17,9 +17,9 @@ Assuming Feri is installed locally in your project's node_modules folder, you ca
 
     const feri = require('feri')
 
-## Lay of the Land
+## Overview
 
-When you require Feri, you are actually requiring her [code/1 - main.js](../../code/1%20-%20main.js) file. Inside this file you'll notice that Feri is sharing every module she uses herself, plus a convenience object called action.
+When you require Feri, you are actually requiring her [code/1 - main.js](../../../code/1%20-%20main.js) file. Inside this file you'll notice that Feri is sharing every module she uses herself, plus a convenience object called action.
 
 ```js
 const feri = {
@@ -53,7 +53,7 @@ For more information, see the [Shared](shared.md) documentation.
 
 ### Config
 
-Config holds all the variables that may be set by the command line, a [custom config file](../../README.md#custom-config-file) for the command line, or programatically.
+Config holds all the variables that may be set by the command line, a [custom config file](../../../README.md#custom-config-file) for the command line, or programatically.
 
 For more information, see the [Config](config.md) documentation.
 
@@ -77,7 +77,7 @@ For more information, see the [Build](build.md) documentation.
 
 ### Watch
 
-Watch is all about watching the source and destination folders for changes, and initiating the proper clean or build tasks in response to file system events.
+Watch is all about watching the source and destination folders for changes. Initiating the appropriate clean or build tasks in response to file system events.
 
 For more information, see the [Watch](watch.md) documentation.
 

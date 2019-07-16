@@ -2,17 +2,19 @@
 
 Watch is all about watching the source and destination folders for changes. Initiating the proper clean or build tasks in response to file system events.
 
-The watch module lives in the file [code/7 - watch.js](../../code/7%20-%20watch.js)
+The watch module can be found inside the file [code/7 - watch.js](../../../code/7%20-%20watch.js)
 
 ## Watch Object
 
 * [buildOne](#watchbuildone)
+* [checkExtensionClients](#watchcheckextensionclients)
 * [emitterDest](#watchemitterdest)
 * [emitterSource](#watchemittersource)
+* [extensionServer](#watchextensionServer)
 * [notTooRecent](#watchnottoorecent)
 * [processWatch](#watchprocesswatch)
 * [stop](#watchstop)
-* [updateLiveReloadServer](#watchupdatelivereloadserver)
+* [updateExtensionServer](#watchupdateextensionserver)
 * [watchDest](#watchwatchdest)
 * [watchSource](#watchwatchsource)
 
@@ -26,6 +28,12 @@ Figure out which files should be processed after receiving an add or change even
 @param   {String}   fileName  File path like '/source/js/combined.js'
 @return  {Promise}
 ```
+
+## watch.checkExtensionClients
+
+Type: `function`
+
+Ping clients to make sure they are still connected. Terminate clients which have not responded to three or more pings.
 
 ## watch.emitterDest
 
@@ -87,7 +95,7 @@ Type: `function`
 Extension server for clients.
 
 ```
-@return  {Undefined}
+@return  {Promise}
 ```
 
 ## watch.notTooRecent
@@ -121,7 +129,7 @@ config.option.livereload = true // watch the destination folder for livereload
 
 return watch.processWatch().then(function() {
     // we are now watching
-}
+})
 ```
 
 Note: This function is also aliased as `feri.action.watch`.
@@ -138,15 +146,15 @@ Stop watching the source and/or destination folders. Optionally stop the LiveRel
 @param  {Boolean}  [stopLivereload]  Optional and defaults to true. If true, stop the LiveReload server.
 ```
 
-## watch.updateLiveReloadServer
+## watch.updateExtensionServer
 
 Type: `function`
 
-Update the LiveReload server with a list of changed files.
+Update the extension server with a list of changed files.
 
 ```
 @param   {Boolean}  now  True meaning we have already waited 300 ms for events to settle.
-@return  {Promise}       Promise that returns true if everything is ok otherwise an error.
+@return  {Promise}
 ```
 
 ## watch.watchDest

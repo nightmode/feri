@@ -2,7 +2,7 @@
 
 Clean is the module dedicated to cleaning destination files.
 
-The clean module lives in the file [code/5 - clean.js](../../code/5%20-%20clean.js)
+The clean module can be found inside the file [code/5 - clean.js](../../../code/5%20-%20clean.js)
 
 ## Clean Object
 

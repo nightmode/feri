@@ -1,12 +1,16 @@
 # Feri - Config
 
-Config holds all the variables that may be set by the command line, a [custom config file](../../README.md#custom-config-file) for the command line, or programatically.
+Config holds all the variables that may be set by the command line, a [custom config file](../custom-config-file.md) for command line use, or programatically.
 
-The clean module lives in the file [code/3 - config.js](../../code/3%20-%20config.js)
+The config module can be found inside the file [code/3 - config.js](../../../code/3%20-%20config.js)
 
 ## Config Object
 
 * [concurLimit](#configconcurlimit)
+* [extension](#configextension)
+  * [defaultDocument](#configextensiondefaultdocument)
+  * [fileTypes](#configextensionfiletypes)
+  * [port](#configextensionport)
 * [fileType](#configfiletype)
   * [concat](#configfiletypeconcat)
   * [css](#configfiletypecss)
@@ -20,7 +24,6 @@ The clean module lives in the file [code/3 - config.js](../../code/3%20-%20confi
     * [source](#configglobwatchsource)
     * [dest](#configglobwatchdest)
 * [language](#configlanguage)
-* [livereloadFileTypes](#configlivereloadfiletypes)
 * [map](#configmap)
   * [destToSourceExt](#configmapdesttosourceext)
   * [sourceToDestTasks](#configmapsourcetodesttasks)
@@ -29,7 +32,8 @@ The clean module lives in the file [code/3 - config.js](../../code/3%20-%20confi
   * [clean](#configoptionclean)
   * [debug](#configoptiondebug)
   * [forcebuild](#configoptionforcebuild)
-  * [livereload](#configoptionlivereload)
+  * [init](#configoptioninit)
+  * [extensions](#configoptionextensions)
   * [republish](#configoptionrepublish)
   * [stats](#configoptionstats)
   * [watch](#configoptionwatch)
@@ -42,7 +46,6 @@ The clean module lives in the file [code/3 - config.js](../../code/3%20-%20confi
   * [chokidar](#configthirdpartychokidar)
   * [cleanCss](#configthirdpartycleancss)
   * [htmlMinifier](#configthirdpartyhtmlminifier)
-  * [livereload](#configthirdpartylivereload)
   * [markdownIt](#configthirdpartymarkdownit)
 
 ## config.concurLimit
@@ -54,6 +57,36 @@ Controls the number of build or clean processes that can be run simultaneously. 
 ```js
 config.concurLimit = 1
 ```
+
+## config.extension
+
+Type: `object`
+
+Parent container for web browser extension support.
+
+## config.extension.defaultDocument
+
+Type: `string`
+
+Defaults to `index.html`.
+
+Will be passed once to each extension client upon connection.
+
+## config.extension.fileTypes
+
+Type: `array`
+
+Defaults to `['css', 'html', 'js']`.
+
+Only inform extension clients about changes to these file types.
+
+## config.extension.port
+
+Type: `number`
+
+Defaults to `4000`.
+
+Websocket server port for extension clients.
 
 ## config.fileType
 
@@ -208,23 +241,13 @@ config.glob.watch.dest = '**/*.css'
 
 Type: `string`
 
-Specify a language Feri that should use. The language should map to a json file like [language/en-us.json](../../language/en-us.json) in the language directory.
+Specify a language Feri that should use. The language should map to a json file like [language/en-us.json](../../../language/en-us.json) in the language directory.
 
 ```js
 config.language = 'en-us'
 ```
 
-Note: API users should use [functions.setLanguage](functions.md#functionssetlanguage) to change both this variable and [share.language.loaded](share.md#sharedlanguageloaded) at the same time. Command line users only need to set `config.langauge` in a [custom config file](../../README.md#custom-config-file).
-
-## config.livereloadFileTypes
-
-Type: `array`
-
-Only refresh the livereload client if one of these file types has been changed.
-
-```js
-config.livereloadFileTypes = ['css', 'html', 'js', 'php']
-```
+Note: API users should use [functions.setLanguage](functions.md#functionssetlanguage) to change both this variable and [share.language.loaded](share.md#sharedlanguageloaded) at the same time. Command line users only need to set `config.langauge` in a [custom config file](../custom-config-file.md).
 
 ## config.map
 
@@ -379,15 +402,21 @@ Overwrite destination files without checking their modified times to see if they
 config.option.forcebuild = false
 ```
 
-## config.option.livereload
+## config.option.init
 
 Type: `boolean`
 
-Monitor the destination directory when watching in order to update Feri's built-in LiveReload server. Defaults to `false`.
+Defaults to `false`.
 
-```js
-config.option.livereload = false
-```
+Create a `./source` and `./dest` folder. Also create a [custom config file](../custom-config-file.md) if no existing custom config files are found.
+
+## config.option.extensions
+
+Type: `boolean`
+
+Defaults to `false`.
+
+Run a WebSocket server for web browser extension clients.
 
 ## config.option.republish
 
@@ -413,7 +442,7 @@ config.option.stats = true
 
 Type: `boolean`
 
-Watch the source directory and optionally the destination directory if `config.option.livereload` is `true`. Clean and build as needed. Defaults to `false` for command line users.
+Watch the source directory and optionally the destination directory if `config.option.extensions` is `true`. Clean and build as needed. Defaults to `false` for command line users.
 
 ```js
 config.option.watch = false
@@ -551,7 +580,15 @@ Options for [markdown-it](https://www.npmjs.com/package/markdown-it). Used by [b
 
 ```js
 config.thirdParty.markdownIt = {
-    'linkify': true
+    'breaks': false,
+    'highlight': null,
+    'html': false,
+    'langPrefix': 'language-',
+    'linkify': true,
+    'maxNesting': 100,
+    'quotes': '“”‘’',
+    'typographer': false,
+    'xhtmlOut': false
 }
 ```
 

@@ -2,7 +2,7 @@
 
 Shared is all the neat things we may want to share across modules. Things that don't really belong in the [config](config.md) module like caches, non-user configurable variables, computed values, and more.
 
-The shared module lives in the file [code/2 - shared.js](../../code/2%20-%20shared.js)
+The shared module can be found inside the file [code/2 - shared.js](../../../code/2%20-%20shared.js)
 
 ## Shared Object
 
@@ -12,6 +12,10 @@ The shared module lives in the file [code/2 - shared.js](../../code/2%20-%20shar
   * [includesNewer](#sharedcacheincludesnewer)
   * [missingMapBuild](#sharedcachemissingmapbuild)
 * [cli](#sharedcli)
+* [extension](#sharedextension)
+  * [calmTimer](#sharedextensioncalmtimer)
+  * [changedFiles](#sharedextensionchangedfiles)
+* [global](#sharedglobal)
 * [help](#sharedhelp)
 * [language](#sharedlanguage)
   * [base](#sharedlanguagebase)
@@ -76,6 +80,31 @@ Type: `boolean`
 Running as a command line tool if `true`.
 
 Called as a require if `false`.
+
+## shared.extension
+
+Type: `object`
+
+Parent container for extension (server) related items.
+
+## shared.extension.calmTimer
+
+Type: `null` or `object`
+
+Variable used by [watch.updateExtensionServer](watch.md#watchupdateextensionserver) to update 300 ms after the last destination file change.
+
+## shared.extension.changedFiles
+
+Type: `array`
+
+Keeps track of which destination files were changed in order to relay those to the extension server.
+
+
+## shared.global
+
+Type: `boolean`
+
+Feri is installed globally if true. Locally if false.
 
 ## shared.help
 

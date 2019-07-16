@@ -18,13 +18,13 @@ Incrementally clean, build, and watch with little to no configuration required.
 * [Upgrade](#upgrade)
 * [Command Line](#command-line)
 * [Quickstart Guide](#quickstart-guide)
-* Advanced
-  * ...
+* [Advanced](#advanced)
   * [Custom Config File](#custom-config-file)
-  * [Extension Specific Information](#extension-specific-information)
+  * [Custom Build Task](#custom-build-task)
+  * [Unique File Types](#unique-file-types)
   * [Edge Cases](#edge-cases)
   * [API](#api)
-* [Support](#contribute)
+* [Support](#support)
 
 ## Features
 
@@ -132,7 +132,7 @@ Assuming Feri is installed globally, the quickest way to start a new project is 
 feri --init
 ```
 
-This will create a `source` and `dest` folder along with a custom config file. To make sure everything works, place some files in your source folder. Now run `feri` from the directory where you can see the source and dest folders. After a short time, your published files should appear in the dest folder.
+This will create a `source` and `dest` folder along with a custom config file. To make sure everything works, place some files in the source folder. Now run `feri` from the directory where you can see the source and dest folders. After a short time, your published files should appear in the dest folder.
 
 You'll need to run `feri` everytime you want to clean and/or build new files. Once you are comfortable with that pattern, try running the following command instead.
 
@@ -144,40 +144,27 @@ Now Feri will stay active, watching your source folder for changes and automatic
 
 ## Advanced
 
-...
+Advanced topics for those that like to tinker.
 
-## Custom Config File
+### Custom Config File
 
-If you are using the command line, Feri will look for a file called `feri.js` or `feri-config.js` in the directory you call her from. This file can specify not only which command line options you want enabled, but also control any [config API](docs/api/config.md) settings.
+Create a [custom config file](docs/advanced/custom-config-file.md) to set your preferred options, add custom build tasks, or leverage the API.
 
-For example, Feri will clean and build by default but what if you want her to watch too? You could type `feri --watch` every time you want to work on your project, but where is the fun in that? Activate your inner awesomeness and setup a custom config file like:
+### Custom Build Task
 
-```js
-module.exports = function(feri) {
-    // clean and build are enabled by default
-    feri.config.option.watch = true
-}
-```
+Feri thinks you should be able to grab nearly any npm module and make a [custom build task](docs/advanced/custom-build-task.md) out of it without too much effort. Are `.snazzy` files the latest way to write CSS? No need to wait for a plugin. Use the latest tech, right away.
 
-Now you can type `feri` and the custom config file will take of the rest! Even better, command line switches still take precedence. That means typing `feri --nowatch` will temporarily override the config file setting.
+### Unique File Types
 
-Protip: All [API documentation](docs/api/index.md) features are available to custom config files.
+Feri comes with built-in support for [unique file types](docs/advanced/unique-file-types.md) such as `concat`, `br`, and `gz`.
 
-## Custom Build Tasks
+### Edge Cases
 
-Feri thinks you should be able to grab nearly any npm module and make a [custom build task](docs/custom-build-task.md) out of it without too much effort. Are `.snazzy` files the new CSS hotness? No need to wait for a plugin, you can play with new tech right away.
+Some [edge cases](docs/advanced/edge-cases.md) you may want to be aware of.
 
-## Extension Specific Information
+### API
 
-Additional [extension specific information](docs/extension-specific-info.md) is available for `concat`, `br`, and `gz` files.
-
-## Edge Cases
-
-An index murder mystery!? Find out more in this melodramatic issue of [Edge Cases](docs/edge-cases.md).
-
-## API
-
-Learn how to leverage Feri's favorite functions in the full [API](docs/api/index.md).
+Leverage or even replace anything behind the scenes with full access to the [API](docs/advanced/api/index.md).
 
 ## Support
 
@@ -187,7 +174,7 @@ In addition to Patreon, here are some other ways you can help support this proje
 
  * [Translate Feri](docs/multilingual.md#translation-guide) into other languages. tlhIngan maH!
  * [Report issues on GitHub](https://github.com/nightmode/feri/issues)
- * Social media, meetups, fan art, papercraft, or nearly anything else you can share.
+ * Social media, meetups, fan art, papercraft, or any other way you like sharing enthusiasm.
  * Pull reqrests to improv spellng in documantations!
 
 ## License

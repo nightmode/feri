@@ -2,7 +2,7 @@
 
 Functions is the module that many other modules depend on. A treasure trove of helpers.
 
-The functions module lives in the file [code/4 - functions.js](../../code/4%20-%20functions.js)
+The functions module can be found inside the file [code/4 - functions.js](../../../code/4%20-%20functions.js)
 
 ## Functions Object
 
@@ -246,7 +246,7 @@ Return glob options updated to ignore include prefixed files.
 
 Type: `function`
 
-If needed, create the source and destination folders along with a [custom config file](../../README.md#custom-config-file) in the present working directory.
+If needed, create the source and destination folders along with a [custom config file](../custom-config-file.md) in the present working directory.
 
 ```
 @return  {Promise}

@@ -1,8 +1,8 @@
 # Feri - Command Line
 
-Once Feri is installed globally you can call her from any location as `feri`.
+If installed globally, you can run the command `feri` from any directory. If installed locally, you'll need to run `npx feri` from your project folder.
 
-Feri will clean, build, and display statistics by default. She will also assume your source folder is "./source" and your destination folder is "./dest" unless you tell her otherwise.
+Feri will clean, build, and display statistics by default. She will also assume your source folder is "./source" and your destination folder is "./dest" unless you specify otherwise.
 
 ## Navigation
 
@@ -62,7 +62,7 @@ Special options can override other options, do multiple things at once, or are o
 -h, --help           help
 ```
 
-Options like `--all`, `--forcebuild`, and `--republish` will override any other settings.
+Special options like `--all`, `--forcebuild`, and `--republish` will override common and negating options.
 
 ## Source
 
