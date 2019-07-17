@@ -50,7 +50,7 @@ Negating options override their counterparts. For example, `feri --clean --nocle
 
 ### Special Options
 
-Special options can override other options, do multiple things at once, or are otherwise uniquely awesome.
+Special options can override other options, do multiple things at once, or are otherwise unique.
 
 ```
 -a, --all            clean, build, watch, extensions, stats

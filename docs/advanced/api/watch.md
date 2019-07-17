@@ -125,7 +125,7 @@ Example
 
 ```js
 config.option.watch = true      // watch the source folder
-config.option.livereload = true // watch the destination folder for livereload
+config.option.extensions = true // watch the destination folder for the extension server
 
 return watch.processWatch().then(function() {
     // we are now watching
@@ -138,12 +138,12 @@ Note: This function is also aliased as `feri.action.watch`.
 
 Type: `function`
 
-Stop watching the source and/or destination folders. Optionally stop the LiveReload server.
+Stop watching the source and/or destination folders. Optionally stop the extensions server.
 
 ```
 @param  {Boolean}  [stopSource]      Optional and defaults to true. If true, stop watching the source folder.
 @param  {Boolean}  [stopDest]        Optional and defaults to true. If true, stop watching the destination folder.
-@param  {Boolean}  [stopLivereload]  Optional and defaults to true. If true, stop the LiveReload server.
+@param  {Boolean}  [stopExtensions]  Optional and defaults to true. If true, stop the extensions server.
 ```
 
 ## watch.updateExtensionServer
@@ -161,7 +161,7 @@ Update the extension server with a list of changed files.
 
 Type: `function`
 
-Watch the destination directory for changes in order to update our LiveReload server as needed.
+Watch the destination directory for changes in order to update the extensions server as needed.
 
 ```
 @param   {String,Object}  [files]  Optional. Glob search string for watching destination files like '*.css' or array of full paths like ['/dest/fonts.css', '/dest/grid.css']

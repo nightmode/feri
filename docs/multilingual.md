@@ -38,7 +38,7 @@ In addition to US English, Feri stores translations inside her [language](https:
 
 To make a new translation, start by copying `en-us.json` to a new file. If you are not sure which language or country abbreviation to use, feel free to name your file `new.json` or similar.
 
-Now that you have your own file to work in, let's go over the hierarchy of a typical language file in more detail.
+Now that you have your own file to work in, let's go over the hierarchy of a language file in more detail.
 
 ### Error
 
@@ -60,7 +60,7 @@ This section contains various error messages in sentence format.
 }
 ```
 
-One thing you may notice is that certain messages have special placeholders like `{software}`. These placeholders get replaced at run time, so a string like:
+Certain messages have special placeholders like `{software}`. These placeholders get replaced at run time, so a string like:
 
 ```
 Halted {software} version {version} due to errors.
@@ -176,7 +176,7 @@ Words get used in all sorts of places. Let's go over examples for each to unders
 /dest/index.html change
 ```
 
-**Done** is displayed after a clean or build phase if no tasks needed to be run.
+**Done** is displayed after a clean or build phase if cleaning or building was not needed.
 
 **Removed** is used throughout Feri to indicate that a file was removed. For example...
 

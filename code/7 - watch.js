@@ -343,7 +343,7 @@ watch.updateExtensionServer = async function watch_updateExtensionServer(now) {
 
 watch.watchDest = async function watch_watchDest(files) {
     /*
-    Watch the destination directory for changes in order to update our extensions server as needed.
+    Watch the destination directory for changes in order to update the extensions server as needed.
     @param   {String,Object}  [files]  Optional. Glob search string for watching destination files like '*.css' or array of full paths like ['/dest/fonts.css', '/dest/grid.css']
     @return  {Promise}
     */

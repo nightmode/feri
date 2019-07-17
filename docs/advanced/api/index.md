@@ -1,6 +1,6 @@
 # Feri - API
 
-Feri is designed to be extremely customizable. That means you get full access to the same API she uses herself behind the scenes. Call on existing functions, create your own, or even replace core functionality with your own custom creation.
+Feri is designed to be extremely customizable. That means you get full access to the same API she uses herself. Call on existing functions, create your own, or even replace core functionality.
 
 ## Modules
 
@@ -13,7 +13,7 @@ Feri is designed to be extremely customizable. That means you get full access to
 
 ## Require
 
-Assuming Feri is installed locally in your project's node_modules folder, you can require her with the following:
+Assuming Feri is installed locally in your project's `node_modules` folder, you can require her with the following:
 
     const feri = require('feri')
 
@@ -53,31 +53,31 @@ For more information, see the [Shared](shared.md) documentation.
 
 ### Config
 
-Config holds all the variables that may be set by the command line, a [custom config file](../../../README.md#custom-config-file) for the command line, or programatically.
+Config holds all the variables that may be set by the command line, set by a [custom config file](../custom-config-file.md) for the command line, or set programatically.
 
 For more information, see the [Config](config.md) documentation.
 
 ### Functions
 
-Functions is the module that many other modules depend on. A treasure trove of helpers.
+Functions is a module that many other modules depend on. A treasure trove of helpers.
 
 For more information, see the [Functions](functions.md) documentation.
 
 ### Clean
 
-Clean is the module dedicated to cleaning destination files.
+Clean is a module dedicated to cleaning destination files.
 
 For more information, see the [Clean](clean.md) documentation.
 
 ### Build
 
-Build is the module dedicated to building destination files.
+Build is a module dedicated to building destination files.
 
 For more information, see the [Build](build.md) documentation.
 
 ### Watch
 
-Watch is all about watching the source and destination folders for changes. Initiating the appropriate clean or build tasks in response to file system events.
+Watch is all about watching source and destination folders for changes. Initiating the appropriate clean or build tasks in response to file system events.
 
 For more information, see the [Watch](watch.md) documentation.
 

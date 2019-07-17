@@ -21,9 +21,6 @@ The shared module can be found inside the file [code/2 - shared.js](../../../cod
   * [base](#sharedlanguagebase)
   * [display](#sharedlanguagedisplay)
   * [loaded](#sharedlanguageloaded)
-* [livereload](#sharedlivereload)
-  * [calmTimer](#sharedlivereloadcalmtimer)
-  * [changedFiles](#sharedlivereloadchangedfiles)
 * [log](#sharedlog)
 * [platform](#sharedplatform)
 * [path](#sharedpath)
@@ -85,7 +82,7 @@ Called as a require if `false`.
 
 Type: `object`
 
-Parent container for extension (server) related items.
+Parent container for extension server related items.
 
 ## shared.extension.calmTimer
 
@@ -98,7 +95,6 @@ Variable used by [watch.updateExtensionServer](watch.md#watchupdateextensionserv
 Type: `array`
 
 Keeps track of which destination files were changed in order to relay those to the extension server.
-
 
 ## shared.global
 
@@ -147,24 +143,6 @@ let message = shared.language.display('error.missingSource')
 Type: `object`
 
 The active language translation. Defaults to english but can be replaced by [functions.setLanguage](functions.md#functionssetlanguage).
-
-## shared.livereload
-
-Type: `object`
-
-Parent container for LiveReload related items.
-
-## shared.livereload.calmTimer
-
-Type: `null` or `object`
-
-Variable used by [watch.updateLiveReloadServer](watch.md#watchupdatelivereloadserver) to update the LiveReload server 300 ms after the last destination file change.
-
-## shared.livereload.changedFiles
-
-Type: `array`
-
-Keeps track of which destination files were changed in order to relay those to the LiveReload server.
 
 ## shared.log
 

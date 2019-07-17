@@ -51,7 +51,7 @@ A single source directory which builds/compiles/minifies into a single destinati
 
 ### File Extension Based
 
-A single plan of action for each file type. CSS files are minified. JPG files are losslessly optimized. Markdown files are compiled, then minified, and so on. Each extension can have its own unique build process but all files of that type are treated equally.
+A single plan of action for each file type. CSS files are minified. JPG files are losslessly optimized. Markdown files are compiled, then minified, and so on. Each extension can have its own unique build process but all files with that extension are treated equally.
 
 ### Include Files
 Any file prefixed with an underscore ( _ ) is considered an include file. Include files do not get directly published from source to destination. Instead, include files contents are only published when a file that can leverage includes is published.
@@ -132,7 +132,7 @@ Assuming Feri is installed globally, the quickest way to start a new project is 
 feri --init
 ```
 
-This will create a `source` and `dest` folder along with a custom config file. To make sure everything works, place some files in the source folder. Now run `feri` from the directory where you can see the source and dest folders. After a short time, your published files should appear in the dest folder.
+This will create a `source` and `dest` folder along with a custom config file. To make sure everything works, place some files in the `source` folder. Now run `feri` from the directory where you can see the source and destination folders. After a short time, your published files should appear in the `dest` folder.
 
 You'll need to run `feri` everytime you want to clean and/or build new files. Once you are comfortable with that pattern, try running the following command instead.
 
@@ -140,7 +140,7 @@ You'll need to run `feri` everytime you want to clean and/or build new files. On
 feri --watch
 ```
 
-Now Feri will stay active, watching your source folder for changes and automatically run the appropriate clean or build tasks depending on your activity in the source folder. Neat!
+Now Feri will stay active, watching your source folder for changes and automatically run the appropriate clean or build tasks depending on activity in the source folder. Neat!
 
 ## Advanced
 
@@ -174,7 +174,7 @@ In addition to Patreon, here are some other ways you can help support this proje
 
  * [Translate Feri](docs/multilingual.md#translation-guide) into other languages. tlhIngan maH!
  * [Report issues on GitHub](https://github.com/nightmode/feri/issues)
- * Social media, meetups, fan art, papercraft, or any other way you like sharing enthusiasm.
+ * Social media, meetups, fan art, papercraft, or any other way you like sharing your enthusiasm.
  * Pull reqrests to improv spellng in documantations!
 
 ## License

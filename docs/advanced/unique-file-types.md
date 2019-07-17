@@ -10,7 +10,7 @@
 
 Feri thinks you should be able to look through your source folder and with a bit of imagination, know exactly what your destination folder will look like. One of the ways Feri does this is by supporting concatenate files that use `.concat` as their file extension.
 
-A concatenate file is simply a list of file path strings and/or globs that point to other files. For example, if you had a directory structure like:
+A concatenate file is a list of file path strings and/or globs that point to other files. For example, if you had a directory structure like:
 
 ```
 /dest
@@ -45,7 +45,7 @@ Our updated directory structure is now:
 /source/_two.js
 ```
 
-The next time Feri builds, she notices the `all.js.concat` file and using the glob inside it, combines the two JS files into one destination file. The destination file is simply the source file without the `.concat` extension. So in our case, the destination file would be named `all.js`.
+The next time Feri builds, she notices the `all.js.concat` file and using the glob inside it, combines the two JS files into one destination file. The destination file name is the source file name without the `.concat` extension. So in our case, the destination file would be named `all.js`.
 
 Now our finished directory structure looks like:
 
@@ -58,19 +58,19 @@ Now our finished directory structure looks like:
 /source/_two.js
 ```
 
-Not too hard and if we are working with other developers, they will see the CONCAT file and know what is going on. No need to consult a build tool's configuration.
+Not too hard to setup and if we are working with other developers, they will see the CONCAT file and understand what that means when source folder changes are published to the destination folder.
 
-Oh and if you are thinking of nesting `.concat` files, please read [concatenate responsibly](edge-cases.md#concatenate-responsibly) first.
+At this point you might be wondering if you can nest `.concat` files and if so, please read [concatenate responsibly](edge-cases.md#concatenate-responsibly) first.
 
 ### Source Maps
 
-Assuming an option like `config.sourceMaps` is enabled, CONCAT files will generate source maps for JS and CSS files like `all.js.concat` and `all.css.concat`.
+Assuming an option like `config.sourceMaps` is enabled, CONCAT files will generate source maps for JS and CSS files like `fileName.js.concat` and `fileName.css.concat`.
 
 ## Brotli (BR)
 
 ### Enabling Brotli
 
-Feri comes ready to create BR compressed versions of files to live alongside their respective destination files. This is great if your web server can serve precompiled Brotli files to clients that support it. Less work for your web server and even better compression than Gzip.
+Feri comes ready to create BR compressed versions of files to live alongside their respective destination files. This is great if your web server can serve precompiled Brotli files to clients that support it. Less bandwidth required for your web server and better compression than Gzip.
 
 To enable Brotli compressed versions of your destination files, add the following to your [custom config file](custom-config-file.md).
 
@@ -92,7 +92,7 @@ Note: Feri will only generate a file like `index.html.br` when `index.html` need
 
 ### Enabling Gzip
 
-Feri comes ready to create GZ compressed versions of files to live alongside their respective destination files. This is great if your web server can serve precompiled Gzip files to clients that support it. Less work for your web server and better than on the fly compression.
+Feri comes ready to create GZ compressed versions of files to live alongside their respective destination files. This is great if your web server can serve precompiled Gzip files to clients that support it. Less bandwidth required for your web server and better than on the fly compression.
 
 To enable Gzip compressed versions of your destination files, add the following to your [custom config file](custom-config-file.md).
 

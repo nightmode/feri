@@ -1,10 +1,10 @@
 # Feri - Custom Build Task
 
-Feri comes with a lot of build tasks by default but sometimes you need something a bit more specialized. That is where custom build tasks come in. Custom build tasks must return a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) but before we go into specifics, lets review how Feri builds files behind the scenes.
+Feri comes with a lot of build tasks by default but sometimes you need something a bit more specialized. That is where custom build tasks come in. Custom build tasks must return a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) but before we create our own build task, let's learn how Feri builds files behind the scenes.
 
 ## config.map.sourceToDestTasks
 
-Build tasks are defined in [config.map.sourceToDestTasks](api/config.md#configmapsourcetodesttasks). Each extension has an array of one or more tasks. The tasks can be strings or functions. Strings signify that the build task exists in Feri's [build](api/build.md) module. Functions signify a custom build task.
+Build tasks are defined in [config.map.sourceToDestTasks](api/config.md#configmapsourcetodesttasks). Each extension has an array of one or more tasks. The tasks can be strings or functions. Strings are build tasks that exist in Feri's [build](api/build.md) module. Functions are custom build tasks.
 
 For example, here is the entry for Markdown:
 
@@ -47,7 +47,7 @@ The property `data` is used to pass strings between build functions that do thei
 
 The property `build` will be set to true if a file needs to be built.
 
-Obviously, we want our custom build task to receive a reusable object. We will also want it to return a reusable object so it can be chained with other build tasks.
+Obviously, we want our custom build task to receive a reusable object. We will also want it to return a reusable object so it can be safely chained with other build tasks.
 
 ## Define a Custom Build Task
 
@@ -86,7 +86,7 @@ Next, we leverage a really neat [Promise](https://developer.mozilla.org/en-US/do
 * Assuming the destination file does not exist **or** if the source file is newer than the destination, it sets `obj.build` to `true`.
 * Assuming `obj.build` is `true`, it reads the source file contents into `obj.data`.
 
-No matter what happens, we can expect `obj.build` to be either true or false. Let's go over both of those scenarios next.
+No matter what happens, we can expect `obj.build` to be either true or false. Let's go over both of these scenarios next.
 
 ### Scenario: Build is True
 
@@ -129,11 +129,11 @@ obj = {
 }
 ```
 
-There is no reason to return the object for any further build tasks. Knowing there is nothing to do, we can `throw 'done'` to break out of our promise chain in a nice way. With less work, Feri runs faster!
+There is no reason to return the object for any further build tasks. Knowing there is nothing to do, we can `throw 'done'` to break out of our promise chain in a nice way. With less work to do, Feri runs faster.
 
 ## More Complex Tasks
 
-When building more complex tasks, your best friends will be [functions.objBuildInMemory](api/functions.md#functionsobjbuildinmemory), [functions.objBuildOnDisk](api/functions.md#functionsobjbuildondisk), and [functions.objBuildWithIncludes](api/functions.md#functionsobjbuildwithincludes). Each of these is used in various bundled [build](api/build.md) tasks so feel free to use any of built-in tasks as a starter for your own custom build task.
+When building more complex tasks, your best friends will be [functions.objBuildInMemory](api/functions.md#functionsobjbuildinmemory), [functions.objBuildOnDisk](api/functions.md#functionsobjbuildondisk), and [functions.objBuildWithIncludes](api/functions.md#functionsobjbuildwithincludes). Each of these is used in various bundled [build](api/build.md) tasks so feel free to use any of the built-in tasks as a template for your own custom build task.
 
 ## License
 
