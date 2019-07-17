@@ -24,5 +24,5 @@ module.exports = function(feri) {
     // source maps
     // feri.config.sourceMaps = true
 
-    // for even more options visit https://github.com/nightmode/feri/blob/master/docs/api/config.md
+    // for even more options visit https://github.com/nightmode/feri/blob/master/docs/advanced/api/config.md
 }
