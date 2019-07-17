@@ -74,9 +74,7 @@ Keep track of any file types that are missing a [config.map.sourceToDestTasks](c
 
 Type: `boolean`
 
-Running as a command line tool if `true`.
-
-Called as a require if `false`.
+Feri is running on the command line if true. As a require if false.
 
 ## shared.extension
 
@@ -106,7 +104,7 @@ Feri is installed globally if true. Locally if false.
 
 Type: `boolean`
 
-Displaying help text on the command line if `true`.
+Displaying help text on the command line if true.
 
 ## shared.language
 
@@ -118,7 +116,7 @@ Parent container for language related items.
 
 Type: `object`
 
-The default language object that is a fallback in case a value in shared.language.loaded is not available.
+The default language fallback object in case a value in shared.language.loaded is not available.
 
 ## shared.language.display
 
@@ -131,7 +129,7 @@ Return a string from `shared.language.loaded` if available otherwise return the 
 @return  {String}        String like 'Missing source file.'
 ```
 
-Example
+For example.
 
 ```js
 let message = shared.language.display('error.missingSource')
@@ -148,13 +146,13 @@ The active language translation. Defaults to english but can be replaced by [fun
 
 Type: `boolean`
 
-Allow console logging if set to `true` for command line use. Defaults to `false` for API and testing.
+Allow console logging if set to true for command line use. Defaults to false for API and testing use.
 
 ## shared.platform
 
 Type: `string`
 
-Result of `os.platform()`. Can be values like `darwin`, `win32`, `win64` and such.
+Result of `os.platform()`. Can be values like `darwin`, `win32`, `win64`, and so on.
 
 ## shared.path
 

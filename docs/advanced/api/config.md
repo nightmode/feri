@@ -1,6 +1,6 @@
 # Feri - Config
 
-Config holds all the variables that may be set by the command line, a [custom config file](../custom-config-file.md) for command line use, or programatically.
+Config holds all the variables that may be set by the command line, set by a [custom config file](../custom-config-file.md) for the command line, or set programatically.
 
 The config module can be found inside the file [code/3 - config.js](../../../code/3%20-%20config.js)
 
@@ -86,7 +86,7 @@ Type: `number`
 
 Defaults to `4000`.
 
-Websocket server port for extension clients.
+WebSocket server port for extension clients.
 
 ## config.fileType
 
@@ -107,7 +107,7 @@ config.fileType.concat = {
 }
 ```
 
-Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` once after enabling sourceMaps will ensure their creation.
 
 ## config.fileType.css
 
@@ -121,7 +121,7 @@ config.fileType.css = {
 }
 ```
 
-Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` once after enabling sourceMaps will ensure their creation.
 
 ## config.fileType.js
 
@@ -135,13 +135,13 @@ config.fileType.js = {
 }
 ```
 
-Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` once after enabling sourceMaps will ensure their creation.
 
 ## config.includeFileTypes
 
 Type: `array`
 
-Used by [watch.buildOne](watch.md#buildone) to know which file types may use includes.
+Used by [watch.buildOne](watch.md#buildone) to know which file types may use includes. Any array items should be a file extension string without a dot like `txt` or `js`.
 
 ```js
 config.includeFileTypes = []
@@ -151,7 +151,7 @@ config.includeFileTypes = []
 
 Type: `string`
 
-Files prefixed with this string will not be published directly to the destination directory. Prefixed files can be included inside other files that do get published to destination though.
+Files prefixed with this string will not be published directly to the destination directory. Prefixed files can be included inside other files that do ultimately get published.
 
 ```js
 config.includePrefix = '_'
@@ -173,7 +173,7 @@ If specified, use when running [clean.processClean](clean.md#cleanprocessclean) 
 config.glob.clean = '' // default
 ```
 
-Example
+For example.
 
 ```js
 // only clean image files
@@ -190,7 +190,7 @@ If specified, use when running [build.processBuild](build.md#buildprocessbuild) 
 config.glob.build = '' // default
 ```
 
-Example
+For example.
 
 ```js
 // only build css files
@@ -213,7 +213,7 @@ If specified, use when running [watch.processWatch](watch.md#watchprocesswatch) 
 config.glob.watch.source = '' // default
 ```
 
-Example
+For example.
 
 ```js
 // watch html and css source files
@@ -230,7 +230,7 @@ If specified, use when running [watch.processWatch](watch.md#watchprocesswatch) 
 config.glob.watch.dest = '' // default
 ```
 
-Example
+For example.
 
 ```js
 // watch css destination files
@@ -241,13 +241,13 @@ config.glob.watch.dest = '**/*.css'
 
 Type: `string`
 
-Specify a language Feri that should use. The language should map to a json file like [language/en-us.json](../../../language/en-us.json) in the language directory.
+Specify which language to use. The language should map to a json file like [language/en-us.json](../../../language/en-us.json) in the language directory.
 
 ```js
 config.language = 'en-us'
 ```
 
-Note: API users should use [functions.setLanguage](functions.md#functionssetlanguage) to change both this variable and [share.language.loaded](share.md#sharedlanguageloaded) at the same time. Command line users only need to set `config.langauge` in a [custom config file](../custom-config-file.md).
+Note: API users should use [functions.setLanguage](functions.md#functionssetlanguage) to change both this variable and [share.language.loaded](shared.md#sharedlanguageloaded) at the same time. Command line users only need to set `config.langauge` in a [custom config file](../custom-config-file.md).
 
 ## config.map
 
@@ -343,7 +343,7 @@ config.map.sourceToDestTasks = {
 }
 ```
 
-Example
+For example.
 
 ```js
 // imaginary custom build task for html files
@@ -486,7 +486,7 @@ Enable source maps for file types that generate CSS or JS files. Defaults to `fa
 config.sourceMaps = false
 ```
 
-Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` **once** after enabling sourceMaps will ensure their creation.
+Note: Feri will only generate a source map when the file it is based on needs to be built. Running `feri --republish` or `feri --forcebuild` once after enabling sourceMaps will ensure their creation.
 
 ## config.sourceRoot
 
