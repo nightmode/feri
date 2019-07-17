@@ -57,8 +57,9 @@ const shared = {
             "message": {
                 "fileChangedTooRecently"  : "{file} was changed too recently, ignoring.",
                 "includesNewer"           : "{extension} include(s) newer than destination file.",
-                "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
                 "listeningOnPort"         : "{software} listening on port {port}.",
+                "missingSourceHelp"       : "Check your folders for existing projects or run \"feri --init\" to start a new project.",
+                "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
                 "usingConfigFile"         : "Using {file} file.",
                 "watchRefreshed"          : "{software} refreshed.",
                 "watchingDirectory"       : "Watching {directory} for changes."
@@ -122,8 +123,9 @@ const shared = {
             "message": {
                 "fileChangedTooRecently"  : "{file} was changed too recently, ignoring.",
                 "includesNewer"           : "{extension} include(s) newer than destination file.",
-                "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
                 "listeningOnPort"         : "{software} listening on port {port}.",
+                "missingSourceHelp"       : "Check your folders for existing projects or run \"feri --init\" to start a new project.",
+                "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
                 "usingConfigFile"         : "Using {file} file.",
                 "watchRefreshed"          : "{software} refreshed.",
                 "watchingDirectory"       : "Watching {directory} for changes."

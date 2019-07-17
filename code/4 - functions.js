@@ -392,6 +392,8 @@ functions.initFeri = async function initFeri() {
     @return  {Promise}
     */
 
+    let messageDone = '\n' + color.gray(shared.language.display('words.done') + '.') + '\n'
+
     // make sure config.path.source is an absolute path in case it was set programmatically
     config.path.source = functions.figureOutPath(config.path.source)
 
@@ -408,8 +410,8 @@ functions.initFeri = async function initFeri() {
     let exists = await functions.filesExist([configFile, configFileAlt])
 
     if (exists.indexOf(true) >= 0) {
-        // do nothing
-        return
+        functions.log(messageDone, false)
+        return // early
     }
 
     let data = await functions.readFile(path.join(shared.path.self, 'templates', 'custom-config.js'))
@@ -420,7 +422,7 @@ functions.initFeri = async function initFeri() {
 
     await functions.writeFile(configFile, data)
 
-    functions.log('\n' + color.gray(shared.language.display('words.done') + '.\n'), false)
+    functions.log(messageDone, false)
 } // initFeri
 
 functions.inSource = function functions_inSource(filePath) {

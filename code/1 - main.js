@@ -391,16 +391,23 @@ const commandLine = async function commandLine() {
         } // if (!shared.help)
 
     } catch(err) {
+        let message = shared.language.display('error.halted')
+        message = message.replace('{software}', 'Feri')
+        message = message.replace('{version}', require('../package.json').version)
 
-        functions.logError(err)
+        if (err.message === shared.language.display('error.missingSourceDirectory')) {
+            // less scary error with extra help
+            functions.log('', false)
+            functions.log(color.gray(message) + '\n', false)
+            functions.log(color.red(err.message) + '\n', false)
+            functions.log(color.gray(shared.language.display('message.missingSourceHelp')) + '\n', false)
+        } else {
+            functions.log('\n' + color.gray(message), false)
 
-        let message = shared.language.display('error.halted') + '\n'
-        message = message.replace('{software}', color.cyan('Feri'))
-        message = message.replace('{version}', color.green(require('../package.json').version))
+            functions.logError(err)
 
-        functions.log(color.gray(message), false)
-        throw err
-
+            throw err
+        }
     }
 } // commandLine
 
