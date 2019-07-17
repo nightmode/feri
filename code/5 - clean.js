@@ -80,7 +80,7 @@ clean.processClean = async function clean_processClean(files, watching) {
 
         if (filesType === 'object') {
             // we already have a specified list to work from
-            filesCleaned = clean.processFiles(files, watching)
+            filesCleaned = await clean.processFiles(files, watching)
         } else {
             let options = {
                 "nocase"  : true,
@@ -102,7 +102,7 @@ clean.processClean = async function clean_processClean(files, watching) {
 
             let findFiles = await functions.findFiles(config.path.dest + '/' + files, options)
 
-            if (files.length > 0) {
+            if (findFiles.length > 0) {
                 filesCleaned = await clean.processFiles(findFiles, watching)
             } else {
                 filesCleaned = []
