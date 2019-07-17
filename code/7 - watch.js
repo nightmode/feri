@@ -147,7 +147,7 @@ watch.checkExtensionClients = function watch_checkExtensionClients() {
 
 watch.extensionServer = async function watch_extensionServer() {
     /*
-    Extension server for clients.
+    Run an extension server for clients.
     @return  {Promise}
     */
 
@@ -264,17 +264,17 @@ watch.processWatch = async function watch_processWatch(sourceFiles, destFiles) {
     }
 } // processWatch
 
-watch.stop = function watch_stop(stopSource, stopDest, stopExtensions) {
+watch.stop = function watch_stop(stopSource, stopDest, stopExtension) {
     /*
     Stop watching the source and/or destination folders. Optionally stop the extensions server.
-    @param   {Boolean}  [stopSource]      Optional and defaults to true. If true, stop watching the source folder.
-    @param   {Boolean}  [stopDest]        Optional and defaults to true. If true, stop watching the destination folder.
-    @param   {Boolean}  [stopExtensions]  Optional and defaults to true. If true, stop the extensions server.
+    @param   {Boolean}  [stopSource]     Optional and defaults to true. If true, stop watching the source folder.
+    @param   {Boolean}  [stopDest]       Optional and defaults to true. If true, stop watching the destination folder.
+    @param   {Boolean}  [stopExtension]  Optional and defaults to true. If true, stop the extension server.
     @return  {Promise}
     */
-    stopSource     = typeof stopSource     === 'boolean' ? stopSource     : true
-    stopDest       = typeof stopDest       === 'boolean' ? stopDest       : true
-    stopExtensions = typeof stopExtensions === 'boolean' ? stopExtensions : true
+    stopSource    = typeof stopSource    === 'boolean' ? stopSource    : true
+    stopDest      = typeof stopDest      === 'boolean' ? stopDest      : true
+    stopExtension = typeof stopExtension === 'boolean' ? stopExtension : true
 
     return new Promise(function(resolve, reject) {
         if (stopSource) {
@@ -293,7 +293,7 @@ watch.stop = function watch_stop(stopSource, stopDest, stopExtensions) {
             }
         }
 
-        if (stopExtensions) {
+        if (stopExtension) {
             clearInterval(extensionServerTimer) // no need to check for disconnected clients anymore
 
             if (typeof extensionServer === 'object') {
@@ -312,7 +312,7 @@ watch.stop = function watch_stop(stopSource, stopDest, stopExtensions) {
 watch.updateExtensionServer = async function watch_updateExtensionServer(now) {
     /*
     Update the extension server with a list of changed files.
-    @param   {Boolean}  now  True meaning we have already waited 300 ms for events to settle.
+    @param   {Boolean}  [now]  Optional and defaults to false. True means we have already waited 300 ms for events to settle.
     @return  {Promise}
     */
     now = now || false

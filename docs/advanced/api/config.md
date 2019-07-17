@@ -62,7 +62,7 @@ config.concurLimit = 1
 
 Type: `object`
 
-Parent container for web browser extension support.
+Parent container for extension client support.
 
 ## config.extension.defaultDocument
 
@@ -173,7 +173,7 @@ If specified, use when running [clean.processClean](clean.md#cleanprocessclean) 
 config.glob.clean = '' // default
 ```
 
-For example.
+Example
 
 ```js
 // only clean image files
@@ -190,7 +190,7 @@ If specified, use when running [build.processBuild](build.md#buildprocessbuild) 
 config.glob.build = '' // default
 ```
 
-For example.
+Example
 
 ```js
 // only build css files
@@ -213,7 +213,7 @@ If specified, use when running [watch.processWatch](watch.md#watchprocesswatch) 
 config.glob.watch.source = '' // default
 ```
 
-For example.
+Example
 
 ```js
 // watch html and css source files
@@ -230,7 +230,7 @@ If specified, use when running [watch.processWatch](watch.md#watchprocesswatch) 
 config.glob.watch.dest = '' // default
 ```
 
-For example.
+Example
 
 ```js
 // watch css destination files
@@ -272,7 +272,7 @@ config.map.destToSourceExt = {
 }
 ```
 
-Notice how an entry like `gz` has an asterisk for one of its array values? An asterisk means the extension in question could be added on to any file. Resulting in a file like `index.html.gz`, `style.css.gz`, or `hello.txt.gz`. Could be anything really so the asterisk instructs Feri to use special logic for these kinds of files.
+Notice how an entry like `gz` has an asterisk for one of its array values? An asterisk means the extension in question could be added on to any file. Resulting in a file like `index.html.gz`, `style.css.gz`, or `hello.txt.gz`. Could be anything really so the asterisk instructs Feri to use special logic for these file extensions.
 
 Protip: Use [functions.addDestToSourceExt](functions.md#functionsadddesttosourceext) to modify this object safely.
 
@@ -282,7 +282,7 @@ Type: `object`
 
 Source extensions to build tasks map.
 
-Array elements for any particular file type can be a `string` or a `function`. A string signifies that an existing build function should be used. For example, `['gif']` means use [build.gif](build.md#buildgif) to optimize gif files. A function means you have constructed your own [custom build task](../custom-build-task.md).
+Array elements for any particular file type can be a `string` or a `function`. A string signifies that an existing build task should be used. For example, `['gif']` means use [build.gif](build.md#buildgif) to optimize gif files. A function means you have constructed your own [custom build task](../custom-build-task.md).
 
 ```js
 config.map.sourceToDestTasks = {
@@ -343,7 +343,7 @@ config.map.sourceToDestTasks = {
 }
 ```
 
-For example.
+Example
 
 ```js
 // imaginary custom build task for html files
@@ -360,7 +360,7 @@ config.map.sourceToDestTasks.html = [elSanto]
 
 Type: `object`
 
-Parent container for options that can be set programmatically or via the command line.
+Parent container for options that can be set via the command line or programmatically.
 
 ## config.option.build
 
@@ -386,7 +386,9 @@ config.option.clean = true
 
 Type: `boolean`
 
-Display extra console log messages to command line users. Defaults to `false`.
+Defaults to `false`.
+
+Display extra console log messages to command line users.
 
 ```js
 config.option.debug = false
@@ -396,7 +398,9 @@ config.option.debug = false
 
 Type: `boolean`
 
-Overwrite destination files without checking their modified times to see if they need to be built. Just build them. Defaults to `false`.
+Defaults to `false`.
+
+Overwrite destination files without checking their modified times to see if they need to be built. Just build them.
 
 ```js
 config.option.forcebuild = false
@@ -408,7 +412,7 @@ Type: `boolean`
 
 Defaults to `false`.
 
-Create a `./source` and `./dest` folder. Also create a [custom config file](../custom-config-file.md) if no existing custom config files are found.
+Create a `./source` and `./dest` folder. Also create a [custom config file](../custom-config-file.md) if it does not exist yet.
 
 ## config.option.extensions
 
@@ -416,13 +420,15 @@ Type: `boolean`
 
 Defaults to `false`.
 
-Run a WebSocket server for web browser extension clients.
+Run a WebSocket server for extension clients.
 
 ## config.option.republish
 
 Type: `boolean`
 
-Remove all destination files and then build. Defaults to `false`.
+Defaults to `false`.
+
+Remove all destination files and then build.
 
 ```js
 config.option.republish = false
@@ -432,7 +438,9 @@ config.option.republish = false
 
 Type: `boolean`
 
-Display statistics for command line users. Defaults to `true`.
+Defaults to `true`.
+
+Display statistics for command line users.
 
 ```js
 config.option.stats = true
@@ -454,7 +462,7 @@ Note: The above value is set to `true` for API users so they can call [watch.pro
 
 Type: `object`
 
-Parent container for paths that can set via the command line or programmatically.
+Parent container for paths that can be set via the command line or programmatically.
 
 ## config.path.source
 
@@ -470,7 +478,7 @@ config.path.source = 'source'
 
 Type: `string`
 
-The destination folder that receives files built from source. The folder that is also cleaned based on the existence of equivalent files in the source directory. Please be careful when choosing your destination folder.
+The destination folder that receives files built from source. The destination folder that is also cleaned based on the existence of equivalent files in the source directory. Please be very careful when choosing your destination folder as a wrong folder could easily be cleaned of valuable files if those files do not have source folder equivalents.
 
 ```js
 config.path.dest = 'dest'
@@ -480,7 +488,9 @@ config.path.dest = 'dest'
 
 Type: `boolean`
 
-Enable source maps for file types that generate CSS or JS files. Defaults to `false`.
+Defaults to `false`.
+
+Enable source maps for file types that generate CSS or JS files.
 
 ```js
 config.sourceMaps = false

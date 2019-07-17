@@ -126,7 +126,7 @@ functions.cloneObj = function functions_cloneObj(object) {
 
 functions.configPathsAreGood = function functions_configPathsAreGood() {
     /*
-    Ensure source and destination are not blank, not the same, and not in each others path. Also ensure that the destination is not a protected folder.
+    Ensure source and destination are not blank, not the same, and not in each other's path. Also ensure that the destination is not a protected folder.
     @return  {*}  Boolean true if both paths are good. String with an error message if not.
     */
 
@@ -212,7 +212,7 @@ functions.configPathsAreGood = function functions_configPathsAreGood() {
 
 functions.destToSource = function functions_destToSource(dest) {
     /*
-    Convert destination path to its source equivalent.
+    Convert a destination path to its source equivalent.
     @param   {String}  dest  File path like '/dest/index.html'
     @return  {String}        File path like '/source/index.html'
     */
@@ -321,7 +321,7 @@ functions.filesExistAndTime = function functions_filesExistAndTime(source, dest)
 
 functions.fileExtension = function functions_fileExtension(filePath) {
     /*
-    Return file extension in string.
+    Return a file extension from a string.
     @param   {String}  filePath  File path like '/conan/riddle-of-steel.txt'
     @return  {String}            String like 'txt'
     */
@@ -789,7 +789,7 @@ functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath)
 
 functions.readFile = function functions_readFile(filePath, encoding) {
     /*
-    Promise version of fs.readFile.
+    Promisified version of fs.readFile.
     @param   {String}  filePath    File path like '/dest/index.html'
     @param   {String}  [encoding]  Optional and defaults to 'utf8'
     @return  {String}              Data from file.
@@ -958,7 +958,7 @@ functions.setLanguage = function functions_setLanguage(lang) {
 
 functions.sourceToDest = function functions_sourceToDest(source) {
     /*
-    Convert source path to its destination equivalent.
+    Convert a source path to its destination equivalent.
     @param   {String}  source  File path like '/source/index.html'
     @return  {String}          File path like '/dest/index.html'
     */
@@ -1162,7 +1162,7 @@ functions.useExistingSourceMap = async function functions_useExistingSourceMap(f
 
 functions.writeFile = function functions_writeFile(filePath, data, encoding) {
     /*
-    Promise version of fs.writeFile.
+    Promisified version of fs.writeFile.
     @param   {String}   filePath    File path like '/web/dest/index.html'
     @param   {String}   data        Data to be written.
     @param   {String}   [encoding]  Optional and defaults to 'utf8'

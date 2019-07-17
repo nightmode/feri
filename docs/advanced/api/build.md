@@ -41,7 +41,7 @@ The build object is grouped into five categories.
 
 ## Build: Command and Control
 
-The following functions control building, setting up promise chains and concurrency.
+The following functions control building, setting up promise chains, and concurrency.
 
 ### build.processBuild
 
@@ -231,7 +231,7 @@ Create a gzipped compressed version of a file to live alongside the original.
 
 Type: `function`
 
-Build a map file and if needed, also make a br and/or gz version of said map file.
+Build a map file. If needed, also make `.br` and/or `.gz` compressed versions of the map file.
 
 ```
 @param   {Object}          obj  Reusable object originally created by build.processOneBuild

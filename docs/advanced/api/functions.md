@@ -125,7 +125,7 @@ Clone an object recursively so the return is not a reference to the original obj
 
 Type: `function`
 
-Ensure source and destination are not blank, not the same, and not in each others path. Also ensure that the destination is not a protected folder.
+Ensure source and destination are not blank, not the same, and not in each other's path. Also ensure that the destination is not a protected folder.
 
 ```
 @return  {*}  Boolean true if both paths are good. String with an error message if not.
@@ -135,7 +135,7 @@ Ensure source and destination are not blank, not the same, and not in each other
 
 Type: `function`
 
-Convert destination path to its source equivalent.
+Convert a destination path to its source equivalent.
 
 ```
 @param   {String}  dest  File path like '/dest/index.html'
@@ -202,7 +202,7 @@ Find out if one or both files exist along with their modified time.
 
 Type: `function`
 
-Return file extension in string.
+Return a file extension from a string.
 
 ```
 @param   {String}  filePath  File path like '/conan/riddle-of-steel.txt'
@@ -393,7 +393,7 @@ Figure out all the possible source files for any given destination file path.
 
 Type: `function`
 
-Promise version of fs.readFile.
+Promisified version of fs.readFile.
 
 ```
 @param   {String}  filePath    File path like '/dest/index.html'
@@ -497,7 +497,7 @@ Replace the shared.language.loaded object with the contents of a JSON language f
 
 Type: `function`
 
-Convert source path to its destination equivalent.
+Convert a source path to its destination equivalent.
 
 ```
 @param   {String}  source  File path like '/source/index.html'
@@ -573,7 +573,7 @@ Use an existing source map if it was modified recently otherwise remove it.
 
 Type: `function`
 
-Promise version of fs.writeFile.
+Promisified version of fs.writeFile.
 
 ```
 @param   {String}   filePath    File path like '/web/dest/index.html'

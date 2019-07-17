@@ -24,7 +24,7 @@ Type: `function`
 
 Figure out which files should be processed after receiving an add or change event from the source directory watcher.
 
-```js
+```
 @param   {String}   fileName  File path like '/source/js/combined.js'
 @return  {Promise}
 ```
@@ -79,20 +79,20 @@ Example
 ```js
 return feri.action.watch().then(function() {
     feri.watch.emitterSource.on('unlinkDir', function(file) {
-        console.log('A directory called ' + file + ' was just removed.')
+        console.log('A directory called ' + file + ' was removed.')
     })
 })
 
 // pretend a directory called 'css' was just removed from the source folder
 
-// display 'A directory called /source/css was just removed.'
+// display 'A directory called /source/css was removed.'
 ```
 
 ## watch.extensionServer
 
 Type: `function`
 
-Extension server for clients.
+Run an extension server for clients.
 
 ```
 @return  {Promise}
@@ -141,9 +141,9 @@ Type: `function`
 Stop watching the source and/or destination folders. Optionally stop the extensions server.
 
 ```
-@param  {Boolean}  [stopSource]      Optional and defaults to true. If true, stop watching the source folder.
-@param  {Boolean}  [stopDest]        Optional and defaults to true. If true, stop watching the destination folder.
-@param  {Boolean}  [stopExtensions]  Optional and defaults to true. If true, stop the extensions server.
+@param  {Boolean}  [stopSource]     Optional and defaults to true. If true, stop watching the source folder.
+@param  {Boolean}  [stopDest]       Optional and defaults to true. If true, stop watching the destination folder.
+@param  {Boolean}  [stopExtension]  Optional and defaults to true. If true, stop the extension server.
 ```
 
 ## watch.updateExtensionServer
@@ -153,7 +153,7 @@ Type: `function`
 Update the extension server with a list of changed files.
 
 ```
-@param   {Boolean}  now  True meaning we have already waited 300 ms for events to settle.
+@param   {Boolean}  [now]  Optional and defaults to false. True means we have already waited 300 ms for events to settle.
 @return  {Promise}
 ```
 
@@ -161,7 +161,7 @@ Update the extension server with a list of changed files.
 
 Type: `function`
 
-Watch the destination directory for changes in order to update the extensions server as needed.
+Watch the destination directory for changes in order to update the extension server as needed.
 
 ```
 @param   {String,Object}  [files]  Optional. Glob search string for watching destination files like '*.css' or array of full paths like ['/dest/fonts.css', '/dest/grid.css']
