@@ -168,9 +168,9 @@ Leverage or even replace anything behind the scenes with full access to the [API
 
 ## Support
 
-Help [support this project](https://www.patreon.com/nightmode) for as little as $1 a month on Patreon. Help me wake up every morning with a smile on my face because you went the extra mile for someone who likes to do the same.
+Help [support this project](https://www.patreon.com/nightmode) on Patreon. Help me caretake and craft new software, videos, and interactive art. All for as little as $1 a month.
 
-In addition to Patreon, here are some other ways you can help support this project.
+In addition to Patreon, here are some other ways you can help this project.
 
  * [Translate Feri](docs/multilingual.md#translation-guide) into other languages. tlhIngan maH!
  * [Report issues on GitHub](https://github.com/nightmode/feri/issues)
