@@ -893,7 +893,7 @@ build.gz = async function build_gz(obj) {
             level: 9
         })
 
-        await fsWriteFilePromise(obj.dest + '.gz', data, 'binary')
+        await fsWriteFilePromise(obj.dest + '.gz', dataCompress, 'binary')
     }
 
     return obj
