@@ -112,7 +112,7 @@ obj = {
 }
 ```
 
-You may be thinking, wait a second... we didn't actually write a file and you are right. Every chain of build tasks has a special finisher task called [build.finalize](api/build.md#buildfinalize) that takes care of writing our files to disk for us.
+You may be thinking, wait a second... we didn't actually write a file and you are right. Every chain of build tasks has a special finisher task called [build.finalize](api/build.md#buildfinalize) that takes care of writing our files to disk.
 
 If we instead choose to write `obj.data` to disk ourselves, it would be a good idea to clear `obj.data` before passing it along to any subsequent tasks like `build.finalize`. That way data isn't written twice.
 

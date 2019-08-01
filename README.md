@@ -19,11 +19,12 @@ Incrementally clean, build, and watch with little to no configuration required.
 * [Command Line](#command-line)
 * [Quickstart Guide](#quickstart-guide)
 * [Advanced](#advanced)
-  * [Custom Config File](#custom-config-file)
-  * [Custom Build Task](#custom-build-task)
-  * [Unique File Types](#unique-file-types)
-  * [Edge Cases](#edge-cases)
-  * [API](#api)
+  * [Custom Config File](docs/advanced/custom-config-file.md)
+  * [Custom Build Task](docs/advanced/custom-build-task.md)
+  * [Unique File Types](docs/advanced/unique-file-types.md)
+  * [Feri Extension](docs/advanced/feri-extension.md)
+  * [Edge Cases](docs/advanced/edge-cases.md)
+  * [API](docs/advanced/api/index.md)
 * [Support](#support)
 
 ## Features
@@ -54,7 +55,7 @@ A single source directory which builds/compiles/minifies into a single destinati
 A single plan of action for each file type. CSS files are minified. JPG files are losslessly optimized. Markdown files are compiled, then minified, and so on. Each extension can have its own unique build process but all files with that extension are treated equally.
 
 ### Include Files
-Any file prefixed with an underscore ( _ ) is considered an include file. Include files do not get directly published from source to destination. Instead, include files contents are only published when a file that can leverage includes is published.
+Any file prefixed with an underscore `_` is considered an include file. Include files do not get directly published from source to destination. Instead, include files contents are only published when a file that can leverage includes is published.
 
 ### Customizable
 
@@ -158,6 +159,10 @@ Feri thinks you should be able to grab nearly any npm module and make a [custom 
 
 Feri comes with built-in support for [unique file types](docs/advanced/unique-file-types.md) such as `concat`, `br`, and `gz`.
 
+### Feri Extension
+
+Reload a web browser tab when files change with the [Feri Extension](docs/advanced/feri-extension.md) for Chrome and Firefox.
+
 ### Edge Cases
 
 Some [edge cases](docs/advanced/edge-cases.md) you may want to be aware of.
@@ -173,7 +178,7 @@ Help [support this project](https://www.patreon.com/nightmode) on Patreon. Help 
 In addition to Patreon, here are some other ways you can help this project.
 
  * [Translate Feri](docs/multilingual.md#translation-guide) into other languages. tlhIngan maH!
- * [Report issues on GitHub](https://github.com/nightmode/feri/issues)
+ * [Report any issues](https://github.com/nightmode/feri/issues) on GitHub.
  * Social media, meetups, fan art, papercraft, or any other way you like sharing your enthusiasm.
  * Pull reqrests to improv spellng in documantations!
 
