@@ -246,7 +246,7 @@ Return glob options updated to ignore include prefixed files.
 
 Type: `function`
 
-If needed, create the source and destination folders along with a [custom config file](../custom-config-file.md) in the present working directory.
+If needed, create the source and destination folders along with a [custom config file](../custom-config-file.md#feri---custom-config-file) in the present working directory.
 
 ```
 @return  {Promise}

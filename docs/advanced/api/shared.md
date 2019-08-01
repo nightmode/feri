@@ -1,6 +1,6 @@
 # Feri - Shared
 
-Shared is all the neat things we may want to share across modules. Things that don't really belong in the [config](config.md) module like caches, non-user configurable variables, computed values, and more.
+Shared is all the neat things we may want to share across modules. Things that don't really belong in the [config](config.md#feri---config) module like caches, non-user configurable variables, computed values, and more.
 
 The shared module can be found inside the file [code/2 - shared.js](../../../code/2%20-%20shared.js)
 

@@ -1,6 +1,6 @@
 # Feri - Config
 
-Config holds all the variables that may be set by the command line, set by a [custom config file](../custom-config-file.md) for the command line, or set programatically.
+Config holds all the variables that may be set by the command line, set by a [custom config file](../custom-config-file.md#feri---custom-config-file) for the command line, or set programatically.
 
 The config module can be found inside the file [code/3 - config.js](../../../code/3%20-%20config.js)
 
@@ -247,7 +247,7 @@ Specify which language to use. The language should map to a json file like [lang
 config.language = 'en-us'
 ```
 
-Note: API users should use [functions.setLanguage](functions.md#functionssetlanguage) to change both this variable and [share.language.loaded](shared.md#sharedlanguageloaded) at the same time. Command line users only need to set `config.langauge` in a [custom config file](../custom-config-file.md).
+Note: API users should use [functions.setLanguage](functions.md#functionssetlanguage) to change both this variable and [share.language.loaded](shared.md#sharedlanguageloaded) at the same time. Command line users only need to set `config.langauge` in a [custom config file](../custom-config-file.md#feri---custom-config-file).
 
 ## config.map
 
@@ -282,7 +282,7 @@ Type: `object`
 
 Source extensions to build tasks map.
 
-Array elements for any particular file type can be a `string` or a `function`. A string signifies that an existing build task should be used. For example, `['gif']` means use [build.gif](build.md#buildgif) to optimize gif files. A function means you have constructed your own [custom build task](../custom-build-task.md).
+Array elements for any particular file type can be a `string` or a `function`. A string signifies that an existing build task should be used. For example, `['gif']` means use [build.gif](build.md#buildgif) to optimize gif files. A function means you have constructed your own [custom build task](../custom-build-task.md#feri---custom-build-task).
 
 ```js
 config.map.sourceToDestTasks = {
@@ -412,7 +412,7 @@ Type: `boolean`
 
 Defaults to `false`.
 
-Create a `./source` and `./dest` folder. Also create a [custom config file](../custom-config-file.md) if it does not exist yet.
+Create a `./source` and `./dest` folder. Also create a [custom config file](../custom-config-file.md#feri---custom-config-file) if it does not exist yet.
 
 ## config.option.extensions
 
@@ -520,7 +520,7 @@ Parent container for options used by various third party packages.
 
 Type: `object`
 
-Options for [chokidar](https://github.com/paulmillr/chokidar). Used by various [watch](watch.md) functions.
+Options for [chokidar](https://github.com/paulmillr/chokidar). Used by various [watch](watch.md#feri---watch) functions.
 
 ```js
 config.thirdParty.chokidar = {

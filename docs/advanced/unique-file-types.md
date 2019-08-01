@@ -72,7 +72,7 @@ Assuming an option like `config.sourceMaps` is enabled, CONCAT files will genera
 
 Feri comes ready to create BR compressed versions of files to live alongside their respective destination files. This is great if your web server can serve precompiled Brotli files to clients that support it. Less bandwidth required for your web server and better compression than Gzip.
 
-To enable Brotli compressed versions of your destination files, add the following to your [custom config file](custom-config-file.md).
+To enable Brotli compressed versions of your destination files, add the following to your [custom config file](custom-config-file.md#feri---custom-config-file).
 
 ```js
 // add br build task for the following extensions
@@ -94,7 +94,7 @@ Note: Feri will only generate a file like `index.html.br` when `index.html` need
 
 Feri comes ready to create GZ compressed versions of files to live alongside their respective destination files. This is great if your web server can serve precompiled Gzip files to clients that support it. Less bandwidth required for your web server and better than on the fly compression.
 
-To enable Gzip compressed versions of your destination files, add the following to your [custom config file](custom-config-file.md).
+To enable Gzip compressed versions of your destination files, add the following to your [custom config file](custom-config-file.md#feri---custom-config-file).
 
 ```js
 // add gz build task for the following extensions

@@ -19,12 +19,12 @@ Incrementally clean, build, and watch with little to no configuration required.
 * [Command Line](#command-line)
 * [Quickstart Guide](#quickstart-guide)
 * [Advanced](#advanced)
-  * [Custom Config File](docs/advanced/custom-config-file.md)
-  * [Custom Build Task](docs/advanced/custom-build-task.md)
-  * [Unique File Types](docs/advanced/unique-file-types.md)
-  * [Feri Extension](docs/advanced/feri-extension.md)
-  * [Edge Cases](docs/advanced/edge-cases.md)
-  * [API](docs/advanced/api/index.md)
+  * [Custom Config File](docs/advanced/custom-config-file.md#feri---custom-config-file)
+  * [Custom Build Task](docs/advanced/custom-build-task.md#feri---custom-build-task)
+  * [Unique File Types](docs/advanced/unique-file-types.md#feri---unique-file-types)
+  * [Feri Extension](docs/advanced/feri-extension.md#feri---feri-extension)
+  * [Edge Cases](docs/advanced/edge-cases.md#feri---edge-cases)
+  * [API](docs/advanced/api/index.md#feri---api)
 * [Support](#support)
 
 ## Features
@@ -36,7 +36,7 @@ Incrementally clean, build, and watch with little to no configuration required.
 * HTML, CSS, and JavaScript
 * Linux, macOS, and Windows
 * Markdown
-* [Multilingual](docs/multilingual.md)
+* [Multilingual](docs/multilingual.md#feri---multilingual)
 
 ## Core Concepts
 
@@ -123,7 +123,7 @@ Or locally with:
 npx feri --help
 ```
 
-More information is available in the [command line](docs/command-line.md) documentation.
+More information is available in the [command line](docs/command-line.md#feri---command-line) documentation.
 
 ## Quickstart Guide
 
@@ -149,27 +149,27 @@ Advanced topics for those that like to tinker.
 
 ### Custom Config File
 
-Create a [custom config file](docs/advanced/custom-config-file.md) to set your preferred options, add custom build tasks, or leverage the API.
+Create a [custom config file](docs/advanced/custom-config-file.md#feri---custom-config-file) to set your preferred options, add custom build tasks, or leverage the API.
 
 ### Custom Build Task
 
-Feri thinks you should be able to grab nearly any npm module and make a [custom build task](docs/advanced/custom-build-task.md) out of it without too much effort. Are `.snazzy` files the latest way to write CSS? No need to wait for a plugin. Use the latest tech, right away.
+Feri thinks you should be able to grab nearly any npm module and make a [custom build task](docs/advanced/custom-build-task.md#feri---custom-build-task) out of it without too much effort. Are `.snazzy` files the latest way to write CSS? No need to wait for a plugin. Use the latest tech, right away.
 
 ### Unique File Types
 
-Feri comes with built-in support for [unique file types](docs/advanced/unique-file-types.md) such as `concat`, `br`, and `gz`.
+Feri comes with built-in support for [unique file types](docs/advanced/unique-file-types.md#feri---unique-file-types) such as `concat`, `br`, and `gz`.
 
 ### Feri Extension
 
-Reload a web browser tab when files change with the [Feri Extension](docs/advanced/feri-extension.md) for Chrome and Firefox.
+Reload a web browser tab when files change with the [Feri Extension](docs/advanced/feri-extension.md#feri---feri-extension) for Chrome and Firefox.
 
 ### Edge Cases
 
-Some [edge cases](docs/advanced/edge-cases.md) you may want to be aware of.
+Some [edge cases](docs/advanced/edge-cases.md#feri---edge-cases) you may want to be aware of.
 
 ### API
 
-Leverage or even replace anything behind the scenes with full access to the [API](docs/advanced/api/index.md).
+Leverage or even replace anything behind the scenes with [full access](docs/advanced/api/index.md#feri---api) to the [API](docs/advanced/api/index.md#feri---api).
 
 ## Support
 

@@ -4,7 +4,7 @@ Feri comes with a lot of build tasks by default but sometimes you need something
 
 ## config.map.sourceToDestTasks
 
-Build tasks are defined in [config.map.sourceToDestTasks](api/config.md#configmapsourcetodesttasks). Each extension has an array of one or more tasks. The tasks can be strings or functions. Strings are build tasks that exist in Feri's [build](api/build.md) module. Functions are custom build tasks.
+Build tasks are defined in [config.map.sourceToDestTasks](api/config.md#configmapsourcetodesttasks). Each extension has an array of one or more tasks. The tasks can be strings or functions. Strings are build tasks that exist in Feri's [build](api/build.md#feri---build) module. Functions are custom build tasks.
 
 For example, here is the entry for Markdown:
 
@@ -133,7 +133,7 @@ There is no reason to return the object for any further build tasks. Knowing the
 
 ## More Complex Tasks
 
-When building more complex tasks, your best friends will be [functions.objBuildInMemory](api/functions.md#functionsobjbuildinmemory), [functions.objBuildOnDisk](api/functions.md#functionsobjbuildondisk), and [functions.objBuildWithIncludes](api/functions.md#functionsobjbuildwithincludes). Each of these is used in various bundled [build](api/build.md) tasks so feel free to use any of the built-in tasks as a template for your own custom build task.
+When building more complex tasks, your best friends will be [functions.objBuildInMemory](api/functions.md#functionsobjbuildinmemory), [functions.objBuildOnDisk](api/functions.md#functionsobjbuildondisk), and [functions.objBuildWithIncludes](api/functions.md#functionsobjbuildwithincludes). Each of these is used in various bundled [build](api/build.md#feri---build) tasks so feel free to use any of the built-in tasks as a template for your own custom build task.
 
 ## License
 

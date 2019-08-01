@@ -20,7 +20,7 @@ Additional languages are always welcome. Details on how to create a translation 
 
 ## Usage
 
-Specifying a language is accomplished with a [custom config file](advanced/custom-config-file.md).
+Specifying a language is accomplished with a [custom config file](advanced/custom-config-file.md#feri---custom-config-file).
 
 For example, if we wanted to work in Swedish we would create a custom config file in our project directory with the following code in it:
 
