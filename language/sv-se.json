@@ -17,7 +17,7 @@
         "missingSourceToDestTasks": "Saknar config.map.sourceToDestTasks för följande filtyper:",
         "listeningOnPort"         : "{software} lyssnar på port {port}.",
         "usingConfigFile"         : "Använder fil {file}.",
-        "watchRefreshed"          : "{software} förnyades.",
+        "watchUpdated"            : "{software} förnyades.",
         "watchingDirectory"       : "Övervakar {directory} efter ändringar."
     },
     "paddedGroups": {

@@ -15,7 +15,7 @@ module.exports = function(feri) {
     // feri.config.option.clean      = true
     // feri.config.option.build      = true
     // feri.config.option.watch      = true
-    // feri.config.option.livereload = true
+    // feri.config.option.extensions = true
 
     // paths
     // feri.config.path.source = 'source'
@@ -24,5 +24,5 @@ module.exports = function(feri) {
     // source maps
     // feri.config.sourceMaps = true
 
-    // for even more options visit https://github.com/nightmode/feri/blob/master/docs/api/config.md
+    // for even more options visit https://github.com/nightmode/feri/blob/master/docs/advanced/api/config.md
 }

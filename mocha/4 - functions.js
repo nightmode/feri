@@ -3,19 +3,19 @@
 //----------
 // Includes
 //----------
-var expect = require('expect.js')
-var path   = require('path')
+const expect = require('expect.js')
+const path   = require('path')
 
-var shared    = require('../code/2 - shared.js')
-var config    = require('../code/3 - config.js')
-var functions = require('../code/4 - functions.js')
+let   shared    = require('../code/2 - shared.js')
+let   config    = require('../code/3 - config.js')
+const functions = require('../code/4 - functions.js')
 
 //-----------
 // Variables
 //-----------
-var sharedBackup = functions.cloneObj(shared)
-var configBackup = functions.cloneObj(config)
-var testPath = path.join(shared.path.self, 'mocha', 'files', 'functions')
+const sharedBackup = functions.cloneObj(shared)
+const configBackup = functions.cloneObj(config)
+const testPath = path.join(shared.path.self, 'mocha', 'files', 'functions')
 
 //-------------
 // Mocha Tests
@@ -42,16 +42,16 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('addDestToSourceExt', function() {
             it('should add and append mappings to without harming existing entries', function() {
 
-                var desired = {
+                let desired = {
                     'karp' : ['splash', 'stare'],
-                    'js'   : ['coffee', 'jsx', 'tea']
+                    'html'   : ['md', 'htm']
                 }
 
                 // add new mapping
                 functions.addDestToSourceExt('karp', ['splash', 'stare'])
 
                 // append to existing mapping
-                functions.addDestToSourceExt('js', 'tea')
+                functions.addDestToSourceExt('html', 'htm')
 
                 expect(config.map.destToSourceExt.karp).to.eql(desired.karp)
 
@@ -99,7 +99,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('changeExt', function() {
             it('should return file path with changed extension', function() {
 
-                var test = functions.changeExt('index.jade', 'html')
+                let test = functions.changeExt('index.md', 'html')
 
                 expect(test).to.be('index.html')
 
@@ -112,7 +112,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('cleanArray', function() {
             it('should should return an array without empty slots', function() {
 
-                var test = functions.cleanArray([1,,3])
+                let test = functions.cleanArray([1,,3])
 
                 expect(test).to.eql([1,3])
 
@@ -125,11 +125,11 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('cloneObj', function() {
             it('should return a cloned object that has no reference to the original', function() {
 
-                var objOne = {
+                let objOne = {
                     'meep': 'moop'
                 }
 
-                var test = functions.cloneObj(objOne)
+                let test = functions.cloneObj(objOne)
 
                 test.meep = false
 
@@ -191,9 +191,9 @@ describe('File -> ../code/4 - functions.js\n', function() {
                         expect(functions.configPathsAreGood()).to.be.a('string')
                     }
 
-                    var env = [process.env.ProgramFiles, process.env['ProgramFiles(x86)'], path.dirname(process.env.USERPROFILE)]
+                    let env = [process.env.ProgramFiles, process.env['ProgramFiles(x86)'], path.dirname(process.env.USERPROFILE)]
 
-                    for (var i in env) {
+                    for (let i in env) {
                         if (typeof env[i] === 'string') {
                             config.path.dest = env[i]
                             expect(functions.configPathsAreGood()).to.be.a('string')
@@ -233,7 +233,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('destToSource', function() {
             it('should convert destination path to source equivalent', function() {
 
-                var test = functions.destToSource(path.join(config.path.dest, 'about', 'index.html'))
+                let test = functions.destToSource(path.join(config.path.dest, 'about', 'index.html'))
 
                 expect(test).to.be(path.join(config.path.source, 'about', 'index.html'))
 
@@ -252,7 +252,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
             it('should leave an absolute path as is', function() {
 
-                var imaginaryPath = path.join(shared.path.pwd, 'some', 'folder')
+                let imaginaryPath = path.join(shared.path.pwd, 'some', 'folder')
 
                 expect(functions.figureOutPath(imaginaryPath) === imaginaryPath)
 
@@ -288,8 +288,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('filesExist', function() {
             it('should confirm that one file exists and another does not', function() {
 
-                var file1 = path.join(testPath, 'filesExist', 'file.txt')
-                var file2 = path.join(testPath, 'filesExist', 'missing.txt')
+                let file1 = path.join(testPath, 'filesExist', 'file.txt')
+                let file2 = path.join(testPath, 'filesExist', 'missing.txt')
 
                 return functions.filesExist([file1, file2]).then(function(exists) {
 
@@ -306,7 +306,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('fileExistsAndTime', function() {
             it('should find out if a file exists and its modified time', function() {
 
-                var file = path.join(testPath, 'fileExistsAndTime', 'file.txt')
+                let file = path.join(testPath, 'fileExistsAndTime', 'file.txt')
 
                 return functions.fileExistsAndTime(file).then(function(obj) {
 
@@ -324,8 +324,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('filesExistAndTime', function() {
             it('should find if one or both files exist and their modified times', function() {
 
-                var file1 = path.join(testPath, 'filesExistAndTime', 'file.txt')
-                var file2 = path.join(testPath, 'filesExistAndTime', 'missing.txt')
+                let file1 = path.join(testPath, 'filesExistAndTime', 'file.txt')
+                let file2 = path.join(testPath, 'filesExistAndTime', 'missing.txt')
 
                 return functions.filesExistAndTime(file1, file2).then(function(obj) {
 
@@ -346,7 +346,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('fileExtension', function() {
             it('should return file extension in string', function() {
 
-                var test = functions.fileExtension('/conan/riddle-of-steel.txt')
+                let test = functions.fileExtension('/conan/riddle-of-steel.txt')
 
                 expect(test).to.be('txt')
 
@@ -359,7 +359,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('fileSize', function() {
             it('should should return the size of an existing file', function() {
 
-                var file = path.join(testPath, 'fileSize', 'file.txt')
+                let file = path.join(testPath, 'fileSize', 'file.txt')
 
                 return functions.fileSize(file).then(function(size) {
 
@@ -371,7 +371,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
             it('should should return 0 for a missing file', function() {
 
-                var file = path.join(testPath, 'fileSize', 'missing.txt')
+                let file = path.join(testPath, 'fileSize', 'missing.txt')
 
                 return functions.fileSize(file).then(function(size) {
 
@@ -409,11 +409,11 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 config.path.source = path.join(testPath, 'initFeri', 'source')
                 config.path.dest   = path.join(testPath, 'initFeri', 'dest')
 
-                var configFileName = (shared.slash === '\\') ? 'feri-config.js' : 'feri.js'
+                let configFileName = (shared.slash === '\\') ? 'feri-config.js' : 'feri.js'
 
-                var configFile = path.join(testPath, 'initFeri', configFileName)
+                let configFile = path.join(testPath, 'initFeri', configFileName)
 
-                var files = [config.path.source, config.path.dest, configFile]
+                let files = [config.path.source, config.path.dest, configFile]
 
                 return functions.initFeri().then(function() {
 
@@ -440,11 +440,11 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 config.path.source = path.join(shared.path.pwd, 'source')
                 config.path.dest   = path.join(shared.path.pwd, 'dest')
 
-                var configFileName = (shared.slash === '\\') ? 'feri-config.js' : 'feri.js'
+                let configFileName = (shared.slash === '\\') ? 'feri-config.js' : 'feri.js'
 
-                var configFile = path.join(shared.path.pwd, configFileName)
+                let configFile = path.join(shared.path.pwd, configFileName)
 
-                var files = [config.path.source, config.path.dest, configFile]
+                let files = [config.path.source, config.path.dest, configFile]
 
                 return functions.initFeri().then(function() {
 
@@ -477,9 +477,9 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('globOptions', function() {
             it('should ', function() {
 
-                var obj = functions.globOptions()
+                let obj = functions.globOptions()
 
-                var desired = {
+                let desired = {
                     'ignore'  : '**/_*',
                     'nocase'  : true,
                     'nodir'   : true,
@@ -497,7 +497,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('inSource', function() {
             it('should return true for a source file path', function() {
 
-                var test = functions.inSource(path.join(config.path.source, 'index.ejs'))
+                let test = functions.inSource(path.join(config.path.source, 'index.md'))
 
                 expect(test).to.be(true)
 
@@ -505,7 +505,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
             it('should return false for a dest file path', function() {
 
-                var test = functions.inSource(path.join(config.path.dest, 'index.html'))
+                let test = functions.inSource(path.join(config.path.dest, 'index.html'))
 
                 expect(test).to.be(false)
 
@@ -569,7 +569,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('makeDirPath', function() {
             it('should create an entire path leading up to a file if needed', function() {
 
-                var pathToMake = path.join(testPath, 'makeDirPath')
+                let pathToMake = path.join(testPath, 'makeDirPath')
 
                 return Promise.resolve().then(function() {
 
@@ -603,7 +603,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
             it('should create an entire path leading up to a folder if needed', function() {
 
-                var pathToMake = path.join(testPath, 'makeDirPath', 'folder')
+                let pathToMake = path.join(testPath, 'makeDirPath', 'folder')
 
                 return Promise.resolve().then(function() {
 
@@ -643,7 +643,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('mathRoundPlaces', function() {
             it('should round a number to a certain amount of decimal places', function() {
 
-                var test = functions.mathRoundPlaces(1.153, 2)
+                let test = functions.mathRoundPlaces(1.153, 2)
 
                 expect(test).to.be(1.15)
 
@@ -752,7 +752,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     mappings: 'AAAA,GAAIA,IAAK',
                     file: 'hi.js',
                     sourceRoot: '/source-maps',
-                    sourcesContent: ['var hi = \'there\'']
+                    sourcesContent: ['let hi = \'there\'']
                 }
 
                 let obj = {
@@ -789,9 +789,9 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('possibleSourceFiles', function() {
             it('should return the desired objects', function() {
 
-                var file
-                var arrayDesired
-                var test
+                let file
+                let arrayDesired
+                let test
 
                 //------------
                 // index.html
@@ -801,14 +801,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 arrayDesired = [
                     path.join(config.path.source, 'index.html'),
                     path.join(config.path.source, 'index.html.concat'),
-                    path.join(config.path.source, 'index.ejs'),
-                    path.join(config.path.source, 'index.ejs.concat'),
-                    path.join(config.path.source, 'index.jade'),
-                    path.join(config.path.source, 'index.jade.concat'),
                     path.join(config.path.source, 'index.md'),
-                    path.join(config.path.source, 'index.md.concat'),
-                    path.join(config.path.source, 'index.pug'),
-                    path.join(config.path.source, 'index.pug.concat')
+                    path.join(config.path.source, 'index.md.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)
@@ -822,11 +816,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 arrayDesired = [
                     path.join(config.path.source, 'code.js'),
-                    path.join(config.path.source, 'code.js.concat'),
-                    path.join(config.path.source, 'code.coffee'),
-                    path.join(config.path.source, 'code.coffee.concat'),
-                    path.join(config.path.source, 'code.jsx'),
-                    path.join(config.path.source, 'code.jsx.concat')
+                    path.join(config.path.source, 'code.js.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)
@@ -844,15 +834,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     path.join(config.path.source, 'style.css.map'),
                     path.join(config.path.source, 'style.css.map.concat'),
                     path.join(config.path.source, 'style.css'),
-                    path.join(config.path.source, 'style.css.concat'),
-                    path.join(config.path.source, 'style.less'),
-                    path.join(config.path.source, 'style.less.concat'),
-                    path.join(config.path.source, 'style.sass'),
-                    path.join(config.path.source, 'style.sass.concat'),
-                    path.join(config.path.source, 'style.scss'),
-                    path.join(config.path.source, 'style.scss.concat'),
-                    path.join(config.path.source, 'style.styl'),
-                    path.join(config.path.source, 'style.styl.concat')
+                    path.join(config.path.source, 'style.css.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)
@@ -875,11 +857,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     path.join(config.path.source, 'code.js.map'),
                     path.join(config.path.source, 'code.js.map.concat'),
                     path.join(config.path.source, 'code.js'),
-                    path.join(config.path.source, 'code.js.concat'),
-                    path.join(config.path.source, 'code.coffee'),
-                    path.join(config.path.source, 'code.coffee.concat'),
-                    path.join(config.path.source, 'code.jsx'),
-                    path.join(config.path.source, 'code.jsx.concat')
+                    path.join(config.path.source, 'code.js.concat')
                 ]
 
                 test = functions.possibleSourceFiles(file)
@@ -895,7 +873,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('readFile', function() {
             it('should get back the contents of a file', function() {
 
-                var file = path.join(testPath, 'readFile', 'readme.txt')
+                let file = path.join(testPath, 'readFile', 'readme.txt')
 
                 return functions.readFile(file).then(function(data) {
 
@@ -912,8 +890,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('readFiles', function() {
             it('should get back and array with the contents of each file', function() {
 
-                var file1 = path.join(testPath, 'readFiles', 'chapter-one.txt')
-                var file2 = path.join(testPath, 'readFiles', 'chapter-two.txt')
+                let file1 = path.join(testPath, 'readFiles', 'chapter-one.txt')
+                let file2 = path.join(testPath, 'readFiles', 'chapter-two.txt')
 
                 return functions.readFiles([file1, file2]).then(function(dataArray) {
 
@@ -931,7 +909,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('removeDest', function() {
             it('should remove file or folder if unrelated to the source directory', function() {
 
-                var pathToRemove = path.join(testPath, 'removeDest')
+                let pathToRemove = path.join(testPath, 'removeDest')
 
                 return Promise.resolve().then(function() {
 
@@ -975,7 +953,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('removeExt', function() {
             it('should remove one extension from a file path', function() {
 
-                var test = functions.removeExt('/folder/index.html.gz')
+                let test = functions.removeExt('/folder/index.html.gz')
 
                 expect(test).to.be('/folder/index.html')
 
@@ -988,7 +966,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('removeFile', function() {
             it('should return true after removing a file', function() {
 
-                var file = path.join(testPath, 'removeFile', 'sample.txt')
+                let file = path.join(testPath, 'removeFile', 'sample.txt')
 
                 return functions.makeDirPath(file).then(function(ok) {
 
@@ -1027,7 +1005,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('removeFiles', function() {
             it('should support removing one file', function() {
 
-                var file = path.join(testPath, 'removeFiles', 'sample.txt')
+                let file = path.join(testPath, 'removeFiles', 'sample.txt')
 
                 return functions.makeDirPath(file).then(function(ok) {
 
@@ -1061,8 +1039,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
             it('should support removing multiple files', function() {
 
-                var file1 = path.join(testPath, 'removeFiles', 'one.txt')
-                var file2 = path.join(testPath, 'removeFiles', 'two.txt')
+                let file1 = path.join(testPath, 'removeFiles', 'one.txt')
+                let file2 = path.join(testPath, 'removeFiles', 'two.txt')
 
                 return functions.makeDirPath(file1).then(function(ok) {
 
@@ -1105,11 +1083,11 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('restoreObj', function() {
             it('should delete any existing properties and restore them based on another object without keeping a reference to that other object', function() {
 
-                var objToRestore = {
+                let objToRestore = {
                     'bjork': true
                 }
 
-                var objToRestoreFrom = {
+                let objToRestoreFrom = {
                     'army': ['of', 'lovers']
                 }
 
@@ -1132,7 +1110,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 return new Promise(function(resolve, reject) {
 
-                    var time = functions.sharedStatsTimeTo()
+                    let time = functions.sharedStatsTimeTo()
 
                     setTimeout(function() {
                         time = functions.sharedStatsTimeTo(time)
@@ -1176,10 +1154,10 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('sourceToDest', function() {
             it('should convert a source path to its destination equivalent', function() {
 
-                var source = path.join(config.path.source, 'index.html')
-                var dest = path.join(config.path.dest, 'index.html')
+                let source = path.join(config.path.source, 'index.html')
+                let dest = path.join(config.path.dest, 'index.html')
 
-                var test = functions.sourceToDest(source)
+                let test = functions.sourceToDest(source)
 
                 expect(test).to.be(dest)
 
@@ -1192,7 +1170,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('stats', function() {
             it('should return the object desired', function() {
 
-                var objDesired = {
+                let objDesired = {
                     'timeTo': {
                         'load' : 0,
                         'clean': 0,
@@ -1201,7 +1179,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     }
                 }
 
-                var test = functions.stats()
+                let test = functions.stats()
 
                 expect(test).to.eql(objDesired)
 
@@ -1216,7 +1194,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 config.path.source = '/web/projects/source'
 
-                var test = functions.trimSource('/web/projects/source/index.html')
+                let test = functions.trimSource('/web/projects/source/index.html')
 
                 expect(test).to.be('/source/index.html')
 
@@ -1231,7 +1209,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 config.path.dest = '/web/projects/dest'
 
-                var test = functions.trimDest('/web/projects/dest/index.html')
+                let test = functions.trimDest('/web/projects/dest/index.html')
 
                 expect(test).to.be('/dest/index.html')
 
@@ -1244,7 +1222,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('uniqueArray', function() {
             it('should return array that contains only unique values', function() {
 
-                var test = functions.uniqueArray([0,0,7])
+                let test = functions.uniqueArray([0,0,7])
 
                 expect(test).to.eql([0,7])
 
@@ -1256,7 +1234,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         //----------------------------
         describe('upgradeAvailable', function() {
 
-            var localVersion = require('../package.json').version
+            let localVersion = require('../package.json').version
 
             it('should return false if the remote version is less than the local version', function() {
 
@@ -1289,7 +1267,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('useExistingSourceMap', function() {
             it('should return false if a source map does not exist', function() {
 
-                var file = path.join(testPath, 'useExistingSourceMap', 'test-1.js')
+                let file = path.join(testPath, 'useExistingSourceMap', 'test-1.js')
 
                 return functions.useExistingSourceMap(file).then(function(result) {
                     expect(result).to.be(false)
@@ -1299,8 +1277,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
             it('should return false and remove an existing source map that is not a valid JSON object', function() {
 
-                var file = path.join(testPath, 'useExistingSourceMap', 'test-2.js')
-                var mapFile = file + '.map'
+                let file = path.join(testPath, 'useExistingSourceMap', 'test-2.js')
+                let mapFile = file + '.map'
 
                 return Promise.resolve().then(function() {
 
@@ -1327,8 +1305,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 this.slow(11000)    // custom mocha slow value
                 this.timeout(11000) // custom mocha timeout value
 
-                var file = path.join(testPath, 'useExistingSourceMap', 'test-3.js')
-                var mapFile = file + '.map'
+                let file = path.join(testPath, 'useExistingSourceMap', 'test-3.js')
+                let mapFile = file + '.map'
 
                 return Promise.resolve().then(function() {
 
@@ -1362,8 +1340,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
             it('should return a valid object for a recently created source map', function() {
 
-                var file = path.join(testPath, 'useExistingSourceMap', 'test-4.js')
-                var mapFile = file + '.map'
+                let file = path.join(testPath, 'useExistingSourceMap', 'test-4.js')
+                let mapFile = file + '.map'
 
                 return Promise.resolve().then(function() {
 
@@ -1377,7 +1355,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                     return functions.useExistingSourceMap(file).then(function(result) {
 
-                        var desired = {
+                        let desired = {
                             "version": 3
                         }
 
@@ -1400,7 +1378,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('writeFile', function() {
             it('should write a file\n', function() {
 
-                var file = path.join(testPath, 'writeFile', 'file.txt')
+                let file = path.join(testPath, 'writeFile', 'file.txt')
 
                 return functions.makeDirPath(file).then(function(ok) {
 
@@ -1435,53 +1413,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
     describe('Functions: Includes', function() {
 
-        //-------------------------
-        // functions.includesNewer
-        //-------------------------
-        describe('includesNewer', function() {
-            it('should confirm include files are newer than a past date', function() {
-
-                var file1 = path.join(testPath, 'includesNewer', 'partials', '_header.ejs')
-                var file2 = path.join(testPath, 'includesNewer', 'partials', '_footer.ejs')
-
-                var includes = [file1, file2]
-
-                return Promise.resolve().then(function() {
-
-                    // check if includes are newer than a past date
-                    return functions.includesNewer(includes, 'ejs', 207187200, false)
-
-                }).then(function(includesNewer) {
-
-                    expect(includesNewer).to.be(true)
-
-                })
-
-            }) // it
-
-            it('should confirm include files are not newer than right now', function() {
-
-                var file1 = path.join(testPath, 'includesNewer', 'partials', '_header.ejs')
-                var file2 = path.join(testPath, 'includesNewer', 'partials', '_footer.ejs')
-
-                var includes = [file1, file2]
-
-                return Promise.resolve().then(function() {
-
-                    var now = new Date().getTime()
-
-                    // check if includes are newer than now
-                    return functions.includesNewer(includes, 'ejs', now, false)
-
-                }).then(function(includesNewer) {
-
-                    expect(includesNewer).to.be(false)
-
-                })
-
-            }) // it
-        }) // describe
-
         //------------------------------
         // functions.includePathsConcat
         //------------------------------
@@ -1490,7 +1421,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 config.path.source = path.join(testPath, 'includePathsConcat')
 
-                var file = path.join(config.path.source, 'all.txt.concat')
+                let file = path.join(config.path.source, 'all.txt.concat')
 
                 return Promise.resolve().then(function() {
 
@@ -1502,7 +1433,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 }).then(function(returnObj) {
 
-                    var desired = [
+                    let desired = [
                         path.join(config.path.source, 'partials', '_01.txt'),
                         path.join(config.path.source, 'partials', '_02.txt')
                     ]
@@ -1514,194 +1445,47 @@ describe('File -> ../code/4 - functions.js\n', function() {
             }) // it
         }) // describe
 
-        //---------------------------
-        // functions.includePathsEjs
-        //---------------------------
-        describe('includePathsEjs', function() {
-            it('should find includes and return our desired object', function() {
+        //-------------------------
+        // functions.includesNewer
+        //-------------------------
+        describe('includesNewer', function() {
+            it('should confirm include files are newer than a past date', function() {
 
-                config.path.source = path.join(testPath, 'includePathsEjs')
+                let file1 = path.join(testPath, 'includesNewer', 'includes', '_header.txt')
+                let file2 = path.join(testPath, 'includesNewer', 'includes', '_footer.txt')
 
-                var file = path.join(config.path.source, 'index.ejs')
+                let includes = [file1, file2]
 
                 return Promise.resolve().then(function() {
 
-                    return functions.readFile(file)
+                    // check if includes are newer than a past date
+                    return functions.includesNewer(includes, 'concat', 207187200, false)
 
-                }).then(function(data) {
+                }).then(function(includesNewer) {
 
-                    return functions.includePathsEjs(data, file)
-
-                }).then(function(returnObj) {
-
-                    var desired = [
-                        path.join(config.path.source, 'partials', '_01.ejs'),
-                        path.join(config.path.source, 'partials', '_02.ejs'),
-                        path.join(config.path.source, 'partials', '_03.ejs'),
-                        path.join(config.path.source, 'partials', '_04.ejs')
-                    ]
-
-                    expect(returnObj).to.eql(desired)
+                    expect(includesNewer).to.be(true)
 
                 })
 
             }) // it
-        }) // describe
 
-        //----------------------------
-        // functions.includePathsJade
-        //----------------------------
-        describe('includePathsJade', function() {
-            it('should find includes and return our desired object', function() {
+            it('should confirm include files are not newer than right now\n', function() {
 
-                config.path.source = path.join(testPath, 'includePathsJade')
+                let file1 = path.join(testPath, 'includesNewer', 'includes', '_header.txt')
+                let file2 = path.join(testPath, 'includesNewer', 'includes', '_footer.txt')
 
-                var file = path.join(config.path.source, 'index.jade')
+                let includes = [file1, file2]
 
                 return Promise.resolve().then(function() {
 
-                    return functions.readFile(file)
+                    let now = new Date().getTime()
 
-                }).then(function(data) {
+                    // check if includes are newer than now
+                    return functions.includesNewer(includes, 'concat', now, false)
 
-                    return functions.includePathsJade(data, file)
+                }).then(function(includesNewer) {
 
-                }).then(function(returnObj) {
-
-                    var desired = [
-                        path.join(config.path.source, 'partials', '_header.jade'),
-                        path.join(config.path.source, 'partials', '_footer.jade')
-                    ]
-
-                    expect(returnObj).to.eql(desired)
-
-                })
-
-            }) // it
-        }) // describe
-
-        //----------------------------
-        // functions.includePathsLess
-        //----------------------------
-        describe('includePathsLess', function() {
-            it('should find includes and return our desired object', function() {
-
-                config.path.source = path.join(testPath, 'includePathsLess')
-
-                var file = path.join(config.path.source, 'style.less')
-
-                return Promise.resolve().then(function() {
-
-                    return functions.readFile(file)
-
-                }).then(function(data) {
-
-                    return functions.includePathsLess(data, file)
-
-                }).then(function(returnObj) {
-
-                    var desired = [
-                        path.join(config.path.source, 'partials', '_fonts.less'),
-                        path.join(config.path.source, 'partials', '_grid.less')
-                    ]
-
-                    expect(returnObj).to.eql(desired)
-
-                })
-
-            }) // it
-        }) // describe
-
-        //----------------------------
-        // functions.includePathsPug
-        //----------------------------
-        describe('includePathsPug', function() {
-            it('should find includes and return our desired object', function() {
-
-                config.path.source = path.join(testPath, 'includePathsPug')
-
-                var file = path.join(config.path.source, 'index.pug')
-
-                return Promise.resolve().then(function() {
-
-                    return functions.readFile(file)
-
-                }).then(function(data) {
-
-                    return functions.includePathsPug(data, file)
-
-                }).then(function(returnObj) {
-
-                    var desired = [
-                        path.join(config.path.source, 'partials', '_header.pug'),
-                        path.join(config.path.source, 'partials', '_footer.pug')
-                    ]
-
-                    expect(returnObj).to.eql(desired)
-
-                })
-
-            }) // it
-        }) // describe
-
-        //----------------------------
-        // functions.includePathsSass
-        //----------------------------
-        describe('includePathsSass', function() {
-            it('should find includes and return our desired object', function() {
-
-                config.path.source = path.join(testPath, 'includePathsSass')
-
-                var file = path.join(config.path.source, 'style.scss')
-
-                return Promise.resolve().then(function() {
-
-                    return functions.readFile(file)
-
-                }).then(function(data) {
-
-                    return functions.includePathsSass(data, file)
-
-                }).then(function(returnObj) {
-
-                    var desired = [
-                        path.join(config.path.source, 'partials', '_fonts.scss'),
-                        path.join(config.path.source, 'partials', '_grid.scss')
-                    ]
-
-                    expect(returnObj).to.eql(desired)
-
-                })
-
-            }) // it
-        }) // describe
-
-        //------------------------------
-        // functions.includePathsStylus
-        //------------------------------
-        describe('includePathsStylus', function() {
-            it('should find includes and return our desired object\n', function() {
-
-                config.path.source = path.join(testPath, 'includePathsStylus')
-
-                var file = path.join(config.path.source, 'style.styl')
-
-                return Promise.resolve().then(function() {
-
-                    return functions.readFile(file)
-
-                }).then(function(data) {
-
-                    return functions.includePathsStylus(data, file)
-
-                }).then(function(returnObj) {
-
-                    var desired = [
-                        path.join(config.path.source, 'partials', '_fonts.styl'),
-                        path.join(config.path.source, 'partials', '_grid.styl')
-                    ]
-
-                    expect(returnObj).to.eql(desired)
+                    expect(includesNewer).to.be(false)
 
                 })
 
@@ -1712,177 +1496,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
     describe('Functions: Reusable Object Building', function() {
 
-        //--------------------------------
-        // functions.objBuildWithIncludes
-        //--------------------------------
-        describe('objBuildWithIncludes', function() {
-
-            it('should set obj.build to true if obj.data is populated', function() {
-
-                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
-                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
-
-                var obj = {
-                    source: path.join(config.path.source, 'index.ejs'),
-                    dest  : '',
-                    data  : '...',
-                    build : false
-                }
-
-                return functions.makeDirPath(config.path.dest, true).then(function() {
-
-                    return functions.objBuildWithIncludes(obj, functions.includePathsEjs)
-
-                }).then(function(obj) {
-
-                    expect(obj.build).to.be(true)
-
-                    // remove empty directory
-                    return functions.removeFile(config.path.dest)
-
-                })
-
-            }) // it
-
-            it('should get back an error if passed an obj.dest path that is in the source directory', function() {
-
-                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
-                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
-
-                var obj = {
-                    source: path.join(config.path.source, 'index.ejs'),
-                    dest  : path.join(config.path.source, 'index.ejs'),
-                    data  : '',
-                    build : false
-                }
-
-                return functions.objBuildWithIncludes(obj, null).catch(function(err) {
-
-                    return err
-
-                }).then(function(err) {
-
-                    expect(err).to.be('functions.objBuildWithIncludes -> Destination points to a source directory.')
-
-                })
-
-            }) // it
-
-            it('should set obj.build to true and populate obj.data if obj.dest is provided', function() {
-
-                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
-                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
-
-                var obj = {
-                    source: path.join(config.path.source, 'index.ejs'),
-                    dest  : path.join(config.path.dest, 'index.html'),
-                    data  : '',
-                    build : false
-                }
-
-                return functions.makeDirPath(obj.dest).then(function() {
-
-                    // create our dest file with some sample data
-                    return functions.writeFile(obj.dest, 'sample data')
-
-                }).then(function() {
-
-                        return functions.objBuildWithIncludes(obj, functions.includePathsEjs)
-
-                }).then(function(returnObj) {
-
-                    expect(returnObj.data).to.be('sample data')
-                    expect(returnObj.build).to.be(true)
-
-                    return functions.removeFile(config.path.dest)
-
-                })
-
-            }) // it
-
-            it('should get back objDesired if only obj.source is specified', function() {
-
-                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
-                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
-
-                var obj = {
-                    source: path.join(config.path.source, 'index.ejs'),
-                    dest  : '',
-                    data  : '',
-                    build : false
-                }
-
-                var objDesired = {
-                    source: obj.source,
-                    dest  : path.join(testPath, 'objBuildWithIncludes', 'dest', 'index.html'),
-                    data  : '<!doctype html>\n<html lang="en">\n<head>\n    <meta charset="utf-8">\n    <title>...</title>\n</head>\n<body>\n\n    <%- include(\'partials/_hello.ejs\') %>\n\n</body>\n</html>',
-                    build : true
-                }
-
-                return functions.objBuildWithIncludes(obj, functions.includePathsEjs).then(function(returnObj) {
-
-                    expect(returnObj).to.eql(objDesired)
-
-                })
-
-            }) // it
-
-            it('should get back objDesired when config.option.forcebuild is true', function() {
-
-                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
-                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
-
-                var sourceFile = path.join(config.path.source, 'index.ejs')
-                var destFile = path.join(config.path.dest, 'index.html')
-
-                var obj = {
-                    source: sourceFile,
-                    dest  : '',
-                    data  : '',
-                    build : false
-                }
-
-                var objDesired = {
-                    source: sourceFile,
-                    dest  : destFile,
-                    data  : '<!doctype html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"utf-8\">\n    <title>...</title>\n</head>\n<body>\n\n    <%- include(\'partials/_hello.ejs\') %>\n\n</body>\n</html>',
-                    build : true
-                }
-
-                return functions.removeFile(config.path.dest).then(function() {
-
-                    return functions.makeDirPath(destFile)
-
-                }).then(function() {
-
-                    return functions.objBuildWithIncludes(obj, functions.includePathsEjs)
-
-                }).then(function(returnObj) {
-
-                    return functions.writeFile(returnObj.dest, returnObj.data)
-
-                }).then(function() {
-
-                    // now a newer destination file exists
-
-                    config.option.forcebuild = true
-
-                    return functions.objBuildWithIncludes(obj, functions.includePathsEjs)
-
-                }).then(function(returnObj) {
-
-                    expect(returnObj).to.eql(objDesired)
-
-                }).then(function() {
-
-                    // remove empty directory
-                    return functions.removeFile(config.path.dest)
-
-                })
-
-            }) // it
-        }) // describe
-
         //----------------------------
         // functions.objBuildInMemory
         //----------------------------
@@ -1892,7 +1505,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 config.path.source = path.join(testPath, 'objBuildInMemory', 'source')
                 config.path.dest   = path.join(testPath, 'objBuildInMemory', 'dest')
 
-                var obj = {
+                let obj = {
                     source: path.join(config.path.source, 'index.html'),
                     dest  : '',
                     data  : '...',
@@ -1912,7 +1525,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 config.path.source = path.join(testPath, 'objBuildInMemory', 'source')
                 config.path.dest   = path.join(testPath, 'objBuildInMemory', 'dest')
 
-                var obj = {
+                let obj = {
                     source: path.join(config.path.source, 'index.html'),
                     dest  : path.join(config.path.source, 'index.html'),
                     data  : '',
@@ -1936,7 +1549,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 config.path.source = path.join(testPath, 'objBuildInMemory', 'source')
                 config.path.dest   = path.join(testPath, 'objBuildInMemory', 'dest')
 
-                var obj = {
+                let obj = {
                     source: path.join(config.path.source, 'index.html'),
                     dest  : path.join(config.path.dest, 'index.html'),
                     data  : '',
@@ -1972,14 +1585,14 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 config.path.source = path.join(testPath, 'objBuildInMemory', 'source')
                 config.path.dest   = path.join(testPath, 'objBuildInMemory', 'dest')
 
-                var obj = {
+                let obj = {
                     source: path.join(config.path.source, 'index.html'),
                     dest  : '',
                     data  : '',
                     build : false
                 }
 
-                var objDesired = {
+                let objDesired = {
                     source: obj.source,
                     dest  : path.join(testPath, 'objBuildInMemory', 'dest', 'index.html'),
                     data  : '<!doctype html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"utf-8\">\n    <title>...</title>\n</head>\n<body>\n\n    <p>Hello from a html file.</p>\n\n</body>\n</html>',
@@ -1999,17 +1612,17 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 config.path.source = path.join(testPath, 'objBuildInMemory', 'source')
                 config.path.dest   = path.join(testPath, 'objBuildInMemory', 'dest')
 
-                var sourceFile = path.join(config.path.source, 'index.html')
-                var destFile = path.join(config.path.dest, 'index.html')
+                let sourceFile = path.join(config.path.source, 'index.html')
+                let destFile = path.join(config.path.dest, 'index.html')
 
-                var obj = {
+                let obj = {
                     source: sourceFile,
                     dest  : '',
                     data  : '',
                     build : false
                 }
 
-                var objDesired = {
+                let objDesired = {
                     source: sourceFile,
                     dest  : destFile,
                     data  : '<!doctype html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"utf-8\">\n    <title>...</title>\n</head>\n<body>\n\n    <p>Hello from a html file.</p>\n\n</body>\n</html>',
@@ -2060,7 +1673,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 config.path.source = path.join(testPath, 'objBuildOnDisk', 'source')
                 config.path.dest   = path.join(testPath, 'objBuildOnDisk', 'dest')
 
-                var obj = {
+                let obj = {
                     source: path.join(config.path.source, 'sample.txt'),
                     dest  : '',
                     data  : '...',
@@ -2073,7 +1686,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 }).then(function(returnObj) {
 
-                     var objDesired = {
+                     let objDesired = {
                         source: path.join(config.path.dest, 'sample.txt'),
                         dest  : path.join(config.path.dest, 'sample.txt'),
                         data  : '',
@@ -2095,7 +1708,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 config.path.source = path.join(testPath, 'objBuildOnDisk', 'source')
                 config.path.dest   = path.join(testPath, 'objBuildOnDisk', 'dest')
 
-                var obj = {
+                let obj = {
                     source: path.join(config.path.source, 'sample.txt'),
                     dest  : path.join(config.path.source, 'sample.txt'),
                     data  : '...',
@@ -2118,7 +1731,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 config.path.source = path.join(testPath, 'objBuildOnDisk', 'source')
                 config.path.dest   = path.join(testPath, 'objBuildOnDisk', 'dest')
 
-                var obj = {
+                let obj = {
                     source: path.join(config.path.source, 'sample.txt'),
                     dest  : path.join(config.path.dest, 'sample.txt'),
                     data  : '...',
@@ -2150,7 +1763,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 config.path.source = path.join(testPath, 'objBuildOnDisk', 'source')
                 config.path.dest   = path.join(testPath, 'objBuildOnDisk', 'dest')
 
-                var obj = {
+                let obj = {
                     source: path.join(config.path.source, 'sample.txt'),
                     dest  : '',
                     data  : '',
@@ -2170,10 +1783,10 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 config.path.source = path.join(testPath, 'objBuildOnDisk', 'source')
                 config.path.dest   = path.join(testPath, 'objBuildOnDisk', 'dest')
 
-                var sourceFile = path.join(config.path.source, 'sample.txt')
-                var destFile = path.join(config.path.dest, 'sample.txt')
+                let sourceFile = path.join(config.path.source, 'sample.txt')
+                let destFile = path.join(config.path.dest, 'sample.txt')
 
-                var obj = {
+                let obj = {
                     source: sourceFile,
                     dest  : '',
                     data  : '',
@@ -2204,6 +1817,180 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 }).then(function() {
 
                     // remove dest folder
+                    return functions.removeFile(config.path.dest)
+
+                })
+
+            }) // it
+        }) // describe
+
+        //--------------------------------
+        // functions.objBuildWithIncludes
+        //--------------------------------
+        describe('objBuildWithIncludes', function() {
+
+            it('should set obj.build to true if obj.data is populated', function() {
+
+                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
+                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
+
+                let obj = {
+                    source: path.join(config.path.source, 'all.txt.concat'),
+                    dest  : '',
+                    data  : '...',
+                    build : false
+                }
+
+                return functions.makeDirPath(config.path.dest, true).then(function() {
+
+                    return functions.objBuildWithIncludes(obj, functions.includePathsConcat)
+
+                }).then(function(obj) {
+
+                    expect(obj.build).to.be(true)
+
+                    // remove empty directory
+                    return functions.removeFile(config.path.dest)
+
+                })
+
+            }) // it
+
+            it('should get back an error if passed an obj.dest path that is in the source directory', function() {
+
+                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
+                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
+
+                let obj = {
+                    source: path.join(config.path.source, 'all.txt.concat'),
+                    dest  : path.join(config.path.source, 'all.txt.concat'),
+                    data  : '',
+                    build : false
+                }
+
+                return functions.objBuildWithIncludes(obj, null).catch(function(err) {
+
+                    return err
+
+                }).then(function(err) {
+
+                    expect(err).to.be('functions.objBuildWithIncludes -> Destination points to a source directory.')
+
+                })
+
+            }) // it
+
+            it('should set obj.build to true and populate obj.data if obj.dest is provided', function() {
+
+                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
+                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
+
+                let obj = {
+                    source: path.join(config.path.source, 'all.txt.concat'),
+                    dest  : path.join(config.path.dest, 'all.txt'),
+                    data  : '',
+                    build : false
+                }
+
+                return functions.makeDirPath(obj.dest).then(function() {
+
+                    // create our dest file with some sample data
+                    return functions.writeFile(obj.dest, 'sample data')
+
+                }).then(function() {
+
+                        return functions.objBuildWithIncludes(obj, functions.includePathsConcat)
+
+                }).then(function(returnObj) {
+
+                    expect(returnObj.data).to.be('sample data')
+                    expect(returnObj.build).to.be(true)
+
+                    return functions.removeFile(config.path.dest)
+
+                })
+
+            }) // it
+
+            it('should get back objDesired if only obj.source is specified', function() {
+
+                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
+                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
+
+                let sourceFile = path.join(config.path.source, 'all.txt.concat')
+                let destFile = path.join(config.path.dest, 'all.txt')
+
+                let obj = {
+                    source: sourceFile,
+                    dest  : '',
+                    data  : '',
+                    build : false
+                }
+
+                let objDesired = {
+                    source: sourceFile,
+                    dest  : destFile,
+                    data  : 'includes/*.txt',
+                    build : true
+                }
+
+                return functions.objBuildWithIncludes(obj, functions.includePathsConcat).then(function(returnObj) {
+
+                    expect(returnObj).to.eql(objDesired)
+
+                })
+
+            }) // it
+
+            it('should get back objDesired when config.option.forcebuild is true', function() {
+
+                config.path.source = path.join(testPath, 'objBuildWithIncludes', 'source')
+                config.path.dest   = path.join(testPath, 'objBuildWithIncludes', 'dest')
+
+                let sourceFile = path.join(config.path.source, 'all.txt.concat')
+                let destFile = path.join(config.path.dest, 'all.txt')
+
+                let obj = {
+                    source: sourceFile,
+                    dest  : '',
+                    data  : '',
+                    build : false
+                }
+
+                let objDesired = {
+                    source: sourceFile,
+                    dest  : destFile,
+                    data  : 'includes/*.txt',
+                    build : true
+                }
+
+                return functions.removeFile(config.path.dest).then(function() {
+
+                    return functions.makeDirPath(destFile)
+
+                }).then(function() {
+
+                    return functions.objBuildWithIncludes(obj, functions.includePathsConcat)
+
+                }).then(function(returnObj) {
+
+                    return functions.writeFile(returnObj.dest, returnObj.data)
+
+                }).then(function() {
+
+                    // now a newer destination file exists
+
+                    config.option.forcebuild = true
+
+                    return functions.objBuildWithIncludes(obj, functions.includePathsConcat)
+
+                }).then(function(returnObj) {
+
+                    expect(returnObj).to.eql(objDesired)
+
+                }).then(function() {
+
+                    // remove empty directory
                     return functions.removeFile(config.path.dest)
 
                 })

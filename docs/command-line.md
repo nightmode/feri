@@ -1,8 +1,10 @@
 # Feri - Command Line
 
-Once Feri is installed globally you can call her from any location as `feri`.
+If installed globally, you can run the command `feri` from any directory. If installed locally, you'll need to run `npx feri` from your project folder.
 
-Feri will clean, build, and display statistics by default. She will also assume your source folder is "./source" and your destination folder is "./dest" unless you tell her otherwise.
+Feri will clean, build, and display statistics by default. She will also assume your source folder is "./source" and your destination folder is "./dest" unless you specify otherwise.
+
+## Navigation
 
 * [Usage](#usage)
 * [Options](#options)
@@ -28,7 +30,7 @@ Options come in three flavours: Common, Negating, and Special.
 -c, --clean          clean the destination directory
 -b, --build          build source files to destination
 -w, --watch          watch source to clean and build as needed
--l, --livereload     monitor destination directory for livereload
+-e, --extensions     monitor destination directory for extensions
 -s, --stats          display statistics
 ```
 
@@ -40,7 +42,7 @@ Feri will clean, build, and display statistics by default. If you like those beh
 -nc, --noclean       no clean
 -nb, --nobuild       no build
 -nw, --nowatch       no watch
--nl, --nolivereload  no livereload
+-ne, --noextensions  no extensions
 -ns, --nostats       no statistics
 ```
 
@@ -48,10 +50,10 @@ Negating options override their counterparts. For example, `feri --clean --nocle
 
 ### Special Options
 
-Special options can override other options, do multiple things at once, or are otherwise uniquely awesome.
+Special options can override other options, do multiple things at once, or are otherwise unique.
 
 ```
--a, --all            clean, build, watch, livereload, stats
+-a, --all            clean, build, watch, extensions, stats
 -f, --forcebuild     overwrite destination files without consideration
 -r, --republish      remove all destination files and then build
 -i, --init           create source, destination, and custom config file
@@ -60,7 +62,7 @@ Special options can override other options, do multiple things at once, or are o
 -h, --help           help
 ```
 
-Options like `--all`, `--forcebuild`, and `--republish` will override any other settings.
+Special options like `--all`, `--forcebuild`, and `--republish` will override common and negating options.
 
 ## Source
 
@@ -94,6 +96,12 @@ Republish from a specific source folder to a specific destination folder.
 feri --republish /path/to/source /path/to/destination
 ```
 
+Clean, build, watch, and host a [Feri Extension](https://github.com/nightmode/feri-extension#feri-extension) server for Chrome and/or Firefox.
+
+```
+feri --extensions
+```
+
 ## License
 
-MIT © [Kai Nightmode](https://forestmist.org)
+MIT © [Kai Nightmode](https://twitter.com/kai_nightmode)

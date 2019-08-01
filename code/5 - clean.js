@@ -3,27 +3,27 @@
 //----------------
 // Includes: Self
 //----------------
-var shared    = require('./2 - shared.js')
-var config    = require('./3 - config.js')
-var functions = require('./4 - functions.js')
+const color     = require('./color.js')
+const shared    = require('./2 - shared.js')
+const config    = require('./3 - config.js')
+const functions = require('./4 - functions.js')
 
 //----------
 // Includes
 //----------
-var chalk = require('chalk') // ~ 20 ms
-var path  = require('path')  // ~  1 ms
+const path = require('path') // ~ 1 ms
 
 //-----------
 // Variables
 //-----------
-var clean = {}
+const clean = {}
 
 //----------------------------
 // Clean: Command and Control
 //----------------------------
 // The following functions control cleaning, setting up promise chains and concurrency.
 
-clean.processClean = function clean_processClean(files, watching) {
+clean.processClean = async function clean_processClean(files, watching) {
     /*
     Remove the destination directory or start a more complex incremental cleanup.
     @param   {String,Object}  [files]     Optional. Glob search string like '*.html' or array of full paths like ['/web/dest/about.html', '/web/dest/index.html']
@@ -32,102 +32,95 @@ clean.processClean = function clean_processClean(files, watching) {
     */
     watching = watching || false
 
+    let filesCleaned = [] // keep track of any files cleaned
+
     if (!config.option.clean && !watching) {
         return Promise.resolve()
     }
 
-    return Promise.resolve().then(function() {
+    if (!watching) {
+        // start clean timer
+        shared.stats.timeTo.clean = functions.sharedStatsTimeTo(shared.stats.timeTo.clean)
+    }
 
-        if (!watching) {
-            // start clean timer
-            shared.stats.timeTo.clean = functions.sharedStatsTimeTo(shared.stats.timeTo.clean)
+    let configPathsAreGood = functions.configPathsAreGood()
+
+    if (configPathsAreGood !== true) {
+        throw new Error(configPathsAreGood)
+    }
+
+    let exists = await functions.fileExists(config.path.source)
+
+    if (exists === false) {
+        throw new Error(shared.language.display('error.missingSourceDirectory'))
+    }
+
+    if (!watching) {
+        // display title
+        functions.log(color.gray('\n' + shared.language.display('words.clean') + '\n'), false)
+    }
+
+    if (config.option.republish && !watching) {
+        // remove all files from inside the dest directory
+        let options = {
+            "nocase"  : true,
+            "nodir"   : false,
+            "realpath": true
         }
 
-        var configPathsAreGood = functions.configPathsAreGood()
-        if (configPathsAreGood !== true) {
-            throw new Error(configPathsAreGood)
-        }
+        let findFiles = await functions.findFiles(config.path.dest + '/{*,.*}', options)
 
-    }).then(function() {
+        await functions.removeFiles(findFiles)
 
-        return functions.fileExists(config.path.source).then(function(exists) {
-            if (exists === false) {
-                throw new Error(shared.language.display('error.missingSourceDirectory'))
-            }
-        })
+        filesCleaned = [config.path.dest]
+    } else {
+        // incremental cleanup
 
-    }).then(function() {
+        let filesType = typeof files
 
-        if (!watching) {
-            // display title
-            functions.log(chalk.gray('\n' + shared.language.display('words.clean') + '\n'), false)
-        }
-
-        if (config.option.republish && !watching) {
-            // remove all files from inside the dest directory
-            var options = {
+        if (filesType === 'object') {
+            // we already have a specified list to work from
+            filesCleaned = await clean.processFiles(files, watching)
+        } else {
+            let options = {
                 "nocase"  : true,
                 "nodir"   : false,
                 "realpath": true
             }
 
-            return functions.findFiles(config.path.dest + '/{*,.*}', options).then(function(files) {
-                return functions.removeFiles(files).then(function() {
-                    return [config.path.dest]
-                })
-            })
-        } else {
-            // incremental cleanup
-
-            var filesType = typeof files
-
-            if (filesType === 'object') {
-                // we already have a specified list to work from
-                return clean.processFiles(files, watching)
+            if (filesType === 'string') {
+                if (files.charAt(0) === '/') {
+                    files = files.replace('/', '')
+                }
             } else {
-                var options = {
-                    "nocase"  : true,
-                    "nodir"   : false,
-                    "realpath": true
-                }
-
-                if (filesType === 'string') {
-                    if (files.charAt(0) === '/') {
-                        files = files.replace('/', '')
-                    }
+                if (config.glob.clean !== '') {
+                    files = config.glob.clean
                 } else {
-                    if (config.glob.clean !== '') {
-                        files = config.glob.clean
-                    } else {
-                        files = '**/*'
-                    }
+                    files = '**/*'
                 }
+            }
 
-                return functions.findFiles(config.path.dest + '/' + files, options).then(function(files) {
-                    if (files.length > 0) {
-                        return clean.processFiles(files, watching)
-                    } else {
-                        return []
-                    }
-                })
+            let findFiles = await functions.findFiles(config.path.dest + '/' + files, options)
+
+            if (findFiles.length > 0) {
+                filesCleaned = await clean.processFiles(findFiles, watching)
+            } else {
+                filesCleaned = []
             }
         }
+    }
 
-    }).then(function(filesCleaned) {
+    if (!watching) {
+        shared.stats.timeTo.clean = functions.sharedStatsTimeTo(shared.stats.timeTo.clean)
 
-        if (!watching) {
-            shared.stats.timeTo.clean = functions.sharedStatsTimeTo(shared.stats.timeTo.clean)
-
-            if (filesCleaned.length === 0) {
-                functions.log(chalk.gray(shared.language.display('words.done') + '.'))
-            } else if (filesCleaned[0] === config.path.dest) {
-                functions.log(chalk.gray('/' + path.basename(config.path.dest) + ' ' + shared.language.display('words.removed')))
-            }
+        if (filesCleaned.length === 0) {
+            functions.log(color.gray(shared.language.display('words.done') + '.'))
+        } else if (filesCleaned[0] === config.path.dest) {
+            functions.log(color.gray('/' + path.basename(config.path.dest) + ' ' + shared.language.display('words.removed')))
         }
+    }
 
-        return filesCleaned
-
-    })
+    return filesCleaned
 } // processClean
 
 clean.processFiles = function clean_processFiles(files, watching) {
@@ -138,7 +131,7 @@ clean.processFiles = function clean_processFiles(files, watching) {
     */
     watching = watching || false
 
-    var filesCleaned = [] // keep track of any files cleaned
+    let filesCleaned = [] // keep track of any files cleaned
 
     functions.cacheReset()
 
@@ -147,9 +140,9 @@ clean.processFiles = function clean_processFiles(files, watching) {
             files = [files]
         }
 
-        var allFiles = []    // array of promises
-        var current  = 0     // number of operations running currently
-        var resolved = false // true if all tasks have been queued
+        let allFiles = []    // array of promises
+        let current  = 0     // number of operations running currently
+        let resolved = false // true if all tasks have been queued
 
         function proceed() {
             current--
@@ -164,7 +157,7 @@ clean.processFiles = function clean_processFiles(files, watching) {
 
         function queue() {
             while (current < config.concurLimit && files.length > 0) {
-                var file = files.shift()
+                let file = files.shift()
 
                 allFiles.push(Promise.resolve(file).then(function(file) {
                     return clean.processOneClean(file).then(function(filePath) {
@@ -206,9 +199,9 @@ clean.processOneClean = function clean_processOneClean(filePath) {
             if (!destExists) {
                 throw 'done'
             } else {
-                var prefix = path.basename(filePath).substr(0, config.includePrefix.length)
+                let prefix = path.basename(filePath).substr(0, config.includePrefix.length)
 
-                var fileExt = functions.fileExtension(filePath)
+                let fileExt = functions.fileExtension(filePath)
 
                 if (prefix === config.includePrefix || fileExt === 'concat') {
                     // prefixed files are includes and should not be in the destination folder
@@ -225,7 +218,7 @@ clean.processOneClean = function clean_processOneClean(filePath) {
 
             // if we got this far we know the destination file exists and it is not an include
 
-            var obj = {
+            let obj = {
                 destFile: filePath,
                 destExt: fileExt,
                 sourceExists: false
@@ -233,13 +226,13 @@ clean.processOneClean = function clean_processOneClean(filePath) {
 
             obj.sourceFiles = functions.possibleSourceFiles(filePath)
 
-            var len = obj.sourceFiles.length
+            let len = obj.sourceFiles.length
 
-            var p = Promise.resolve()
+            let p = Promise.resolve()
 
-            for (var i = 0; i < len; i++) {
+            for (let i = 0; i < len; i++) {
                 (function() {
-                    var possibleSourceFile = obj.sourceFiles[i]
+                    let possibleSourceFile = obj.sourceFiles[i]
 
                     p = p.then(function(exists) {
                         if (exists) {

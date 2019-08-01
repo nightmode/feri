@@ -1,5 +1,6 @@
 {
     "error": {
+        "concatInclude"         : "Warning: Concat files can use includes but should never be an include themselves.",
         "configPaths"           : "Source and destination should be unique and not nested within each other.",
         "destPointsToSource"    : "Destination points to a source directory.",
         "destProtected"         : "Destination should not be a protected location like {path}.",
@@ -14,10 +15,11 @@
     "message": {
         "fileChangedTooRecently"  : "{file} was changed too recently, ignoring.",
         "includesNewer"           : "{extension} include(s) newer than destination file.",
-        "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
         "listeningOnPort"         : "{software} listening on port {port}.",
+        "missingSourceHelp"       : "Check your folders for existing projects or run \"feri --init\" to start a new project.",
+        "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
         "usingConfigFile"         : "Using {file} file.",
-        "watchRefreshed"          : "{software} refreshed.",
+        "watchUpdated"            : "{software} updated.",
         "watchingDirectory"       : "Watching {directory} for changes."
     },
     "paddedGroups": {

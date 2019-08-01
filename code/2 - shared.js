@@ -3,20 +3,20 @@
 //----------
 // Includes
 //----------
-var os           = require('os')            // ~ 1 ms
-var path         = require('path')          // ~ 1 ms
+const os   = require('os')   // ~ 1 ms
+const path = require('path') // ~ 1 ms
 
-//-----------
-// Functions
-//-----------
-var propertyAccessor = function propertyAccessor(object, keys) {
+//-------------------
+// Private Functions
+//-------------------
+const propertyAccessor = function propertyAccessor(object, keys) {
     /*
     Retrieve an object property with a dot notation string.
     @param   {Object}  object   Object to access.
     @param   {String}  keys     Property to access using 0 or more dots for notation.
     @return  {*}
     */
-    var array = keys.split('.')
+    let array = keys.split('.')
     while (array.length && (object = object[array.shift()]));
     return object
 }
@@ -24,7 +24,7 @@ var propertyAccessor = function propertyAccessor(object, keys) {
 //-----------
 // Variables
 //-----------
-var shared = {
+const shared = {
     // null values will be populated later
     cache: {
         'errorsSeen'       : [], // Keep track of which error messages have been displayed to a command line user. Used by functions.logError to show individual errors only once.
@@ -33,11 +33,16 @@ var shared = {
         'missingMapBuild'  : []  // Keep track of any file types that are missing a config.map.sourceToDestTasks entry during a build pass.
     },
     cli: false, // Running as a command line tool if true. Called as a require if false.
+    extension: {
+        'calmTimer': null, // Variable used by watch.updateExtensionServer to update 300 ms after the last destination file change.
+        'changedFiles': [] // Keeps track of which destination files were changed in order to relay those to the extension server.
+    },
     global: true, // Installed globally if true. Locally if false.
     help: false, // will be set to true if we are displaying help text on the command line
     language: { // language.base and language.loaded are a duplicate of each other to speed up our default english language usage
         base: { // The default language object that is a fallback in case a value in shared.language.loaded is not available.
             "error": {
+                "concatInclude"         : "Warning: Concat files can use includes but should never be an include themselves.",
                 "configPaths"           : "Source and destination should be unique and not nested within each other.",
                 "destPointsToSource"    : "Destination points to a source directory.",
                 "destProtected"         : "Destination should not be a protected location like {path}.",
@@ -52,10 +57,11 @@ var shared = {
             "message": {
                 "fileChangedTooRecently"  : "{file} was changed too recently, ignoring.",
                 "includesNewer"           : "{extension} include(s) newer than destination file.",
-                "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
                 "listeningOnPort"         : "{software} listening on port {port}.",
+                "missingSourceHelp"       : "Check your folders for existing projects or run \"feri --init\" to start a new project.",
+                "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
                 "usingConfigFile"         : "Using {file} file.",
-                "watchRefreshed"          : "{software} refreshed.",
+                "watchUpdated"            : "{software} updated.",
                 "watchingDirectory"       : "Watching {directory} for changes."
             },
             "paddedGroups": {
@@ -92,7 +98,7 @@ var shared = {
             @param   {String}  keys  String like 'error.missingSource'
             @return  {String}        String like 'Missing source file.'
             */
-            var alreadyLoaded = propertyAccessor(shared.language.loaded, keys)
+            let alreadyLoaded = propertyAccessor(shared.language.loaded, keys)
 
             if (typeof alreadyLoaded === 'string') {
                 return alreadyLoaded
@@ -102,6 +108,7 @@ var shared = {
         },
         loaded: { // The active language translation. Defaults to english but can be replaced by functions.setLanguage.
             "error": {
+                "concatInclude"         : "Warning: Concat files can use includes but should never be an include themselves.",
                 "configPaths"           : "Source and destination should be unique and not nested within each other.",
                 "destPointsToSource"    : "Destination points to a source directory.",
                 "destProtected"         : "Destination should not be a protected location like {path}.",
@@ -116,10 +123,11 @@ var shared = {
             "message": {
                 "fileChangedTooRecently"  : "{file} was changed too recently, ignoring.",
                 "includesNewer"           : "{extension} include(s) newer than destination file.",
-                "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
                 "listeningOnPort"         : "{software} listening on port {port}.",
+                "missingSourceHelp"       : "Check your folders for existing projects or run \"feri --init\" to start a new project.",
+                "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
                 "usingConfigFile"         : "Using {file} file.",
-                "watchRefreshed"          : "{software} refreshed.",
+                "watchUpdated"            : "{software} updated.",
                 "watchingDirectory"       : "Watching {directory} for changes."
             },
             "paddedGroups": {
@@ -150,10 +158,6 @@ var shared = {
                 "watching"        : "Watching"
             }
         }
-    },
-    livereload: {
-        'calmTimer'   : null, // Variable used by watch.updateLiveReloadServer to update the LiveReload server 300 ms after the last destination file change.
-        'changedFiles': [], // Keeps track of which destination files were changed in order to relay those to the LiveReload server.
     },
     log: false, // will be set to true if we are running as a command line in order to allow console logging
     platform: os.platform(),

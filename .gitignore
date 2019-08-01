@@ -1,5 +1,5 @@
+.DS_store
 misc
 node_modules
-.DS_store
 npm-debug.log
 package-lock.json

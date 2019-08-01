@@ -3,29 +3,32 @@
 //----------------
 // Includes: Self
 //----------------
-var shared    = require('./2 - shared.js')
-var config    = require('./3 - config.js')
-var functions = require('./4 - functions.js')
+const color     = require('./color.js')
+const shared    = require('./2 - shared.js')
+const config    = require('./3 - config.js')
+const functions = require('./4 - functions.js')
 
 //----------
 // Includes
 //----------
-var chalk     = require('chalk')                   // ~ 20 ms
-var fs        = require('fs')                      // ~  1 ms
-var glob      = require('glob')                    // ~ 13 ms
-var path      = require('path')                    // ~  1 ms
-var promisify = require('es6-promisify').promisify // ~  4 ms
+const fs   = require('fs')   // ~  1 ms
+const glob = require('glob') // ~ 13 ms
+const path = require('path') // ~  1 ms
+const util = require('util') // ~  1 ms
+const zlib = require('zlib') // ~  6 ms
 
 //---------------------
 // Includes: Promisify
 //---------------------
-var execPromise        = promisify(require('child_process').exec) // ~ 13 ms
-var fsWriteFilePromise = promisify(fs.writeFile)                  // ~  1 ms
+const brotliPromise      = util.promisify(zlib.brotliCompress) // ~ 1 ms
+const execPromise        = util.promisify(require('child_process').exec) // ~ 10 ms
+const fsWriteFilePromise = util.promisify(fs.writeFile) // ~ 1 ms
+const gzipPromise        = util.promisify(zlib.gzip) // ~ 1 ms
 
 //-----------------------------
 // Includes: Paths to Binaries
 //-----------------------------
-var gif = '',
+let gif = '',
     jpg = '',
     png = ''
 
@@ -43,27 +46,17 @@ if (shared.global) {
 //---------------------
 // Includes: Lazy Load
 //---------------------
-var babel              // require('babel-core')                     // ~ 401 ms
-var css                // require('clean-css')                      // ~  83 ms
-var coffeeScript       // require('coffeescript')                   // ~  36 ms
-var ejs                // require('ejs')                            // ~   4 ms
-var html               // require('html-minifier').minify           // ~   4 ms
-var jade               // require('jade-legacy')                    // ~ 112 ms
-var js                 // require('uglify-js')                      // ~  83 ms
-var less               // require('less')                           // ~  89 ms
-var markdown           // require('markdown-it')()                  // ~  56 ms
-var transferMap        // require('multi-stage-sourcemap').transfer // ~  20 ms
-var pako               // require('pako')                           // ~  21 ms
-var pug                // require('pug')                            // ~ 257 ms
-var sassPromise        // promisify(require('node-sass').render)    // ~   7 ms
-var sourceMapGenerator // require('source-map').SourceMapGenerator  // ~  13 ms
-var stylus             // require('stylus')                         // ~  98 ms
-
+let css                // require('clean-css')                      // ~  83 ms
+let html               // require('html-minifier').minify           // ~   4 ms
+let js                 // require('uglify-js')                      // ~  83 ms
+let markdown           // require('markdown-it')()                  // ~  56 ms
+let transferMap        // require('multi-stage-sourcemap').transfer // ~  20 ms
+let sourceMapGenerator // require('source-map').SourceMapGenerator  // ~  13 ms
 
 //-----------
 // Variables
 //-----------
-var build = {}
+const build = {}
 
 //----------------------------
 // Build: Command and Control
@@ -90,7 +83,7 @@ build.processBuild = function build_processBuild(files, watching) {
             shared.stats.timeTo.build = functions.sharedStatsTimeTo(shared.stats.timeTo.build)
         }
 
-        var configPathsAreGood = functions.configPathsAreGood()
+        let configPathsAreGood = functions.configPathsAreGood()
         if (configPathsAreGood !== true) {
             throw new Error(configPathsAreGood)
         }
@@ -107,10 +100,10 @@ build.processBuild = function build_processBuild(files, watching) {
 
         if (!watching) {
             // display title
-            functions.log(chalk.gray('\n' + shared.language.display('words.build') + '\n'), false)
+            functions.log(color.gray('\n' + shared.language.display('words.build') + '\n'), false)
         }
 
-        var filesType = typeof files
+        let filesType = typeof files
 
         if (filesType === 'object') {
             // we already have a specified list to work from
@@ -146,18 +139,18 @@ build.processBuild = function build_processBuild(files, watching) {
                 //------------------------
                 // Missing Build Mappings
                 //------------------------
-                var array = shared.cache.missingMapBuild.slice()
-                var len = array.length
+                let array = shared.cache.missingMapBuild.slice()
+                let len = array.length
 
                 if (len > 0) {
-                    for (var i = 0; i < len; i++) {
+                    for (let i = 0; i < len; i++) {
                         array[i] = '.' + array[i]
                     }
 
-                    functions.log('\n    ' + chalk.gray(shared.language.display('message.missingSourceToDestTasks') + '\n        ' + array.sort().join('\n        ')), false)
+                    functions.log('\n    ' + color.gray(shared.language.display('message.missingSourceToDestTasks') + '\n        ' + array.sort().join('\n        ')), false)
                 }
             } else {
-                functions.log(chalk.gray(shared.language.display('words.done') + '.'))
+                functions.log(color.gray(shared.language.display('words.done') + '.'))
             }
 
             //------------
@@ -176,7 +169,7 @@ build.processFiles = function build_processFiles(files) {
     @param   {Object,String}  files  Array of paths like ['/source/path1', '/source/path2'] or a string like '/source/path'
     @return  {Promise}               Promise that returns an array of file path strings for the files built like ['/dest/css/style.css', '/dest/index.html']
     */
-    var filesBuilt = [] // keep track of any files built
+    let filesBuilt = [] // keep track of any files built
 
     return new Promise(function(resolve, reject) {
 
@@ -186,9 +179,9 @@ build.processFiles = function build_processFiles(files) {
 
         functions.cacheReset()
 
-        var allFiles = []    // array of promises
-        var current  = 0     // number of operations running currently
-        var resolved = false // true if all tasks have been queued
+        let allFiles = []    // array of promises
+        let current  = 0     // number of operations running currently
+        let resolved = false // true if all tasks have been queued
 
         function proceed() {
             current--
@@ -203,7 +196,7 @@ build.processFiles = function build_processFiles(files) {
 
         function queue() {
             while (current < config.concurLimit && files.length > 0) {
-                var file = files.shift()
+                let file = files.shift()
 
                 allFiles.push(Promise.resolve(file).then(function(file) {
                     return build.processOneBuild(file).then(function(filePath) {
@@ -239,23 +232,23 @@ build.processOneBuild = function build_processOneBuild(filePath) {
     @param   {String}   filePath  Full path to a file like '/web/source/rss.xml'
     @return  {Promise}            Promise that returns a file path string if something was built otherwise undefined.
     */
-    var fileExt = functions.fileExtension(filePath)
+    let fileExt = functions.fileExtension(filePath)
 
     // reusable object that will be passed between build functions
-    var object = {
+    let object = {
         'source': filePath,
         'dest': '',
         'data': '',
         'build': false
     }
 
-    var p = Promise.resolve(object)
+    let p = Promise.resolve(object)
 
     // figure out which array of functions apply to this file type
     if (config.map.sourceToDestTasks.hasOwnProperty(fileExt)) {
-        var len = config.map.sourceToDestTasks[fileExt].length
+        let len = config.map.sourceToDestTasks[fileExt].length
 
-        for (var i = 0; i < len; i++) {
+        for (let i = 0; i < len; i++) {
             if (typeof config.map.sourceToDestTasks[fileExt][i] === 'string') {
                 // built-in build task
                 p = p.then(build[config.map.sourceToDestTasks[fileExt][i]])
@@ -290,64 +283,15 @@ build.processOneBuild = function build_processOneBuild(filePath) {
 //------------------
 // The following functions do their primary task in memory.
 
-build.coffeeScript = function build_coffeeScript(obj) {
-    /*
-    CoffeeScript using https://www.npmjs.com/package/coffeescript.
-    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
-    @return  {Promise}  obj  Promise that returns a reusable object.
-    */
-    return functions.objBuildInMemory(obj).then(function(obj) {
-
-        functions.logWorker('build.coffeeScript', obj)
-
-        if (obj.build) {
-            if (typeof coffeeScript !== 'object') {
-                coffeeScript = require('coffeescript')
-            }
-
-            if (config.sourceMaps || config.fileType.coffee.sourceMaps) {
-                var coffeeObj = coffeeScript.compile(obj.data, {
-                    sourceMap: true,
-                    bare: true
-                })
-
-                var sourceMap = JSON.parse(coffeeObj.v3SourceMap)
-                sourceMap.sourcesContent = [obj.data.replace(/"/g, '\"')]
-
-                obj.data = coffeeObj.js + '//# sourceMappingURL=' + path.basename(obj.dest) + '.map'
-
-                sourceMap = functions.normalizeSourceMap(obj, sourceMap)
-
-                var mapObject = functions.objFromSourceMap(obj, sourceMap)
-
-                return build.map(mapObject).then(function() {
-                    return obj
-                })
-            } else {
-                obj.data = coffeeScript.compile(obj.data)
-                return obj
-            }
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
-
-    }).then(function(obj) {
-
-        return obj
-
-    })
-} // coffeeScript
-
 build.css = function build_css(obj) {
     /*
     Minify CSS using https://www.npmjs.com/package/clean-css.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    var buildAlreadySet = obj.build
+    let buildAlreadySet = obj.build
 
-    var sourceBaseName = path.basename(config.path.source)
+    let sourceBaseName = path.basename(config.path.source)
 
     return functions.objBuildInMemory(obj).then(function(obj) {
 
@@ -372,15 +316,15 @@ build.css = function build_css(obj) {
 
         if (existingSourceMap) {
             // temporarily set any sourceMappingURL to a full path for clean-css
-            var string = '/*# sourceMappingURL='
-            var pos = obj.data.indexOf(string)
+            let string = '/*# sourceMappingURL='
+            let pos = obj.data.indexOf(string)
 
             if (pos > 0) {
                 obj.data = obj.data.substr(0, pos) + '\n' + string + path.dirname(obj.dest) + shared.slash + path.basename(obj.dest) + '.map */'
             }
         }
 
-        var options = functions.cloneObj(config.thirdParty.cleanCss)
+        let options = functions.cloneObj(config.thirdParty.cleanCss)
 
         if (config.sourceMaps || config.fileType.css.sourceMaps) {
             options.sourceMap = true
@@ -388,7 +332,7 @@ build.css = function build_css(obj) {
             options.target = path.dirname(obj.dest)
         }
 
-        var cssMin = new css(options).minify(obj.data)
+        let cssMin = new css(options).minify(obj.data)
 
         if (config.sourceMaps || config.fileType.css.sourceMaps) {
 
@@ -420,29 +364,27 @@ build.css = function build_css(obj) {
     })
 } // css
 
-build.html = function build_html(obj) {
+build.html = async function build_html(obj) {
     /*
     Minify HTML using https://www.npmjs.com/package/html-minifier.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    return functions.objBuildInMemory(obj).then(function(obj) {
+    obj = await functions.objBuildInMemory(obj)
 
-        functions.logWorker('build.html', obj)
+    functions.logWorker('build.html', obj)
 
-        if (obj.build) {
-            if (typeof html !== 'object') {
-                html = require('html-minifier').minify
-            }
-
-            obj.data = html(obj.data, config.thirdParty.htmlMinifier)
-            return obj
-        } else {
-            // no further chained promises should be called
-            throw 'done'
+    if (obj.build) {
+        if (typeof html !== 'object') {
+            html = require('html-minifier').minify
         }
 
-    })
+        obj.data = html(obj.data, config.thirdParty.htmlMinifier)
+        return obj
+    } else {
+        // no further chained promises should be called
+        throw 'done'
+    }
 } // html
 
 build.js = function build_js(obj) {
@@ -451,9 +393,9 @@ build.js = function build_js(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    var buildAlreadySet = obj.build
+    let buildAlreadySet = obj.build
 
-    var previousSourceMap = false
+    let previousSourceMap = false
 
     return functions.objBuildInMemory(obj).then(function(obj) {
 
@@ -485,7 +427,7 @@ build.js = function build_js(obj) {
 
     }).then(function() {
 
-        var options = {
+        let options = {
             'keep_fnames': true
             /*
             // the following code is great for troubleshooting source maps
@@ -498,7 +440,7 @@ build.js = function build_js(obj) {
             */
         }
 
-        var outputFileName = path.basename(obj.dest)
+        let outputFileName = path.basename(obj.dest)
 
         if (config.sourceMaps || config.fileType.js.sourceMaps) {
             options.sourceMap = {
@@ -554,7 +496,7 @@ build.js = function build_js(obj) {
 
             sourceMap = functions.normalizeSourceMap(obj, sourceMap)
 
-            var mapObject = functions.objFromSourceMap(obj, sourceMap)
+            let mapObject = functions.objFromSourceMap(obj, sourceMap)
 
             return build.map(mapObject).then(function() {
                 return jsMin
@@ -572,104 +514,30 @@ build.js = function build_js(obj) {
     })
 } // js
 
-build.jsx = function build_jsx(obj) {
-    /*
-    Transform JSX files to JS using https://www.npmjs.com/package/babel-cli.
-    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
-    @return  {Promise}  obj  Promise that returns a reusable object.
-    */
-    var buildAlreadySet = obj.build
-
-    return functions.objBuildInMemory(obj).then(function(obj) {
-
-        functions.logWorker('build.jsx', obj)
-
-        if (obj.build) {
-
-            if (typeof babel !== 'object') {
-                babel = require('babel-core')
-            }
-
-            if ((config.sourceMaps || config.fileType.jsx.sourceMaps) && buildAlreadySet) {
-                return functions.useExistingSourceMap(obj.dest)
-            }
-
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
-
-    }).then(function(existingSourceMap) {
-
-        existingSourceMap = existingSourceMap || false
-
-        var options = {
-            'presets': ['react']
-        }
-
-        if (config.sourceMaps || config.fileType.jsx.sourceMaps) {
-            options.sourceMaps = true
-            options.sourceMapTarget = path.basename(obj.dest)
-            options.sourceRoot = config.sourceRoot
-
-            if (existingSourceMap) {
-                options.inputSourceMap = existingSourceMap
-            }
-        }
-
-        return babel.transform(obj.data, options)
-
-    }).then(function(fromBabel) {
-
-        obj.data = fromBabel.code
-
-        if (config.sourceMaps || config.fileType.jsx.sourceMaps) {
-            let sourceMap = fromBabel.map
-
-            if (obj.data.indexOf('//# sourceMappingURL=') < 0) {
-                obj.data += '\n' + '//# sourceMappingURL=' + path.basename(obj.dest) + '.map'
-            }
-
-            sourceMap = functions.normalizeSourceMap(obj, sourceMap)
-
-            let mapObject = functions.objFromSourceMap(obj, sourceMap)
-
-            return build.map(mapObject)
-        }
-
-    }).then(function() {
-
-        return obj
-
-    })
-} // jsx
-
-build.markdown = function build_markdown(obj) {
+build.markdown = async function build_markdown(obj) {
     /*
     Markdown using https://www.npmjs.com/package/markdown-it.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    return functions.objBuildInMemory(obj).then(function(obj) {
+    obj = await functions.objBuildInMemory(obj)
 
-        functions.logWorker('build.markdown', obj)
+    functions.logWorker('build.markdown', obj)
 
-        if (obj.build) {
-            if (typeof markdown !== 'object') {
-                markdown = require('markdown-it')()
-            }
-
-            markdown.options = config.thirdParty.markdownIt
-
-            obj.data = markdown.render(obj.data)
-
-            return obj
-        } else {
-            // no further chained promises should be called
-            throw 'done'
+    if (obj.build) {
+        if (typeof markdown !== 'object') {
+            markdown = require('markdown-it')()
         }
 
-    })
+        markdown.options = config.thirdParty.markdownIt
+
+        obj.data = markdown.render(obj.data)
+
+        return obj
+    } else {
+        // no further chained promises should be called
+        throw 'done'
+    }
 } // markdown
 
 //----------------
@@ -677,135 +545,114 @@ build.markdown = function build_markdown(obj) {
 //----------------
 // The following functions like working on disk based files.
 
-build.copy = function build_copy(obj) {
+build.copy = async function build_copy(obj) {
     /*
     Copy source to destination.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    return Promise.resolve().then(function() {
+    functions.logWorker('build.copy', obj)
 
-        functions.logWorker('build.copy', obj)
+    if (obj.data === '') {
+        obj = await functions.objBuildOnDisk(obj)
 
-        if (obj.data === '') {
+        if (obj.build) {
 
-            return functions.objBuildOnDisk(obj).then(function() {
+            await new Promise(function(resolve, reject) {
 
-                if (obj.build) {
+                let sourceFile = fs.createReadStream(obj.source)
+                sourceFile.on('error', reject)
 
-                    return new Promise(function(resolve, reject) {
+                let destFile = fs.createWriteStream(obj.dest)
+                destFile.on('error', reject)
+                destFile.on('finish', resolve)
 
-                        var sourceFile = fs.createReadStream(obj.source)
-                        sourceFile.on('error', reject)
-
-                        var destFile = fs.createWriteStream(obj.dest)
-                        destFile.on('error', reject)
-                        destFile.on('finish', resolve)
-
-                        // copy source to dest
-                        sourceFile.pipe(destFile)
-
-                    }).then(function() {
-
-                        functions.logOutput(obj.dest, 'copy')
-
-                    })
-
-                } else {
-                    // obj.build is false so no further chained promises should be called
-                    throw 'done'
-                }
+                // copy source to dest
+                sourceFile.pipe(destFile)
 
             })
 
+            functions.logOutput(obj.dest, 'copy')
+
         } else {
-            // do nothing and let build.finalize take care of writing obj.data
+            // obj.build is false so no further chained promises should be called
+            throw 'done'
         }
+    } else {
+        // do nothing and let build.finalize take care of writing obj.data
+    }
 
-    }).then(function() {
-
-        return obj
-
-    })
+    return obj
 } // copy
 
-build.gif = function build_gif(obj) {
+build.gif = async function build_gif(obj) {
     /*
     Losslessly optimize GIF files using https://www.npmjs.com/package/gifsicle.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    return functions.objBuildOnDisk(obj).then(function(obj) {
+    obj = await functions.objBuildOnDisk(obj)
 
-        functions.logWorker('build.gif', obj)
+    functions.logWorker('build.gif', obj)
 
-        if (obj.build) {
-            return execPromise('"' + gif + '" --output "' + obj.dest + '" --optimize=3 --no-extensions "' + obj.source + '"')
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
+    if (obj.build) {
+        await execPromise('"' + gif + '" --output "' + obj.dest + '" --optimize=3 --no-extensions "' + obj.source + '"')
+    } else {
+        // no further chained promises should be called
+        throw 'done'
+    }
 
-    }).then(function() {
+    functions.logOutput(obj.dest)
 
-        functions.logOutput(obj.dest)
-        return obj
-
-    })
+    return obj
 } // gif
 
-build.jpg = function build_jpg(obj) {
+build.jpg = async function build_jpg(obj) {
     /*
     Losslessly optimize JPG files using https://www.npmjs.com/package/jpegtran-bin.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    return functions.objBuildOnDisk(obj).then(function(obj) {
+    obj = await functions.objBuildOnDisk(obj)
 
-        functions.logWorker('build.jpg', obj)
+    functions.logWorker('build.jpg', obj)
 
-        if (obj.build) {
-            return execPromise('"' + jpg + '" -copy none -optimize -progressive -outfile "' +  obj.dest + '" "' + obj.source + '"')
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
+    if (obj.build) {
+        await execPromise('"' + jpg + '" -copy none -optimize -progressive -outfile "' +  obj.dest + '" "' + obj.source + '"')
+    } else {
+        // no further chained promises should be called
+        throw 'done'
+    }
 
-    }).then(function() {
+    functions.logOutput(obj.dest)
 
-        functions.logOutput(obj.dest)
-        return obj
-
-    })
+    return obj
 } // jpg
 
-build.png = function build_png(obj) {
+build.png = async function build_png(obj) {
     /*
     Losslessly optimize PNG files using https://www.npmjs.com/package/optipng-bin.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    return functions.objBuildOnDisk(obj).then(function(obj) {
+    obj = await functions.objBuildOnDisk(obj)
 
-        functions.logWorker('build.png', obj)
+    functions.logWorker('build.png', obj)
 
-        if (obj.build) {
-            var cmd = '"' + png + '" -clobber -o2 -strip all -out "' + obj.dest + '" "' + obj.source + '"'
-            return execPromise(cmd).then(function() {
-                // get rid of the possible .bak file optipng makes when overwriting an existing dest file with a different source file
-                return functions.removeDest(obj.dest + '.bak', false)
-            })
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
+    if (obj.build) {
+        let cmd = '"' + png + '" -clobber -o2 -strip all -out "' + obj.dest + '" "' + obj.source + '"'
+        await execPromise(cmd)
 
-    }).then(function() {
+        // get rid of the possible .bak file optipng makes when overwriting an existing dest file with a different source file
+        await functions.removeDest(obj.dest + '.bak', false)
+    } else {
+        // no further chained promises should be called
+        throw 'done'
+    }
 
-        functions.logOutput(obj.dest)
-        return obj
+    functions.logOutput(obj.dest)
 
-    })
+    return obj
 } // png
 
 //----------------------
@@ -825,7 +672,7 @@ build.concat = function build_concat(obj) {
 
         if (obj.build && config.fileType.concat.enabled) {
 
-            var filePaths = []
+            let filePaths = []
 
             return functions.includePathsConcat(obj.data, obj.source).then(function(includeFiles) {
 
@@ -838,11 +685,11 @@ build.concat = function build_concat(obj) {
                 // empty obj.data in preparation to populate it with include file contents
                 obj.data = ''
 
-                var fileExtDest = functions.fileExtension(obj.dest)
+                let fileExtDest = functions.fileExtension(obj.dest)
 
-                var arrayDataLength = arrayData.length - 1
+                let arrayDataLength = arrayData.length - 1
 
-                for (var i in arrayData) {
+                for (let i in arrayData) {
                     obj.data += arrayData[i]
 
                     if (i < arrayDataLength) {
@@ -855,9 +702,9 @@ build.concat = function build_concat(obj) {
                     }
                 }
 
-                var createSourceMaps = false
+                let createSourceMaps = false
 
-                var configConcatMaps = config.sourceMaps || config.fileType.concat.sourceMaps
+                let configConcatMaps = config.sourceMaps || config.fileType.concat.sourceMaps
 
                 if (fileExtDest === 'js' && (configConcatMaps || config.fileType.js.sourceMaps)) {
                     createSourceMaps = true
@@ -870,11 +717,11 @@ build.concat = function build_concat(obj) {
                         sourceMapGenerator = require('source-map').SourceMapGenerator
                     }
 
-                    var map = new sourceMapGenerator({
+                    let map = new sourceMapGenerator({
                         file: path.basename(obj.dest)
                     })
 
-                    var totalLines = 0
+                    let totalLines = 0
 
                     for (let i in filePaths) {
                         let lineArray = arrayData[i].split(/\r?\n/)
@@ -899,7 +746,7 @@ build.concat = function build_concat(obj) {
                         }
                     }
 
-                    var sourceMap = JSON.parse(map.toString())
+                    let sourceMap = JSON.parse(map.toString())
 
                     sourceMap.sourceRoot = config.sourceRoot
                     sourceMap.sourcesContent = []
@@ -927,16 +774,16 @@ build.concat = function build_concat(obj) {
 
     }).then(function() {
 
-        var fileExtSource = path.basename(obj.source).split('.').reverse()[1] // for example, return 'js' for a file named 'file.js.concat'
+        let fileExtSource = path.basename(obj.source).split('.').reverse()[1] // for example, return 'js' for a file named 'file.js.concat'
 
         // now return a chain of build tasks just like build.processOneBuild but don't add build.finalize since that will run after our final return anyway
-        var p = Promise.resolve(obj)
+        let p = Promise.resolve(obj)
 
         // figure out which array of functions apply to this file type
         if (config.map.sourceToDestTasks.hasOwnProperty(fileExtSource)) {
-            var len = config.map.sourceToDestTasks[fileExtSource].length
+            let len = config.map.sourceToDestTasks[fileExtSource].length
 
-            for (var i = 0; i < len; i++) {
+            for (let i = 0; i < len; i++) {
                 if (typeof config.map.sourceToDestTasks[fileExtSource][i] === 'string') {
                     // built-in build task
                     p = p.then(build[config.map.sourceToDestTasks[fileExtSource][i]])
@@ -961,322 +808,6 @@ build.concat = function build_concat(obj) {
     })
 } // concat
 
-build.ejs = function build_ejs(obj) {
-    /*
-    Embedded JavaScript templates using https://www.npmjs.com/package/ejs.
-    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
-    @return  {Promise}  obj  Promise that returns a reusable object.
-    */
-    return functions.objBuildWithIncludes(obj, functions.includePathsEjs).then(function(obj) {
-
-        functions.logWorker('build.ejs', obj)
-
-        if (obj.build) {
-            if (typeof ejs !== 'object') {
-                ejs = require('ejs')
-            }
-
-            var options = {
-                'filename': obj.source, // needed by EJS to figure out includes
-                'root': config.path.source // used by EJS to figure out an absolute path from an include like <% include '/partials/_header.ejs' %>
-            }
-
-            obj.data = ejs.render(obj.data, null, options)
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
-
-        return obj
-
-    })
-} // ejs
-
-build.jade = function build_jade(obj) {
-    /*
-    Jade using https://www.npmjs.com/package/jade-legacy.
-    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
-    @return  {Promise}  obj  Promise that returns a reusable object.
-    */
-    return functions.objBuildWithIncludes(obj, functions.includePathsJade).then(function(obj) {
-
-        functions.logWorker('build.jade', obj)
-
-        if (obj.build) {
-            if (typeof jade !== 'object') {
-                jade = require('jade-legacy')
-            }
-
-            obj.data = jade.render(obj.data, {
-                filename: obj.source
-            })
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
-
-        return obj
-
-    })
-} // jade
-
-build.less = function build_less(obj) {
-    /*
-    Less using https://www.npmjs.com/package/less.
-    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
-    @return  {Promise}  obj  Promise that returns a reusable object.
-    */
-    return functions.objBuildWithIncludes(obj, functions.includePathsLess).then(function(obj) {
-
-        functions.logWorker('build.less', obj)
-
-        if (obj.build) {
-            if (typeof less !== 'object') {
-                less = require('less')
-            }
-
-            return new Promise(function(resolve, reject) {
-                var options = {
-                    filename: path.basename(obj.source),
-                    paths: [path.dirname(obj.source)],
-                    compress: true
-                }
-
-                if (config.sourceMaps || config.fileType.less.sourceMaps) {
-                    options.sourceMap = {
-                        'sourceMapFullFilename': obj.source
-                    }
-                }
-
-                less.render(obj.data, options,
-                function(e, output) {
-                    if (e) {
-                        reject(e)
-                    } else {
-
-                        if (config.sourceMaps || config.fileType.less.sourceMaps) {
-
-                            obj.data = output.css + '\n/*# sourceMappingURL=' + path.basename(obj.dest) + '.map */'
-
-                            var sourceMap = JSON.parse(output.map)
-
-                            sourceMap.file = path.basename(obj.dest)
-                            sourceMap.sourceRoot = config.sourceRoot
-                            sourceMap.sources[0] = obj.source
-
-                            return functions.readFiles(sourceMap.sources).then(function(dataArray) {
-
-                                sourceMap.sourcesContent = dataArray
-
-                            }).then(function() {
-
-                                var replaceString = path.dirname(config.path.source) + shared.slash
-                                for (var i in sourceMap.sources) {
-                                    sourceMap.sources[i] = sourceMap.sources[i].replace(replaceString, '').replace('\\', '/')
-                                }
-
-                                let mapObject = functions.objFromSourceMap(obj, sourceMap)
-
-                                return build.map(mapObject)
-
-                            }).then(function() {
-
-                                resolve()
-
-                            })
-
-                        } else {
-                            obj.data = output.css
-                            resolve()
-                        }
-                    }
-                })
-            }) // promise
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
-
-    }).then(function() {
-
-        return obj
-
-    })
-} // less
-
-build.pug = function build_pug(obj) {
-    /*
-    Pug using https://www.npmjs.com/package/pug.
-    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
-    @return  {Promise}  obj  Promise that returns a reusable object.
-    */
-    return functions.objBuildWithIncludes(obj, functions.includePathsPug).then(function(obj) {
-
-        functions.logWorker('build.pug', obj)
-
-        if (obj.build) {
-            if (typeof pug !== 'object') {
-                pug = require('pug')
-            }
-
-            obj.data = pug.render(obj.data, {
-                filename: obj.source
-            })
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
-
-        return obj
-
-    })
-} // pug
-
-build.sass = function build_sass(obj) {
-    /*
-    Sass using https://www.npmjs.com/package/node-sass.
-    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
-    @return  {Promise}  obj  Promise that returns a reusable object.
-    */
-    return functions.objBuildWithIncludes(obj, functions.includePathsSass).then(function(obj) {
-
-        functions.logWorker('build.sass', obj)
-
-        if (obj.build) {
-            if (typeof sassPromise !== 'object') {
-                sassPromise = promisify(require('node-sass').render)
-            }
-
-            var options = {
-                file: obj.source,
-                outputStyle: 'compressed' // without this, node-sass seems to mess up source maps
-            }
-
-            if (config.sourceMaps || config.fileType.sass.sourceMaps || config.fileType.scss.sourceMaps) {
-                options.outFile = obj.dest
-                options.sourceMap = obj.dest + '.map'
-                options.sourceMapContents = true
-                options.sourceMapRoot = config.sourceRoot
-            }
-
-            return sassPromise(options).then(function(data) {
-
-                if (config.sourceMaps || config.fileType.sass.sourceMaps || config.fileType.scss.sourceMaps) {
-                    data.css = data.css.toString().replace(/\n\n/g, '\n')
-
-                    var sourceMap = JSON.parse(data.map.toString())
-
-                    sourceMap = functions.normalizeSourceMap(obj, sourceMap)
-
-                    let mapObject = functions.objFromSourceMap(obj, sourceMap)
-
-                    return build.map(mapObject).then(function() {
-                        return data
-                    })
-                } else {
-                    return data
-                }
-
-            }).then(function(data) {
-
-                obj.data = data.css
-
-            })
-
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
-
-    }).then(function() {
-
-        return obj
-
-    })
-} // sass
-
-build.stylus = function build_stylus(obj) {
-    /*
-    Stylus using https://www.npmjs.com/package/stylus.
-    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
-    @return  {Promise}  obj  Promise that returns a reusable object.
-    */
-    return functions.objBuildWithIncludes(obj, functions.includePathsStylus).then(function(obj) {
-
-        functions.logWorker('build.stylus', obj)
-
-        if (obj.build) {
-            if (typeof stylus !== 'object') {
-                stylus = require('stylus')
-            }
-
-            return new Promise(function(resolve, reject) {
-
-                var style = stylus(obj.data)
-                    .set('compress', true)
-                    .set('filename', obj.source)
-                    .set('paths', [path.dirname(obj.source)])
-
-                if (config.sourceMaps || config.fileType.styl.sourceMaps) {
-                    style.set('sourcemap', {
-                        'sourceRoot': config.sourceRoot
-                    })
-                }
-
-                style.render(function(err, css) {
-                    if (err) {
-                        functions.log(err)
-                        reject(err)
-                    } else {
-                        if (config.sourceMaps || config.fileType.styl.sourceMaps) {
-                            var string = '/*# sourceMappingURL='
-                            var pos = css.indexOf(string)
-
-                            if (pos > 0) {
-                                css = css.substr(0, pos) + '\n' + string + path.basename(obj.dest) + '.map */'
-                            }
-
-                            obj.data = css
-
-                            var sourceMap = style.sourcemap
-
-                            var sources = []
-                            var basename = path.basename(config.path.source)
-
-                            for (var i in sourceMap.sources) {
-                                sources.push(sourceMap.sources[i].replace(basename, config.path.source))
-                            }
-
-                            return functions.readFiles(sources).then(function(dataArray) {
-
-                                sourceMap.sourcesContent = dataArray
-
-                                let mapObject = functions.objFromSourceMap(obj, sourceMap)
-
-                                return build.map(mapObject).then(function() {
-                                    resolve()
-                                })
-
-                            })
-                        } else {
-                            obj.data = css
-                            resolve()
-                        }
-                    }
-                }) // style.render
-            })
-        } else {
-            // no further chained promises should be called
-            throw 'done'
-        }
-
-    }).then(function() {
-
-        return obj
-
-    })
-} // stylus
-
 //------------------
 // Build: Finishers
 //------------------
@@ -1284,117 +815,121 @@ build.stylus = function build_stylus(obj) {
 // Unlike most build functions, they don't bother to check if a source file is
 // newer than a destination file since that should have been handled already.
 
-build.finalize = function build_finalize(obj) {
+build.finalize = async function build_finalize(obj) {
     /*
     Finalize by writing memory to disk or copying source to dest, if needed.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
-    return Promise.resolve().then(function() {
-        functions.logWorker('build.finalize', obj)
+    functions.logWorker('build.finalize', obj)
 
-        if (obj.data !== '') {
-            // write obj.data to dest
+    if (obj.data !== '') {
+        // write obj.data to dest
 
-            if (obj.dest === '') {
-                obj.dest = functions.sourceToDest(obj.source)
-            } else if (functions.inSource(obj.dest)) {
-                // obj.dest points to a file in the source directory which could be dangerous
-                throw 'build.finalize -> ' + shared.language.display('error.destPointsToSource')
-            }
-
-            return functions.makeDirPath(obj.dest).then(function() {
-
-                return fsWriteFilePromise(obj.dest, obj.data)
-
-            }).then(function() {
-
-                obj.data = ''
-
-                functions.logOutput(obj.dest)
-
-                return obj
-
-            })
-        } else if (obj.dest === '') {
-            // copy source to dest
-            return build.copy(obj)
-        } else {
-            return obj
+        if (obj.dest === '') {
+            obj.dest = functions.sourceToDest(obj.source)
+        } else if (functions.inSource(obj.dest)) {
+            // obj.dest points to a file in the source directory which could be dangerous
+            throw 'build.finalize -> ' + shared.language.display('error.destPointsToSource')
         }
-    })
+
+        await functions.makeDirPath(obj.dest)
+
+        await fsWriteFilePromise(obj.dest, obj.data)
+
+        obj.data = ''
+
+        functions.logOutput(obj.dest)
+
+        return obj
+    } else if (obj.dest === '') {
+        // copy source to dest
+        return build.copy(obj)
+    } else {
+        return obj
+    }
 } // finalize
 
-build.gz = function build_gz(obj) {
+build.br = async function build_br(obj) {
     /*
-    Create a gzipped version of a file to live alongside the original.
+    Create a brotli compressed version of a file to live alongside the original.
     @param   {Object}          obj  Reusable object originally created by build.processOneBuild
     @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
     */
     if (obj.build) {
-        return build.finalize(obj).then(function() { // build.finalize ensures our destination file is ready to be compressed
+        obj = await build.finalize(obj) // build.finalize ensures our destination file is ready to be compressed
 
-            functions.logWorker('build.gz', obj)
+        functions.logWorker('build.br', obj)
 
-            if (shared.slash === '/') {
-                return execPromise('gzip -9 -k -n -f "' + obj.dest + '"')
-            } else {
-                // we are on windows
-                if (typeof pako !== 'object') {
-                    pako = require('pako')
-                }
+        let data = await functions.readFile(obj.dest)
 
-                return functions.readFile(obj.dest).then(function(data) {
-
-                    return pako.gzip(data, {
-                        level: 9,
-                        to: 'string'
-                    })
-
-                }).then(function(data) {
-
-                    return fsWriteFilePromise(obj.dest + '.gz', data, 'binary')
-
-                })
+        let dataCompress = await brotliPromise(data, {
+            params: {
+                // the default compression level is 11 which is exactly what we want
+                [zlib.constants.BROTLI_PARAM_SIZE_HINT]: data.length
             }
-
-        }).then(function() {
-
-            return obj
-
         })
-    } else {
-        return obj
+
+        await fsWriteFilePromise(obj.dest + '.br', dataCompress, 'binary')
     }
+
+    return obj
+} // br
+
+build.gz = async function build_gz(obj) {
+    /*
+    Create a gzip compressed version of a file to live alongside the original.
+    @param   {Object}          obj  Reusable object originally created by build.processOneBuild
+    @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
+    */
+    if (obj.build) {
+        obj = await build.finalize(obj) // build.finalize ensures our destination file is ready to be compressed
+
+        functions.logWorker('build.gz', obj)
+
+        let data = await functions.readFile(obj.dest)
+
+        let dataCompress = await gzipPromise(data, {
+            level: 9
+        })
+
+        await fsWriteFilePromise(obj.dest + '.gz', dataCompress, 'binary')
+    }
+
+    return obj
 } // gz
 
-build.map = function build_map(obj) {
+build.map = async function build_map(obj) {
     /*
-    Build a map file and if needed, also make a gz version of said map file.
+    Build a map file and if needed, also make a br and/or gz version of said map file.
     @param   {Object}          obj  Reusable object originally created by build.processOneBuild
     @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
     */
     // Troubleshooting a JavaScript source map? Try http://sokra.github.io/source-map-visualization/ and https://sourcemaps.io
     if (obj.build) {
-        return build.finalize(obj).then(function() { // build.finalize ensures our destination file is written to disk
+        obj = await build.finalize(obj) // build.finalize ensures our destination file is written to disk
 
-            functions.logWorker('build.map', obj)
+        functions.logWorker('build.map', obj)
 
-            if (config.map.sourceToDestTasks.map.indexOf('gz') >= 0) {
-                // manually kick off a gz task for the new .map file
-                return build.gz({
-                    'source': obj.dest,
-                    'dest': obj.dest,
-                    'data': '',
-                    'build': true
-                })
-            }
+        if (config.map.sourceToDestTasks.map.indexOf('br') >= 0) {
+            // manually kick off a br task for the new .map file
+            await build.br({
+                'source': obj.dest,
+                'dest': obj.dest,
+                'data': '',
+                'build': true
+            })
+        }
 
-        }).then(function() {
-
-            return obj
-
-        })
+        if (config.map.sourceToDestTasks.map.indexOf('gz') >= 0) {
+            // manually kick off a gz task for the new .map file
+            await build.gz({
+                'source': obj.dest,
+                'dest': obj.dest,
+                'data': '',
+                'build': true
+            })
+        }
     }
 
     return obj

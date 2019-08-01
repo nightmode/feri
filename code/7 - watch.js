@@ -3,42 +3,42 @@
 //----------------
 // Includes: Self
 //----------------
-var shared    = require('./2 - shared.js')
-var config    = require('./3 - config.js')
-var functions = require('./4 - functions.js')
-var clean     = require('./5 - clean.js')
-var build     = require('./6 - build.js')
+const color     = require('./color.js')
+const shared    = require('./2 - shared.js')
+const config    = require('./3 - config.js')
+const functions = require('./4 - functions.js')
+const clean     = require('./5 - clean.js')
+const build     = require('./6 - build.js')
 
 //----------
 // Includes
 //----------
-var chalk       = require('chalk')       // ~ 20 ms
-var events      = require('events')      // ~  1 ms
-var mkdirp      = require('mkdirp')      // ~  1 ms
-var path        = require('path')        // ~  1 ms
-var querystring = require('querystring') // ~  2 ms
+const events      = require('events')      // ~ 1 ms
+const mkdirp      = require('mkdirp')      // ~ 1 ms
+const path        = require('path')        // ~ 1 ms
+const querystring = require('querystring') // ~ 2 ms
 
 //---------------------
 // Includes: Lazy Load
 //---------------------
-var chokidar // require('chokidar') // ~ 75 ms
-var http     // require('http')     // ~ 17 ms
-var tinyLr   // require('tiny-lr')  // ~  ? ms
+let chokidar  // require('chokidar') // ~ 75 ms
+let WebSocket // require('ws')       // ~ 34 ms
 
 //-----------
 // Variables
 //-----------
-var chokidarSource   = '' // will become a chokidar object when watching the source folder
-var chokidarDest     = '' // will become a chokidar object when watching the destination folder
+let chokidarSource   = '' // will become a chokidar object when watching the source folder
+let chokidarDest     = '' // will become a chokidar object when watching the destination folder
 
-var chokidarSourceFiles = '' // string or array of source files being watched
-var chokidarDestFiles   = '' // string or array of destination files being watched
+let chokidarSourceFiles = '' // string or array of source files being watched
+let chokidarDestFiles   = '' // string or array of destination files being watched
 
-var livereloadServer = '' // will become a tinyLr object when watching the destination folder
+let extensionServer      = '' // will become a WebSocket object if config.option.extensions is enabled
+let extensionServerTimer = '' // will become a setInterval object if config.option.extensions is enabled
 
-var recentFiles = {} // keep track of files that have changed too recently
+let recentFiles = {} // keep track of files that have changed too recently
 
-var watch = {
+const watch = {
     'emitterDest'  : new events.EventEmitter(),
     'emitterSource': new events.EventEmitter()
 }
@@ -46,66 +46,158 @@ var watch = {
 //-------------------
 // Private Functions
 //-------------------
-var lazyLoadChokidar = function watch_lazyLoadChokidar () {
+const lazyLoadChokidar = function watch_lazyLoadChokidar() {
     if (typeof chokidar !== 'object') {
         chokidar = require('chokidar')
     }
 } // lazyLoadChokidar
 
+const lazyLoadWebSocket = function watch_lazyLoadWebSocket() {
+    if (typeof WebSocket !== 'object') {
+        WebSocket = require('ws')
+    }
+} // lazyLoadWebSocket
+
 //-----------
 // Functions
 //-----------
-watch.buildOne = function watch_buildOne(fileName) {
+watch.buildOne = async function watch_buildOne(fileName) {
     /*
     Figure out which files should be processed after receiving an add or change event from the source directory watcher.
     @param   {String}   fileName  File path like '/source/js/combined.js'
     @return  {Promise}
     */
-    return Promise.resolve().then(function() {
+    let ext = functions.fileExtension(fileName)
 
-        var ext = functions.fileExtension(fileName)
+    let files = []
 
-        var checkConcatFiles = false
+    let checkConcatFiles = false
 
-        var isInclude = path.basename(fileName).substr(0, config.includePrefix.length) === config.includePrefix
+    const isIncludePrefixFile = path.basename(fileName).substr(0, config.includePrefix.length) === config.includePrefix
 
-        if (isInclude) {
-            if (config.includeFileTypes.indexOf(ext) >= 0) {
-                // included file could be in any of this type of file so check them all
-                return functions.findFiles(config.path.source + "/**/*." + ext)
-            } else {
-                checkConcatFiles = true
-            }
+    if (isIncludePrefixFile) {
+        if (config.includeFileTypes.indexOf(ext) >= 0) {
+            // included file could be in any of this type of file so check them all
+            files = await functions.findFiles(config.path.source + "/**/*." + ext)
         } else {
             checkConcatFiles = true
         }
+    } else {
+        // not an include prefixed file
+        files.push(fileName) // this file should be built
+        checkConcatFiles = true
+    }
 
-        if (checkConcatFiles && config.fileType.concat.enabled) {
-            if (ext === 'concat') {
-                return [fileName]
-            } else {
-                if (ext !== '') {
-                    ext = '.' + ext
+    if (checkConcatFiles && config.fileType.concat.enabled) {
+
+        if (ext === 'concat') {
+            if (isIncludePrefixFile) {
+                // concat files that are also _ prefixed include files will not trigger a rebuild of their parent concat file when modified
+                // only a modification of the parent concat file or the modification of any non-concat included files would trigger a rebuild
+                // in other words, avoid creating files like _edgeCase.js.concat
+                functions.log(color.red(shared.language.display('error.concatInclude')))
+                functions.log(color.gray('https://github.com/nightmode/feri/blob/master/docs/extension-specific-info.md#twilight-zone') + '\n')
+            }
+
+            ext = functions.fileExtension(functions.removeExt(fileName))
+        }
+
+        // .concat files can concat almost anything so check all fileName.ext.concat files
+        let possibleFiles = await functions.findFiles(config.path.source + '/**/*.' + ext + '.concat')
+
+        if (possibleFiles.length > 0) {
+            for (let x in possibleFiles) {
+                let data = await functions.readFile(possibleFiles[x])
+
+                let includeFiles = await functions.includePathsConcat(data, possibleFiles[x])
+
+                if (includeFiles.indexOf(fileName) >= 0) {
+                    files.push(possibleFiles[x])
                 }
-
-                // .concat files can concat almost anything so check all name.ext.concat files
-                return functions.findFiles(config.path.source + '/**/*' + ext + '.concat').then(function(files) {
-                    if (!isInclude) {
-                        files.unshift(fileName)
-                    }
-                    return files
-                })
             }
         }
+    }
 
-    }).then(function(files) {
+    if (files.length > 0) {
+        files = files.filter(function(y) {
+            // filter out any _ prefixed includes
+            return path.basename(y).substr(0, config.includePrefix.length) !== config.includePrefix
+        })
 
-        if (files.length > 0) {
-            return build.processBuild(files, true)
-        }
-
-    })
+        return build.processBuild(files, true)
+    }
 } // buildOne
+
+watch.checkExtensionClients = function watch_checkExtensionClients() {
+    /*
+    Ping clients to make sure they are still connected. Terminate clients which have not responded to three or more pings.
+    */
+    extensionServer.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN) {
+            if (client._pingAttempt >= 3) {
+                // disconnected client
+                client.terminate()
+            } else {
+                client._pingAttempt += 1
+                client.send('ping')
+            }
+        }
+    })
+} // checkExtensionClients
+
+watch.extensionServer = async function watch_extensionServer() {
+    /*
+    Run an extension server for clients.
+    @return  {Promise}
+    */
+
+    if (config.option.extensions) {
+        lazyLoadWebSocket()
+
+        // stop the extension server only
+        await watch.stop(false, false, true)
+
+        await new Promise(function(resolve, reject) {
+            extensionServer = new WebSocket.Server({ port: config.extension.port }, function(err) {
+                if (err) {
+                    if (shared.cli) {
+                        console.error(err)
+                    }
+                    reject(err)
+                } else {
+                    extensionServer.on('connection', function connection(server) {
+                        server._pingAttempt = 0
+
+                        server.on('message', function incoming(message) {
+                            if (message === 'ping') {
+                                // reply with pong
+                                server.send('pong')
+                            } else if (message === 'pong') {
+                                // client responded to a ping so reset _pingAttempt
+                                server._pingAttempt = 0
+                            }
+                        })
+
+                        server.on('close', function close(o) {
+                            // do nothing
+                        })
+
+                        // send the default document once
+                        server.send(JSON.stringify({ defaultDocument: config.extension.defaultDocument }))
+                    })
+
+                    // check clients for dropped connections every 10 seconds
+                    extensionServerTimer = setInterval(watch.checkExtensionClients, 10000)
+
+                    // extension server is running
+                    functions.log(color.gray(shared.language.display('message.listeningOnPort').replace('{software}', 'Extension server').replace('{port}', config.extension.port)))
+
+                    resolve()
+                }
+            })
+        })
+    }
+} // extensionServer
 
 watch.notTooRecent = function watch_notTooRecent(file) {
     /*
@@ -113,11 +205,11 @@ watch.notTooRecent = function watch_notTooRecent(file) {
     @param   {String}   file  File path like '/path/readme.txt'
     @return  {Boolean}        True if a file was not active recently.
     */
-    var time = new Date().getTime()
-    var expireTime = time - 300
+    let time = new Date().getTime()
+    let expireTime = time - 300
 
     // clean out old entries in recentFiles
-    for (var x in recentFiles) {
+    for (let x in recentFiles) {
         if (recentFiles[x] < expireTime) {
             // remove this entry
             delete recentFiles[x]
@@ -133,248 +225,193 @@ watch.notTooRecent = function watch_notTooRecent(file) {
     }
 } // notTooRecent
 
-watch.processWatch = function watch_processWatch(sourceFiles, destFiles) {
+watch.processWatch = async function watch_processWatch(sourceFiles, destFiles) {
     /*
-    Watch both source and destination folders for activity.
+    Watch the source folder. Optionally watch the destination folder and start an extension server.
     @param   {String,Object}  [sourceFiles]  Optional. Glob search string for watching source files like '*.html' or array of full paths like ['/source/about.html', '/source/index.html']
     @param   {String,Object}  [destFiles]    Optional. Glob search string for watching destination files like '*.css' or array of full paths like ['/dest/fonts.css', '/dest/grid.css']
     @return  {Promise}
     */
-    if (!config.option.watch) {
-        return Promise.resolve()
-    } else {
-        return Promise.resolve().then(function() {
+    if (config.option.watch) {
+        // start watch timer
+        shared.stats.timeTo.watch = functions.sharedStatsTimeTo(shared.stats.timeTo.watch)
 
-            // start watch timer
-            shared.stats.timeTo.watch = functions.sharedStatsTimeTo(shared.stats.timeTo.watch)
+        let configPathsAreGood = functions.configPathsAreGood()
 
-            var configPathsAreGood = functions.configPathsAreGood()
-            if (configPathsAreGood !== true) {
-                throw new Error(configPathsAreGood)
-            }
+        if (configPathsAreGood !== true) {
+            throw new Error(configPathsAreGood)
+        }
 
-        }).then(function() {
+        let exists = await functions.fileExists(config.path.source)
 
-            return functions.fileExists(config.path.source).then(function(exists) {
-                if (exists === false) {
-                    throw shared.language.display('error.missingSourceDirectory')
-                }
-            })
+        if (exists === false) {
+            throw shared.language.display('error.missingSourceDirectory')
+        }
 
-        }).then(function() {
+        functions.log(color.gray('\n' + shared.language.display('words.watch') + '\n'), false)
 
-            return new Promise(function(resolve, reject) {
+        await watch.watchSource(sourceFiles)
 
-                functions.log(chalk.gray('\n' + shared.language.display('words.watch') + '\n'), false)
+        if (config.option.extensions) {
+            await watch.watchDest(destFiles)
+        } // if
 
-                return watch.watchSource(sourceFiles).then(function() {
-                    //------------
-                    // LiveReload
-                    //------------
-                    if (!config.option.livereload) {
-                        resolve()
-                    } else {
-                        if (typeof tinyLr !== 'object') {
-                            tinyLr = require('tiny-lr')
-                        }
+        if (config.option.extensions) {
+            await watch.extensionServer()
+        }
 
-                        // stop the livereload server only
-                        watch.stop(false, false, true)
-
-                        livereloadServer = new tinyLr.Server()
-                        livereloadServer.listen(config.thirdParty.livereload.port, function(err) {
-                            if (err) {
-                                if (shared.cli) {
-                                    console.error(err)
-                                }
-                                reject(err)
-                            } else {
-                                return watch.watchDest(destFiles).then(function() {
-
-                                    functions.log(chalk.gray(shared.language.display('message.listeningOnPort').replace('{software}', 'LiveReload').replace('{port}', config.thirdParty.livereload.port)))
-
-                                    resolve()
-
-                                }).catch(function(err) {
-
-                                    reject(err)
-
-                                })
-                            }
-                        })
-                    }
-                })
-
-            }).then(function() {
-
-                shared.stats.timeTo.watch = functions.sharedStatsTimeTo(shared.stats.timeTo.watch)
-
-            })
-        })
+        shared.stats.timeTo.watch = functions.sharedStatsTimeTo(shared.stats.timeTo.watch)
     }
 } // processWatch
 
-watch.stop = function watch_stop(stopSource, stopDest, stopLivereload) {
+watch.stop = function watch_stop(stopSource, stopDest, stopExtension) {
     /*
-    Stop watching the source and/or destination folders. Also stop the LiveReload server.
-    @param   {Boolean}  [stopSource]      Optional and defaults to true. If true, stop watching the source folder.
-    @param   {Boolean}  [stopDest]        Optional and defaults to true. If true, stop watching the destination folder.
-    @param   {Boolean}  [stopLivereload]  Optional and defaults to true. If true, stop the LiveReload server.
+    Stop watching the source and/or destination folders. Optionally stop the extensions server.
+    @param   {Boolean}  [stopSource]     Optional and defaults to true. If true, stop watching the source folder.
+    @param   {Boolean}  [stopDest]       Optional and defaults to true. If true, stop watching the destination folder.
+    @param   {Boolean}  [stopExtension]  Optional and defaults to true. If true, stop the extension server.
+    @return  {Promise}
     */
-    stopSource     = typeof stopSource     === 'boolean' ? stopSource     : true
-    stopDest       = typeof stopDest       === 'boolean' ? stopDest       : true
-    stopLivereload = typeof stopLivereload === 'boolean' ? stopLivereload : true
+    stopSource    = typeof stopSource    === 'boolean' ? stopSource    : true
+    stopDest      = typeof stopDest      === 'boolean' ? stopDest      : true
+    stopExtension = typeof stopExtension === 'boolean' ? stopExtension : true
 
-    if (stopSource) {
-        if (typeof chokidarSource === 'object') {
-            // clean up previous watcher
-            chokidarSource.close() // remove all listeners
-            chokidarSource.unwatch(chokidarSourceFiles)
-        }
-    }
-
-    if (stopDest) {
-        if (typeof chokidarDest === 'object') {
-            // clean up previous watcher
-            chokidarDest.close() // remove all listeners
-            chokidarDest.unwatch(chokidarDestFiles)
-        }
-    }
-
-    if (stopLivereload) {
-        if (typeof livereloadServer === 'object') {
-            if (livereloadServer.server._handle === null) {
-                // livereload is not running
-            } else {
-                // stop livereload server and free up port
-                livereloadServer.server.removeAllListeners()
-                livereloadServer.server.close()
-            }
-        }
-    }
-} // stop
-
-watch.updateLiveReloadServer = function watch_updateLiveReloadServer(now) {
-    /*
-    Update the LiveReload server with a list of changed files.
-    @param   {Boolean}  now  True meaning we have already waited 300 ms for events to settle.
-    @return  {Promise}       Promise that returns true if everything is ok otherwise an error.
-    */
     return new Promise(function(resolve, reject) {
-        now = now || false
+        if (stopSource) {
+            if (typeof chokidarSource === 'object') {
+                // clean up previous watcher
+                chokidarSource.close() // remove all listeners
+                chokidarSource.unwatch(chokidarSourceFiles)
+            }
+        }
 
-        if (!now) {
-            // will proceed 300 ms from now in order for things to settle
-            clearTimeout(shared.livereload.calmTimer)
-            shared.livereload.calmTimer = setTimeout(function() {
-                watch.updateLiveReloadServer(true)
-            }, 300)
-            resolve(true)
+        if (stopDest) {
+            if (typeof chokidarDest === 'object') {
+                // clean up previous watcher
+                chokidarDest.close() // remove all listeners
+                chokidarDest.unwatch(chokidarDestFiles)
+            }
+        }
+
+        if (stopExtension) {
+            clearInterval(extensionServerTimer) // no need to check for disconnected clients anymore
+
+            if (typeof extensionServer === 'object') {
+                extensionServer.close(function() {
+                    resolve()
+                })
+            } else {
+                resolve()
+            }
         } else {
-            if (typeof http !== 'object') {
-                http = require('http')
-            }
-
-            var postData = '{"files": ' + JSON.stringify(shared.livereload.changedFiles) + '}'
-
-            shared.livereload.changedFiles = []
-
-            var requestOptions = {
-                'port'  : config.thirdParty.livereload.port,
-                'path'  : '/changed',
-                'method': 'POST',
-                'headers': {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Content-Length': postData.length
-                }
-            }
-
-            var request = http.request(requestOptions)
-
-            request.on('error', function(err) {
-                if (shared.cli) {
-                    console.error(err)
-                }
-                reject(err)
-            })
-
-            request.write(postData)
-            request.end()
-
-            functions.log(chalk.gray(shared.language.display('message.watchRefreshed').replace('{software}', 'LiveReload') + '\n'))
-            resolve(true)
+            resolve()
         }
     })
-} // updateLiveReloadServer
+} // stop
 
-watch.watchDest = function watch_watchDest(files) {
+watch.updateExtensionServer = async function watch_updateExtensionServer(now) {
     /*
-    Watch the destination directory for changes in order to update our LiveReload server as needed.
+    Update the extension server with a list of changed files.
+    @param   {Boolean}  [now]  Optional and defaults to false. True means we have already waited 300 ms for events to settle.
+    @return  {Promise}
+    */
+    now = now || false
+
+    if (!now) {
+        // will proceed 300 ms from now in order for things to settle
+        clearTimeout(shared.extension.calmTimer)
+
+        shared.extension.calmTimer = setTimeout(function() {
+            watch.updateExtensionServer(true)
+        }, 300)
+    } else {
+        if (shared.extension.changedFiles.length > 0) {
+            let fileList = '{"files": ' + JSON.stringify(shared.extension.changedFiles) + '}'
+
+            shared.extension.changedFiles = []
+
+            extensionServer.clients.forEach(function each(client) {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(fileList)
+                }
+            })
+
+            functions.log(color.gray(shared.language.display('message.watchUpdated').replace('{software}', 'Extension server') + '\n'))
+        }
+    }
+} // updateExtensionServer
+
+watch.watchDest = async function watch_watchDest(files) {
+    /*
+    Watch the destination directory for changes in order to update the extensions server as needed.
     @param   {String,Object}  [files]  Optional. Glob search string for watching destination files like '*.css' or array of full paths like ['/dest/fonts.css', '/dest/grid.css']
     @return  {Promise}
     */
-    return new Promise(function(resolve, reject) {
+    lazyLoadChokidar()
 
-        lazyLoadChokidar()
+    let filesType = typeof files
 
-        var filesType = typeof files
-
-        if (filesType === 'object') {
-            // we already have a specified list to work from
+    if (filesType === 'object') {
+        // we already have a specified list to work from
+    } else {
+        if (filesType === 'string') {
+            // string should be a glob
+            files = files.replace(config.path.dest, '')
         } else {
-            if (filesType === 'string') {
-                // string should be a glob
-                files = files.replace(config.path.dest, '')
+            // files is undefined
+            if (config.glob.watch.dest !== '') {
+                files = config.glob.watch.dest
             } else {
-                // files is undefined
-                if (config.glob.watch.dest !== '') {
-                    files = config.glob.watch.dest
-                } else {
-                    files = ''
-                }
+                files = ''
             }
-
-            if (files.charAt(0) === '/' || files.charAt(0) === '\\') {
-                files = files.substring(1)
-            }
-
-            files = config.path.dest + shared.slash + files
         }
 
-        var readyCalled = false
+        if (files.charAt(0) === '/' || files.charAt(0) === '\\') {
+            files = files.substring(1)
+        }
 
-        watch.stop(false, true, false) // stop watching dest
+        // chokidar will be happier without backslashes
+        files = config.path.dest.replace(/\\/g, '/') + '/' + files
+    }
+
+    await watch.stop(false, true, false) // stop watching dest
+
+    let readyCalled = false
+
+    await new Promise(function(resolve, reject) {
 
         chokidarDestFiles = files
 
-        chokidarDest = chokidar.watch(null, config.thirdParty.chokidar)
+        chokidarDest = chokidar.watch([], config.thirdParty.chokidar)
 
         chokidarDest
         .on('add', function(file) {
             if (!shared.suppressWatchEvents) {
-                var ext = path.extname(file).replace('.', '')
-                if (config.livereloadFileTypes.indexOf(ext) >= 0) {
-                    functions.log(chalk.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
+                let ext = path.extname(file).replace('.', '')
+                if (config.extension.fileTypes.indexOf(ext) >= 0) {
+                    functions.log(color.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
 
                     // emit an event
                     watch.emitterDest.emit('add', file)
 
-                    shared.livereload.changedFiles.push(file.replace(config.path.dest + '/', ''))
-                    watch.updateLiveReloadServer()
+                    shared.extension.changedFiles.push(file.replace(config.path.dest + '/', ''))
+
+                    watch.updateExtensionServer()
                 }
             }
         })
         .on('change', function(file) {
             if (!shared.suppressWatchEvents) {
-                var ext = path.extname(file).replace('.', '').toLowerCase()
-                if (config.livereloadFileTypes.indexOf(ext) >= 0) {
-                    functions.log(chalk.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
+                let ext = path.extname(file).replace('.', '').toLowerCase()
+                if (config.extension.fileTypes.indexOf(ext) >= 0) {
+                    functions.log(color.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
 
                     // emit an event
                     watch.emitterDest.emit('change', file)
 
-                    shared.livereload.changedFiles.push(file.replace(config.path.dest + '/', ''))
-                    watch.updateLiveReloadServer()
+                    shared.extension.changedFiles.push(file.replace(config.path.dest + '/', ''))
+
+                    watch.updateExtensionServer()
                 }
             }
         })
@@ -392,7 +429,7 @@ watch.watchDest = function watch_watchDest(files) {
             if (readyCalled === false) {
                 readyCalled = true
 
-                functions.log(chalk.gray(shared.language.display('message.watchingDirectory').replace('{directory}', '/' + path.basename(config.path.dest))))
+                functions.log(color.gray(shared.language.display('message.watchingDirectory').replace('{directory}', '/' + path.basename(config.path.dest))))
 
                 watch.emitterDest.emit('ready')
 
@@ -401,21 +438,22 @@ watch.watchDest = function watch_watchDest(files) {
         })
 
         chokidarDest.add(files)
-
     })
 } // watchDest
 
-watch.watchSource = function watch_watchSource(files) {
+watch.watchSource = async function watch_watchSource(files) {
     /*
     Watch source directory for changes and kick off the appropriate response tasks as needed.
     @param   {String,Object}  [files]  Optional. Glob search string for watching source files like '*.html' or array of full paths like ['/source/about.html', '/source/index.html']
     @return  {Promise}
     */
-    return new Promise(function(resolve, reject) {
+    await watch.stop(true, false, false) // stop watching source
+
+    await new Promise(function(resolve, reject) {
 
         lazyLoadChokidar()
 
-        var filesType = typeof files
+        let filesType = typeof files
 
         if (filesType === 'object') {
             // we already have a specified list to work from
@@ -436,21 +474,20 @@ watch.watchSource = function watch_watchSource(files) {
                 files = files.substring(1)
             }
 
-            files = config.path.source + shared.slash + files
+            // chokidar will be happier without backslashes
+            files = config.path.source.replace(/\\/g, '/') + '/' + files
         }
 
-        var readyCalled = false
-
-        watch.stop(true, false, false) // stop watching source
+        let readyCalled = false
 
         chokidarSourceFiles = files
 
-        chokidarSource = chokidar.watch(null, config.thirdParty.chokidar)
+        chokidarSource = chokidar.watch([], config.thirdParty.chokidar)
 
         chokidarSource
         .on('addDir', function(file) {
             if (!shared.suppressWatchEvents) {
-                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.addDirectory')))
+                functions.log(color.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.addDirectory')))
 
                 // emit an event
                 watch.emitterSource.emit('add directory', file)
@@ -465,7 +502,7 @@ watch.watchSource = function watch_watchSource(files) {
         })
         .on('unlinkDir', function(file) {
             if (!shared.suppressWatchEvents) {
-                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removedDirectory')))
+                functions.log(color.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removedDirectory')))
 
                 // emit an event
                 watch.emitterSource.emit('removed directory', file)
@@ -475,7 +512,7 @@ watch.watchSource = function watch_watchSource(files) {
         })
         .on('add', function(file) {
             if (!shared.suppressWatchEvents) {
-                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
+                functions.log(color.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
 
                 // emit an event
                 watch.emitterSource.emit('add', file)
@@ -486,7 +523,7 @@ watch.watchSource = function watch_watchSource(files) {
         .on('change', function(file) {
             if (!shared.suppressWatchEvents) {
                 if (watch.notTooRecent(file)) {
-                    functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
+                    functions.log(color.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
 
                     // emit an event
                     watch.emitterSource.emit('change', file)
@@ -494,14 +531,14 @@ watch.watchSource = function watch_watchSource(files) {
                     watch.buildOne(file)
                 } else {
                     if (config.option.debug) {
-                        functions.log(chalk.yellow(shared.language.display('message.fileChangedTooRecently').replace('{file}', functions.trimSource(file).replace(/\\/g, '/'))))
+                        functions.log(color.yellow(shared.language.display('message.fileChangedTooRecently').replace('{file}', functions.trimSource(file).replace(/\\/g, '/'))))
                     }
                 }
             }
         })
         .on('unlink', function(file) {
             if (!shared.suppressWatchEvents) {
-                functions.log(chalk.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed')))
+                functions.log(color.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removed')))
 
                 // emit an event
                 watch.emitterSource.emit('removed', file)
@@ -523,7 +560,7 @@ watch.watchSource = function watch_watchSource(files) {
             if (readyCalled === false) {
                 readyCalled = true
 
-                functions.log(chalk.gray(shared.language.display('message.watchingDirectory').replace('{directory}', '/' + path.basename(config.path.source))))
+                functions.log(color.gray(shared.language.display('message.watchingDirectory').replace('{directory}', '/' + path.basename(config.path.source))))
 
                 recentFiles = {} // reset recentFiles in case any changes happened while we were loading
 
@@ -534,7 +571,6 @@ watch.watchSource = function watch_watchSource(files) {
         })
 
         chokidarSource.add(files)
-
     })
 } // watchSource
 

@@ -6,122 +6,126 @@ An easy to use build tool for web files.
 
 Incrementally clean, build, and watch with little to no configuration required.
 
-## Future of Feri
-
-The following changes are likely for the next major release.
-
-* Upgrade to Async/Await.
-* Upgrade to Streams.
-* Reduce dependencies drastically.
-* Reposition Feri as a focused, opinionated tool that can be extended. Not an everything included tool.
-
-## Quick Links
+## Navigation
 
 * [Features](#features)
-* [How It Works](#how-it-works)
+* [Core Concepts](#core-concepts)
   * [One Source, One Destination](#one-source-one-destination)
-  * [Extension Based](#extension-based)
+  * [File Extension Based](#file-extension-based)
   * [Include Files](#include-files)
-  * [Preconfigured](#preconfigured)
-* [Requirements](#requirements)
+  * [Customizable](#customizable)
 * [Install](#install)
-* [Upgrading](#upgrading)
+* [Upgrade](#upgrade)
 * [Command Line](#command-line)
-* [Quickstart](#quickstart)
-* [Custom Config File](#custom-config-file)
-* [Extension Specific Information](#extension-specific-information)
-* [Edge Cases](#edge-cases)
-* [API Documentation](#api-documentation)
-* [Contribute](#contribute)
+* [Quickstart Guide](#quickstart-guide)
+* [Advanced](#advanced)
+  * [Custom Config File](docs/advanced/custom-config-file.md#feri---custom-config-file)
+  * [Custom Build Task](docs/advanced/custom-build-task.md#feri---custom-build-task)
+  * [Unique File Types](docs/advanced/unique-file-types.md#feri---unique-file-types)
+  * [Feri Extension](docs/advanced/feri-extension.md#feri---feri-extension)
+  * [Edge Cases](docs/advanced/edge-cases.md#feri---edge-cases)
+  * [API](docs/advanced/api/index.md#feri---api)
+* [Support](#support)
 
 ## Features
 
 * Clean, Build, and Watch
-* Command Line / API
-* Compile
-  * JSX
-* Compile and Minify
-  * CoffeeScript
-  * Embedded JavaScript (EJS)
-  * Jade
-  * Less
-  * Markdown
-  * Pug
-  * Sass
-  * Stylus
+* Command Line and API
 * Concatenate
-* LiveReload
-* Minify
-  * HTML
-  * CSS
-  * JavaScript
-* Optimize
-  * GIF
-  * JPG
-  * PNG
-* [Multilingual](docs/multilingual.md)
-* Multi-platform
-* Promise Based
-* Source Maps
+* GIF, JPG, and PNG
+* HTML, CSS, and JavaScript
+* Linux, macOS, and Windows
+* Markdown
+* [Multilingual](docs/multilingual.md#feri---multilingual)
 
-## How It Works
+## Core Concepts
 
 ### One Source, One Destination
 
-Feri is based on the simple premise of having one source and one destination directory.
+A single source directory which builds/compiles/minifies into a single destination directory.
 
-Since source and destination folders are linked, cleaning is a breeze. If a destination file does not have a source equivalent, remove the destination file.
+**Clean**: Destination files that do not have a source equivalent are removed during cleaning.
 
-Likewise, knowing which source files need to be built is simple. If a source file is missing a destination equivalent, build the source file. If a source file is newer than a destination equivalent, build the source file. If a destination file is newer, no build is needed.
+**Build**: If a source file is missing a destination equivalent, build the file. If a source file is newer than a destination equivalent, build the file.
 
-Watching is accomplished by running the appropriate clean or build function in reaction to file system changes. With some added smarts to know that a modified include file should trigger a check all files that may depend on the include for possible rebuilding.
+**Watch**: Run a clean or build task in reaction to file system changes.
 
-### Extension Based
+### File Extension Based
 
-Feri has a plan of action for each file type. CSS files get minified. JPG files are losslessly optimized, and so on. Each extension can have its own unique build process but all files of that type are treated equally. This greatly reduces the complexity when compared to systems which have you define every action to every file, over and over again.
+A single plan of action for each file type. CSS files are minified. JPG files are losslessly optimized. Markdown files are compiled, then minified, and so on. Each extension can have its own unique build process but all files with that extension are treated equally.
 
 ### Include Files
-Any file prefixed with an underscore ( _ ) is considered an include file. Include files do not get directly published from source to destination but can be included in other files that do.
+Any file prefixed with an underscore `_` is considered an include file. Include files do not get directly published from source to destination. Instead, include files contents are only published when a file that can leverage includes is published.
 
-### Preconfigured
+### Customizable
 
-Feri comes preconfigured with sensible defaults that get you up and running fast. For some, you'll never have to touch a thing. For others, you'll thrill at how easy it is to make a Feri config file with all your favorite settings. Others still will cackle with mad abandonment once they harness the unrestricted power of Feri's API to make their own wild creations!
-
-## Requirements
-
-[Node](https://nodejs.org/en/) version 8.0.0 or greater.
+Although capable as is, Feri is designed to be extremely customizable. Using the API or a custom config file allows you to not only change options but even replace core functions.
 
 ## Install
 
-Install Feri globally for command line use.
+Make sure you have [Node](https://nodejs.org/en/) version 11.0.0 or greater. Depending on your operating system, you may also need to install python or other tools used by dependencies that need to be compiled.
+
+Install Feri globally as a command line tool, accessible from anywhere.
 
 ```
 npm install -g feri
 ```
 
-Install Feri locally in your project's [node_modules](https://nodejs.org/api/modules.html#modules_loading_from_node_modules_folders) folder for API use.
+Install Feri locally in your project's [node_modules](https://nodejs.org/api/modules.html#modules_loading_from_node_modules_folders) folder for API use and/or command line use from within your project only.
 
 ```
 npm install feri
 ```
 
-## Upgrading
+## Upgrade
 
-### Upgrading from Feri 1.x
+You can always upgrade to the latest version of Feri by re-running the global or local install commands.
 
-If you are using EJS includes like `include(root + '/absolute/path')`, you will need to update all your files to remove the root variable. In the case of the previous example, the new include would look like `include('/absolute/path')`. This change was necessary since EJS added native support for project root folders.
+If you are unsure if an upgrade is available, run the following for a global install.
+
+```
+feri --version
+```
+
+Or the following for a local install.
+
+```
+npx feri --version
+```
+
+The above commands will provide additional upgrade information if a newer version is available. Otherwise, just the currently installed version will be listed.
+
+### Upgrade from Version 3
+
+Two potentially critical things to be aware of.
+
+* The dependency `livereload` has been replaced by a new extension server.
+* Many dependencies have been removed.
+    * If you still want to work with CoffeeScript, EJS, Jade, JSX, Less, Pug, Sass, and/or Stylus, you'll need to create your own custom build task.
+
+Custom config files using the boolean `feri.config.option.livereload` should be changed to `feri.config.option.extensions`.
+
+API use for anything `livereload` related should be changed to an `extension` or `extensions` equivalent depending on where you are in the plumbing.
+
+Command line options like `--livereload` and `--nolivereload` have new equivalents like `--extensions` and `--noextensions`.
 
 ## Command Line
 
-Assuming Feri is installed globally, you can see what command line options are available with:
+If installed globally, you can see what command line options are available with:
 
 ```
 feri --help
 ```
 
-Expanded information is available in the [command line](docs/command-line.md) documentation.
+Or locally with:
 
-## Quickstart
+```
+npx feri --help
+```
+
+More information is available in the [command line](docs/command-line.md#feri---command-line) documentation.
+
+## Quickstart Guide
 
 Assuming Feri is installed globally, the quickest way to start a new project is to use the init command.
 
@@ -129,50 +133,55 @@ Assuming Feri is installed globally, the quickest way to start a new project is 
 feri --init
 ```
 
-This will create your `source` and `dest` folders along with a custom config file. To make sure everything works, place some files in your source folder. Now run `feri` from the directory where you can see the source and dest folders. Check the dest folder and you should see your built / optimized files. Wash, rinse, repeat.
+This will create a `source` and `dest` folder along with a custom config file. To make sure everything works, place some files in the `source` folder. Now run `feri` from the directory where you can see the source and destination folders. After a short time, your published files should appear in the `dest` folder.
 
-## Custom Config File
+You'll need to run `feri` everytime you want to clean and/or build new files. Once you are comfortable with that pattern, try running the following command instead.
 
-If you are using the command line, Feri will look for a file called `feri.js` or `feri-config.js` in the directory you call her from. This file can specify not only which command line options you want enabled, but also control any [config API](docs/api/config.md) settings.
-
-For example, Feri will clean and build by default but what if you want her to watch too? You could type `feri --watch` every time you want to work on your project, but where is the fun in that? Activate your inner awesomeness and setup a custom config file like:
-
-```js
-module.exports = function(feri) {
-    // clean and build are enabled by default
-    feri.config.option.watch = true
-}
+```
+feri --watch
 ```
 
-Now you can type `feri` and the custom config file will take of the rest! Even better, command line switches still take precedence. That means typing `feri --nowatch` will temporarily override the config file setting.
+Now Feri will stay active, watching your source folder for changes and automatically run the appropriate clean or build tasks depending on activity in the source folder. Neat!
 
-Protip: All [API documentation](docs/api/index.md) features are available to custom config files.
+## Advanced
 
-## Custom Build Tasks
+Advanced topics for those that like to tinker.
 
-Feri thinks you should be able to grab nearly any npm module and make a [custom build task](docs/custom-build-task.md) out of it without too much effort. Are `.snazzy` files the new CSS hotness? No need to wait for a plugin, you can play with new tech right away.
+### Custom Config File
 
-## Extension Specific Information
+Create a [custom config file](docs/advanced/custom-config-file.md#feri---custom-config-file) to set your preferred options, add custom build tasks, or leverage the API.
 
-Additional [extension specific information](docs/extension-specific-info.md) is available for `concat` files, `ejs` includes, and `gz` files.
+### Custom Build Task
 
-## Edge Cases
+Feri thinks you should be able to grab nearly any npm module and make a [custom build task](docs/advanced/custom-build-task.md#feri---custom-build-task) out of it without too much effort. Are `.snazzy` files the latest way to write CSS? No need to wait for a plugin. Use the latest tech, right away.
 
-An index murder mystery!? Find out more in this melodramatic issue of [Edge Cases](docs/edge-cases.md).
+### Unique File Types
 
-## API Documentation
+Feri comes with built-in support for [unique file types](docs/advanced/unique-file-types.md#feri---unique-file-types) such as `concat`, `br`, and `gz`.
 
-Learn how to leverage Feri's favorite functions in the full [API documentation](docs/api/index.md).
+### Feri Extension
 
-## Contribute
+Reload a web browser tab when files change with the [Feri Extension](docs/advanced/feri-extension.md#feri---feri-extension) for Chrome and Firefox.
 
-Looking to contribute? Here are some ideas on how you can help Feri.
+### Edge Cases
 
- * Are your friends grunting and gulping their way through a broccoli brunch? Tell them about the best non-digestive themed build tool available, Feri.
- * [Translate Feri](docs/multilingual.md#translation-guide) into other languages. Bonus points for Klingon.
- * [Report issues on GitHub](https://github.com/nightmode/feri/issues) or post Feri fan art to [DeviantArt](https://deviantart.com) instead!
+Some [edge cases](docs/advanced/edge-cases.md#feri---edge-cases) you may want to be aware of.
+
+### API
+
+Leverage or even replace anything behind the scenes with [full access](docs/advanced/api/index.md#feri---api) to the [API](docs/advanced/api/index.md#feri---api).
+
+## Support
+
+Help [support this project](https://www.patreon.com/nightmode) on Patreon. Help me caretake and craft new software, videos, and interactive art. All for as little as $1 a month.
+
+In addition to Patreon, here are some other ways you can help this project.
+
+ * [Translate Feri](docs/multilingual.md#translation-guide) into other languages. tlhIngan maH!
+ * [Report any issues](https://github.com/nightmode/feri/issues) on GitHub.
+ * Social media, meetups, fan art, papercraft, or any other way you like sharing your enthusiasm.
  * Pull reqrests to improv spellng in documantations!
 
 ## License
 
-MIT © [Kai Nightmode](https://forestmist.org)
+MIT © [Kai Nightmode](https://twitter.com/kai_nightmode)

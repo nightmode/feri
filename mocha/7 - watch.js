@@ -3,30 +3,31 @@
 //----------
 // Includes
 //----------
-var expect = require('expect.js')
-var fs     = require('fs')
-var path   = require('path')
+const expect    = require('expect.js')
+const fs        = require('fs')
+const path      = require('path')
+const WebSocket = require('ws')
 
-var shared    = require('../code/2 - shared.js')
-var config    = require('../code/3 - config.js')
-var functions = require('../code/4 - functions.js')
-var clean     = require('../code/5 - clean.js')
-var build     = require('../code/6 - build.js')
-var watch     = require('../code/7 - watch.js')
+const shared    = require('../code/2 - shared.js')
+let   config    = require('../code/3 - config.js')
+const functions = require('../code/4 - functions.js')
+const clean     = require('../code/5 - clean.js')
+const build     = require('../code/6 - build.js')
+const watch     = require('../code/7 - watch.js')
 
 //-----------
 // Variables
 //-----------
-var configBackup = functions.cloneObj(config)
-var testPath = path.join(shared.path.self, 'mocha', 'files', 'watch')
-var reWriteTimer = setTimeout(function() {}, 0)
+const configBackup = functions.cloneObj(config)
+const testPath     = path.join(shared.path.self, 'mocha', 'files', 'watch')
+let   reWriteTimer = setTimeout(function() {}, 0)
 
 //-----------
 // Functions
 //-----------
-var reWriter = function reWriter(goCrazy, filePath, data) {
+const reWriter = function reWriter(goCrazy, filePath, data) {
     /*
-    Keep on writing a file until chokidar notices us.
+    Keep on writing a file until chokidar senpai notices us.
     @param  {Boolean}  goCrazy   Start or continue to write a file every 500 ms until someone stops us!
     @param  {String}   filePath  String file path like '/source/file.txt'. Not used if goCrazy is false.
     @param  {String}   [data]    Optional data to write to the file. Defaults to 'changed data'.
@@ -92,8 +93,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
             config.path.source = path.join(testPath, 'buildOne', 'source')
             config.path.dest   = path.join(testPath, 'buildOne', 'dest')
 
-            var fileSource = path.join(config.path.source, 'buildOne.txt')
-            var fileDest = path.join(config.path.dest, 'buildOne.txt')
+            let fileSource = path.join(config.path.source, 'buildOne.txt')
+            let fileDest = path.join(config.path.dest, 'buildOne.txt')
 
             return Promise.resolve().then(function() {
 
@@ -122,6 +123,95 @@ describe('File -> ../code/7 - watch.js\n', function() {
         }) // it
     }) // describe
 
+    //-----------------------
+    // watch.extensionServer
+    //-----------------------
+    describe('extensionServer', function() {
+        it('should accept connection by client', function() {
+
+            config.option.extensions = true
+
+            return Promise.resolve().then(function() {
+
+                return watch.extensionServer()
+
+            }).then(function() {
+
+                return new Promise(function(resolve, reject) {
+                    let sock = new WebSocket('ws://localhost:' + config.extension.port)
+
+                    sock.onopen = function(event) {
+                        // one time event
+                        resolve()
+                    }
+                })
+
+            })
+        }) // it
+
+        it('client should receive default document', function() {
+            config.option.extensions = true
+
+            return Promise.resolve().then(function() {
+
+                return watch.extensionServer()
+
+            }).then(function() {
+
+                return new Promise(function(resolve, reject) {
+                    let sock = new WebSocket('ws://localhost:' + config.extension.port)
+
+                    sock.onmessage = function (event) {
+                        let data = event.data
+
+                        try {
+                            data = JSON.parse(data)
+                        } catch(e) {
+                            // do nothing
+                        }
+
+                        if (data.hasOwnProperty('defaultDocument')) {
+                            if (typeof data.defaultDocument === 'string') {
+                                let defaultDocument = data.defaultDocument.trim()
+
+                                expect(defaultDocument).to.be(config.extension.defaultDocument)
+                                resolve()
+                            }
+                        }
+                    }
+                })
+
+            })
+        }) // it
+
+        it('ping from client should return a pong', function() {
+            config.option.extensions = true
+
+            return Promise.resolve().then(function() {
+
+                return watch.extensionServer()
+
+            }).then(function() {
+
+                return new Promise(function(resolve, reject) {
+                    let sock = new WebSocket('ws://localhost:' + config.extension.port)
+
+                    sock.onopen = function(event) {
+                        // one time event
+                        sock.send("ping")
+                    }
+
+                    sock.onmessage = function (event) {
+                        if (event.data === 'pong') {
+                            resolve()
+                        }
+                    }
+                })
+
+            })
+        }) // it
+    }) // describe
+
     //--------------------
     // watch.notTooRecent
     //--------------------
@@ -130,7 +220,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             watch.notTooRecent('notTooRecent1.txt')
             setTimeout(function() {
-                var bool = watch.notTooRecent('notTooRecent1.txt')
+                let bool = watch.notTooRecent('notTooRecent1.txt')
                 expect(bool).to.be(true)
                 done()
             }, 350)
@@ -140,7 +230,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
         it('should return false for file activity in quick succession', function() {
 
             watch.notTooRecent('notTooRecent2.txt')
-            var bool = watch.notTooRecent('notTooRecent2.txt')
+            let bool = watch.notTooRecent('notTooRecent2.txt')
             expect(bool).to.be(false)
 
         }) // it
@@ -152,13 +242,13 @@ describe('File -> ../code/7 - watch.js\n', function() {
     describe('processWatch', function() {
         it('should see events for both source and destination', function() {
 
-            config.option.livereload = true
+            config.option.extensions = true
 
             config.path.source = path.join(testPath, 'processWatch-1', 'source')
             config.path.dest   = path.join(testPath, 'processWatch-1', 'dest')
 
-            var fileSource = path.join(config.path.source, 'one.html')
-            var fileDest   = path.join(config.path.dest, 'one.html')
+            let fileSource = path.join(config.path.source, 'one.html')
+            let fileDest   = path.join(config.path.dest, 'one.html')
 
             return Promise.resolve().then(function() {
 
@@ -168,8 +258,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 return new Promise(function(resolve, reject) {
 
-                    var check1 = false
-                    var check2 = false
+                    let check1 = false
+                    let check2 = false
 
                     function check() {
                         if (check1 && check2) {
@@ -216,16 +306,16 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
         it('should use config.glob.watch strings if available', function() {
 
-            config.option.livereload = true
+            config.option.extensions = true
 
-            config.glob.watch.source = '*.less'
+            config.glob.watch.source = '*.css'
             config.glob.watch.dest = '*.css'
 
             config.path.source = path.join(testPath, 'processWatch-2', 'source')
             config.path.dest   = path.join(testPath, 'processWatch-2', 'dest')
 
-            var fileSource = path.join(config.path.source, 'two.less')
-            var fileDest   = path.join(config.path.dest, 'two.css')
+            let fileSource = path.join(config.path.source, 'two.css')
+            let fileDest   = path.join(config.path.dest, 'two.css')
 
             return Promise.resolve().then(function() {
 
@@ -235,8 +325,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 return new Promise(function(resolve, reject) {
 
-                    var check1 = false
-                    var check2 = false
+                    let check1 = false
+                    let check2 = false
 
                     function check() {
                         if (check1 && check2) {
@@ -282,16 +372,16 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
         it('should use glob search strings as parameters', function() {
 
-            config.option.livereload = true
+            config.option.extensions = true
 
             config.path.source = path.join(testPath, 'processWatch-3', 'source')
             config.path.dest   = path.join(testPath, 'processWatch-3', 'dest')
 
-            var fileSource = path.join(config.path.source, 'three.js')
-            var fileDest   = path.join(config.path.dest, 'three.js')
+            let fileSource = path.join(config.path.source, 'three.js')
+            let fileDest   = path.join(config.path.dest, 'three.js')
 
-            var ignoreFileSource = path.join(config.path.source, 'three.html')
-            var ignoreFileDest   = path.join(config.path.dest, 'three.html')
+            let ignoreFileSource = path.join(config.path.source, 'three.html')
+            let ignoreFileDest   = path.join(config.path.dest, 'three.html')
 
             return Promise.resolve().then(function() {
 
@@ -301,8 +391,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 return new Promise(function(resolve, reject) {
 
-                    var check1 = false
-                    var check2 = false
+                    let check1 = false
+                    let check2 = false
 
                     function check() {
                         if (check1 && check2) {
@@ -329,7 +419,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                     return functions.writeFile(ignoreFileSource, 'changed data').then(function() {
 
-                        reWriter(true, fileSource, 'var peanut = "butter"')
+                        reWriter(true, fileSource, 'let peanut = "butter"')
 
                     })
 
@@ -361,16 +451,16 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
         it('should use arrays with file path strings as parameters', function() {
 
-            config.option.livereload = true
+            config.option.extensions = true
 
             config.path.source = path.join(testPath, 'processWatch-4', 'source')
             config.path.dest   = path.join(testPath, 'processWatch-4', 'dest')
 
-            var fileSource = path.join(config.path.source, 'four.js')
-            var fileDest   = path.join(config.path.dest, 'four.js')
+            let fileSource = path.join(config.path.source, 'four.js')
+            let fileDest   = path.join(config.path.dest, 'four.js')
 
-            var ignoreFileSource = path.join(config.path.source, 'four.html')
-            var ignoreFileDest   = path.join(config.path.dest, 'four.html')
+            let ignoreFileSource = path.join(config.path.source, 'four.html')
+            let ignoreFileDest   = path.join(config.path.dest, 'four.html')
 
             return Promise.resolve().then(function() {
 
@@ -380,8 +470,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 return new Promise(function(resolve, reject) {
 
-                    var check1 = false
-                    var check2 = false
+                    let check1 = false
+                    let check2 = false
 
                     function check() {
                         if (check1 && check2) {
@@ -408,7 +498,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                     return functions.writeFile(ignoreFileSource, 'changed data').then(function() {
 
-                        reWriter(true, fileSource, 'var jelly = "time"')
+                        reWriter(true, fileSource, 'let jelly = "time"')
 
                     })
 
@@ -442,19 +532,53 @@ describe('File -> ../code/7 - watch.js\n', function() {
     //------------
     // watch.stop
     //------------
-    // Stop watching the source and/or destination folders. Also stop the livereload server.
+    // Stop watching the source and/or destination folders. Also stop the extensions server.
     // No need to test since it will be tested by watch.processWatch, watch.watchDest, and watch.watchSource.
 
-    //------------------------------
-    // watch.updateLiveReloadServer
-    //------------------------------
-    describe('updateLiveReloadServer', function() {
-        it('should not return an error', function() {
+    //-----------------------------
+    // watch.updateExtensionServer
+    //-----------------------------
+    describe('updateExtensionServer', function() {
+        it('should send a list of changed files to extension clients', function() {
 
-            watch.updateLiveReloadServer('now').then(function(updated) {
-                expect(updated).to.be(true)
+            config.option.extensions = true
+
+            return Promise.resolve().then(function() {
+
+                return watch.extensionServer()
+
+            }).then(function() {
+
+                return new Promise(function(resolve, reject) {
+                    let sock = new WebSocket('ws://localhost:' + config.extension.port)
+
+                    sock.onopen = function(event) {
+                        // one time event
+
+                        // simulate changed files
+                        shared.extension.changedFiles = ['index.html']
+
+                        watch.updateExtensionServer('now')
+                    }
+
+                    sock.onmessage = function (event) {
+                        let data = event.data
+
+                        try {
+                            data = JSON.parse(data)
+                        } catch(e) {
+                            // do nothing
+                        }
+
+                        if (data.hasOwnProperty('files')) {
+                            if (Array.isArray(data.files) && data.files.length === 1 && data.files[0] === 'index.html') {
+                                resolve()
+                            }
+                        }
+                    }
+                })
+
             })
-
         }) // it
     }) // describe
 
@@ -464,12 +588,12 @@ describe('File -> ../code/7 - watch.js\n', function() {
     describe('watchDest', function() {
         it('should notice an event in the destination folder', function() {
 
-            config.option.livereload = true
+            config.option.extensions = true
 
             config.path.source = path.join(testPath, 'watchDest', 'source')
             config.path.dest   = path.join(testPath, 'watchDest', 'dest')
 
-            var fileDest = path.join(config.path.dest, 'watchDest.html')
+            let fileDest = path.join(config.path.dest, 'watchDest.html')
 
             return Promise.resolve().then(function() {
 
@@ -508,7 +632,7 @@ describe('File -> ../code/7 - watch.js\n', function() {
             config.path.source = path.join(testPath, 'watchSource', 'source')
             config.path.dest   = path.join(testPath, 'watchSource', 'dest')
 
-            var fileSource = path.join(config.path.source, 'watchSource.html')
+            let fileSource = path.join(config.path.source, 'watchSource.html')
 
             return Promise.resolve().then(function() {
 

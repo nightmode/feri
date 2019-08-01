@@ -3,22 +3,27 @@
 //----------------
 // Includes: Self
 //----------------
-var shared = require('./2 - shared.js')
+const color  = require('./color.js')
+const shared = require('./2 - shared.js')
 
 //----------
 // Includes
 //----------
-var chalk = require('chalk') // ~ 20 ms
-var path  = require('path')  // ~  1 ms
+const path = require('path') // ~ 1 ms
 
 //-----------
 // Variables
 //-----------
-var config = {
+const config = {
     // null values will be populated later
     concurLimit: 1, // 1-3 recommended since node libuv has 4 slots by default
+    extension: { // web browser extension support
+        defaultDocument: 'index.html', // will be passed once to each extension client upon connection
+        fileTypes: ['css', 'html', 'js'], // only inform extension clients about changes to these file types
+        port: 4000 // websocket server port
+    },
     fileType: null, // object that will hold options for individual file types
-    includeFileTypes: ['ejs', 'jade', 'less', 'pug', 'sass', 'scss', 'styl'], // Used by watch.buildOne to know which file types may use includes.
+    includeFileTypes: [], // Used by watch.buildOne to know which file types may use includes.
     includePrefix: '_',   // Files prefixed with this string will not be published directly to the destination directory. Prefixed files can be included inside other files that do get published to destination though.
     glob: { // glob search strings like **/*.gif
         'clean': '', // If specified, use when running clean.processClean without the files parameter.
@@ -29,7 +34,6 @@ var config = {
         }
     },
     language: 'en-us', // should map to a json file in the language directory
-    livereloadFileTypes: ['css', 'html', 'js', 'php'], // Only refresh the livereload client if one of these file types has been changed.
     map: {
         'destToSourceExt'  : null, // object of destination file extensions and their possible source file types
         'sourceToDestTasks': null  // object of file extensions, each with an array of building functions
@@ -40,7 +44,7 @@ var config = {
         'debug'              : false,
         'forcebuild'         : false,
         'init'               : false,
-        'livereload'         : false,
+        'extensions'         : false,
         'republish'          : false,
         'stats'              : true,
         'watch'              : false
@@ -58,9 +62,6 @@ var config = {
 // File Type Options
 //-------------------
 config.fileType = {
-    coffee: {
-        'sourceMaps': false // used by build.coffeeScript
-    },
     concat: {
         'enabled': true,
         'sourceMaps': false // used by build.concat
@@ -70,21 +71,6 @@ config.fileType = {
     },
     js: {
         'sourceMaps': false // used by build.js
-    },
-    jsx: {
-        'sourceMaps': false // used by build.jsx
-    },
-    less: {
-        'sourceMaps': false // used by build.less
-    },
-    sass: {
-        'sourceMaps': false // used by build.sass
-    },
-    scss: {
-        'sourceMaps': false // used by build.sass
-    },
-    styl: {
-        'sourceMaps': false // used by build.stylus
     }
 }
 
@@ -92,10 +78,9 @@ config.fileType = {
 // Destination Extensions to Source Extensions
 //---------------------------------------------
 config.map.destToSourceExt = {
-    'css' : ['less', 'sass', 'scss', 'styl'],
+    'br'  : ['*'],
     'gz'  : ['*'],
-    'html': ['ejs', 'jade', 'md', 'pug'],
-    'js'  : ['coffee', 'jsx'],
+    'html': ['md'],
     'map' : ['*']
 }
 
@@ -103,30 +88,22 @@ config.map.destToSourceExt = {
 // Source Extensions to Build Tasks Map
 //--------------------------------------
 config.map.sourceToDestTasks = {
-    'coffee': ['coffeeScript', 'js'],
     'concat': ['concat'],
     'css'   : ['css'],
-    'ejs'   : ['ejs', 'html'],
     'gif'   : ['gif'],
     'htm'   : ['html'],
     'html'  : ['html'],
-    'jade'  : ['jade', 'html'],
     'jpg'   : ['jpg'],
     'jpeg'  : ['jpg'],
     'js'    : ['js'],
-    'jsx'   : ['jsx'],
-    'less'  : ['less'],
     'md'    : ['markdown', 'html'],
     'png'   : ['png'],
-    'pug'   : ['pug', 'html'],
-    'sass'  : ['sass'],
-    'scss'  : ['sass'],
-    'styl'  : ['stylus'],
     // copy only tasks
     '7z'    : ['copy'],
     'ai'    : ['copy'],
     'asp'   : ['copy'],
     'aspx'  : ['copy'],
+    'br'    : ['copy'],
     'c'     : ['copy'],
     'cfm'   : ['copy'],
     'cfc'   : ['copy'],
@@ -221,9 +198,6 @@ config.thirdParty = {
             'output'            : 'rootRelative',
             'removeEmptyQueries': true
         }
-    },
-    livereload: { // used by watch.*
-        'port': 35729
     },
     markdownIt: { // used by build.markdown
         'breaks': false,
