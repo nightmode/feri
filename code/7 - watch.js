@@ -336,7 +336,7 @@ watch.updateExtensionServer = async function watch_updateExtensionServer(now) {
                 }
             })
 
-            functions.log(color.gray(shared.language.display('message.watchRefreshed').replace('{software}', 'Extension server') + '\n'))
+            functions.log(color.gray(shared.language.display('message.watchUpdated').replace('{software}', 'Extension server') + '\n'))
         }
     }
 } // updateExtensionServer

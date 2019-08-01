@@ -61,7 +61,7 @@ const shared = {
                 "missingSourceHelp"       : "Check your folders for existing projects or run \"feri --init\" to start a new project.",
                 "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
                 "usingConfigFile"         : "Using {file} file.",
-                "watchRefreshed"          : "{software} refreshed.",
+                "watchUpdated"            : "{software} updated.",
                 "watchingDirectory"       : "Watching {directory} for changes."
             },
             "paddedGroups": {
@@ -127,7 +127,7 @@ const shared = {
                 "missingSourceHelp"       : "Check your folders for existing projects or run \"feri --init\" to start a new project.",
                 "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
                 "usingConfigFile"         : "Using {file} file.",
-                "watchRefreshed"          : "{software} refreshed.",
+                "watchUpdated"            : "{software} updated.",
                 "watchingDirectory"       : "Watching {directory} for changes."
             },
             "paddedGroups": {

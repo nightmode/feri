@@ -17,7 +17,7 @@
         "missingSourceToDestTasks": "Absence de config.map.sourceToDestTasks pour les types de fichiers suivants:",
         "listeningOnPort"         : "{software} écoute sur le port {port}.",
         "usingConfigFile"         : "Utilisant {file} fichier.",
-        "watchRefreshed"          : "{software} rafraîchi.",
+        "watchUpdated"            : "{software} rafraîchi.",
         "watchingDirectory"       : "Observant {directory} pour des changements."
     },
     "paddedGroups": {
