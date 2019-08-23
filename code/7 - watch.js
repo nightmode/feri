@@ -17,6 +17,12 @@ const events      = require('events')      // ~ 1 ms
 const mkdirp      = require('mkdirp')      // ~ 1 ms
 const path        = require('path')        // ~ 1 ms
 const querystring = require('querystring') // ~ 2 ms
+const util        = require('util')        // ~ 1 ms
+
+//---------------------
+// Includes: Promisify
+//---------------------
+const mkdirpPromise = util.promisify(mkdirp) // ~ 1 ms
 
 //---------------------
 // Includes: Lazy Load
@@ -27,8 +33,8 @@ let WebSocket // require('ws')       // ~ 34 ms
 //-----------
 // Variables
 //-----------
-let chokidarSource   = '' // will become a chokidar object when watching the source folder
-let chokidarDest     = '' // will become a chokidar object when watching the destination folder
+let chokidarSource = '' // will become a chokidar object when watching the source folder
+let chokidarDest   = '' // will become a chokidar object when watching the destination folder
 
 let chokidarSourceFiles = '' // string or array of source files being watched
 let chokidarDestFiles   = '' // string or array of destination files being watched
@@ -67,6 +73,17 @@ watch.buildOne = async function watch_buildOne(fileName) {
     @param   {String}   fileName  File path like '/source/js/combined.js'
     @return  {Promise}
     */
+
+    // chill for a bit to let things settle
+    await functions.wait(100)
+
+    // since rename events can be chaotic, does the source file or folder still exist?
+    let fileExists = await functions.fileExists(fileName)
+
+    if (fileExists === false) {
+        return 'early'
+    }
+
     let ext = functions.fileExtension(fileName)
 
     let files = []
@@ -123,6 +140,20 @@ watch.buildOne = async function watch_buildOne(fileName) {
             // filter out any _ prefixed includes
             return path.basename(y).substr(0, config.includePrefix.length) !== config.includePrefix
         })
+
+        if (files.includes(fileName)) {
+            // things can be weird during rename events
+
+            // does the source file or folder still exist?
+            fileExists = await functions.fileExists(fileName)
+
+            if (fileExists === false) {
+                return 'late but not too late'
+            }
+
+            // delete the dest file to ensure a new file is built with the correct case
+            await functions.removeDest(functions.sourceToDest(fileName), false, false)
+        }
 
         return build.processBuild(files, true)
     }
@@ -245,7 +276,7 @@ watch.processWatch = async function watch_processWatch(sourceFiles, destFiles) {
         let exists = await functions.fileExists(config.path.source)
 
         if (exists === false) {
-            throw shared.language.display('error.missingSourceDirectory')
+            throw new Error(shared.language.display('error.missingSourceDirectory'))
         }
 
         functions.log(color.gray('\n' + shared.language.display('words.watch') + '\n'), false)
@@ -263,6 +294,28 @@ watch.processWatch = async function watch_processWatch(sourceFiles, destFiles) {
         shared.stats.timeTo.watch = functions.sharedStatsTimeTo(shared.stats.timeTo.watch)
     }
 } // processWatch
+
+watch.removeOne = async function watch_removeOne(fileName) {
+    /*
+    Figure out if file or folder should be removed after an unlink or unlinkdir event from the source directory watcher.
+    @param   {String}   fileName    File path like '/source/js/combined.js'
+    @return  {Promise}
+    */
+
+    // chill for a bit to let things settle
+    await functions.wait(100)
+
+    const destFile = functions.sourceToDest(fileName)
+
+    const sourceFileExists = await functions.fileExists(fileName)
+    const destFileExists = await functions.fileExists(destFile)
+
+    if (sourceFileExists === true || destFileExists === false) {
+        return 'early'
+    }
+
+    await functions.removeDest(destFile, false)
+} // removeOne
 
 watch.stop = function watch_stop(stopSource, stopDest, stopExtension) {
     /*
@@ -379,7 +432,6 @@ watch.watchDest = async function watch_watchDest(files) {
     let readyCalled = false
 
     await new Promise(function(resolve, reject) {
-
         chokidarDestFiles = files
 
         chokidarDest = chokidar.watch([], config.thirdParty.chokidar)
@@ -387,7 +439,7 @@ watch.watchDest = async function watch_watchDest(files) {
         chokidarDest
         .on('add', function(file) {
             if (!shared.suppressWatchEvents) {
-                let ext = path.extname(file).replace('.', '')
+                let ext = functions.fileExtension(file)
                 if (config.extension.fileTypes.indexOf(ext) >= 0) {
                     functions.log(color.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
 
@@ -402,7 +454,7 @@ watch.watchDest = async function watch_watchDest(files) {
         })
         .on('change', function(file) {
             if (!shared.suppressWatchEvents) {
-                let ext = path.extname(file).replace('.', '').toLowerCase()
+                let ext = functions.fileExtension(file)
                 if (config.extension.fileTypes.indexOf(ext) >= 0) {
                     functions.log(color.gray(functions.trimDest(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.change')))
 
@@ -416,10 +468,16 @@ watch.watchDest = async function watch_watchDest(files) {
             }
         })
         .on('error', function(error) {
-            functions.log(shared.language.display('error.watchingDest'), error)
+            if (error.code === 'EPERM' && shared.platform === 'win32') {
+                // ignore eperm errors on windows which can happen when deleting folders
+                return 'early'
+            }
+
+            functions.log(shared.language.display('error.watchingDest'))
+            functions.logError(error)
 
             // emit an event
-            watch.emitterDest.emit('error')
+            watch.emitterDest.emit('error', error)
 
             reject() // a promise can only be resolved or rejected once so if this gets called more than once it will be harmless
         })
@@ -447,69 +505,43 @@ watch.watchSource = async function watch_watchSource(files) {
     @param   {String,Object}  [files]  Optional. Glob search string for watching source files like '*.html' or array of full paths like ['/source/about.html', '/source/index.html']
     @return  {Promise}
     */
-    await watch.stop(true, false, false) // stop watching source
+    lazyLoadChokidar()
 
-    await new Promise(function(resolve, reject) {
+    let filesType = typeof files
 
-        lazyLoadChokidar()
-
-        let filesType = typeof files
-
-        if (filesType === 'object') {
-            // we already have a specified list to work from
+    if (filesType === 'object') {
+        // we already have a specified list to work from
+    } else {
+        if (filesType === 'string') {
+            // string should be a glob
+            files = files.replace(config.path.source, '')
         } else {
-            if (filesType === 'string') {
-                // string should be a glob
-                files = files.replace(config.path.source, '')
+            // files is undefined
+            if (config.glob.watch.source !== '') {
+                files = config.glob.watch.source
             } else {
-                // files is undefined
-                if (config.glob.watch.source !== '') {
-                    files = config.glob.watch.source
-                } else {
-                    files = ''
-                }
+                files = ''
             }
-
-            if (files.charAt(0) === '/' || files.charAt(0) === '\\') {
-                files = files.substring(1)
-            }
-
-            // chokidar will be happier without backslashes
-            files = config.path.source.replace(/\\/g, '/') + '/' + files
         }
 
-        let readyCalled = false
+        if (files.charAt(0) === '/' || files.charAt(0) === '\\') {
+            files = files.substring(1)
+        }
 
+        // chokidar will be happier without backslashes
+        files = config.path.source.replace(/\\/g, '/') + '/' + files
+    }
+
+    await watch.stop(true, false, false) // stop watching source
+
+    let readyCalled = false
+
+    await new Promise(function(resolve, reject) {
         chokidarSourceFiles = files
 
         chokidarSource = chokidar.watch([], config.thirdParty.chokidar)
 
         chokidarSource
-        .on('addDir', function(file) {
-            if (!shared.suppressWatchEvents) {
-                functions.log(color.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.addDirectory')))
-
-                // emit an event
-                watch.emitterSource.emit('add directory', file)
-
-                mkdirp(functions.sourceToDest(file), function(err) {
-                    if (err) {
-                        console.error(err)
-                        return
-                    }
-                })
-            }
-        })
-        .on('unlinkDir', function(file) {
-            if (!shared.suppressWatchEvents) {
-                functions.log(color.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removedDirectory')))
-
-                // emit an event
-                watch.emitterSource.emit('removed directory', file)
-
-                functions.removeDest(functions.sourceToDest(file), true, true)
-            }
-        })
         .on('add', function(file) {
             if (!shared.suppressWatchEvents) {
                 functions.log(color.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.add')))
@@ -517,7 +549,17 @@ watch.watchSource = async function watch_watchSource(files) {
                 // emit an event
                 watch.emitterSource.emit('add', file)
 
-                watch.buildOne(file)
+                watch.workQueueAdd('source', 'add', file)
+            }
+        })
+        .on('addDir', function(file) {
+            if (!shared.suppressWatchEvents) {
+                functions.log(color.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.addDirectory')))
+
+                // emit an event
+                watch.emitterSource.emit('add directory', file)
+
+                watch.workQueueAdd('source', 'adddir', file)
             }
         })
         .on('change', function(file) {
@@ -528,7 +570,7 @@ watch.watchSource = async function watch_watchSource(files) {
                     // emit an event
                     watch.emitterSource.emit('change', file)
 
-                    watch.buildOne(file)
+                    watch.workQueueAdd('source', 'change', file)
                 } else {
                     if (config.option.debug) {
                         functions.log(color.yellow(shared.language.display('message.fileChangedTooRecently').replace('{file}', functions.trimSource(file).replace(/\\/g, '/'))))
@@ -543,11 +585,27 @@ watch.watchSource = async function watch_watchSource(files) {
                 // emit an event
                 watch.emitterSource.emit('removed', file)
 
-                clean.processClean(functions.sourceToDest(file), true)
+                watch.workQueueAdd('source', 'unlink', file)
+            }
+        })
+        .on('unlinkDir', function(file) {
+            if (!shared.suppressWatchEvents) {
+                functions.log(color.gray(functions.trimSource(file).replace(/\\/g, '/') + ' ' + shared.language.display('words.removedDirectory')))
+
+                // emit an event
+                watch.emitterSource.emit('removed directory', file)
+
+                watch.workQueueAdd('source', 'unlinkdir', file)
             }
         })
         .on('error', function(error) {
-            functions.log(shared.language.display('error.watchingSource'), error)
+            if (error.code === 'EPERM' && shared.platform === 'win32') {
+                // ignore eperm errors on windows which can happen when deleting folders
+                return 'early'
+            }
+
+            functions.log(shared.language.display('error.watchingSource'))
+            functions.logError(error)
 
             // emit an event
             watch.emitterSource.emit('error', error)
@@ -573,6 +631,76 @@ watch.watchSource = async function watch_watchSource(files) {
         chokidarSource.add(files)
     })
 } // watchSource
+
+watch.workQueueAdd = function watch_workQueueAdd(location, task, path) {
+    /*
+    Add an event triggered task to the shared.watch.workQueue array.
+    @param  {String}  location  A string like 'source' or 'dest'.
+    @param  {String}  task      An event triggered task string like 'add', 'change', and so on.
+    @param  {String}  path      A string with the full path to a file or folder.
+    */
+    shared.watch.workQueue.push({
+        location: location,
+        task: task,
+        path: path
+    })
+
+    watch.workQueueProcess()
+} // workQueueAdd
+
+watch.workQueueProcess = async function watch_workQueueProcess() {
+    /*
+    Process the shared.watch.workQueue array and run tasks one at a time to match the order of events.
+    @return  {Promise}
+    */
+    if (shared.watch.working || shared.watch.workQueue.length === 0) {
+        // an instance of this function is already working the queue or there is nothing to do
+        return 'early'
+    }
+
+    shared.watch.working = true // so subsequent calls to this function know we are working the queue
+
+    do {
+        let work = shared.watch.workQueue.shift() // removes the first item from the array
+
+        try {
+            if (work.location === 'source') {
+                switch (work.task) {
+                    case 'add':
+                        await watch.buildOne(work.path)
+                        break
+
+                    case 'adddir':
+                        await mkdirpPromise(functions.sourceToDest(work.path))
+                        break
+
+                    case 'change':
+                        await watch.buildOne(work.path)
+                        break
+
+                    case 'unlink':
+                        await watch.removeOne(work.path)
+                        break
+
+                    case 'unlinkdir':
+                        await watch.removeOne(work.path)
+                        break
+
+                    default:
+                        functions.log('watch.workQueueProcess -> unknown source work task "' + work.task + '"')
+                        break
+                } // switch
+            } else {
+                functions.log('watch.workQueueProcess -> unknown work location "' + work.location + '"')
+            }
+        } catch (error) {
+            functions.log('watch.workQueueProcess -> try catch error')
+            functions.logError(error)
+        }
+    } while (shared.watch.workQueue.length > 0)
+
+    shared.watch.working = false
+} // workQueueProcess
 
 //---------
 // Exports

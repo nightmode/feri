@@ -54,7 +54,7 @@ function setupColors() {
         }
     }
 
-    if (platform === 'win32' || platform === 'win64') {
+    if (platform === 'win32') {
         // use brigher versions of these colors
         color.red     = color.redBright
         color.green   = color.greenBright

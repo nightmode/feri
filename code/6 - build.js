@@ -92,7 +92,7 @@ build.processBuild = function build_processBuild(files, watching) {
 
         return functions.fileExists(config.path.source).then(function(exists) {
             if (exists === false) {
-                throw shared.language.display('error.missingSourceDirectory')
+                throw new Error(shared.language.display('error.missingSourceDirectory'))
             }
         })
 
@@ -830,7 +830,7 @@ build.finalize = async function build_finalize(obj) {
             obj.dest = functions.sourceToDest(obj.source)
         } else if (functions.inSource(obj.dest)) {
             // obj.dest points to a file in the source directory which could be dangerous
-            throw 'build.finalize -> ' + shared.language.display('error.destPointsToSource')
+            throw new Error('build.finalize -> ' + shared.language.display('error.destPointsToSource'))
         }
 
         await functions.makeDirPath(obj.dest)

@@ -37,6 +37,16 @@ const shared = {
         'calmTimer': null, // Variable used by watch.updateExtensionServer to update 300 ms after the last destination file change.
         'changedFiles': [] // Keeps track of which destination files were changed in order to relay those to the extension server.
     },
+    folder: {
+        dest: { // destination folder related
+            case: '', // the mode or style of file naming such as 'lower', 'upper', 'nocase', or 'case', set by functions.detectCaseDest
+            lastPath: '' // the last seen destination folder like '/project/dest', set by functions.detectCaseDest
+        },
+        source: { // source folder related
+            case: '', // the mode or style of file naming such as 'lower', 'upper', 'nocase', or 'case', set by functions.detectCaseSource
+            lastPath: '' // the last seen source folder like '/project/source', set by functions.detectCaseSource
+        }
+    },
     global: true, // Installed globally if true. Locally if false.
     help: false, // will be set to true if we are displaying help text on the command line
     language: { // language.base and language.loaded are a duplicate of each other to speed up our default english language usage
@@ -175,13 +185,19 @@ const shared = {
         }
     },
     suppressWatchEvents: false, // Used to temporarily suppress watch events for command line users until the title "Watching" is displayed. Can also be used to temporarily suppress watch events without having to stop the watch process.
-    uniqueNumber: 0 // iterate with (++uniqueNumber) or reset to 0
+    uniqueNumber: 0, // iterate with (++uniqueNumber) or reset to 0
+    watch: {
+        working: false, // when set to true, one instance of watch.workQueueProcess is already taking care of the workQueue
+        workQueue: [] // array of objects that will be managed by watch.workQueueAdd and watch.workQueueProcess.
+        // workQueue will contain objects like... [{location:'source', task:'add', path:'/source/file.txt'}, {location:'source', task:'change', path:'/source/file.txt'}]
+        // the workQueue order will match the order of events while watching
+    }
 }
 
 //------------------
 // Windows Specific
 //------------------
-if (shared.platform === 'win32' || shared.platform === 'win64') {
+if (shared.platform === 'win32') {
     shared.slash = '\\'
 }
 

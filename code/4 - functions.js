@@ -14,15 +14,18 @@ const fs     = require('fs')     // ~  1 ms
 const glob   = require('glob')   // ~ 13 ms
 const mkdirp = require('mkdirp') // ~  1 ms
 const path   = require('path')   // ~  1 ms
+const rimraf = require('rimraf') // ~ 13 ms
 const util   = require('util')   // ~  1 ms
 
 //---------------------
 // Includes: Promisify
 //---------------------
-const fsReadFilePromise  = util.promisify(fs.readFile)       // ~  1 ms
-const fsStatPromise      = util.promisify(fs.stat)           // ~  1 ms
-const fsWriteFilePromise = util.promisify(fs.writeFile)      // ~  1 ms
-const rimrafPromise      = util.promisify(require('rimraf')) // ~ 14 ms
+const fsReaddir          = util.promisify(fs.readdir)   // ~ 1 ms
+const fsReadFilePromise  = util.promisify(fs.readFile)  // ~ 1 ms
+const fsStatPromise      = util.promisify(fs.stat)      // ~ 1 ms
+const fsWriteFilePromise = util.promisify(fs.writeFile) // ~ 1 ms
+const mkdirpPromise      = util.promisify(mkdirp)       // ~ 1 ms
+const rimrafPromise      = util.promisify(rimraf)       // ~ 1 ms
 
 //---------------------
 // Includes: Lazy Load
@@ -216,8 +219,225 @@ functions.destToSource = function functions_destToSource(dest) {
     @param   {String}  dest  File path like '/dest/index.html'
     @return  {String}        File path like '/source/index.html'
     */
-    return dest.replace(config.path.dest, config.path.source)
+    let source = dest.replace(config.path.dest, '').replace(config.path.source, '')
+
+    switch (config.case.source) {
+        case 'upper':
+            source = source.toUpperCase()
+            break
+        case 'lower':
+            source = source.toLowerCase()
+            break
+    } // switch
+
+    source = config.path.source + source
+
+    return source
 } // destToSource
+
+functions.detectCaseDest = async function functions_detectCaseDest() {
+    /*
+    Find out how a destination folder deals with case. Writes a test file once and then caches that result for subsequent calls.
+    @return  {Promise}  Promise that returns a string like 'lower', 'upper', 'nocase', or 'case'.
+    */
+
+    /*
+    Testing results.
+        Mac
+            ExFAT = nocase
+            MS-DOS (FAT-32) = nocase
+            Mac OS Extended (Journaled) = nocase
+            Mac OS Extended (Case-sensitive, Journaled) = case
+        Linux
+            Ext4 = case
+        Windows
+            NTFS = nocase // beware... windows 10 can supposedly set individual folders to 'case'
+    */
+    const dest = config.path.dest
+
+    if (shared.folder.dest.lastPath === dest) {
+        // dest has not changed since we last checked
+        if (shared.folder.dest.case !== '') {
+            // case is not empty so return the previuosly figured out case
+            return Promise.resolve(shared.folder.dest.case)
+        }
+    } else {
+        shared.folder.dest.lastPath = dest
+    }
+
+    const file = 'aB.feri'
+    const fileLowerCase = file.toLowerCase()
+    const fileUpperCase = file.toUpperCase()
+
+    const fileFullPath = path.join(dest, file)
+
+    try {
+        // try to delete a previous test file
+        await functions.removeFile(fileFullPath)
+    } catch (error) {
+        // do nothing
+    }
+
+    let result = '' // will be set to 'lower', 'upper', 'nocase', or 'case'
+
+    const writeFile = await functions.writeFile(fileFullPath, 'This is a test file created by Feri. It is safe to delete.')
+
+    if (writeFile === false) {
+        throw new Error('functions.detectCaseDest -> could not write a test file to "' + dest + '"')
+    }
+
+    const dir = await fsReaddir(dest)
+
+    for (let i in dir) {
+        if (fileLowerCase === dir[i].toLowerCase()) {
+            // this is our matching file
+
+            if (fileLowerCase === dir[i]) {
+                // the destination forces all file names to lowercase
+                result = 'lower'
+            }
+
+            if (fileUpperCase === dir[i]) {
+                // the destination forces all file names to uppercase
+                result = 'upper'
+            }
+
+            break
+        }
+    }
+
+    if (result === '') {
+        // ask the os for a lower case version of the test file
+        let fileExists = false
+
+        try {
+            await fsStatPromise(path.join(dest, fileLowerCase))
+            fileExists = true
+        } catch (error) {
+            // do nothing
+        }
+
+        if (fileExists) {
+            // the destination folder is NOT case sensitive
+            result = 'nocase'
+        } else {
+            // the destination folder is case sensitive
+            result = 'case'
+        }
+    }
+
+    const removeFile = await functions.removeFile(fileFullPath)
+
+    if (removeFile === false) {
+        throw new Error('functions.detectCaseDest -> could not remove test file "' + fileFullPath + '"')
+    }
+
+    shared.folder.dest.case = result // save the result for next time so we can run faster
+
+    return result
+} // detectCaseDest
+
+functions.detectCaseSource = async function functions_detectCaseSource() {
+    /*
+    Find out how a source folder deals with case. Writes a test file once and then caches that result for subsequent calls.
+    @return  {Promise}  Promise that returns a string like 'lower', 'upper', 'nocase', or 'case'.
+    */
+
+    /*
+    Testing results.
+        Mac
+            ExFAT = nocase
+            MS-DOS (FAT-32) = nocase
+            Mac OS Extended (Journaled) = nocase
+            Mac OS Extended (Case-sensitive, Journaled) = case
+        Linux
+            Ext4 = case
+        Windows
+            NTFS = nocase // beware... windows 10 can supposedly set individual folders to 'case'
+    */
+    const source = config.path.source
+
+    if (shared.folder.source.lastPath === source) {
+        // source has not changed since we last checked
+        if (shared.folder.source.case !== '') {
+            // case is not empty so return the previuosly figured out case
+            return Promise.resolve(shared.folder.source.case)
+        }
+    } else {
+        shared.folder.source.lastPath = source
+    }
+
+    const file = 'aB.feri'
+    const fileLowerCase = file.toLowerCase()
+    const fileUpperCase = file.toUpperCase()
+
+    const fileFullPath = path.join(source, file)
+
+    try {
+        // try to delete a previous test file
+        await functions.removeFile(fileFullPath)
+    } catch (error) {
+        // do nothing
+    }
+
+    let result = '' // will be set to 'lower', 'upper', 'nocase', or 'case'
+
+    const writeFile = await functions.writeFile(fileFullPath, 'This is a test file created by Feri. It is safe to delete.')
+
+    if (writeFile === false) {
+        throw new Error('functions.detectCaseSource -> could not write a test file to "' + source + '"')
+    }
+
+    const dir = await fsReaddir(source)
+
+    for (let i in dir) {
+        if (fileLowerCase === dir[i].toLowerCase()) {
+            // this is our matching file
+
+            if (fileLowerCase === dir[i]) {
+                // the source forces all file names to lowercase
+                result = 'lower'
+            }
+
+            if (fileUpperCase === dir[i]) {
+                // the source forces all file names to uppercase
+                result = 'upper'
+            }
+
+            break
+        }
+    }
+
+    if (result === '') {
+        // ask the os for a lower case version of the test file
+        let fileExists = false
+
+        try {
+            await fsStatPromise(path.join(source, fileLowerCase))
+            fileExists = true
+        } catch (error) {
+            // do nothing
+        }
+
+        if (fileExists) {
+            // the source folder is NOT case sensitive
+            result = 'nocase'
+        } else {
+            // the source folder is case sensitive
+            result = 'case'
+        }
+    }
+
+    const removeFile = await functions.removeFile(fileFullPath)
+
+    if (removeFile === false) {
+        throw new Error('functions.detectCaseSource -> could not remove test file "' + fileFullPath + '"')
+    }
+
+    shared.folder.source.case = result // save the result for next time so we can run faster
+
+    return result
+} // detectCaseSource
 
 functions.figureOutPath = function functions_figureOutPath(filePath) {
     /*
@@ -251,12 +471,40 @@ functions.fileExists = function functions_fileExists(filePath) {
     @param   {String}   filePath  Path to a file or folder.
     @return  {Promise}            Promise that returns a boolean. True if yes.
     */
-    return fsStatPromise(filePath).then(function() {
+    return functions.fileStat(filePath).then(function() {
         return true
     }).catch(function(err) {
         return false
     })
 } // fileExists
+
+functions.fileExistsAndTime = function functions_fileExistsAndTime(filePath) {
+    /*
+    Find out if a file exists along with its modified time.
+    @param   {String}   filePath  Path to a file or folder.
+    @return  {Promise}            Promise that returns an object like { exists: true, mtime: 123456789 }
+    */
+    return functions.fileStat(filePath).then(function(stat) {
+        return {
+            'exists': true,
+            'mtime': stat.mtime.getTime()
+        }
+    }).catch(function(err) {
+        return {
+            'exists': false,
+            'mtime': 0
+        }
+    })
+} // fileExistsAndTime
+
+functions.fileExtension = function functions_fileExtension(filePath) {
+    /*
+    Return a file extension from a string.
+    @param   {String}  filePath  File path like '/conan/riddle-of-steel.txt'
+    @return  {String}            String like 'txt'
+    */
+    return path.extname(filePath).replace('.', '').toLowerCase()
+} // fileExtension
 
 functions.filesExist = function functions_filesExist(filePaths) {
     /*
@@ -271,25 +519,6 @@ functions.filesExist = function functions_filesExist(filePaths) {
     return Promise.all(files)
 } // filesExist
 
-functions.fileExistsAndTime = function functions_fileExistsAndTime(filePath) {
-    /*
-    Find out if a file exists along with its modified time.
-    @param   {String}   filePath  Path to a file or folder.
-    @return  {Promise}            Promise that returns an object like { exists: true, mtime: 123456789 }
-    */
-    return fsStatPromise(filePath).then(function(stat) {
-        return {
-            'exists': true,
-            'mtime': stat.mtime.getTime()
-        }
-    }).catch(function(err) {
-        return {
-            'exists': false,
-            'mtime': 0
-        }
-    })
-} // fileExistsAndTime
-
 functions.filesExistAndTime = function functions_filesExistAndTime(source, dest) {
     /*
     Find out if one or both files exist along with their modified time.
@@ -297,18 +526,9 @@ functions.filesExistAndTime = function functions_filesExistAndTime(source, dest)
     @param   {String}  dest    Destination file path like '/dest/favicon.ico'
     @return  {Promise}         Promise that returns an object like { source: { exists: true, mtime: 123456789 }, dest: { exists: false, mtime: 0 } }
     */
+
     let files = [source, dest].map(function(file) {
-        return fsStatPromise(file).then(function(stat) {
-            return {
-                'exists': true,
-                'mtime': stat.mtime.getTime()
-            }
-        }).catch(function(err) {
-            return {
-                'exists': false,
-                'mtime': 0
-            }
-        })
+        return functions.fileExistsAndTime(file)
     })
 
     return Promise.all(files).then(function(array) {
@@ -319,27 +539,125 @@ functions.filesExistAndTime = function functions_filesExistAndTime(source, dest)
     })
 } // filesExistAndTime
 
-functions.fileExtension = function functions_fileExtension(filePath) {
-    /*
-    Return a file extension from a string.
-    @param   {String}  filePath  File path like '/conan/riddle-of-steel.txt'
-    @return  {String}            String like 'txt'
-    */
-    return path.extname(filePath).replace('.', '').toLowerCase()
-} // fileExtension
-
 functions.fileSize = function functions_fileSize(filePath) {
     /*
     Find out the size of a file or folder.
     @param  {String}   filePath  Path to a file or folder.
-    @return {Promise}            Promise that will return a boolean. True if yes.
+    @return {Promise}            Promise that will return the number of bytes or 0.
     */
-    return fsStatPromise(filePath).then(function(stats) {
+    return functions.fileStat(filePath).then(function(stats) {
         return stats.size
     }).catch(function(err) {
         return 0
     })
 } // fileSize
+
+functions.fileStat = async function functions_fileStat(filePath) {
+    /*
+    Return an fs stats object if a file or folder exists otherwise an error.
+    A case sensitive version of fsStatPromise for source and dest locations.
+    @param   {String}   filePath  Path to a file or folder.
+    @return  {Promise}            Promise that returns an fs stats object if a file or folder exists. An error if not.
+    */
+    let theCase = '' // can be set to 'lower', 'upper', 'nocase', or 'case'
+
+    if (functions.inDest(filePath)) {
+        //check the file case style of the destination volume
+        if (config.case.dest !== '') {
+            // user specified overide
+            theCase = config.case.dest
+        } else {
+            theCase = await functions.detectCaseDest()
+        }
+    } else if (functions.inSource(filePath)) {
+        //check the file case style of the source volume
+        if (config.case.source !== '') {
+            // user specified overide
+            theCase = config.case.source
+        } else {
+            theCase = await functions.detectCaseSource()
+        }
+    } else {
+        // this file is not in the source or dest
+        // this can happen during mocha tests
+        return fsStatPromise(filePath)
+    }
+
+    const isConcat = (functions.fileExtension(filePath) === 'concat')
+
+    if (theCase === 'case') {
+        // this volume is case sensitive so we can use fsStatPromise to ask for a very specific file like 'inDex.html' and be sure that it will not match a pre-existing file like 'index.html'
+
+        if (isConcat) {
+            // do a fuzzy case match for the 'concat' extension part of a file name only
+            const dirName = path.dirname(filePath)
+            const dir = await fsReaddir(dirName)
+
+            let fileName = path.basename(filePath)
+            const fileNameLowerCase = fileName.toLowerCase()
+            const fileNameSansConcat = functions.removeExt(fileName)
+
+            for (let i in dir) {
+                if (functions.fileExtension(dir[i]) === 'concat') {
+                    if (fileNameSansConcat === functions.removeExt(dir[i])) {
+                        // irrespective of the concat extension, an exact match
+                        fileName = dir[i]
+                        break
+                    }
+                }
+            }
+
+            return fsStatPromise(path.join(dirName, fileName))
+        } // isConcat
+
+        // ask for an exact file name match
+        return fsStatPromise(filePath)
+    } else {
+        // this volume is NOT case sensitive so a call like fsStatPromise('inDex.html') could return true if a pre-existing file like 'index.html' already exists
+        // using fsStatPromise on a volume that is NOT case sensitive can lead to files not being cleaned or built, especially if a file is renamed by changing the case of existing characters only
+
+        const dir = await fsReaddir(path.dirname(filePath))
+
+        let fileName = path.basename(filePath)
+        let filePathActual = ''
+
+        if (theCase === 'upper') {
+            fileName = fileName.toUpperCase()
+        } else if (theCase === 'lower') {
+            fileName = fileName.toLowerCase()
+        }
+
+        if (isConcat) {
+            // do a fuzzy case match for the 'concat' extension part of a file name only
+            let fileNameSansConcat = functions.removeExt(fileName)
+
+            for (let i in dir) {
+                if (functions.fileExtension(dir[i]) === 'concat') {
+                    if (fileNameSansConcat === functions.removeExt(dir[i])) {
+                        // irrespective of the concat extension, an exact match
+                        filePathActual = filePath
+                        break
+                    }
+                }
+            }
+        } else {
+            for (let i in dir) {
+                if (fileName === dir[i]) {
+                    // an exact match, including case
+                    filePathActual = filePath
+                    break
+                }
+            }
+        }
+
+        if (filePathActual === '') {
+            throw new Error('functions.fileStat -> "' + filePath + '" does not exist')
+        } else {
+            // safe to call fsStatPromise since our earlier logic ensures an exact match
+            return fsStatPromise(filePath)
+        }
+    }
+} // fileStat
 
 functions.findFiles = function functions_findFiles(match, options) {
     /*
@@ -386,6 +704,15 @@ functions.globOptions = function functions_globOptions() {
     }
 } // globOptions
 
+functions.inDest = function functions_inDest(filePath) {
+    /*
+    Find out if a path is in the destination directory.
+    @param   {String}   filePath  Full file path like '/projects/dest/index.html'
+    @return  {Boolean}            True if the file path is in the destination directory.
+    */
+    return filePath.indexOf(config.path.dest) === 0
+} // inDest
+
 functions.initFeri = async function initFeri() {
     /*
     If needed, create the source and destination folders along with a custom config file in the present working directory.
@@ -411,7 +738,7 @@ functions.initFeri = async function initFeri() {
 
     if (exists.indexOf(true) >= 0) {
         functions.log(messageDone, false)
-        return // early
+        return 'early'
     }
 
     let data = await functions.readFile(path.join(shared.path.self, 'templates', 'custom-config.js'))
@@ -428,7 +755,7 @@ functions.initFeri = async function initFeri() {
 functions.inSource = function functions_inSource(filePath) {
     /*
     Find out if a path is in the source directory.
-    @param   {String}   filePath  Full file path like '/projects/a/source/index.html'
+    @param   {String}   filePath  Full file path like '/projects/source/index.html'
     @return  {Boolean}            True if the file path is in the source directory.
     */
     return filePath.indexOf(config.path.source) === 0
@@ -461,8 +788,8 @@ functions.log = function functions_log(message, indent) {
 
 functions.logError = function functions_logError(error) {
     /*
-    Log a stack trace or simple text string depending on the type of object passed in.
-    @param  {Object,String}  err  Error object or simple string describing the error.
+    Log a stack trace or text string depending on the type of object passed in.
+    @param  {Object,String}  err  Error object or string describing the error.
     */
     let message = error.message || error
     let displayError = false
@@ -533,7 +860,7 @@ functions.makeDirPath = function functions_makeDirPath(filePath, isDir) {
     Create an entire directory structure leading up to a file or folder, if needed.
     @param   {String}   filePath  Path like '/images/koi.png' or '/images'.
     @param   {Boolean}  isDir     True if filePath is a directory that should be used as is.
-    @return  {Promise}            Promise that returns true if successful. Error object if not.
+    @return  {Promise}            Promise that returns true if successful. An error if not.
     */
     isDir = isDir || false
 
@@ -541,14 +868,8 @@ functions.makeDirPath = function functions_makeDirPath(filePath, isDir) {
         filePath = path.dirname(filePath)
     }
 
-    return new Promise(function(resolve, reject) {
-        mkdirp(filePath, function(err) {
-            if (err) {
-                reject(err)
-            } else {
-                resolve(true)
-            }
-        })
+    return mkdirpPromise(filePath).then(function(confirmPath) {
+        return true
     })
 } // makeDirPath
 
@@ -843,10 +1164,10 @@ functions.removeDest = async function functions_removeDest(filePath, log, isDir)
     isDir = (isDir === true) ? true : false
 
     if (filePath.indexOf(config.path.source) >= 0) {
-        throw 'functions.removeDest -> ' + shared.language.display('error.removeDest') + ' -> ' + filePath
+        throw new Error('functions.removeDest -> ' + shared.language.display('error.removeDest') + ' -> ' + filePath)
     }
 
-    await rimrafPromise(filePath)
+    await functions.removeFile(filePath)
 
     if (log) {
         let message = 'words.removed'
@@ -876,8 +1197,8 @@ functions.removeFile = function functions_removeFile(filePath) {
     @param   {String}   filePath  String like '/dest/index.html'
     @return  {Promise}            Promise that returns true if the file or folder was removed or if there was nothing to do. An error otherwise.
     */
-    return rimrafPromise(filePath).then(function() {
-        return true
+    return rimrafPromise(filePath, { glob: false }).then(function(error) {
+        return error || true
     })
 } // removeFile
 
@@ -966,7 +1287,7 @@ functions.sourceToDest = function functions_sourceToDest(source) {
     */
     let sourceExt = functions.fileExtension(source)
 
-    let dest = source.replace(config.path.source, config.path.dest)
+    let dest = source.replace(config.path.source, '').replace(config.path.dest, '')
 
     if (sourceExt === 'concat') {
         sourceExt = functions.fileExtension(functions.removeExt(source))
@@ -979,6 +1300,17 @@ functions.sourceToDest = function functions_sourceToDest(source) {
             break
         }
     }
+
+    switch (config.case.dest) {
+        case 'upper':
+            dest = dest.toUpperCase()
+            break
+        case 'lower':
+            dest = dest.toLowerCase()
+            break
+    } // switch
+
+    dest = config.path.dest + dest
 
     return dest
 } // sourceToDest
@@ -1162,6 +1494,15 @@ functions.useExistingSourceMap = async function functions_useExistingSourceMap(f
     return sourceMap
 } // useExistingSourceMap
 
+functions.wait = function functions_wait(ms) {
+    /*
+    Promise that is useful for injecting delays and testing scenarios.
+    @param   {Number}   ms  Number of milliseconds to wait before returning.
+    @return  {Promise}
+    */
+    return new Promise(resolve => setTimeout(resolve, ms))
+} // wait
+
 functions.writeFile = function functions_writeFile(filePath, data, encoding) {
     /*
     Promisified version of fs.writeFile.
@@ -1213,7 +1554,7 @@ functions.includesNewer = function functions_includesNewer(includePaths, fileTyp
                     newer = true
                 }
             } else {
-                return fsStatPromise(include).then(function(stat) {
+                return functions.fileStat(include).then(function(stat) {
                     // add date to cache
                     shared.cache.includesNewer[fileType][fileName] = stat.mtime.getTime()
                     if (shared.cache.includesNewer[fileType][fileName] > destTime) {
@@ -1315,47 +1656,36 @@ functions.includePathsConcat = function functions_includePathsConcat(data, fileP
 
         return p
 
-    }).then(function(includes) {
+    }).then(async function(includes) {
 
         if (includes.length > 0) {
             // now we have an array of includes like ['/full/path/to/_file.js']
 
             let promiseArray = []
 
-            for (let i in includes) {
-                (function() {
-                    let ii = i
-                    promiseArray.push(
-                        functions.fileExists(includes[ii]).then(function(exists) {
-                            if (exists) {
-                                if (functions.fileExtension(includes[ii]) === 'concat') {
-                                    return functions.readFile(includes[ii]).then(function(data) {
-                                        return functions.includePathsConcat(data, includes[ii], includePathsCacheName).then(function(subIncludes) {
-                                            for (let j in subIncludes) {
-                                                includes.push(subIncludes[j])
-                                            }
-                                        })
-                                    })
-                                }
-                            } else {
-                                delete includes[ii] // leaves an empty space in the array which we will clean up later
-                            }
-                        })
-                    )
-                })()
+            for (const i in includes) {
+                const exists = await functions.fileExists(includes[i])
+
+                if (exists) {
+                    if (functions.fileExtension(includes[i]) === 'concat') {
+                        const data = await functions.readFile(includes[i])
+
+                        const subIncludes = await functions.includePathsConcat(data, includes[i], includePathsCacheName)
+
+                        for (let j in subIncludes) {
+                            includes.push(subIncludes[j])
+                        }
+                    }
+                } else {
+                    delete includes[i] // leaves an empty space in the array which we will clean up later
+                }
             } // for
 
-            return Promise.all(promiseArray).then(function() {
-
-                // clean out any empty includes which meant their files could not be found
-                includes = functions.cleanArray(includes)
-
-            }).then(function() {
-                return includes
-            })
-        } else {
-            return includes
+            // clean out any empty includes which meant their files could not be found
+            includes = functions.cleanArray(includes)
         }
+
+        return includes
 
     }).then(function(includes) {
 
@@ -1400,7 +1730,7 @@ functions.objBuildWithIncludes = async function functions_objBuildWithIncludes(o
     } else if (obj.dest !== '') {
         // make sure obj.dest does not point to a file in the source directory
         if (functions.inSource(obj.dest)) {
-            throw 'functions.objBuildWithIncludes -> ' + shared.language.display('error.destPointsToSource')
+            throw new Error('functions.objBuildWithIncludes -> ' + shared.language.display('error.destPointsToSource'))
         } else {
             // read dest file into memory
             try {
@@ -1409,7 +1739,7 @@ functions.objBuildWithIncludes = async function functions_objBuildWithIncludes(o
                 obj.data = data
                 obj.build = true
             } catch(err) {
-                throw 'functions.objBuildWithIncludes -> ' + shared.language.display('error.missingDest')
+                throw new Error('functions.objBuildWithIncludes -> ' + shared.language.display('error.missingDest'))
             }
         }
     } else {
@@ -1426,7 +1756,7 @@ functions.objBuildWithIncludes = async function functions_objBuildWithIncludes(o
 
             if (!files.source.exists) {
                 // missing source file
-                throw 'functions.objBuildWithIncludes -> ' + shared.language.display('error.missingSource')
+                throw new Error('functions.objBuildWithIncludes -> ' + shared.language.display('error.missingSource'))
             }
 
             if (files.dest.exists) {
@@ -1478,7 +1808,7 @@ functions.objBuildInMemory = async function functions_objBuildInMemory(obj) {
     } else if (obj.dest !== '') {
         // make sure obj.dest does not point to a file in the source directory
         if (functions.inSource(obj.dest)) {
-            throw 'functions.objBuildInMemory -> ' + shared.language.display('error.destPointsToSource')
+            throw new Error('functions.objBuildInMemory -> ' + shared.language.display('error.destPointsToSource'))
         } else {
             // read dest file into memory
             try {
@@ -1487,7 +1817,7 @@ functions.objBuildInMemory = async function functions_objBuildInMemory(obj) {
                 obj.data = data
                 obj.build = true
             } catch(err) {
-                throw 'functions.objBuildInMemory -> ' + shared.language.display('error.missingDest')
+                throw new Error('functions.objBuildInMemory -> ' + shared.language.display('error.missingDest'))
             }
         }
     } else {
@@ -1504,7 +1834,7 @@ functions.objBuildInMemory = async function functions_objBuildInMemory(obj) {
 
             if (!files.source.exists) {
                 // missing source file
-                throw 'functions.objBuildInMemory -> ' + shared.language.display('error.missingSource')
+                throw new Error('functions.objBuildInMemory -> ' + shared.language.display('error.missingSource'))
             }
 
             if (files.dest.exists) {
@@ -1546,7 +1876,7 @@ functions.objBuildOnDisk = async function functions_objBuildOnDisk(obj) {
         } else {
             // make sure obj.dest does not point to a file in the source directory
             if (functions.inSource(obj.dest)) {
-                throw 'functions.objBuildOnDisk -> ' + shared.language.display('error.destPointsToSource')
+                throw new Error('functions.objBuildOnDisk -> ' + shared.language.display('error.destPointsToSource'))
             }
         }
 
@@ -1585,9 +1915,16 @@ functions.objBuildOnDisk = async function functions_objBuildOnDisk(obj) {
             // check to see if the source file is newer than a possible dest file
             let files = await functions.filesExistAndTime(obj.source, obj.dest)
 
-            if (!files.source.exists) {
+            if (files.source.exists === false) {
                 // missing source file
-                throw 'functions.objBuildOnDisk -> ' + shared.language.display('error.missingSource')
+
+                if (files.dest.exists) {
+                    // a missing source file and an existing dest file is most likely a rename caught while watching
+                    // it is tempting to delete obj.dest but that would cause other issues since chokidar can report events out of order
+                    throw 'done'
+                } else {
+                    throw new Error('functions.objBuildOnDisk -> ' + shared.language.display('error.missingSource'))
+                }
             }
 
             if (files.dest.exists) {

@@ -28,8 +28,14 @@ try {
 //----------
 // Includes
 //----------
-const fs   = require('fs')   // ~  1 ms
-const path = require('path') // ~  1 ms
+const fs   = require('fs')   // ~ 1 ms
+const path = require('path') // ~ 1 ms
+const util = require('util') // ~ 1 ms
+
+//---------------------
+// Includes: Promisify
+//---------------------
+const fsStatPromise = util.promisify(fs.stat) // ~ 1 ms
 
 //-------------------------
 // Global or Local Install
@@ -75,29 +81,31 @@ const commandLine = async function commandLine() {
     Command Line checks, options, and startup procedures.
     @return  {Promise}
     */
-    commandLineOptions = process.argv.slice(2)
-    configFile = path.join(shared.path.pwd, 'feri.js')
-    configFileExists = false
+    let configFile = path.join(shared.path.pwd, 'feri.js')
+    let configFileExists = false
 
     // enable console logging since we are running as a command line program
     shared.log = true
 
     try {
         // check for a feri.js file
-        configFileExists = await functions.fileExists(configFile)
-
-        if (configFileExists === false) {
-            // check for a feri-config.js file
+        configFileExists = await fsStatPromise(configFile)
+    } catch (error) {
+        // check for a feri-config.js file
+        try {
             configFile = path.join(shared.path.pwd, 'feri-config.js')
-
-            configFileExists = await functions.fileExists(configFile)
+            configFileExists = await fsStatPromise(configFile)
+        } catch (error) {
+            // do nothing
         }
+    }
 
+    try {
         if (configFileExists) {
             try {
                 require(configFile)(feri) // share our feri reference with this require
             } catch(e) {
-                throw 'Loading ' + configFile + ' \n\n' + 'Make sure the file is a valid module like...\n\n' + 'module.exports = function(feri) { /* code */ }'
+                throw new Error('Loading ' + configFile + ' \n\n' + 'Make sure the file is a valid module like...\n\n' + 'module.exports = function(feri) { /* code */ }')
             }
         }
 
@@ -428,9 +436,7 @@ const inOptions = function inOptions(search) {
 //-------------------------
 // Command Line or Require
 //-------------------------
-let commandLineOptions,
-    configFile,
-    configFileExists
+let commandLineOptions = process.argv.slice(2)
 
 if (shared.cli) {
     //--------------

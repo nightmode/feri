@@ -16,10 +16,17 @@ const path = require('path') // ~ 1 ms
 //-----------
 const config = {
     // null values will be populated later
-    concurLimit: 1, // 1-3 recommended since node libuv has 4 slots by default
+    case: { // manually specify how file name cases are handled on the volume for a folder
+        // for case sensitive volumes (linux by default), setting 'case' gets you the most speed as the OS can be trusted to match file names exactly
+        // for case insensitive volumes (mac and windows by default), setting 'nocase' will get you some speed since feri will not have to write a test file to determine casing for that location
+        source: '', // source folder, can be 'lower', 'upper', 'nocase', and 'case'
+        dest: '' // destination folder, can be 'lower', 'upper', 'nocase', and 'case'
+    },
+    concurLimit: 1, // libuv has 4 slots by default so you may want to try setting concurLimit to 2 or 3 for faster clean and build calls
+    // concurLimit has no effect on watching which only runs one clean or build task at a time
     extension: { // web browser extension support
         defaultDocument: 'index.html', // will be passed once to each extension client upon connection
-        fileTypes: ['css', 'html', 'js'], // only inform extension clients about changes to these file types
+        fileTypes: ['css', 'html', 'js'], // only inform extension clients about changes to these file types, file types should be lowercase only
         port: 4000 // websocket server port
     },
     fileType: null, // object that will hold options for individual file types
@@ -160,8 +167,9 @@ config.map.sourceToDestTasks = {
 config.thirdParty = {
     chokidar: { // used by watch.*
         // ignore dot objects except for .htaccess files and .nvm directories
-        // also ignore newly created folders for Mac OS, Ubuntu, and Windows
-        'ignored': [/[\/\\]\.(?!htaccess|nvm)/, '**/untitled folder', '**/Untitled Folder', '**/New folder'],
+        // ignore feri test files created by functions.detectCaseDest and functions.detectCaseSource
+        // ignore newly created folders for Mac OS, Ubuntu, and Windows
+        'ignored': [/[\/\\]\.(?!htaccess|nvm)/, /[\/\\]ab\.feri/i, '**/untitled folder', '**/Untitled Folder', '**/New folder'],
         'ignoreInitial' : true,
         'followSymlinks': false
     },
