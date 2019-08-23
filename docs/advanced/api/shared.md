@@ -120,13 +120,13 @@ Parent container for destination folder related items.
 
 Type: `string`
 
-The mode or style of file naming such as 'lower', 'upper', 'nocase', or 'case'. Set by [functions.detectCaseDest](functions.md#functionsdetectcasedest).
+The mode or style of file naming such as `lower`, `upper`, `nocase`, or `case`. Set by [functions.detectCaseDest](functions.md#functionsdetectcasedest).
 
 ## shared.folder.dest.lastPath
 
 Type: `string`
 
-The last seen destination folder like '/project/dest'. Set by [functions.detectCaseDest](functions.md#functionsdetectcasedest).
+The last seen destination folder like `/project/dest`. Set by [functions.detectCaseDest](functions.md#functionsdetectcasedest).
 
 ## shared.folder.source
 
@@ -138,13 +138,13 @@ Parent container for source folder related items.
 
 Type: `string`
 
-The mode or style of file naming such as 'lower', 'upper', 'nocase', or 'case'. Set by [functions.detectCaseSource](functions.md#functionsdetectcasesource).
+The mode or style of file naming such as `lower`, `upper`, `nocase`, or `case`. Set by [functions.detectCaseSource](functions.md#functionsdetectcasesource).
 
 ## shared.folder.source.lastPath
 
 Type: `string`
 
-The last seen source folder like '/project/source'. Set by [functions.detectCaseSource](functions.md#functionsdetectcasesource).
+The last seen source folder like `/project/source`. Set by [functions.detectCaseSource](functions.md#functionsdetectcasesource).
 
 ## shared.global
 

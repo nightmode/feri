@@ -197,7 +197,7 @@ Watch source directory for changes and kick off the appropriate response tasks a
 
 Type: `function`
 
-Add an event triggered task to the shared.watch.workQueue array.
+Add an event triggered task to the `shared.watch.workQueue` array.
 
 ```
 @param  {String}  location  A string like 'source' or 'dest'.
@@ -209,7 +209,7 @@ Add an event triggered task to the shared.watch.workQueue array.
 
 Type: `function`
 
-Process the shared.watch.workQueue array and run tasks one at a time to match the order of events.
+Process the `shared.watch.workQueue` array and run tasks one at a time to match the order of events.
 
 ```
 @return  {Promise}

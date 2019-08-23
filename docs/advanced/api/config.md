@@ -63,11 +63,11 @@ Type: `string`
 
 Defaults to an empty string.
 
-Valid values are 'case', 'nocase', 'lower', and 'upper'.
+Valid values are `case`, `nocase`, `lower`, and `upper`.
 
-For case sensitive volumes (linux by default), setting 'case' gets you the most speed as the OS can be trusted to match file names exactly.
+For case sensitive volumes (Linux by default), setting `case` gets you the most speed as the OS can be trusted to match file names exactly.
 
-For case insensitive volumes (mac and windows by default), setting 'nocase' will get you some speed since Feri will not have to write a test file to determine casing for that location.
+For case insensitive volumes (macOS and Windows by default), setting `nocase` will get you some speed since Feri will not have to write a test file to determine casing for that location.
 
 ## config.case.dest
 
@@ -75,11 +75,11 @@ Type : `string`
 
 Defaults to an empty string.
 
-Valid values are 'case', 'nocase', 'lower', and 'upper'.
+Valid values are `case`, `nocase`, `lower`, and `upper`.
 
-For case sensitive volumes (linux by default), setting 'case' gets you the most speed as the OS can be trusted to match file names exactly.
+For case sensitive volumes (Linux by default), setting `case` gets you the most speed as the OS can be trusted to match file names exactly.
 
-For case insensitive volumes (mac and windows by default), setting 'nocase' will get you some speed since Feri will not have to write a test file to determine casing for that location.
+For case insensitive volumes (macOS and Windows by default), setting `nocase` will get you some speed since Feri will not have to write a test file to determine casing for that location.
 
 ## config.concurLimit
 
