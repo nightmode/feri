@@ -240,6 +240,66 @@ describe('File -> ../code/4 - functions.js\n', function() {
             }) // it
         }) // describe
 
+        //--------------------------
+        // functions.detectCaseDest
+        //--------------------------
+        describe('detectCaseDest', function() {
+            it('should return a valid string for the casing used on a destination volume', function() {
+
+                config.path.dest = path.join(testPath, 'functions', 'detectCaseDest')
+
+                return functions.makeDirPath(config.path.dest, true).then(function(ok) {
+
+                    expect(ok).to.be(true)
+
+                    return functions.detectCaseDest()
+
+                }).then(function(theCase) {
+
+                    expect(theCase).to.be.a('string')
+                    expect(theCase).to.match(/^(case|nocase|lower|upper)$/)
+
+                    return functions.removeDest(config.path.dest, false)
+
+                }).then(function(ok) {
+
+                    expect(ok).to.be(true)
+
+                })
+
+            }) // it
+        }) // describe
+
+        //----------------------------
+        // functions.detectCaseSource
+        //----------------------------
+        describe('detectCaseSource', function() {
+            it('should return a valid string for the casing used on a source volume', function() {
+
+                config.path.source = path.join(testPath, 'functions', 'detectCaseSource')
+
+                return functions.makeDirPath(config.path.source, true).then(function(ok) {
+
+                    expect(ok).to.be(true)
+
+                    return functions.detectCaseSource()
+
+                }).then(function(theCase) {
+
+                    expect(theCase).to.be.a('string')
+                    expect(theCase).to.match(/^(case|nocase|lower|upper)$/)
+
+                    return functions.removeFile(config.path.source)
+
+                }).then(function(ok) {
+
+                    expect(ok).to.be(true)
+
+                })
+
+            }) // it
+        }) // describe
+
         //-------------------------
         // functions.figureOutPath
         //-------------------------
@@ -282,24 +342,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
             }) // it
         }) // describe
 
-        //----------------------
-        // functions.filesExist
-        //----------------------
-        describe('filesExist', function() {
-            it('should confirm that one file exists and another does not', function() {
-
-                let file1 = path.join(testPath, 'filesExist', 'file.txt')
-                let file2 = path.join(testPath, 'filesExist', 'missing.txt')
-
-                return functions.filesExist([file1, file2]).then(function(exists) {
-
-                    expect(exists).to.eql([true, false])
-
-                })
-
-            }) // it
-        }) // describe
-
         //-----------------------------
         // functions.fileExistsAndTime
         //-----------------------------
@@ -312,6 +354,37 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                     expect(obj.exists).to.be(true)
                     expect(obj.mtime).to.be.a('number')
+
+                })
+
+            }) // it
+        }) // describe
+
+        //-------------------------
+        // functions.fileExtension
+        //-------------------------
+        describe('fileExtension', function() {
+            it('should return file extension in string', function() {
+
+                let test = functions.fileExtension('/conan/riddle-of-steel.txt')
+
+                expect(test).to.be('txt')
+
+            }) // it
+        }) // describe
+
+        //----------------------
+        // functions.filesExist
+        //----------------------
+        describe('filesExist', function() {
+            it('should confirm that one file exists and another does not', function() {
+
+                let file1 = path.join(testPath, 'filesExist', 'file.txt')
+                let file2 = path.join(testPath, 'filesExist', 'missing.txt')
+
+                return functions.filesExist([file1, file2]).then(function(exists) {
+
+                    expect(exists).to.eql([true, false])
 
                 })
 
@@ -336,19 +409,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     expect(obj.dest.mtime).to.be(0)
 
                 })
-
-            }) // it
-        }) // describe
-
-        //-------------------------
-        // functions.fileExtension
-        //-------------------------
-        describe('fileExtension', function() {
-            it('should return file extension in string', function() {
-
-                let test = functions.fileExtension('/conan/riddle-of-steel.txt')
-
-                expect(test).to.be('txt')
 
             }) // it
         }) // describe
@@ -382,6 +442,54 @@ describe('File -> ../code/4 - functions.js\n', function() {
             }) // it
         }) // describe
 
+        //--------------------
+        // functions.fileStat
+        //--------------------
+        describe('fileStat', function() {
+            it('should returns stats for a source file', function() {
+                config.path.source = path.join(testPath, 'fileStat', 'source')
+
+                return functions.fileStat(path.join(config.path.source, 'source.txt')).then(function(stat) {
+
+                    expect(stat.size).to.be.a('number')
+
+                }) // it
+            }) // it
+
+            it('should returns stats for a dest file', function() {
+                config.path.dest = path.join(testPath, 'fileStat', 'dest')
+
+                return functions.fileStat(path.join(config.path.dest, 'dest.txt')).then(function(stat) {
+
+                    expect(stat.size).to.be.a('number')
+
+                })
+            }) // it
+
+            it('should returns stats for file that is not located in the source or dest folder', function() {
+                config.path.source = path.join(testPath, 'fileStat', 'source')
+                config.path.dest = path.join(testPath, 'fileStat', 'dest')
+
+                return functions.fileStat(path.join(testPath, 'fileStat', 'root.txt')).then(function(stat) {
+
+                    expect(stat.size).to.be.a('number')
+
+                })
+            }) // it
+
+            it('should returns an error for a file that does not exist', function() {
+                return functions.fileStat(path.join(testPath, 'fileStat', 'missing.txt')).then(function(stat) {
+
+                    throw 'Should not have found file.'
+
+                }).catch(function(error) {
+
+                    expect(error).to.be.an('object')
+
+                })
+            }) // it
+        }) // describe
+
         //---------------------
         // functions.findFiles
         //---------------------
@@ -394,6 +502,53 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     expect(files).to.not.be.empty()
 
                 })
+
+            }) // it
+        }) // describe
+
+        //-----------------------
+        // functions.globOptions
+        //-----------------------
+        describe('globOptions', function() {
+            it('should ', function() {
+
+                let obj = functions.globOptions()
+
+                let desired = {
+                    'ignore'  : '**/_*',
+                    'nocase'  : true,
+                    'nodir'   : true,
+                    'realpath': true
+                }
+
+                expect(obj).to.eql(desired)
+
+            }) // it
+        }) // describe
+
+        //------------------
+        // functions.inDest
+        //------------------
+        describe('inDest', function() {
+            it('should return true for a file in the destination folder', function() {
+
+                let folder = path.join(testPath, 'inDest', 'dest')
+                let file   = path.join(folder, 'magikarp.png')
+
+                config.path.dest = folder
+
+                expect(functions.inDest(file)).to.be(true)
+
+            }) // it
+
+            it('should return false for a file that is not in the destination folder', function() {
+
+                let folder = path.join(testPath, 'inDest', 'dest')
+                let file   = path.join(testPath, 'inDest', 'magikarp.png')
+
+                config.path.dest = folder
+
+                expect(functions.inDest(file)).to.be(false)
 
             }) // it
         }) // describe
@@ -467,26 +622,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
                     expect(data).to.be('module.exports = function(feri) {}')
 
                 })
-
-            }) // it
-        }) // describe
-
-        //-----------------------
-        // functions.globOptions
-        //-----------------------
-        describe('globOptions', function() {
-            it('should ', function() {
-
-                let obj = functions.globOptions()
-
-                let desired = {
-                    'ignore'  : '**/_*',
-                    'nocase'  : true,
-                    'nodir'   : true,
-                    'realpath': true
-                }
-
-                expect(obj).to.eql(desired)
 
             }) // it
         }) // describe
@@ -938,7 +1073,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                     }).catch(function(err) {
 
-                        expect(err).to.be.a('string')
+                        expect(err.message).to.be.a('string')
 
                     })
 
@@ -1372,6 +1507,26 @@ describe('File -> ../code/4 - functions.js\n', function() {
             }) // it
         }) // describe
 
+        //----------------
+        // functions.wait
+        //----------------
+        describe('wait', function() {
+            it('not return any sooner than the requested wait time in milliseconds', function() {
+
+                const timeStart = Date.now() // milliseconds
+
+                return functions.wait(1000).then(function() {
+
+                    const timeEnd = Date.now() + 5 // +5 ms to make things a bit less strict
+                    const timeDiff = timeEnd - timeStart
+
+                    expect(timeDiff).to.be.greaterThan(1000)
+
+                })
+
+            }) // it
+        }) // describe
+
         //---------------------
         // functions.writeFile
         //---------------------
@@ -1538,7 +1693,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 }).then(function(err) {
 
-                    expect(err).to.be('functions.objBuildInMemory -> Destination points to a source directory.')
+                    expect(err.message).to.be('functions.objBuildInMemory -> Destination points to a source directory.')
 
                 })
 
@@ -1721,7 +1876,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 }).then(function(err) {
 
-                    expect(err).to.be('functions.objBuildOnDisk -> Destination points to a source directory.')
+                    expect(err.message).to.be('functions.objBuildOnDisk -> Destination points to a source directory.')
 
                 })
             }) // it
@@ -1874,7 +2029,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 }).then(function(err) {
 
-                    expect(err).to.be('functions.objBuildWithIncludes -> Destination points to a source directory.')
+                    expect(err.message).to.be('functions.objBuildWithIncludes -> Destination points to a source directory.')
 
                 })
 

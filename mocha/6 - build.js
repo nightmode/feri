@@ -913,7 +913,7 @@ describe('File -> ../code/6 - build.js\n', function() {
 
                 }).then(function(err) {
 
-                    expect(err).to.be('build.finalize -> Destination points to a source directory.')
+                    expect(err.message).to.be('build.finalize -> Destination points to a source directory.')
 
                 })
             }) // it

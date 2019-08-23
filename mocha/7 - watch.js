@@ -70,18 +70,19 @@ describe('File -> ../code/7 - watch.js\n', function() {
         // runs before each test in this describe block
         config = functions.restoreObj(config, configBackup)
 
-        config.option.concurLimit = 1
         config.option.watch = true
+
+        shared.watch.working = true // set to true to keep watch.workQueueProcess from responding to events, set back to false if needed for an individual test
+        shared.watch.workQueue = []
     })
 
     afterEach(function() {
         // runs after each test in this describe block
-
-        // remove any event listeners
         watch.emitterDest.removeAllListeners()
         watch.emitterSource.removeAllListeners()
 
-        watch.stop()
+        // turn off the rewriter
+        reWriter(false)
     })
 
     //----------------
@@ -250,6 +251,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
             let fileSource = path.join(config.path.source, 'one.html')
             let fileDest   = path.join(config.path.dest, 'one.html')
 
+            shared.watch.working = false // allow workQueueProcess to take care of the shared.watch.workQueue array
+
             return Promise.resolve().then(function() {
 
                 return watch.processWatch()
@@ -292,7 +295,9 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 expect(checks).to.be(true)
 
-                watch.stop()
+                return watch.stop()
+
+            }).then(function() {
 
                 return functions.writeFile(fileSource, 'original data')
 
@@ -316,6 +321,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             let fileSource = path.join(config.path.source, 'two.css')
             let fileDest   = path.join(config.path.dest, 'two.css')
+
+            shared.watch.working = false // allow workQueueProcess to take care of the shared.watch.workQueue array
 
             return Promise.resolve().then(function() {
 
@@ -358,7 +365,9 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 expect(checks).to.be(true)
 
-                watch.stop()
+                return watch.stop()
+
+            }).then(function() {
 
                 return functions.writeFile(fileSource, 'original data')
 
@@ -382,6 +391,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             let ignoreFileSource = path.join(config.path.source, 'three.html')
             let ignoreFileDest   = path.join(config.path.dest, 'three.html')
+
+            shared.watch.working = false // allow workQueueProcess to take care of the shared.watch.workQueue array
 
             return Promise.resolve().then(function() {
 
@@ -429,7 +440,9 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 expect(checks).to.be(true)
 
-                watch.stop()
+                return watch.stop()
+
+            }).then(function() {
 
                 return functions.writeFile(fileSource, 'original data')
 
@@ -461,6 +474,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             let ignoreFileSource = path.join(config.path.source, 'four.html')
             let ignoreFileDest   = path.join(config.path.dest, 'four.html')
+
+            shared.watch.working = false // allow workQueueProcess to take care of the shared.watch.workQueue array
 
             return Promise.resolve().then(function() {
 
@@ -508,7 +523,9 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 expect(checks).to.be(true)
 
-                watch.stop()
+                return watch.stop()
+
+            }).then(function() {
 
                 return functions.writeFile(fileSource, 'original data')
 
@@ -526,6 +543,107 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
             })
 
+        }) // it
+    }) // describe
+
+    //-----------------
+    // watch.removeOne
+    //-----------------
+    describe('removeOne', function() {
+        it('should never delete a source file', function() {
+            // sourceFileExists === true
+            // destFileExists   === false
+
+            config.path.source = path.join(testPath, 'removeOne-1', 'source')
+            config.path.dest = path.join(testPath, 'removeOne-1', 'dest')
+
+            const fileSource = path.join(config.path.source, 'remove.txt')
+            const fileDest = path.join(config.path.dest, 'remove.txt')
+
+
+            return functions.fileExists(fileSource).then(function(exists) {
+                // make sure our source file exists before testing
+                if (exists === false) {
+                    return functions.writeFile(fileSource, '...')
+                }
+            }).then(function() {
+
+                return watch.removeOne(fileSource)
+
+            }).then(function() {
+
+                return functions.fileExists(fileSource)
+
+            }).then(function(exists) {
+
+                expect(exists).to.be(true)
+
+            })
+        }) // it
+
+        it('should not remove a dest file if its source file exists', function() {
+            // source file exists === true
+            // dest file exists === true
+
+            config.path.source = path.join(testPath, 'removeOne-2', 'source')
+            config.path.dest = path.join(testPath, 'removeOne-2', 'dest')
+
+            const fileSource = path.join(config.path.source, 'remove.txt')
+            const fileDest = path.join(config.path.dest, 'remove.txt')
+
+
+            return functions.fileExists(fileDest).then(function(exists) {
+                // make sure our dest file exists before testing
+                if (exists === false) {
+                    return functions.writeFile(fileDest, '...')
+                }
+            }).then(function() {
+
+                return watch.removeOne(fileSource)
+
+            }).then(function() {
+
+                return functions.fileExists(fileDest)
+
+            }).then(function(exists) {
+
+                expect(exists).to.be(true)
+
+            })
+        }) // it
+
+        it('should remove a dest file if its source file does not exist', function() {
+            // source file exists === false
+            // dest file exists === true
+
+            config.path.source = path.join(testPath, 'removeOne-3', 'source')
+            config.path.dest = path.join(testPath, 'removeOne-3', 'dest')
+
+            const fileSource = path.join(config.path.source, 'remove.txt')
+            const fileDest = path.join(config.path.dest, 'remove.txt')
+
+
+            return functions.fileExists(fileDest).then(function(exists) {
+                // make sure our dest file exists before testing
+                if (exists === false) {
+                    return functions.writeFile(fileDest, '...')
+                }
+            }).then(function() {
+
+                return watch.removeOne(fileSource)
+
+            }).then(function() {
+
+                return functions.fileExists(fileDest)
+
+            }).then(function(exists) {
+
+                expect(exists).to.be(false)
+
+                // write a dest file for next time
+                return functions.writeFile(fileDest, '...')
+
+            })
         }) // it
     }) // describe
 
@@ -655,12 +773,263 @@ describe('File -> ../code/7 - watch.js\n', function() {
 
                 expect(emit).to.be(true)
 
-                watch.stop()
+                return watch.stop()
+
+            }).then(function() {
 
                 return functions.writeFile(fileSource, 'original data')
 
             })
 
+        }) // it
+    }) // describe
+
+    //--------------------
+    // watch.workQueueAdd
+    //--------------------
+    describe('workQueueAdd', function() {
+        it('should add the desired object to the work queue', function() {
+
+            // set to true so watch.workQueueProcess does not process the queue
+            shared.watch.working = true
+
+            let desired = {
+                location: 'source',
+                task: 'add',
+                path: '/project/source/index.html'
+            }
+
+            watch.workQueueAdd(desired.location, desired.task, desired.path)
+
+            expect(shared.watch.workQueue).to.eql([desired])
+
+            // reset to the defaults
+            shared.watch.workQueue = []
+            shared.watch.working = false
+
+        }) // it
+    }) // describe
+
+    //------------------------
+    // watch.workQueueProcess
+    //------------------------
+    describe('workQueueProcess', function() {
+        it('should process an add event', function() {
+            config.path.source = path.join(testPath, 'workQueueProcess', 'source')
+            config.path.dest   = path.join(testPath, 'workQueueProcess', 'dest')
+
+            const fileSource = path.join(config.path.source, 'file.txt')
+            const fileDest = path.join(config.path.dest, 'file.txt')
+
+            shared.watch.working = false // allow workQueueProcess to take care of the shared.watch.workQueue array
+
+            shared.watch.workQueue = [{
+                location: 'source',
+                task: 'add',
+                path: fileSource
+            }]
+
+            return watch.workQueueProcess().then(function() {
+
+                return functions.readFile(fileDest)
+
+            }).then(function(data) {
+
+                expect(data).to.be('new data')
+
+                // reset destination file for next time
+                return functions.writeFile(fileDest, 'old data')
+
+            }).then(function() {
+
+                expect(shared.watch.working).to.be(false)
+                expect(shared.watch.workQueue).to.eql([])
+
+            })
+        }) // it
+
+        it('should process an adddir event', function() {
+            config.path.source = path.join(testPath, 'workQueueProcess', 'source')
+            config.path.dest   = path.join(testPath, 'workQueueProcess', 'dest')
+
+            const folderSource = path.join(config.path.source, 'add folder')
+            const folderDest = path.join(config.path.dest, 'add folder')
+
+            shared.watch.working = false // allow workQueueProcess to take care of the shared.watch.workQueue array
+
+            shared.watch.workQueue = [{
+                location: 'source',
+                task: 'adddir',
+                path: folderSource
+            }]
+
+            return watch.workQueueProcess().then(function() {
+
+                return functions.fileStat(folderDest)
+
+            }).then(function(stat) {
+
+                expect(stat.isDirectory()).to.be(true)
+
+                // remove destination folder for next time
+                return functions.removeFile(folderDest)
+
+            }).then(function() {
+
+                expect(shared.watch.working).to.be(false)
+                expect(shared.watch.workQueue).to.eql([])
+
+            })
+        }) // it
+
+        it('should process a change event', function() {
+            config.path.source = path.join(testPath, 'workQueueProcess', 'source')
+            config.path.dest   = path.join(testPath, 'workQueueProcess', 'dest')
+
+            const fileSource = path.join(config.path.source, 'file.txt')
+            const fileDest = path.join(config.path.dest, 'file.txt')
+
+            shared.watch.working = false // allow workQueueProcess to take care of the shared.watch.workQueue array
+
+            shared.watch.workQueue = [{
+                location: 'source',
+                task: 'change',
+                path: fileSource
+            }]
+
+            return watch.workQueueProcess().then(function() {
+
+                return functions.readFile(fileDest)
+
+            }).then(function(data) {
+
+                expect(data).to.be('new data')
+
+                // reset destination file for next time
+                return functions.writeFile(fileDest, 'old data')
+
+            }).then(function() {
+
+                expect(shared.watch.working).to.be(false)
+                expect(shared.watch.workQueue).to.eql([])
+
+            })
+        }) // it
+
+        it('should process an unlink event', function() {
+            config.path.source = path.join(testPath, 'workQueueProcess', 'source')
+            config.path.dest   = path.join(testPath, 'workQueueProcess', 'dest')
+
+            const fileSource = path.join(config.path.source, 'file.txt')
+            const fileDest = path.join(config.path.dest, 'file.txt')
+
+            shared.watch.working = false // allow workQueueProcess to take care of the shared.watch.workQueue array
+
+            shared.watch.workQueue = [{
+                location: 'source',
+                task: 'unlink',
+                path: fileSource
+            }]
+
+            return functions.fileExists(fileSource).then(function(exists) {
+
+                if (!exists) {
+                    return functions.writeFile(fileSource, 'new data')
+                }
+
+            }).then(function() {
+
+                functions.fileExists(fileDest)
+
+            }).then(function(exists) {
+
+                if (!exists) {
+                    return functions.writeFile(fileDest, 'old data')
+                }
+
+            }).then(function() {
+
+                return functions.removeFile(fileSource)
+
+            }).then(function() {
+
+                return functions.fileExists(fileSource)
+
+            }).then(function(exists) {
+
+                expect(exists).to.be(false)
+
+                return watch.workQueueProcess()
+
+            }).then(function() {
+
+                return functions.fileExists(fileDest)
+
+            }).then(function(exists) {
+
+                expect(exists).to.be(false)
+
+                // reset source file for next time
+                return functions.writeFile(fileSource, 'new data')
+
+            }).then(function() {
+
+                // reset dest file for next time
+                return functions.writeFile(fileDest, 'old data')
+
+            }).then(function() {
+
+                expect(shared.watch.working).to.be(false)
+                expect(shared.watch.workQueue).to.eql([])
+
+            })
+        }) // it
+
+        it('should process an unlinkdir event', function() {
+            config.path.source = path.join(testPath, 'workQueueProcess', 'source')
+            config.path.dest   = path.join(testPath, 'workQueueProcess', 'dest')
+
+            const folderSource = path.join(config.path.source, 'unlink folder')
+            const folderDest = path.join(config.path.dest, 'unlink folder')
+
+            shared.watch.working = false // allow workQueueProcess to take care of the shared.watch.workQueue array
+
+            shared.watch.workQueue = [{
+                location: 'source',
+                task: 'unlinkdir',
+                path: folderSource
+            }]
+
+            return functions.fileExists(folderDest).then(function(exists) {
+
+                if (exists) {
+                    return functions.removeFile(folderDest)
+                }
+
+            }).then(function() {
+
+                return functions.makeDirPath(folderSource, true)
+
+            }).then(function() {
+
+                return watch.workQueueProcess()
+
+            }).then(function() {
+
+                return functions.fileExists(folderDest)
+
+            }).then(function(exists) {
+
+                expect(exists).to.be(false)
+
+                return functions.removeFile(folderSource)
+
+            }).then(function() {
+
+                expect(shared.watch.working).to.be(false)
+                expect(shared.watch.workQueue).to.eql([])
+
+            })
         }) // it
     }) // describe
 
