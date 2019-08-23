@@ -6,6 +6,9 @@ The config module can be found inside the file [code/3 - config.js](../../../cod
 
 ## Config Object
 
+* [case](#configcase)
+  * [source](#configcasesource)
+  * [dest](#configcasedest)
 * [concurLimit](#configconcurlimit)
 * [extension](#configextension)
   * [defaultDocument](#configextensiondefaultdocument)
@@ -48,11 +51,43 @@ The config module can be found inside the file [code/3 - config.js](../../../cod
   * [htmlMinifier](#configthirdpartyhtmlminifier)
   * [markdownIt](#configthirdpartymarkdownit)
 
+## config.case
+
+Type: `object`
+
+Parent container for manually specifying how file name cases are handled on the source and dest volumes.
+
+## config.case.source
+
+Type: `string`
+
+Defaults to an empty string.
+
+Valid values are 'case', 'nocase', 'lower', and 'upper'.
+
+For case sensitive volumes (linux by default), setting 'case' gets you the most speed as the OS can be trusted to match file names exactly.
+
+For case insensitive volumes (mac and windows by default), setting 'nocase' will get you some speed since Feri will not have to write a test file to determine casing for that location.
+
+## config.case.dest
+
+Type : `string`
+
+Defaults to an empty string.
+
+Valid values are 'case', 'nocase', 'lower', and 'upper'.
+
+For case sensitive volumes (linux by default), setting 'case' gets you the most speed as the OS can be trusted to match file names exactly.
+
+For case insensitive volumes (mac and windows by default), setting 'nocase' will get you some speed since Feri will not have to write a test file to determine casing for that location.
+
 ## config.concurLimit
 
 Type: `number`
 
-Controls the number of build or clean processes that can be run simultaneously. Values 1-3 recommended since node [libuv](https://github.com/libuv/libuv) seems to have 4 slots by default. Feel free to experiment with this setting to see how fast you can get Feri to run.
+Controls the number of clean or build processes that can be run simultaneously. Values 1-3 recommended since node [libuv](https://github.com/libuv/libuv) seems to have 4 slots by default. Feel free to experiment with this setting to see how fast you can get Feri to run.
+
+Note: This setting only affects clean and build processes, not watching. Watching limits clean and build tasks to one at a time to match the order of events.
 
 ```js
 config.concurLimit = 1
@@ -78,7 +113,7 @@ Type: `array`
 
 Defaults to `['css', 'html', 'js']`.
 
-Only inform extension clients about changes to these file types.
+Only inform extension clients about changes to these file types. File types should be lowercase only.
 
 ## config.extension.port
 

@@ -15,6 +15,13 @@ The shared module can be found inside the file [code/2 - shared.js](../../../cod
 * [extension](#sharedextension)
   * [calmTimer](#sharedextensioncalmtimer)
   * [changedFiles](#sharedextensionchangedfiles)
+* [folder](#sharedfolder)
+  * [dest](#sharedfolderdest)
+    * [case](#sharedfolderdestcase)
+    * [lastPath](#sharedfolderdestlastpath)
+  * [source](#sharedfoldersource)
+    * [case](#sharedfoldersourcecase)
+    * [lastPath](#sharedfoldersourcelastpath)
 * [global](#sharedglobal)
 * [help](#sharedhelp)
 * [language](#sharedlanguage)
@@ -35,6 +42,9 @@ The shared module can be found inside the file [code/2 - shared.js](../../../cod
     * [watch](#sharedstatstimetowatch)
 * [suppressWatchEvents](#sharedsuppresswatchevents)
 * [uniqueNumber](#shareduniquenumber)
+* [watch](#sharedwatch)
+  * [working](#sharedwatchworking)
+  * [workQueue](#sharedwatchworkqueue)
 
 ## shared.cache
 
@@ -93,6 +103,48 @@ Variable used by [watch.updateExtensionServer](watch.md#watchupdateextensionserv
 Type: `array`
 
 Keeps track of which destination files were changed in order to relay those to the extension server.
+
+## shared.folder
+
+Type: `object`
+
+Parent container for source and destination folder related items.
+
+## shared.folder.dest
+
+Type: `object`
+
+Parent container for destination folder related items.
+
+## shared.folder.dest.case
+
+Type: `string`
+
+The mode or style of file naming such as 'lower', 'upper', 'nocase', or 'case'. Set by [functions.detectCaseDest](functions.md#functionsdetectcasedest).
+
+## shared.folder.dest.lastPath
+
+Type: `string`
+
+The last seen destination folder like '/project/dest'. Set by [functions.detectCaseDest](functions.md#functionsdetectcasedest).
+
+## shared.folder.source
+
+Type: `object`
+
+Parent container for source folder related items.
+
+## shared.folder.source.case
+
+Type: `string`
+
+The mode or style of file naming such as 'lower', 'upper', 'nocase', or 'case'. Set by [functions.detectCaseSource](functions.md#functionsdetectcasesource).
+
+## shared.folder.source.lastPath
+
+Type: `string`
+
+The last seen source folder like '/project/source'. Set by [functions.detectCaseSource](functions.md#functionsdetectcasesource).
 
 ## shared.global
 
@@ -229,6 +281,44 @@ shared.suppressWatchEvents = false // default
 Type: `number`
 
 Iterate with `(++shared.uniqueNumber)` or reset back to 0.
+
+## shared.watch
+
+Type: `object`
+
+Parent container for watch related items.
+
+## shared.watch.working
+
+Type: `boolean`
+
+Defaults to `false`.
+
+Will be set to `true` by [watch.workQueueProcess](watch.md#watchworkqueueprocess) so multiple calls to `watch.workQueueProcess` return early if one instance of that function is already working on the `shared.watch.workQueue` array.
+
+## shared.watch.workQueue
+
+Type: `array`
+
+Defaults to an empty array.
+
+Array of objects that will be managed by [watch.workQueueAdd](watch.md#watchworkqueueadd) and [watch.workQueueProcess](watch.md#watchworkqueueprocess).
+
+```js
+// example array with two objects
+shared.watch.workQueue = [
+    {
+        location: 'source',
+        task: 'add',
+        path: '/source/file.txt'
+    },
+    {
+        location: 'source',
+        task: 'change',
+        path:'/source/file.txt'
+    }
+]
+```
 
 ## License
 

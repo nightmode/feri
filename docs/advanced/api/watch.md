@@ -13,10 +13,13 @@ The watch module can be found inside the file [code/7 - watch.js](../../../code/
 * [extensionServer](#watchextensionServer)
 * [notTooRecent](#watchnottoorecent)
 * [processWatch](#watchprocesswatch)
+* [removeOne](#watchremoveone)
 * [stop](#watchstop)
 * [updateExtensionServer](#watchupdateextensionserver)
 * [watchDest](#watchwatchdest)
 * [watchSource](#watchwatchsource)
+* [workQueueAdd](#watchworkqueueadd)
+* [workQueueProcess](#watchworkqueueprocess)
 
 ## watch.buildOne
 
@@ -134,6 +137,17 @@ return watch.processWatch().then(function() {
 
 Note: This function is also aliased as `feri.action.watch`.
 
+## watch.removeOne
+
+Type: `function`
+
+Figure out if file or folder should be removed after an unlink or unlinkdir event from the source directory watcher.
+
+```
+@param   {String}   fileName    File path like '/source/js/combined.js'
+@return  {Promise}
+```
+
 ## watch.stop
 
 Type: `function`
@@ -176,6 +190,28 @@ Watch source directory for changes and kick off the appropriate response tasks a
 
 ```
 @param   {String,Object}  [files]  Optional. Glob search string for watching source files like '*.html' or array of full paths like ['/source/about.html', '/source/index.html']
+@return  {Promise}
+```
+
+## watch.workQueueAdd
+
+Type: `function`
+
+Add an event triggered task to the shared.watch.workQueue array.
+
+```
+@param  {String}  location  A string like 'source' or 'dest'.
+@param  {String}  task      An event triggered task string like 'add', 'change', and so on.
+@param  {String}  path      A string with the full path to a file or folder.
+```
+
+## watch.workQueueProcess
+
+Type: `function`
+
+Process the shared.watch.workQueue array and run tasks one at a time to match the order of events.
+
+```
 @return  {Promise}
 ```
 

@@ -17,15 +17,19 @@ The functions object is grouped into three categories.
 * [cloneObj](#functionscloneobj)
 * [configPathsAreGood](#functionsconfigpathsaregood)
 * [destToSource](#functionsdesttosource)
+* [detectCaseDest](#functionsdetectcasedest)
+* [detectCaseSource](#functionsdetectcasesource)
 * [figureOutPath](#functionsfigureoutpath)
 * [fileExists](#functionsfileexists)
-* [filesExist](#functionsfilesexist)
 * [fileExistsAndTime](#functionsfileexistsandtime)
-* [filesExistAndTime](#functionsfilesexistandtime)
 * [fileExtension](#functionsfileextension)
+* [filesExist](#functionsfilesexist)
+* [filesExistAndTime](#functionsfilesexistandtime)
 * [fileSize](#functionsfilesize)
+* [fileStat](#functionsfilestat)
 * [findFiles](#functionsfindfiles)
 * [globOptions](#functionsgloboptions)
+* [inDest](#functionsindest)
 * [initFeri](#functionsinitferi)
 * [inSource](#functionsinsource)
 * [isGlob](#functionsisglob)
@@ -55,6 +59,7 @@ The functions object is grouped into three categories.
 * [uniqueArray](#functionsuniquearray)
 * [upgradeAvailable](#functionsupgradeavailable)
 * [useExistingSourceMap](#functionsuseexistingsourcemap)
+* [wait](#functionswait)
 * [writeFile](#functionswritefile)
 
 ### Functions: Includes
@@ -142,6 +147,26 @@ Convert a destination path to its source equivalent.
 @return  {String}        File path like '/source/index.html'
 ```
 
+### functions.detectCaseDest
+
+Type: `function`
+
+Find out how a destination folder deals with case. Writes a test file once and then caches that result for subsequent calls.
+
+```
+@return  {Promise}  Promise that returns a string like 'lower', 'upper', 'nocase', or 'case'.
+```
+
+### functions.detectCaseSource
+
+Type: `function`
+
+Find out how a source folder deals with case. Writes a test file once and then caches that result for subsequent calls.
+
+```
+@return  {Promise}  Promise that returns a string like 'lower', 'upper', 'nocase', or 'case'.
+```
+
 ### functions.figureOutPath
 
 Type: `function`
@@ -164,17 +189,6 @@ Find out if a file or folder exists.
 @return  {Promise}            Promise that returns a boolean. True if yes.
 ```
 
-### functions.filesExist
-
-Type: `function`
-
-Find out if one or more files or folders exist.
-
-```
-@param   {Object}   filePaths  Array of file paths like ['/source/index.html', '/source/about.html']
-@return  {Promise}             Promise that returns an array of booleans. True if a particular file exists.
-```
-
 ### functions.fileExistsAndTime
 
 Type: `function`
@@ -184,6 +198,28 @@ Find out if a file exists along with its modified time.
 ```
 @param   {String}   filePath  Path to a file or folder.
 @return  {Promise}            Promise that returns an object like { exists: true, mtime: 123456789 }
+```
+
+### functions.fileExtension
+
+Type: `function`
+
+Return a file extension from a string.
+
+```
+@param   {String}  filePath  File path like '/conan/riddle-of-steel.txt'
+@return  {String}            String like 'txt'
+```
+
+### functions.filesExist
+
+Type: `function`
+
+Find out if one or more files or folders exist.
+
+```
+@param   {Object}   filePaths  Array of file paths like ['/source/index.html', '/source/about.html']
+@return  {Promise}             Promise that returns an array of booleans. True if a particular file exists.
 ```
 
 ### functions.filesExistAndTime
@@ -198,17 +234,6 @@ Find out if one or both files exist along with their modified time.
 @return  {Promise}         Promise that returns an object like { source: { exists: true, mtime: 123456789 }, dest: { exists: false, mtime: 0 } }
 ```
 
-### functions.fileExtension
-
-Type: `function`
-
-Return a file extension from a string.
-
-```
-@param   {String}  filePath  File path like '/conan/riddle-of-steel.txt'
-@return  {String}            String like 'txt'
-```
-
 ### functions.fileSize
 
 Type: `function`
@@ -217,7 +242,18 @@ Find out the size of a file or folder.
 
 ```
 @param  {String}   filePath  Path to a file or folder.
-@return {Promise}            Promise that will return a boolean. True if yes.
+@return {Promise}            Promise that will return the number of bytes or 0.
+```
+
+### functions.fileStat
+
+Type: `function`
+
+Return an fs stats object if a file or folder exists otherwise an error. A case sensitive version of fsStatPromise for source and dest locations.
+
+```
+@param   {String}   filePath  Path to a file or folder.
+@return  {Promise}            Promise that returns an fs stats object if a file or folder exists. An error if not.
 ```
 
 ### functions.findFiles
@@ -242,6 +278,17 @@ Return glob options updated to ignore include prefixed files.
 @return  {Object}
 ```
 
+### functions.inDest
+
+Type: `function`
+
+Find out if a path is in the destination directory.
+
+```
+@param   {String}   filePath  Full file path like '/projects/dest/index.html'
+@return  {Boolean}            True if the file path is in the destination directory.
+```
+
 ### functions.initFeri
 
 Type: `function`
@@ -259,7 +306,7 @@ Type: `function`
 Find out if a path is in the source directory.
 
 ```
-@param   {String}   filePath  Full file path like '/projects/a/source/index.md'
+@param   {String}   filePath  Full file path like '/projects/source/index.md'
 @return  {Boolean}            True if the file path is in the source directory.
 ```
 
@@ -289,10 +336,10 @@ Display a console message if logging is enabled.
 
 Type: `function`
 
-Log a stack trace or simple text string depending on the type of object passed in.
+Log a stack trace or text string depending on the type of object passed in.
 
 ```
-@param  {Object,String}  err  Error object or simple string describing the error.
+@param  {Object,String}  err  Error object or string describing the error.
 ```
 
 ### functions.logOutput
@@ -326,7 +373,7 @@ Create an entire directory structure leading up to a file or folder, if needed.
 ```
 @param   {String}   filePath  Path like '/images/koi.png' or '/images'.
 @param   {Boolean}  isDir     True if filePath is a directory that should be used as is.
-@return  {Promise}            Promise that returns true if successful. Error object if not.
+@return  {Promise}            Promise that returns true if successful. An error if not.
 ```
 
 ### functions.mathRoundPlaces
@@ -567,6 +614,17 @@ Use an existing source map if it was modified recently otherwise remove it.
 ```
 @param   {String}   filePath  Path to a file that may also have a separate '.map' file associated with it.
 @return  {Promise}            Promise that will return a source map object that was generated recently or a boolean false.
+```
+
+### functions.wait
+
+Type: `function`
+
+Promise that is useful for injecting delays and testing scenarios.
+
+```
+@param   {Number}   ms  Number of milliseconds to wait before returning.
+@return  {Promise}
 ```
 
 ### functions.writeFile
