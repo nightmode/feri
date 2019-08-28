@@ -77,6 +77,8 @@ Install Feri locally in your project's [node_modules](https://nodejs.org/api/mod
 npm install feri
 ```
 
+Either process above may display warnings about optional dependencies. These warnings can be safely ignored as those dependencies were not needed for your particular OS.
+
 ## Upgrade
 
 You can always upgrade to the latest version of Feri by re-running the global or local install commands.
