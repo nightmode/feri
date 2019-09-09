@@ -30,17 +30,20 @@ const gzipPromise        = util.promisify(zlib.gzip) // ~ 1 ms
 //-----------------------------
 let gif = '',
     jpg = '',
-    png = ''
+    png = '',
+    svg = ''
 
 if (shared.global) {
     // each of these take ~ 0 ms instead of ~ 297 ms when using require('name').path
     gif = path.join(shared.path.self, 'node_modules', 'gifsicle', 'vendor', 'gifsicle')
     jpg = path.join(shared.path.self, 'node_modules', 'jpegtran-bin', 'vendor', 'jpegtran')
     png = path.join(shared.path.self, 'node_modules', 'optipng-bin', 'vendor', 'optipng')
+    svg = path.join(shared.path.self, 'node_modules', 'svgo', 'bin', 'svgo')
 } else {
     gif = path.join(shared.path.self, '..', 'gifsicle', 'vendor', 'gifsicle')
     jpg = path.join(shared.path.self, '..', 'jpegtran-bin', 'vendor', 'jpegtran')
     png = path.join(shared.path.self, '..', 'optipng-bin', 'vendor', 'optipng')
+    svg = path.join(shared.path.self, '..', 'svgo', 'bin', 'svgo')
 }
 
 //---------------------
@@ -654,6 +657,31 @@ build.png = async function build_png(obj) {
 
     return obj
 } // png
+
+build.svg = async function build_svg(obj) {
+    /*
+    Optimize SVG files using https://www.npmjs.com/package/svgo.
+    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
+    @return  {Promise}  obj  Promise that returns a reusable object.
+    */
+    obj = await functions.objBuildOnDisk(obj)
+
+    functions.logWorker('build.svg', obj)
+
+    if (obj.build) {
+        let options = JSON.stringify(config.thirdParty.svgo)
+
+        let cmd = '"' + svg + '" --quiet --config=\'' + options + '\' --input="' + obj.source + '" --output="' + obj.dest + '"'
+        await execPromise(cmd)
+    } else {
+        // no further chained promises should be called
+        throw 'done'
+    }
+
+    functions.logOutput(obj.dest)
+
+    return obj
+} // svg
 
 //----------------------
 // Build: With Includes

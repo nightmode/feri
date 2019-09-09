@@ -105,6 +105,7 @@ config.map.sourceToDestTasks = {
     'js'    : ['js'],
     'md'    : ['markdown', 'html'],
     'png'   : ['png'],
+    'svg'   : ['svg'],
     // copy only tasks
     '7z'    : ['copy'],
     'ai'    : ['copy'],
@@ -147,7 +148,6 @@ config.map.sourceToDestTasks = {
     'py'    : ['copy'],
     'rb'    : ['copy'],
     'rss'   : ['copy'],
-    'svg'   : ['copy'],
     'swf'   : ['copy'],
     'tar'   : ['copy'],
     'ttf'   : ['copy'],
@@ -157,6 +157,7 @@ config.map.sourceToDestTasks = {
     'weba'  : ['copy'],
     'webm'  : ['copy'],
     'woff'  : ['copy'],
+    'woff2' : ['copy'],
     'xls'   : ['copy'],
     'xlsx'  : ['copy'],
     'xml'   : ['copy'],
@@ -219,6 +220,68 @@ config.thirdParty = {
         'quotes': '“”‘’',
         'typographer': false,
         'xhtmlOut': false
+    },
+    svgo: { // used by build.svg
+        'full': true, // true means use the defined plugins only
+        'js2svg': {
+            pretty: false,
+            indent: '    '
+        },
+        'multipass': true,
+        'plugins': [
+            // the array order is important so do not alpha sort
+            // enable a plugin by naming it in a string
+            // or pass an option to a plugin -> { removeDesc: { removeAny: true } }
+            'removeDoctype',
+            'removeXMLProcInst',
+            'removeComments',
+            'removeMetadata',
+            'removeXMLNS',
+            'removeEditorsNSData',
+            'cleanupAttrs',
+            'inlineStyles',
+            'minifyStyles',
+            'convertStyleToAttrs',
+            'cleanupIDs',
+            'prefixIds',
+            'removeRasterImages',
+            'removeUselessDefs',
+            'cleanupNumericValues',
+            'cleanupListOfValues',
+            'convertColors',
+            'removeUnknownsAndDefaults',
+            'removeNonInheritableGroupAttrs',
+            'removeUselessStrokeAndFill',
+            'removeViewBox',
+            'cleanupEnableBackground',
+            'removeHiddenElems',
+            'removeEmptyText',
+            'convertShapeToPath',
+            'convertEllipseToCircle',
+            'moveElemsAttrsToGroup',
+            'moveGroupAttrsToElems',
+            'collapseGroups',
+            'convertPathData',
+            'convertTransform',
+            'removeEmptyAttrs',
+            'removeEmptyContainers',
+            'mergePaths',
+            'removeUnusedNS',
+            'sortAttrs',
+            'sortDefsChildren',
+            'removeTitle',
+            'removeDesc',
+            'removeDimensions',
+            'removeAttrs',
+            'removeAttributesBySelector',
+            'removeElementsByAttr',
+            'addClassesToSVGElement',
+            'removeStyleElement',
+            'removeScriptElement',
+            'addAttributesToSVGElement',
+            'removeOffCanvasPaths',
+            'reusePaths'
+        ]
     }
 }
 
