@@ -724,12 +724,12 @@ build.concat = function build_concat(obj) {
                     obj.data += arrayData[i]
 
                     if (i < arrayDataLength) {
+                        obj.data += '\n'
+
                         if (fileExtDest === 'js') {
                             // add a safety separator for javascript
                             obj.data += ';'
                         }
-
-                        obj.data += '\n'
                     }
                 }
 
