@@ -109,7 +109,7 @@ Minify HTML using [html-minifier](https://www.npmjs.com/package/html-minifier).
 
 Type: `function`
 
-Minify JavaScript using [uglify-js](https://www.npmjs.com/package/uglify-js).
+Minify JavaScript using [terser](https://www.npmjs.com/package/terser).
 
 ```
 @param   {Object}   obj  Reusable object originally created by build.processOneBuild

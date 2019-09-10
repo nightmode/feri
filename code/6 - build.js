@@ -51,7 +51,7 @@ if (shared.global) {
 //---------------------
 let css                // require('clean-css')                      // ~  83 ms
 let html               // require('html-minifier').minify           // ~   4 ms
-let js                 // require('uglify-js')                      // ~  83 ms
+let js                 // require('terser')                         // ~  41 ms
 let markdown           // require('markdown-it')()                  // ~  56 ms
 let transferMap        // require('multi-stage-sourcemap').transfer // ~  20 ms
 let sourceMapGenerator // require('source-map').SourceMapGenerator  // ~  13 ms
@@ -392,7 +392,7 @@ build.html = async function build_html(obj) {
 
 build.js = function build_js(obj) {
     /*
-    Minify JavaScript using https://www.npmjs.com/package/uglify-js.
+    Minify JavaScript using https://www.npmjs.com/package/terser.
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -407,7 +407,7 @@ build.js = function build_js(obj) {
         if (obj.build) {
 
             if (typeof js !== 'object') {
-                js = require('uglify-js')
+                js = require('terser')
             }
 
             if ((config.sourceMaps || config.fileType.js.sourceMaps) && buildAlreadySet) {
@@ -431,7 +431,9 @@ build.js = function build_js(obj) {
     }).then(function() {
 
         let options = {
-            'keep_fnames': true
+            'keep_classnames': true,
+            'keep_fnames': true,
+            'mangle': false
             /*
             // the following code is great for troubleshooting source maps
             output: {
@@ -471,8 +473,8 @@ build.js = function build_js(obj) {
                 }
 
                 // transfer the new source map to the previous one
-                // would be nice if uglify could do this without help but issues exist as in version 2.6.2
-                // might be able to remove this code at a later date once uglify is improved
+                // uglify 2.6.2 could not do this without help but we have since switched to terser so perhaps this code is not needed anymore
+                // needs testing
 
                 sourceMap = transferMap({
                     fromSourceMap: sourceMap,
