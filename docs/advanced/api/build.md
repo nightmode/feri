@@ -20,6 +20,7 @@ The build object is grouped into five categories.
 * [html](#buildhtml)
 * [js](#buildjs)
 * [markdown](#buildmarkdown)
+* [svg](#buildsvg)
 
 ### Build: On Disk
 
@@ -121,6 +122,17 @@ Minify JavaScript using [terser](https://www.npmjs.com/package/terser).
 Type: `function`
 
 Markdown using [markdown-it](https://www.npmjs.com/package/markdown-it).
+
+```
+@param   {Object}   obj  Reusable object originally created by build.processOneBuild
+@return  {Promise}  obj  Promise that returns a reusable object.
+```
+
+### build.svg
+
+Type: `function`
+
+Optimize SVG files using [svgo](https://www.npmjs.com/package/svgo).
 
 ```
 @param   {Object}   obj  Reusable object originally created by build.processOneBuild

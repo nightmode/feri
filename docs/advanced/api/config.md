@@ -50,6 +50,7 @@ The config module can be found inside the file [code/3 - config.js](../../../cod
   * [cleanCss](#configthirdpartycleancss)
   * [htmlMinifier](#configthirdpartyhtmlminifier)
   * [markdownIt](#configthirdpartymarkdownit)
+  * [svgo](#configthirdpartysvgo)
 
 ## config.case
 
@@ -321,19 +322,24 @@ Array elements for any particular file type can be a `string` or a `function`. A
 
 ```js
 config.map.sourceToDestTasks = {
+    'concat': ['concat'],
     'css'   : ['css'],
     'gif'   : ['gif'],
+    'htm'   : ['html'],
     'html'  : ['html'],
     'jpg'   : ['jpg'],
+    'jpeg'  : ['jpg'],
     'js'    : ['js'],
     'md'    : ['markdown', 'html'],
     'png'   : ['png'],
+    'svg'   : ['svg'],
     // copy only tasks
     '7z'    : ['copy'],
     'ai'    : ['copy'],
     'asp'   : ['copy'],
     'aspx'  : ['copy'],
     'br'    : ['copy'],
+    'c'     : ['copy'],
     'cfm'   : ['copy'],
     'cfc'   : ['copy'],
     'csv'   : ['copy'],
@@ -341,27 +347,34 @@ config.map.sourceToDestTasks = {
     'docx'  : ['copy'],
     'eot'   : ['copy'],
     'eps'   : ['copy'],
+    'exe'   : ['copy'],
     'flv'   : ['copy'],
     'gz'    : ['copy'],
+    'h'     : ['copy'],
     'ico'   : ['copy'],
     'ini'   : ['copy'],
     'iso'   : ['copy'],
     'json'  : ['copy'],
+    'm3u8'  : ['copy'],
     'm4a'   : ['copy'],
     'map'   : ['copy'],
+    'mid'   : ['copy'],
+    'midi'  : ['copy'],
     'mov'   : ['copy'],
     'mp3'   : ['copy'],
     'mp4'   : ['copy'],
+    'mpd'   : ['copy'],
     'ogg'   : ['copy'],
     'otf'   : ['copy'],
     'pdf'   : ['copy'],
     'php'   : ['copy'],
     'pl'    : ['copy'],
-    'py'    : ['copy'],
+    'ppt'   : ['copy'],
+    'pptx'  : ['copy'],
     'psd'   : ['copy'],
+    'py'    : ['copy'],
     'rb'    : ['copy'],
     'rss'   : ['copy'],
-    'svg'   : ['copy'],
     'swf'   : ['copy'],
     'tar'   : ['copy'],
     'ttf'   : ['copy'],
@@ -371,6 +384,7 @@ config.map.sourceToDestTasks = {
     'weba'  : ['copy'],
     'webm'  : ['copy'],
     'woff'  : ['copy'],
+    'woff2' : ['copy'],
     'xls'   : ['copy'],
     'xlsx'  : ['copy'],
     'xml'   : ['copy'],
@@ -635,6 +649,78 @@ config.thirdParty.markdownIt = {
     'typographer': false,
     'xhtmlOut': false
 }
+```
+
+#config.thirdParty.svgo
+
+Type: `object`
+
+Options for [svgo](https://www.npmjs.com/package/svgo). Used by [build.svg](build.md#buildsvg).
+
+```js
+'full': true, // true means use the defined plugins only
+'js2svg': {
+    pretty: false,
+    indent: '    '
+},
+'multipass': true,
+'plugins': [
+    // the array order is important so do not alpha sort
+    // disable a plugin by passing false as the only value
+    // enable a plugin by passing true as the only value
+    // enable a plugin by passing an object to the plugin -> { removeDesc: { removeAny: true } }
+    { 'removeDoctype': true },
+    { 'removeXMLProcInst': true },
+    { 'removeComments': true },
+    { 'removeMetadata': true },
+    { 'removeXMLNS': false },
+    { 'removeEditorsNSData': true },
+    { 'cleanupAttrs': true },
+    { 'inlineStyles': true },
+    { 'minifyStyles': true },
+    { 'convertStyleToAttrs': true },
+    { 'cleanupIDs': true },
+    { 'prefixIds': false },
+    { 'removeRasterImages': false },
+    { 'removeUselessDefs': true },
+    { 'cleanupNumericValues': true },
+    { 'cleanupListOfValues': false },
+    { 'convertColors': true },
+    { 'removeUnknownsAndDefaults': true },
+    { 'removeNonInheritableGroupAttrs': true },
+    { 'removeUselessStrokeAndFill': true },
+    { 'removeViewBox': true },
+    { 'cleanupEnableBackground': true },
+    { 'removeHiddenElems': true },
+    { 'removeEmptyText': true },
+    { 'convertShapeToPath': true },
+    { 'convertEllipseToCircle': true },
+    { 'moveElemsAttrsToGroup': true },
+    { 'moveGroupAttrsToElems': true },
+    { 'collapseGroups': true },
+    { 'convertPathData': true },
+    { 'convertTransform': true },
+    { 'removeEmptyAttrs': true },
+    { 'removeEmptyContainers': true },
+    { 'mergePaths': true },
+    { 'removeUnusedNS': true },
+    { 'sortAttrs': false },
+    { 'sortDefsChildren': true },
+    { 'removeTitle': true },
+    { 'removeDesc': true },
+    { 'removeDimensions': false },
+    { 'removeAttrs': false },
+    { 'removeAttributesBySelector': false },
+    { 'removeElementsByAttr': false },
+    { 'removeStyleElement': false },
+    { 'removeScriptElement': false },
+    { 'removeOffCanvasPaths': false }
+    /*
+    The following plugins do not support passing false and must be passed options they like in order to use them.
+    { 'addAttributesToSVGElement': ... }
+    { 'addClassesToSVGElement': ... }
+    { 'reusePaths': ... }
+    */
 ```
 
 ## License
