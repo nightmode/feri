@@ -480,7 +480,7 @@ describe('File -> ../code/6 - build.js\n', function() {
         // build.markdown
         //----------------
         describe('markdown', function() {
-            it('should compile a md file to html\n', function() {
+            it('should compile a md file to html', function() {
 
                 config.path.source = path.join(testPath, 'markdown', 'source')
                 config.path.dest   = path.join(testPath, 'markdown', 'dest')
@@ -495,6 +495,33 @@ describe('File -> ../code/6 - build.js\n', function() {
                 return build.markdown(obj).then(function(returnObj) {
 
                     expect(returnObj.data).to.be('<h1>Heading</h1>\n')
+
+                })
+
+            }) // it
+        }) // describe
+
+        //-----------
+        // build.svg
+        //-----------
+        describe('svg', function() {
+            it('should optimize a svg file\n', function() {
+
+                config.path.source = path.join(testPath, 'svg', 'source')
+                config.path.dest   = path.join(testPath, 'svg', 'dest')
+
+                let obj = {
+                    'source': path.join(config.path.source, 'phone.svg'),
+                    'dest': '',
+                    'data': '',
+                    'build': false
+                }
+
+                let desiredObj = '<svg width="1152" height="810.671" viewBox="0 0 1080 760" xmlns="http://www.w3.org/2000/svg"><g fill-rule="evenodd" transform="translate(0 -292.36)"><path fill="#26c6da" d="M0 292.36h1080v760H0z"/><circle cx="540.29" cy="672.78" r="279.58" fill="#00bcd4"/><rect x="467.7" y="559.65" width="142.99" height="255.96" ry="5.888" fill="#607d8b"/><path fill="#455a64" d="M472.11 580.58h134.68v216.77H472.11z"/><ellipse cx="513.12" cy="569.54" rx="3.526" ry="3.898" fill="#b0bec5"/><rect x="523.62" y="566.46" width="41.742" height="6.359" ry="1.325" fill="#b0bec5"/><path d="M530 815.58v26.786h20V815.58z" fill="#ececec"/><path d="M535 842.36v105c0 6 4 10 10 10h49.949c6.05 0 10.051-4 10.051-9.798V887.36c0-3 2-5 5-5h45c3 0 5 2 5 5v165h10v-170c0-6-4-10-10-10h-55c-5 0-10 5-10 10v60.076c0 2.924-2 4.924-4.824 4.947l-40.013-.044C547 947.36 545 945.36 545 942.562v-100.2zm494-106.12v31.021h-34.898V736.24z" fill="#ececec"/><path d="M994.49 746.6h-90c-6-.239-10 4.761-10 10v295.26l10-.505v-289.7c.066-2.804 1-5.29 5-5.065l85 .014zm40.01-18.88l-5 4.137v41.369l5 4.137h30V727.72z" fill="#ececec"/><path d="M1064.5 712.36v80h15v-80z" fill="#4d4d4d"/><circle cx="1072.2" cy="719.96" r="5" fill="#ffc107"/><path fill="#78909c" d="M514.67 641.74h51.013v96.47H514.67zm10.36-6.32h29.8v6.061h-29.8z"/><path fill="#607d8b" d="M516.69 643.76h46.972v89.651H516.69z"/><path d="M516.69 709.92c18.366 3.369 30.562-13.803 46.972-2.768v26.258H516.69z" fill="#b2ff59"/></g></svg>'
+
+                return build.svg(obj).then(function(returnObj) {
+
+                    expect(returnObj.data).to.eql(desiredObj)
 
                 })
 

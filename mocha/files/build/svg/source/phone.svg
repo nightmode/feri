@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="304.8mm" height="214.49mm" version="1.1" viewBox="0 0 1080 760" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(0 -292.36)">
+  <g fill-rule="evenodd">
+   <rect y="292.36" width="1080" height="760" fill="#26c6da"/>
+   <circle cx="540.29" cy="672.78" r="279.58" fill="#00bcd4"/>
+   <rect x="467.7" y="559.65" width="142.99" height="255.96" ry="5.8875" fill="#607d8b"/>
+   <rect x="472.11" y="580.58" width="134.68" height="216.77" fill="#455a64"/>
+   <ellipse cx="513.12" cy="569.54" rx="3.5264" ry="3.8977" fill="#b0bec5"/>
+   <rect x="523.62" y="566.46" width="41.742" height="6.3595" ry="1.3249" fill="#b0bec5"/>
+   <path d="m530 815.58v26.786h20v-26.786z" fill="#ececec"/>
+   <path d="m535 842.36v105c0 6 4 10 10 10h49.949c6.0508 0 10.051-4 10.051-9.7982v-60.202c0-3 2-5 5-5h45c3 0 5 2 5 5v165h10v-170c0-6-4-10-10-10h-55c-5 0-10 5-10 10v60.076c0 2.9245-2 4.9245-4.8236 4.9469l-40.013-0.0441c-3.1632 0.02173-5.1632-1.9783-5.1632-4.7765v-100.2z" fill="#ececec"/>
+   <rect transform="rotate(90)" x="736.24" y="-1029" width="31.021" height="34.898" fill="#ececec"/>
+   <path d="m994.49 746.6h-90c-6-0.23855-10 4.7614-10 10v295.26l10-0.5051v-289.7c0.0658-2.8038 1-5.2893 4.9993-5.0646l85.001 0.0138z" fill="#ececec"/>
+   <path d="m1034.5 727.72-5 4.1369v41.369l5 4.1369h30v-49.643z" fill="#ececec"/>
+   <path d="m1064.5 712.36v80h15v-80z" fill="#4d4d4d"/>
+   <circle cx="1072.2" cy="719.96" r="5" fill="#ffc107"/>
+   <rect x="514.67" y="641.74" width="51.013" height="96.47" fill="#78909c"/>
+   <rect x="525.03" y="635.42" width="29.8" height="6.0609" fill="#78909c"/>
+   <rect x="516.69" y="643.76" width="46.972" height="89.651" fill="#607d8b"/>
+   <path d="m516.69 709.92c18.366 3.3685 30.562-13.803 46.972-2.7679v26.258h-46.972z" fill="#b2ff59"/>
+  </g>
+ </g>
+</svg>
