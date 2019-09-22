@@ -32,7 +32,7 @@ Incrementally clean, build, and watch with little to no configuration required.
 * Clean, Build, and Watch
 * Command Line and API
 * Concatenate
-* GIF, JPG, and PNG
+* GIF, JPG, PNG, and SVG
 * HTML, CSS, and JavaScript
 * Linux, macOS, and Windows
 * Markdown
