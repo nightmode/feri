@@ -918,6 +918,23 @@ describe('File -> ../code/4 - functions.js\n', function() {
             }) // it
         }) // describe
 
+        //---------------------
+        // functions.playSound
+        //---------------------
+        describe('playSound', function() {
+            it('should play a sound', function() {
+
+                let file = path.join(testPath, 'playSound', 'audio.wav')
+
+                try {
+                    functions.playSound(file) // this sound should play
+                    functions.playSound(file) // this repeat sound should not play since the first sound is still playing
+                } catch (error) {
+                    throw 'Error playing sound.'
+                }
+            }) // it
+        }) // describe
+
         //-------------------------------
         // functions.possibleSourceFiles
         //-------------------------------
