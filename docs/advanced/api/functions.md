@@ -42,6 +42,7 @@ The functions object is grouped into three categories.
 * [normalizeSourceMap](#functionsnormalizesourcemap)
 * [objFromSourceMap](#functionsobjfromsourcemap)
 * [occurrences](#functionsoccurrences)
+* [playSound](#functionsplaysound)
 * [possibleSourceFiles](#functionspossiblesourcefiles)
 * [readFile](#functionsreadfile)
 * [readFiles](#functionsreadfiles)
@@ -329,7 +330,7 @@ Display a console message if logging is enabled.
 
 ```
 @param  {String}   message   String to display.
-@param  {Boolean}  [indent]  Optional and defaults to true. If true, the string will be indented four spaces.
+@param  {Boolean}  [indent]  Optional and defaults to true. If true, the string will be indented using the shared.indent value.
 ```
 
 ### functions.logError
@@ -423,6 +424,16 @@ Find out how many characters or strings are in a string.
 @param   {String}   subString           Character or string to search for.
 @param   {Boolean}  [allowOverlapping]  Optional and defaults to false.
 @return  {Number}                       Number of occurrences of 'subString' in 'string'.
+```
+
+### functions.playSound
+
+Type: `function`
+
+Play a sound file using [node-wav-player](https://www.npmjs.com/package/node-wav-player).
+
+```
+@param  {String}  file  File path or file name string. A file name without a directory component like 'sound.wav' will be prepended with feri's sound folder location.
 ```
 
 ### functions.possibleSourceFiles

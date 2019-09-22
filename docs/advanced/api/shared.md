@@ -24,6 +24,7 @@ The shared module can be found inside the file [code/2 - shared.js](../../../cod
     * [lastPath](#sharedfoldersourcelastpath)
 * [global](#sharedglobal)
 * [help](#sharedhelp)
+* [indent](#sharedindent)
 * [language](#sharedlanguage)
   * [base](#sharedlanguagebase)
   * [display](#sharedlanguagedisplay)
@@ -157,6 +158,14 @@ Feri is installed globally if true. Locally if false.
 Type: `boolean`
 
 Displaying help text on the command line if true.
+
+## shared.indent
+
+Type: `string`
+
+Defaults to four spaces.
+
+Used to indent console messages.
 
 ## shared.language
 

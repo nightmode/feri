@@ -43,6 +43,7 @@ The config module can be found inside the file [code/3 - config.js](../../../cod
 * [path](#configpath)
   * [source](#configpathsource)
   * [dest](#configpathdest)
+* [playSound](#configplaysound)
 * [sourceMaps](#configsourcemaps)
 * [sourceRoot](#configsourceroot)
 * [thirdParty](#configthirdparty)
@@ -532,6 +533,14 @@ The destination folder that receives files built from source. The destination fo
 ```js
 config.path.dest = 'dest'
 ```
+
+## config.playSound
+
+Type: `boolean`
+
+Defaults to `true`.
+
+Allow [functions.playSound](functions.md#functionsplaysound) to play sound.
 
 ## config.sourceMaps
 

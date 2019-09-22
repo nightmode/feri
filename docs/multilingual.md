@@ -51,6 +51,7 @@ This section contains various error messages in sentence format.
     "destPointsToSource"    : "Destination points to a source directory.",
     "destProtected"         : "Destination should not be a protected location like {path}.",
     "halted"                : "Halted {software} version {version} due to errors.",
+    "locationInCode"        : "{error} on line {number} character {position}.",
     "missingDest"           : "Missing destination file.",
     "missingSource"         : "Missing source file.",
     "missingSourceDirectory": "Missing source directory.",
@@ -81,6 +82,7 @@ This section contains various informative messages in sentence format.
 ```js
 "message": {
     "fileChangedTooRecently"  : "{file} was changed too recently, ignoring.",
+    "fileWasNotBuilt"         : "File was not built.",
     "includesNewer"           : "{extension} include(s) newer than destination file.",
     "listeningOnPort"         : "{software} listening on port {port}.",
     "missingSourceHelp"       : "Check your folders for existing projects or run \"feri --init\" to start a new project.",
@@ -145,6 +147,7 @@ Words get used in all sorts of places. Let's go over examples for each to unders
     "clean"           : "Clean",
     "change"          : "change",
     "done"            : "Done",
+    "in"              : "in",
     "removed"         : "removed",
     "removedDirectory": "removed dir",
     "seconds"         : "seconds",
@@ -178,6 +181,8 @@ Words get used in all sorts of places. Let's go over examples for each to unders
 ```
 
 **Done** is displayed after a clean or build phase if cleaning or building was not needed.
+
+**In** is used to construct error messages like `Error in /source/file.js`.
 
 **Removed** is used throughout Feri to indicate that a file was removed. For example...
 
