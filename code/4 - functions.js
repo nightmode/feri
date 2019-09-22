@@ -30,11 +30,14 @@ const rimrafPromise      = util.promisify(rimraf)       // ~ 1 ms
 //---------------------
 // Includes: Lazy Load
 //---------------------
-let https // require('https') // ~ 33 ms
+let https     // require('https')           // ~ 33 ms
+let playSound // require('node-wav-player') // ~ 11 ms
 
 //-----------
 // Variables
 //-----------
+let playSoundLastFile = '' // used by functions.playSound()
+let playSoundPlaying = false // used by functions.playSound()
 let functions = {}
 
 //-----------
@@ -778,10 +781,10 @@ functions.log = function functions_log(message, indent) {
     /*
     Display a console message if logging is enabled.
     @param  {String}   message   String to display.
-    @param  {Boolean}  [indent]  Optional and defaults to true. If true, the string will be indented four spaces.
+    @param  {Boolean}  [indent]  Optional and defaults to true. If true, the string will be indented using the shared.indent value.
     */
     if (shared.log) {
-        indent = (indent === false) ? '' : '    '
+        indent = (indent === false) ? '' : shared.indent
         console.info(indent + message)
     }
 } // log
@@ -800,11 +803,15 @@ functions.logError = function functions_logError(error) {
                 displayError = true
             }
         } else {
-            // check if we have seen this error before
-            if (shared.cache.errorsSeen.indexOf(error) < 0) {
-                // error is unique so cache it for next time
-                shared.cache.errorsSeen.push(error)
+            if (config.option.watch) {
                 displayError = true
+            } else {
+                // check if we have seen this error before
+                if (shared.cache.errorsSeen.indexOf(error) < 0) {
+                    // error is unique so cache it for next time
+                    shared.cache.errorsSeen.push(error)
+                    displayError = true
+                }
             }
         }
     }
@@ -819,6 +826,27 @@ functions.logError = function functions_logError(error) {
         }
     }
 } // logError
+
+functions.logMultiline = function functions_logMultiline(lines, indent) {
+    /*
+    Log a multiline message with a single indent for the first line and two indents for subsequent lines.
+    @param  {Object}   lines     Array of strings to write on separate lines.
+    @param  {Boolean}  [indent]  Optional and defaults to true. If true, each indent will use the shared.indent value.
+    */
+    if (shared.log) {
+        if (typeof lines === 'string') {
+            lines = [lines]
+        }
+
+        indent = (indent === false) ? '' : shared.indent
+
+        console.info(indent + lines.shift())
+
+        for (const i of lines) {
+            console.info(indent + indent + i)
+        }
+    }
+} // logMultiline
 
 functions.logOutput = function functions_logOutput(destFilePath, message) {
     /*
@@ -1018,6 +1046,50 @@ functions.occurrences = function functions_occurrences(string, subString, allowO
 
     return n
 } // occurrences
+
+functions.playSound = function functions_playSound(file) {
+    /*
+    Play a sound file using https://www.npmjs.com/package/node-wav-player.
+    @param  {String}  file  File path or file name string. A file name without a directory component like 'sound.wav' will be prepended with feri's sound folder location.
+    */
+    if (config.playSound) {
+        if (path.parse(file).dir === '') {
+            // prepend the default path to feri sounds
+            file = path.join(shared.path.self, 'sound', file)
+        }
+
+        if (typeof playSound !== 'object') {
+            playSound = require('node-wav-player')
+        }
+
+        let proceed = true
+
+        if (playSoundPlaying) {
+            // a sound is currently playing
+            if (file === playSoundLastFile) {
+                // same file requested as file currently playing
+                proceed = false
+            } else {
+                playSound.stop()
+            }
+        }
+
+        if (proceed) {
+            playSoundPlaying = true
+
+            playSound.play({
+                path: file,
+                sync: true
+            }).then(function() {
+                playSoundPlaying = false
+            }).catch(function(err) {
+                playSoundPlaying = false
+            })
+        }
+
+        playSoundLastFile = file
+    }
+} // playSound
 
 functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath) {
     /*

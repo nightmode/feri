@@ -60,6 +60,7 @@ const config = {
         'source': path.join(shared.path.pwd, 'source'),
         'dest'  : path.join(shared.path.pwd, 'dest')
     },
+    playSound: true, // allow functions.playSound() to play sound
     sourceMaps: false,
     sourceRoot: '/source-maps', // The virtual folder all source maps will show up under when using developer tools in a web browser.
     thirdParty: null // object that will hold options for various third party packages

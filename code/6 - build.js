@@ -459,6 +459,37 @@ build.js = function build_js(obj) {
 
     }).then(function(jsMin) {
 
+        if (jsMin.error) {
+            if (shared.cli) {
+                // display but do not throw an error for command line users
+
+                const file = obj.source.replace(path.dirname(config.path.source), '')
+
+                let multiline = [
+                    /* line 1 */
+                    jsMin.error.name + ' ' + shared.language.display('words.in') + ' ' + file,
+                    /* line 2 */
+                    shared.language.display('error.locationInCode')
+                        .replace('{error}', jsMin.error.message)
+                        .replace('{number}', jsMin.error.line)
+                        .replace('{position}', jsMin.error.pos),
+                    /* line 3 */
+                    shared.language.display('message.fileWasNotBuilt')
+                ]
+
+                multiline = multiline.map(line => color.red(line))
+
+                functions.logMultiline(multiline)
+
+                functions.playSound('error.wav')
+
+                throw 'done'
+            } else {
+                // api users
+                throw jsMin.error
+            }
+        }
+
         if (config.sourceMaps || config.fileType.js.sourceMaps) {
             let sourceMap = JSON.parse(jsMin.map)
 

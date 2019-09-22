@@ -49,6 +49,7 @@ const shared = {
     },
     global: true, // Installed globally if true. Locally if false.
     help: false, // will be set to true if we are displaying help text on the command line
+    indent: '    ', // default to four spaces when indenting console messages
     language: { // language.base and language.loaded are a duplicate of each other to speed up our default english language usage
         base: { // The default language object that is a fallback in case a value in shared.language.loaded is not available.
             "error": {
@@ -57,6 +58,7 @@ const shared = {
                 "destPointsToSource"    : "Destination points to a source directory.",
                 "destProtected"         : "Destination should not be a protected location like {path}.",
                 "halted"                : "Halted {software} version {version} due to errors.",
+                "locationInCode"        : "{error} on line {number} character {position}.",
                 "missingDest"           : "Missing destination file.",
                 "missingSource"         : "Missing source file.",
                 "missingSourceDirectory": "Missing source directory.",
@@ -66,6 +68,7 @@ const shared = {
             },
             "message": {
                 "fileChangedTooRecently"  : "{file} was changed too recently, ignoring.",
+                "fileWasNotBuilt"         : "File was not built.",
                 "includesNewer"           : "{extension} include(s) newer than destination file.",
                 "listeningOnPort"         : "{software} listening on port {port}.",
                 "missingSourceHelp"       : "Check your folders for existing projects or run \"feri --init\" to start a new project.",
@@ -94,6 +97,7 @@ const shared = {
                 "clean"           : "Clean",
                 "change"          : "change",
                 "done"            : "Done",
+                "in"              : "in",
                 "removed"         : "removed",
                 "removedDirectory": "removed dir",
                 "seconds"         : "seconds",
@@ -123,6 +127,7 @@ const shared = {
                 "destPointsToSource"    : "Destination points to a source directory.",
                 "destProtected"         : "Destination should not be a protected location like {path}.",
                 "halted"                : "Halted {software} version {version} due to errors.",
+                "locationInCode"        : "{error} on line {number} character {position}.",
                 "missingDest"           : "Missing destination file.",
                 "missingSource"         : "Missing source file.",
                 "missingSourceDirectory": "Missing source directory.",
@@ -132,6 +137,7 @@ const shared = {
             },
             "message": {
                 "fileChangedTooRecently"  : "{file} was changed too recently, ignoring.",
+                "fileWasNotBuilt"         : "File was not built.",
                 "includesNewer"           : "{extension} include(s) newer than destination file.",
                 "listeningOnPort"         : "{software} listening on port {port}.",
                 "missingSourceHelp"       : "Check your folders for existing projects or run \"feri --init\" to start a new project.",
@@ -160,6 +166,7 @@ const shared = {
                 "clean"           : "Clean",
                 "change"          : "change",
                 "done"            : "Done",
+                "in"              : "in",
                 "removed"         : "removed",
                 "removedDirectory": "removed dir",
                 "seconds"         : "seconds",
