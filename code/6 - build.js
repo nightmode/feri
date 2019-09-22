@@ -21,7 +21,7 @@ const zlib = require('zlib') // ~  6 ms
 // Includes: Promisify
 //---------------------
 const brotliPromise      = util.promisify(zlib.brotliCompress) // ~ 1 ms
-const execPromise        = util.promisify(require('child_process').exec) // ~ 10 ms
+const execFilePromise    = util.promisify(require('child_process').execFile) // ~ 9 ms
 const fsWriteFilePromise = util.promisify(fs.writeFile) // ~ 1 ms
 const gzipPromise        = util.promisify(zlib.gzip) // ~ 1 ms
 
@@ -658,7 +658,7 @@ build.gif = async function build_gif(obj) {
     functions.logWorker('build.gif', obj)
 
     if (obj.build) {
-        await execPromise('"' + gif + '" --output "' + obj.dest + '" --optimize=3 --no-extensions "' + obj.source + '"')
+        await execFilePromise(gif, ['--output', obj.dest, '--optimize=3', '--no-extensions', obj.source])
     } else {
         // no further chained promises should be called
         throw 'done'
@@ -680,7 +680,7 @@ build.jpg = async function build_jpg(obj) {
     functions.logWorker('build.jpg', obj)
 
     if (obj.build) {
-        await execPromise('"' + jpg + '" -copy none -optimize -progressive -outfile "' +  obj.dest + '" "' + obj.source + '"')
+        await execFilePromise(jpg, ['-copy', 'none', '-optimize', '-progressive', '-outfile', obj.dest, obj.source])
     } else {
         // no further chained promises should be called
         throw 'done'
@@ -702,8 +702,7 @@ build.png = async function build_png(obj) {
     functions.logWorker('build.png', obj)
 
     if (obj.build) {
-        let cmd = '"' + png + '" -clobber -o2 -strip all -out "' + obj.dest + '" "' + obj.source + '"'
-        await execPromise(cmd)
+        await execFilePromise(png, ['-clobber', '-o2', '-strip', 'all', '-out', obj.dest, obj.source])
 
         // get rid of the possible .bak file optipng makes when overwriting an existing dest file with a different source file
         await functions.removeDest(obj.dest + '.bak', false)
