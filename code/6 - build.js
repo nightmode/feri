@@ -835,6 +835,11 @@ build.concat = function build_concat(obj) {
 
     }).then(function() {
 
+        if (obj.data === '') {
+            // since obj.build is true, make sure obj.data is not empty to avoid an edge case where build.copy copies the original concat file contents to the destination
+            obj.data = ' '
+        }
+
         let fileExtSource = path.basename(obj.source).split('.').reverse()[1] // for example, return 'js' for a file named 'file.js.concat'
 
         // now return a chain of build tasks just like build.processOneBuild but don't add build.finalize since that will run after our final return anyway
