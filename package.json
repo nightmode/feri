@@ -13,13 +13,13 @@
     "feri": "code/1 - main.js"
   },
   "dependencies": {
-    "chokidar": "3.0.2",
+    "chokidar": "3.1.0",
     "clean-css": "4.2.1",
     "gifsicle": "4.0.1",
     "glob": "7.1.4",
     "html-minifier": "4.0.0",
     "jpegtran-bin": "4.0.0",
-    "markdown-it": "9.1.0",
+    "markdown-it": "10.0.0",
     "mkdirp": "0.5.1",
     "multi-stage-sourcemap": "0.3.1",
     "node-wav-player": "0.1.0",
@@ -27,7 +27,7 @@
     "rimraf": "3.0.0",
     "source-map": "0.7.3",
     "svgo": "1.3.0",
-    "terser": "4.3.1",
+    "terser": "4.3.2",
     "ws": "7.1.2"
   },
   "devDependencies": {
