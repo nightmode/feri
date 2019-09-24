@@ -11,10 +11,14 @@ The functions object is grouped into three categories.
 ### Functions
 
 * [addDestToSourceExt](#functionsadddesttosourceext)
+* [buildEmptyOk](#functionsbuildemptyok)
 * [cacheReset](#functionscachereset)
 * [changeExt](#functionschangeext)
 * [cleanArray](#functionscleanarray)
 * [cloneObj](#functionscloneobj)
+* [concatMetaClean](#functionsconcatmetaclean)
+* [concatMetaRead](#functionsconcatmetaread)
+* [concatMetaWrite](#functionsconcatmetawrite)
 * [configPathsAreGood](#functionsconfigpathsaregood)
 * [destToSource](#functionsdesttosource)
 * [detectCaseDest](#functionsdetectcasedest)
@@ -80,11 +84,22 @@ The functions object is grouped into three categories.
 
 Type: `function`
 
-Add or append a mapping to config.map.destToSourceExt without harming existing entries.
+Add or append a mapping to [config.map.destToSourceExt](config.md#configmapdesttosourceext) without harming existing entries.
 
 ```
 @param  {String}         ext       Extension like 'html'
 @param  {String,Object}  mappings  String like 'md' or array of strings like ['md']
+```
+
+### functions.buildEmptyOk
+
+Type: `function`
+
+Allow empty files to be built in memory once they get to [build.finalize](build.md#buildfinalize).
+
+```
+@param   {Object}   obj  Reusable object originally created by build.processOneBuild
+@return  {Promise}  obj  Promise that returns a reusable object.
 ```
 
 ### functions.cacheReset
@@ -125,6 +140,33 @@ Clone an object recursively so the return is not a reference to the original obj
 ```
 @param  {Object}  obj  Object like { number: 1, bool: true, array: [], subObject: {} }
 @return {Object}
+```
+
+### functions.concatMetaClean
+
+Type: `function`
+
+Silently clean up any orphaned `.filename.ext.concat` meta files in the source directory.
+
+### functions.concatMetaRead
+
+Type: `function`
+
+Read a meta information file which lists the includes used to build a concat file.
+
+```
+@param  {String}  file  Full file path to a source concat file.
+```
+
+### functions.concatMetaWrite
+
+Type: `function`
+
+Write a meta information file with a list of includes used to build a concat file.
+
+```
+@param  {String}  file          Full file path to a source concat file.
+@param  {Object}  includeArray  Array of include file strings.
 ```
 
 ### functions.configPathsAreGood
