@@ -360,6 +360,8 @@ build.css = function build_css(obj) {
 
     }).then(function() {
 
+        obj = functions.buildEmptyOk(obj)
+
         return obj
 
     })
@@ -381,6 +383,9 @@ build.html = async function build_html(obj) {
         }
 
         obj.data = html(obj.data, config.thirdParty.htmlMinifier)
+
+        obj = functions.buildEmptyOk(obj)
+
         return obj
     } else {
         // no further chained promises should be called
@@ -543,6 +548,8 @@ build.js = function build_js(obj) {
 
         obj.data = jsMin.code
 
+        obj = functions.buildEmptyOk(obj)
+
         return obj
 
     })
@@ -566,6 +573,8 @@ build.markdown = async function build_markdown(obj) {
         markdown.options = config.thirdParty.markdownIt
 
         obj.data = markdown.render(obj.data)
+
+        obj = functions.buildEmptyOk(obj)
 
         return obj
     } else {
@@ -739,7 +748,11 @@ build.concat = function build_concat(obj) {
 
                 filePaths = includeFiles
 
-                return functions.readFiles(includeFiles)
+                return functions.concatMetaWrite(obj.source, filePaths)
+
+            }).then(function() {
+
+                return functions.readFiles(filePaths)
 
             }).then(function(arrayData) {
 
@@ -835,10 +848,7 @@ build.concat = function build_concat(obj) {
 
     }).then(function() {
 
-        if (obj.data === '') {
-            // since obj.build is true, make sure obj.data is not empty to avoid an edge case where build.copy copies the original concat file contents to the destination
-            obj.data = ' '
-        }
+        obj = functions.buildEmptyOk(obj)
 
         let fileExtSource = path.basename(obj.source).split('.').reverse()[1] // for example, return 'js' for a file named 'file.js.concat'
 

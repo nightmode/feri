@@ -110,6 +110,10 @@ clean.processClean = async function clean_processClean(files, watching) {
         }
     }
 
+    // silently clean any orphaned concat meta files in the source folder
+    // these should not add to our filesCleaned array since they are not user generated files
+    await functions.concatMetaClean()
+
     if (!watching) {
         shared.stats.timeTo.clean = functions.sharedStatsTimeTo(shared.stats.timeTo.clean)
 

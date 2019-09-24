@@ -128,7 +128,11 @@ watch.buildOne = async function watch_buildOne(fileName) {
 
                 let includeFiles = await functions.includePathsConcat(data, possibleFiles[x])
 
-                if (includeFiles.indexOf(fileName) >= 0) {
+                let concatMeta = await functions.concatMetaRead(possibleFiles[x])
+
+                if (concatMeta.toString() !== includeFiles.toString()) {
+                    files.push(possibleFiles[x])
+                } else if (includeFiles.indexOf(fileName) >= 0) {
                     files.push(possibleFiles[x])
                 }
             }

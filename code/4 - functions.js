@@ -62,6 +62,21 @@ functions.addDestToSourceExt = function functions_addDestToSourceExt(ext, mappin
     Array.prototype.push.apply(config.map.destToSourceExt[ext], mappings)
 } // addDestToSourceExt
 
+functions.buildEmptyOk = function functions_buildEmptyOk(obj) {
+    /*
+    Allow empty files to be built in memory once they get to build.finalize.
+    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
+    @return  {Promise}  obj  Promise that returns a reusable object.
+    */
+    if (obj.build && obj.data === '') {
+        // empty files are valid files
+        // add a space to obj.data so build.finalize builds the file from memory and does not copy the source file directly to the destination
+        obj.data = ' '
+    }
+
+    return obj
+} // buildEmptyOk
+
 functions.cacheReset = function functions_cacheReset() {
     /*
     Reset shared.cache and shared.uniqueNumber for a new pass through a set of files.
@@ -129,6 +144,63 @@ functions.cloneObj = function functions_cloneObj(object) {
 
     return objectConstructor
 } // cloneObj
+
+functions.concatMetaClean = async function functions_concatMetaClean() {
+    /*
+    Silently clean up any orphaned '.filename.ext.concat' meta files in the source directory.
+    */
+    let metaFiles = await functions.findFiles(config.path.source + '/**/.*.concat')
+
+    for (const file of metaFiles) {
+        const originalFile = path.join(path.dirname(file), path.basename(file).replace('.', ''))
+
+        const originalExists = await functions.fileExists(originalFile)
+
+        if (originalExists === false) {
+            await functions.removeFile(file)
+        }
+    }
+} // concatMetaClean
+
+functions.concatMetaRead = async function functions_concatMetaRead(file) {
+    /*
+    Read a meta information file which lists the includes used to build a concat file.
+    @param  {String}  file  Full file path to a source concat file.
+    */
+    file = path.join(path.dirname(file), '.' + path.basename(file))
+
+    let data = ''
+
+    try {
+        data = await functions.readFile(file)
+        data = JSON.parse(data)
+        data = data.map(i => path.join(config.path.source, i))
+    } catch (error) {
+        // do nothing
+    }
+
+    return data
+} // concatMetaRead
+
+functions.concatMetaWrite = async function functions_concatMetaWrite(file, includeArray) {
+    /*
+    Write a meta information file with a list of includes used to build a concat file.
+    @param  {String}  file          Full file path to a source concat file.
+    @param  {Object}  includeArray  Array of include file strings.
+    */
+
+    file = path.join(path.dirname(file), '.' + path.basename(file))
+
+    // make sure we are going to write to the source folder only
+    if (file.indexOf(config.path.source) !== 0) {
+        throw new Error('functions.concatMetaWrite -> refusing to write to non source location "' + file + '"')
+    }
+
+    let data = includeArray.map(i => i.replace(config.path.source, ''))
+    data = JSON.stringify(data)
+
+    await functions.writeFile(file, data)
+} // concatMetaWrite
 
 functions.configPathsAreGood = function functions_configPathsAreGood() {
     /*
@@ -1856,7 +1928,18 @@ functions.objBuildWithIncludes = async function functions_objBuildWithIncludes(o
         // check includes to see if any of them are newer
         let includes = await includeFunction(obj.data, obj.source)
 
-        includesNewer = await functions.includesNewer(includes, sourceExt, destTime)
+        if (functions.fileExtension(obj.source) === 'concat') {
+            // check for a concat meta information file, if any
+            let concatMeta = await functions.concatMetaRead(obj.source)
+
+            if (concatMeta.toString() !== includes.toString()) {
+                obj.build = true
+            }
+        }
+
+        if (!obj.build) {
+            includesNewer = await functions.includesNewer(includes, sourceExt, destTime)
+        }
     }
 
     if (obj.build || includesNewer) {
