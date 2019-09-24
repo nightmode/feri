@@ -60,6 +60,44 @@ describe('File -> ../code/4 - functions.js\n', function() {
             }) // it
         }) // describe
 
+        //------------------------
+        // functions.buildEmptyOk
+        //------------------------
+        describe('buildEmptyOk', function() {
+            it('should leave obj.data as is when not building', function() {
+                let testObj = {
+                    build: false,
+                    data: ''
+                }
+
+                let resultObj = functions.buildEmptyOk(testObj)
+
+                expect(resultObj).to.eql(testObj)
+            }) // it
+
+            it('should change an empty obj.data value when building', function() {
+                let testObj = {
+                    build: true,
+                    data: ''
+                }
+
+                let resultObj = functions.buildEmptyOk(testObj)
+
+                expect(resultObj.data).to.eql(' ')
+            }) // it
+
+            it('should leave a non-empty obj.data value as is when building', function() {
+                let testObj = {
+                    build: true,
+                    data: 'meep'
+                }
+
+                let resultObj = functions.buildEmptyOk(testObj)
+
+                expect(resultObj).to.eql(testObj)
+            }) // it
+        }) // describe
+
         //----------------------
         // functions.cacheReset
         //----------------------
@@ -134,6 +172,146 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 test.meep = false
 
                 expect(objOne.meep).to.be('moop')
+
+            }) // it
+        }) // describe
+
+        //---------------------------
+        // functions.concatMetaClean
+        //---------------------------
+        describe('concatMetaClean', function() {
+            it('should clean orphan files only', function() {
+
+                config.path.source = path.join(testPath, 'concatMetaClean', 'source')
+
+                let validFile = path.join(config.path.source, '.valid.txt.concat')
+                let orphanFile = path.join(config.path.source, '.orphan.txt.concat')
+
+                return Promise.resolve().then(function() {
+
+                    // make sure our orphan file exists
+                    return functions.writeFile(orphanFile, '...')
+
+                }).then(function() {
+
+                    return functions.concatMetaClean()
+
+                }).then(function() {
+
+                    return functions.fileExists(orphanFile)
+
+                }).then(function(orphanFileExists) {
+
+                    // make sure our orphan file was deleted
+                    expect(orphanFileExists).to.be(false)
+
+                    return functions.fileExists(validFile)
+
+                }).then(function(validFileExists) {
+
+                    // make sure our valid file was not deleted
+                    expect(validFileExists).to.be(true)
+
+                    // write our orphan file back to disk for next time
+                    return functions.writeFile(orphanFile, '...')
+
+                })
+
+            }) // it
+        }) // describe
+
+        //--------------------------
+        // functions.concatMetaRead
+        //--------------------------
+        describe('concatMetaRead', function() {
+            it('should return a valid result for an existing file', function() {
+
+                config.path.source = path.join(testPath, 'concatMetaRead', 'source')
+
+                let file = path.join(config.path.source, 'style.css.concat')
+
+                let desiredObject = [
+                    path.join(config.path.source, '_a.css'),
+                    path.join(config.path.source, '_b.css')
+                ]
+
+                return Promise.resolve().then(function() {
+
+                    return functions.concatMetaRead(file)
+
+                }).then(function(data) {
+
+                    expect(data).to.eql(desiredObject)
+
+                })
+
+            }) // it
+
+            it('should return an empty result for a missing file', function() {
+
+                config.path.source = path.join(testPath, 'concatMetaRead', 'source')
+
+                let file = path.join(config.path.source, 'missing.css.concat')
+
+                return functions.concatMetaRead(file).then(function(data) {
+
+                    expect(data).to.be('')
+
+                })
+
+            }) // it
+        }) // describe
+
+        //---------------------------
+        // functions.concatMetaWrite
+        //---------------------------
+        describe('concatMetaWrite', function() {
+            it('should write a meta file to the source folder', function() {
+
+                config.path.source = path.join(testPath, 'concatMetaWrite', 'source')
+
+                let file = path.join(config.path.source, 'all.txt.concat')
+                let metaFile = path.join(config.path.source, '.all.txt.concat')
+
+                let desiredObject = [
+                    path.join(config.path.source, '_a.css'),
+                    path.join(config.path.source, '_b.css')
+                ]
+
+                return Promise.resolve().then(function() {
+
+                    return functions.concatMetaWrite(file, desiredObject)
+
+                }).then(function() {
+
+                    return functions.concatMetaRead(file)
+
+                }).then(function(data) {
+
+                    expect(data).to.eql(desiredObject)
+
+                    return functions.removeFile(metaFile)
+
+                })
+
+            }) // it
+
+            it('should throw if a file is not located in the source path', function() {
+
+                config.path.source = path.join(testPath, 'concatMetaWrite', 'source')
+                config.path.dest = path.join(testPath, 'concatMetaWrite', 'dest')
+
+                let file = path.join(config.path.dest, 'some.css.concat')
+
+                return functions.concatMetaWrite(file, []).then(function() {
+
+                    throw 'Should have thrown a specific error.'
+
+                }).catch(function(err) {
+
+                    expect(err.message.indexOf('refusing to write to non source location')).to.be.greaterThan(0)
+
+                })
 
             }) // it
         }) // describe
@@ -246,7 +424,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('detectCaseDest', function() {
             it('should return a valid string for the casing used on a destination volume', function() {
 
-                config.path.dest = path.join(testPath, 'functions', 'detectCaseDest')
+                config.path.dest = path.join(testPath, 'detectCaseDest')
 
                 return functions.makeDirPath(config.path.dest, true).then(function(ok) {
 
@@ -276,7 +454,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
         describe('detectCaseSource', function() {
             it('should return a valid string for the casing used on a source volume', function() {
 
-                config.path.source = path.join(testPath, 'functions', 'detectCaseSource')
+                config.path.source = path.join(testPath, 'detectCaseSource')
 
                 return functions.makeDirPath(config.path.source, true).then(function(ok) {
 
