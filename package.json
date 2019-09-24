@@ -58,6 +58,7 @@
     "gif",
     "jpg",
     "png",
+    "svg",
     "gzip",
     "brotli"
   ]
