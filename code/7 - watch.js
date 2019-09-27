@@ -89,6 +89,7 @@ watch.buildOne = async function watch_buildOne(fileName) {
     let files = []
 
     let checkConcatFiles = false
+    let checkJssFiles = false
 
     const isIncludePrefixFile = path.basename(fileName).substr(0, config.includePrefix.length) === config.includePrefix
 
@@ -98,11 +99,13 @@ watch.buildOne = async function watch_buildOne(fileName) {
             files = await functions.findFiles(config.path.source + "/**/*." + ext)
         } else {
             checkConcatFiles = true
+            checkJssFiles = true
         }
     } else {
         // not an include prefixed file
         files.push(fileName) // this file should be built
         checkConcatFiles = true
+        checkJssFiles = true
     }
 
     if (checkConcatFiles && config.fileType.concat.enabled) {
@@ -120,10 +123,10 @@ watch.buildOne = async function watch_buildOne(fileName) {
         }
 
         // .concat files can concat almost anything so check all fileName.ext.concat files
-        let possibleFiles = await functions.findFiles(config.path.source + '/**/*.' + ext + '.concat')
+        const possibleFiles = await functions.findFiles(config.path.source + '/**/*.' + ext + '.concat')
 
         if (possibleFiles.length > 0) {
-            for (let x in possibleFiles) {
+            for (const x in possibleFiles) {
                 let data = await functions.readFile(possibleFiles[x])
 
                 let includeFiles = await functions.includePathsConcat(data, possibleFiles[x])
@@ -137,7 +140,29 @@ watch.buildOne = async function watch_buildOne(fileName) {
                 }
             }
         }
-    }
+    } // checkConcatFiles && config.fileType.concat.enabled
+
+    if (checkJssFiles && config.fileType.jss.enabled) {
+
+        if (ext === 'jss') {
+            ext = functions.fileExtension(functions.removeExt(fileName))
+        }
+
+        // .jss files can encapsulate almost anything so check all fileName.ext.jss files
+        const possibleFiles = await functions.findFiles(config.path.source + '/**/*.' + ext + '.jss')
+
+        if (possibleFiles.length > 0) {
+            for (const x in possibleFiles) {
+                let data = await functions.readFile(possibleFiles[x])
+
+                let includeFiles = await functions.includePathsJss(data, possibleFiles[x])
+
+                if (includeFiles.indexOf(fileName) >= 0) {
+                    files.push(possibleFiles[x])
+                }
+            }
+        }
+    } // checkJssFiles && config.fileType.jss.enabled
 
     if (files.length > 0) {
         files = files.filter(function(y) {

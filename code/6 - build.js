@@ -884,6 +884,292 @@ build.concat = function build_concat(obj) {
     })
 } // concat
 
+build.jss = async function build_jss(obj) {
+    /*
+    JavaScript Static Server (JSS) files.
+    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
+    @return  {Promise}  obj  Promise that returns a reusable object.
+    */
+    try {
+        obj = await functions.objBuildWithIncludes(obj, functions.includePathsJss)
+
+        functions.logWorker('build.jss', obj)
+
+        if (obj.build === false) {
+            // no further chained promises should be called
+            throw 'done'
+        }
+
+        let placeNumber = 0 // will increment to ensure unique placeholders
+
+        async function recurse(data, filePath, parentIncludes) {
+            /*
+            @param  {String}  data              String with zero or more <js>...</js> blocks.
+            @param  {String}  filePath          Full path to the file that supplied the data.
+            @param  {Object}  [parentIncludes]  Optional array of full path strings to parent include files. Used when recursing.
+            */
+
+            parentIncludes = parentIncludes || []
+
+            let jssCode = []
+            let jssIncludes = []
+            let localPlace = 0
+
+            //-----------------------
+            // Find <js> code blocks
+            //-----------------------
+            data = data.replace(/<js>(.*?)<\/js>/gs, function(match, p1) {
+                // add <js> code to jssCode
+                jssCode.push({
+                    place: placeNumber,
+                    code: functions.removeJsComments(p1)
+                })
+
+                // leave a {{js-0}} numbered placeholder
+                return '{{js-' + (placeNumber++) + '}}'
+            })
+
+            if (jssCode.length === 0) {
+                // return early
+                return data
+            }
+
+            //--------------------------
+            // Find include() functions
+            //--------------------------
+            for (let i = 0; i < jssCode.length; i++) {
+                jssCode[i].code = jssCode[i].code.replace(/(^|\s)include\(['|"](.*?)['|"]\)/g, function(match, p1, p2) {
+                    // add include function to jssIncludes
+                    jssIncludes.push({
+                        jssNumber: i,
+                        place: jssCode[i].place,
+                        localPlace: localPlace,
+                        code: p2
+                    })
+
+                    // leave a {{js-include-0-0}} numbered placeholder
+                    return '{{js-include-' + jssCode[i].place + '-' + (localPlace++) + '}}'
+                })
+            }
+
+            //----------------------
+            // Recurse for includes
+            //----------------------
+            if (jssIncludes.length > 0) {
+                for (let i = 0; i < jssIncludes.length; i++) {
+                    const include = jssIncludes[i]
+
+                    let fullPath = ''
+
+                    if (include.code.charAt(0) === shared.slash) {
+                        // path starting from source
+                        fullPath = path.join(config.path.source, include.code)
+                    } else {
+                        // relative path
+                        fullPath = path.join(path.dirname(filePath), include.code)
+                    }
+
+                    if (parentIncludes.indexOf(fullPath) >= 0) {
+                        // endless nesting detected
+
+                        parentIncludes.push(filePath) // add ourself for error logging
+                        parentIncludes.push(fullPath) // add next include for error logging
+
+                        const file = obj.source.replace(path.dirname(config.path.source), '')
+
+                        const errorSequence = parentIncludes.map(pi => pi.replace(config.path.source, '')).join(' -> ')
+
+                        if (shared.cli) {
+                            // display but do not throw an error for command line users
+
+                            let multiline = [
+                                /* line 1 */
+                                'Endless nesting ' + shared.language.display('words.in') + ' ' + file,
+                                /* line 2 */
+                                errorSequence,
+                                /* line 3 */
+                                shared.language.display('message.fileWasNotBuilt')
+                            ]
+
+                            multiline = multiline.map(line => color.red(line))
+
+                            functions.logMultiline(multiline)
+
+                            functions.playSound('error.wav')
+
+                            throw 'done'
+                        } else {
+                            // api users
+                            throw new Error('build.jss -> Endless nesting in sequence -> ' + errorSequence)
+                        }
+                    } else {
+                        parentIncludes.push(filePath) // add ourself for the next recurse
+                    }
+
+                    let fileData = await functions.readFile(fullPath)
+
+                    let result = await recurse(fileData, fullPath, parentIncludes)
+
+                    let lookFor = '{{js-include-' + include.place + '-' + include.localPlace + '}}'
+
+                    // replace {{js-include-0-0}} numbered placeholders with a begin type placeholder, the result of the recurse call, and an end type placeholder
+                    jssCode[include.jssNumber].code = jssCode[include.jssNumber].code.replace(lookFor, '{{js-include-begin}}</js>' + result + '<js>{{js-include-end}}')
+                } // for
+            } // jssIncludes.length > 0
+
+            for (let i = 0; i < jssCode.length; i++) {
+                // replace placeholders with code
+                data = data.replace('{{js-' + jssCode[i].place + '}}', '<js>' + jssCode[i].code + '</js>')
+            }
+
+            return data
+        } // recurse
+
+        let data = await recurse(obj.data, obj.source)
+
+        data = data.replace(/<js>\s*<\/js>/gm, '') // remove empty <js> pairs
+
+        data = data.replace(/{{js-include-begin}}/g, ';await (async function(){').replace(/{{js-include-end}}/g, '})();')
+
+        let jssCode = []
+        let localPlace = 0
+
+        //-----------------------
+        // Find <js> code blocks
+        //-----------------------
+        data = data.replace(/<js>(.*?)<\/js>/gs, function(match, p1) {
+            // add <js> code to jssCode
+            jssCode.push({
+                place: localPlace,
+                code: p1
+            })
+
+            // leave a {{js-0}} numbered placeholder
+            return '{{js-' + (localPlace++) + '}}'
+        })
+
+        //--------------------------------
+        // Add place param to write calls
+        //--------------------------------
+        for (const jss of jssCode) {
+            // have each write pass the current place value
+            jss.code = jss.code.replace(/(write\(['|"]?.*?)\)/gs, function(match, p1) {
+                return p1 + ', place)'
+            })
+        }
+
+        //------------------------------------
+        // Create a write buffer and function
+        //------------------------------------
+        let writeBuffer = []
+
+        function writeFunction(string, place) {
+            writeBuffer.push({
+                place: place,
+                string: string
+            })
+        }
+
+        //-------------------
+        // Construct daFunc!
+        //-------------------
+        let daFunc = '' // a function built out of strings? madness!
+
+        daFunc += 'return async function(write) {' + '\n'
+        daFunc += '    let place = 0;' + '\n'
+
+        for (const jss of jssCode) {
+            daFunc += '    place = ' + jss.place + ';' + '\n'
+            daFunc += '    ' + jss.code + '' + '\n'
+        }
+
+        daFunc += '}' + '\n'
+
+        await Function(daFunc)()(writeFunction) // create with first () then run with second ()
+
+        //-------------------------------------------------
+        // Replace placeholders with write buffer elements
+        //-------------------------------------------------
+        for (const i of writeBuffer) {
+            // replace {{js-0}} numbered placeholders
+            data = data.replace('{{js-' + i.place + '}}', i.stuff)
+        }
+
+        data = data.replace(/{{js-[0-9]+}}/g, '') // replace any js blocks that did not call write
+
+        obj.data = data
+
+        obj = functions.buildEmptyOk(obj)
+
+        //-------------------------------
+        // Create a chain of build tasks
+        //-------------------------------
+        let fileExtSource = path.basename(obj.source).split('.').reverse()[1] // for example, return 'html' for a file named 'file.html.jss'
+
+        // now return a chain of build tasks just like build.processOneBuild but don't add build.finalize since that will run after our final return anyway
+        let p = Promise.resolve(obj)
+
+        // figure out which array of functions apply to this file type
+        if (config.map.sourceToDestTasks.hasOwnProperty(fileExtSource)) {
+            let len = config.map.sourceToDestTasks[fileExtSource].length
+
+            for (let i = 0; i < len; i++) {
+                if (typeof config.map.sourceToDestTasks[fileExtSource][i] === 'string') {
+                    // built-in build task
+                    p = p.then(build[config.map.sourceToDestTasks[fileExtSource][i]])
+                } else {
+                    // custom build task function
+                    p = p.then(config.map.sourceToDestTasks[fileExtSource][i])
+                }
+            }
+        } else {
+            if (shared.cache.missingMapBuild.indexOf(fileExtSource) < 0 && fileExtSource !== '') {
+                shared.cache.missingMapBuild.push(fileExtSource)
+            }
+            p = p.then(build.copy) // add default copy task
+        }
+
+        await p
+
+        //--------------------------------------------------------
+        // Return the reusable object for any further build tasks
+        //--------------------------------------------------------
+        return obj
+
+    } catch(error) {
+        if (error.code === 'ENOENT') {
+            const errorFile = obj.source.replace(config.path.source, '')
+            const errorInclude = error.path.replace(config.path.source, '')
+
+            if (shared.cli) {
+                // display but do not throw an error for command line users
+
+                let multiline = [
+                    /* line 1 */
+                    'Include not found while building ' + errorFile,
+                    /* line 2 */
+                    'Missing include ' + errorInclude,
+                    /* line 3 */
+                    shared.language.display('message.fileWasNotBuilt')
+                ]
+
+                multiline = multiline.map(line => color.red(line))
+
+                functions.logMultiline(multiline)
+
+                functions.playSound('error.wav')
+
+                throw 'done'
+            } else {
+                // api users
+                throw new Error('build.jss -> missing include -> ' + errorInclude + ' in ' + errorFile)
+            }
+        } else {
+            throw error
+        }
+    } // catch
+} // jss
+
 //------------------
 // Build: Finishers
 //------------------

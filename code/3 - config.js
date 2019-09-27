@@ -79,6 +79,9 @@ config.fileType = {
     },
     js: {
         'sourceMaps': false // used by build.js
+    },
+    jss: {
+        'enabled': true
     }
 }
 
@@ -104,6 +107,7 @@ config.map.sourceToDestTasks = {
     'jpg'   : ['jpg'],
     'jpeg'  : ['jpg'],
     'js'    : ['js'],
+    'jss'   : ['jss'],
     'md'    : ['markdown', 'html'],
     'png'   : ['png'],
     'svg'   : ['svg'],

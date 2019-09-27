@@ -1178,6 +1178,10 @@ functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath)
         sources.push(filePath + '.concat')
     }
 
+    if (functions.fileExtension(filePath) !== 'jss' && config.fileType.jss.enabled) {
+        sources.push(filePath + '.jss')
+    }
+
     if (config.map.destToSourceExt.hasOwnProperty(destExt)) {
         let proceed = false
 
@@ -1367,6 +1371,62 @@ functions.removeFiles = function functions_removeFile(files) {
     })
 } // removeFiles
 
+functions.removeJsComments = function functions_removeJsComments(code) {
+    /*
+    Remove single line and block comments from JavaScript.
+    @param   {String}  code  JavaScript code to remove comments from.
+    @return  {String}        JavaScript code without comments.
+    */
+
+    // This function is a slightly modified version of https://stackoverflow.com/questions/5989315/regex-for-match-replacing-javascript-comments-both-multiline-and-inline#answer-52630274
+
+    let inQuoteChar = null
+
+    let inBlockComment = false
+    let inLineComment = false
+    let inRegexLiteral = false
+
+    let cleanedCode = ''
+
+    const len = code.length
+
+    for (var i = 0; i < len; i++) {
+        if (!inQuoteChar && !inBlockComment && !inLineComment && !inRegexLiteral) {
+            if (code[i] === '"' || code[i] === "'" || code[i] === '`') {
+                inQuoteChar = code[i]
+            } else if (code[i] === '/' && code[i+1] === '*') {
+                inBlockComment = true
+            } else if (code[i] === '/' && code[i+1] === '/') {
+                inLineComment = true
+            } else if (code[i] === '/' && code[i+1] !== '/') {
+                inRegexLiteral = true
+            }
+        } else {
+            if (inQuoteChar && ((code[i] === inQuoteChar && code[i-1] != '\\') || (code[i] === '\n' && inQuoteChar !== '`'))) {
+                inQuoteChar = null
+            }
+
+            if (inRegexLiteral && ((code[i] === '/' && code[i-1] !== '\\') || code[i] === '\n')) {
+                inRegexLiteral = false
+            }
+
+            if (inBlockComment && code[i-1] === '/' && code[i-2] === '*') {
+                inBlockComment = false
+            }
+
+            if (inLineComment && code[i] === '\n') {
+                inLineComment = false
+            }
+        }
+
+        if (!inBlockComment && !inLineComment) {
+            cleanedCode += code[i]
+        }
+    }
+
+    return cleanedCode
+} // removeJsComments
+
 functions.restoreObj = function functions_restoreObj(obj, fromObj) {
     /*
     Restore an object without affecting any references to said object.
@@ -1433,7 +1493,7 @@ functions.sourceToDest = function functions_sourceToDest(source) {
 
     let dest = source.replace(config.path.source, '').replace(config.path.dest, '')
 
-    if (sourceExt === 'concat') {
+    if (sourceExt === 'concat' || sourceExt === 'jss') {
         sourceExt = functions.fileExtension(functions.removeExt(source))
         dest = functions.removeExt(dest)
     }
@@ -1850,6 +1910,59 @@ functions.includePathsConcat = function functions_includePathsConcat(data, fileP
 
     })
 } // includePathsConcat
+
+functions.includePathsJss = async function functions_includePathsJss(data, filePath, includesSoFar) {
+    /*
+    Find JSS includes and return an array of matches.
+    @param   {String}   data             String to search for include paths.
+    @param   {String}   filePath         Full path to the file that provided the data string.
+    @param   {Object}   [includesSoFar]  Optional array of full path strings to include files already found. Used when recursing.
+    @return  {Promise}                   Promise that returns an array of files if successful. An error object if not.
+    */
+    includesSoFar = includesSoFar || []
+
+    const jssCode = []
+    const jssIncludes = []
+    let   includes = []
+
+    data.replace(/<js>(.*?)<\/js>/gs, function(match, p1) {
+        jssCode.push(functions.removeJsComments(p1))
+    })
+
+    jssCode.join(' ').replace(/(^|\s)include\(['|"](.*?)['|"]\)/g, function(match, p1, p2) {
+        jssIncludes.push(p2)
+    })
+
+    jssIncludes.forEach(function(i) {
+        // convert to full paths
+        let fullPath = ''
+
+        if (i.charAt(0) === shared.slash) {
+            // path starting from source
+            fullPath = path.join(config.path.source, i)
+        } else {
+            // relative path
+            fullPath = path.join(path.dirname(filePath), i)
+        }
+
+        if (includesSoFar.indexOf(fullPath) < 0 && includes.indexOf(fullPath) < 0) {
+            // only add unique includes to avoid duplicates
+            includes.push(fullPath)
+        }
+    })
+
+    includesSoFar = includesSoFar.concat(includes)
+
+    for (const fileName of includes) {
+        const fileData = await functions.readFile(fileName)
+
+        const subIncludes = await functions.includePathsJss(fileData, fileName, includesSoFar)
+
+        includes = includes.concat(subIncludes)
+    }
+
+    return includes
+} // includePathsJss
 
 //-------------------------------------
 // Functions: Reusable Object Building

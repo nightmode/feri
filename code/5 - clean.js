@@ -207,9 +207,10 @@ clean.processOneClean = function clean_processOneClean(filePath) {
 
                 let fileExt = functions.fileExtension(filePath)
 
-                if (prefix === config.includePrefix || fileExt === 'concat') {
+                if (prefix === config.includePrefix || fileExt === 'concat' || fileExt === 'jss') {
                     // prefixed files are includes and should not be in the destination folder
-                    // concat files should not be in the destination folder either
+                    // concat files should not be in the destination folder
+                    // jss files should not be in the destination folder
                     return functions.removeDest(filePath).then(function() {
                         throw 'done'
                     })

@@ -1131,6 +1131,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 arrayDesired = [
                     path.join(config.path.source, 'index.html'),
                     path.join(config.path.source, 'index.html.concat'),
+                    path.join(config.path.source, 'index.html.jss'),
                     path.join(config.path.source, 'index.md'),
                     path.join(config.path.source, 'index.md.concat')
                 ]
@@ -1146,7 +1147,8 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
                 arrayDesired = [
                     path.join(config.path.source, 'code.js'),
-                    path.join(config.path.source, 'code.js.concat')
+                    path.join(config.path.source, 'code.js.concat'),
+                    path.join(config.path.source, 'code.js.jss')
                 ]
 
                 test = functions.possibleSourceFiles(file)
@@ -1163,8 +1165,10 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 arrayDesired = [
                     path.join(config.path.source, 'style.css.map'),
                     path.join(config.path.source, 'style.css.map.concat'),
+                    path.join(config.path.source, 'style.css.map.jss'),
                     path.join(config.path.source, 'style.css'),
-                    path.join(config.path.source, 'style.css.concat')
+                    path.join(config.path.source, 'style.css.concat'),
+                    path.join(config.path.source, 'style.css.jss')
                 ]
 
                 test = functions.possibleSourceFiles(file)
@@ -1184,10 +1188,13 @@ describe('File -> ../code/4 - functions.js\n', function() {
                 arrayDesired = [
                     path.join(config.path.source, 'code.js.map.gz'),
                     path.join(config.path.source, 'code.js.map.gz.concat'),
+                    path.join(config.path.source, 'code.js.map.gz.jss'),
                     path.join(config.path.source, 'code.js.map'),
                     path.join(config.path.source, 'code.js.map.concat'),
+                    path.join(config.path.source, 'code.js.map.jss'),
                     path.join(config.path.source, 'code.js'),
-                    path.join(config.path.source, 'code.js.concat')
+                    path.join(config.path.source, 'code.js.concat'),
+                    path.join(config.path.source, 'code.js.jss')
                 ]
 
                 test = functions.possibleSourceFiles(file)
