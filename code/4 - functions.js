@@ -1929,8 +1929,9 @@ functions.includePathsJss = async function functions_includePathsJss(data, fileP
         jssCode.push(functions.removeJsComments(p1))
     })
 
-    jssCode.join(' ').replace(/(^|\s)include\(['|"](.*?)['|"]\)/g, function(match, p1, p2) {
-        jssIncludes.push(p2)
+    jssCode.join(' ').replace(/(?:^|\s)include\(['|"](.*?)['|"]/g, function(match, p1) {
+        // in the regex above, we only want the "include('...'" part of an include call that may have more arguments before a closing parentheses.
+        jssIncludes.push(p1)
     })
 
     jssIncludes.forEach(function(i) {
@@ -1954,7 +1955,39 @@ functions.includePathsJss = async function functions_includePathsJss(data, fileP
     includesSoFar = includesSoFar.concat(includes)
 
     for (const fileName of includes) {
-        const fileData = await functions.readFile(fileName)
+        let fileData = ''
+
+        try {
+             fileData = await functions.readFile(fileName)
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                const errorFile = filePath.replace(config.path.source, '')
+                const errorInclude = error.path.replace(config.path.source, '')
+
+                if (shared.cli) {
+                    // display an error for command line users
+
+                    let multiline = [
+                        /* line 1 */
+                        'Include not found while building ' + errorFile,
+                        /* line 2 */
+                        'Missing include ' + errorInclude,
+                        shared.language.display('message.fileWasNotBuilt')
+                    ]
+
+                    multiline = multiline.map(line => color.red(line))
+
+                    functions.logMultiline(multiline)
+
+                    functions.playSound('error.wav')
+
+                    throw 'done'
+                } else {
+                    // api users
+                    throw new Error('functions.includePathsJss -> missing include -> ' + errorInclude + ' in ' + errorFile)
+                }
+            }
+        }
 
         const subIncludes = await functions.includePathsJss(fileData, fileName, includesSoFar)
 

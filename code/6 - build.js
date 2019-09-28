@@ -466,7 +466,7 @@ build.js = function build_js(obj) {
 
         if (jsMin.error) {
             if (shared.cli) {
-                // display but do not throw an error for command line users
+                // display an error for command line users
 
                 const file = obj.source.replace(path.dirname(config.path.source), '')
 
@@ -938,13 +938,16 @@ build.jss = async function build_jss(obj) {
             // Find include() functions
             //--------------------------
             for (let i = 0; i < jssCode.length; i++) {
-                jssCode[i].code = jssCode[i].code.replace(/(^|\s)include\(['|"](.*?)['|"]\)/g, function(match, p1, p2) {
+                jssCode[i].code = jssCode[i].code.replace(/(?:^|\s)include\(['|"](.*?)['|"]\s*,?/gs, function(match, p1) {
+                    // in the regex above, we want to capture "include('...'" without any additional arguments or a closing parentheses
+                    // this will allow us pass those arguments to the include file later
+
                     // add include function to jssIncludes
                     jssIncludes.push({
                         jssNumber: i,
                         place: jssCode[i].place,
                         localPlace: localPlace,
-                        code: p2
+                        code: p1
                     })
 
                     // leave a {{js-include-0-0}} numbered placeholder
@@ -980,7 +983,7 @@ build.jss = async function build_jss(obj) {
                         const errorSequence = parentIncludes.map(pi => pi.replace(config.path.source, '')).join(' -> ')
 
                         if (shared.cli) {
-                            // display but do not throw an error for command line users
+                            // display an error for command line users
 
                             let multiline = [
                                 /* line 1 */
@@ -1029,7 +1032,7 @@ build.jss = async function build_jss(obj) {
 
         data = data.replace(/<js>\s*<\/js>/gm, '') // remove empty <js> pairs
 
-        data = data.replace(/{{js-include-begin}}/g, ';await (async function(){').replace(/{{js-include-end}}/g, '})();')
+        data = data.replace(/{{js-include-begin}}/g, ';await (async function(...args){').replace(/{{js-include-end}}/g, '})(') // because we originally captured "include('...'" without the last parentheses in case there were extra arguments to pass, do no include the last parentheses here
 
         let jssCode = []
         let localPlace = 0
@@ -1091,11 +1094,13 @@ build.jss = async function build_jss(obj) {
         // Replace placeholders with write buffer elements
         //-------------------------------------------------
         for (const i of writeBuffer) {
+            let placeHolder = '{{js-' + i.place + '}}'
+
             // replace {{js-0}} numbered placeholders
-            data = data.replace('{{js-' + i.place + '}}', i.stuff)
+            data = data.replace(placeHolder, i.string + placeHolder) // prepend strings before our placeholder in case write() was called more than once
         }
 
-        data = data.replace(/{{js-[0-9]+}}/g, '') // replace any js blocks that did not call write
+        data = data.replace(/{{js-[0-9]+}}/g, '') // remove any remaining js placeholders
 
         obj.data = data
 
@@ -1142,7 +1147,7 @@ build.jss = async function build_jss(obj) {
             const errorInclude = error.path.replace(config.path.source, '')
 
             if (shared.cli) {
-                // display but do not throw an error for command line users
+                // display an error for command line users
 
                 let multiline = [
                     /* line 1 */

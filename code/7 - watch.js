@@ -723,8 +723,10 @@ watch.workQueueProcess = async function watch_workQueueProcess() {
                 functions.log('watch.workQueueProcess -> unknown work location "' + work.location + '"')
             }
         } catch (error) {
-            functions.log('watch.workQueueProcess -> try catch error')
-            functions.logError(error)
+            if (error !== 'done') {
+                functions.log(color.red('watch.workQueueProcess -> try catch error'))
+                functions.logError(error)
+            }
         }
     } while (shared.watch.workQueue.length > 0)
 
