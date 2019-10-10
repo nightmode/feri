@@ -234,10 +234,10 @@ config.thirdParty = {
         },
         'multipass': true,
         'plugins': [
-            // the array order is important so do not alpha sort
-            // disable a plugin by passing false as the only value
-            // enable a plugin by passing true as the only value
-            // enable a plugin by passing an object to the plugin -> { removeDesc: { removeAny: true } }
+            // the array order may be important so do not alpha sort
+            // disable most plugins by passing false as the only value
+            // enable most plugins by passing true as the only value
+            // enable some plugins by passing an object to the plugin -> { removeDesc: { removeAny: true } }
             { 'removeDoctype': true },
             { 'removeXMLProcInst': true },
             { 'removeComments': true },
@@ -249,7 +249,7 @@ config.thirdParty = {
             { 'minifyStyles': true },
             { 'convertStyleToAttrs': true },
             { 'cleanupIDs': true },
-            { 'prefixIds': false },
+            { 'prefixIds': { 'prefixIds': false, 'prefixClassNames': false }},
             { 'removeRasterImages': false },
             { 'removeUselessDefs': true },
             { 'cleanupNumericValues': true },
