@@ -1032,7 +1032,9 @@ build.jss = async function build_jss(obj) {
 
         data = data.replace(/<js>\s*<\/js>/gm, '') // remove empty <js> pairs
 
-        data = data.replace(/{{js-include-begin}}/g, ';await (async function(...args){').replace(/{{js-include-end}}/g, '})(') // because we originally captured "include('...'" without the last parentheses in case there were extra arguments to pass, do no include the last parentheses here
+        data = data.replace(/{{js-include-begin}}/g, ';await (async function(sourcePath, shared, ...args){').replace(/{{js-include-end}}/g, '})(sourcePath, shared,') // because we originally captured "include('...'" without the last parentheses in case there were extra arguments to pass, do no include the last parentheses here
+
+        data = data.replace(/\(sourcePath, shared,\)/g, '(sourcePath, shared)') // clean up any trailing commas
 
         let jssCode = []
         let localPlace = 0
@@ -1078,7 +1080,7 @@ build.jss = async function build_jss(obj) {
         //-------------------
         let daFunc = '' // a function built out of strings? madness!
 
-        daFunc += 'return async function(write) {' + '\n'
+        daFunc += 'return async function(write, require, sourcePath, shared) {' + '\n'
         daFunc += '    let place = 0;' + '\n'
 
         for (const jss of jssCode) {
@@ -1088,7 +1090,11 @@ build.jss = async function build_jss(obj) {
 
         daFunc += '}' + '\n'
 
-        await Function(daFunc)()(writeFunction) // create with first () then run with second ()
+        const sourcePath = config.path.source
+
+        const sharedObj = {} // a shared object reference which will be accesible from any include
+
+        await Function(daFunc)()(writeFunction, require, sourcePath, sharedObj) // create with first () then run with second ()
 
         //-------------------------------------------------
         // Replace placeholders with write buffer elements
