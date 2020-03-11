@@ -3,7 +3,7 @@
 * [Brotli (BR)](#brotli-br)
 * [Concatenate (CONCAT)](#concatenate-concat)
 * [Gzip (GZ)](#gzip-gz)
-* [JavaScript Server-Side (JSS)](#?-jss)
+* [JavaScript Server-Side (JSS)](#javascript-server-side-jss)
 
 ## Brotli (BR)
 
