@@ -1164,36 +1164,59 @@ build.jss = async function build_jss(obj) {
         return obj
 
     } catch(error) {
+        if (error === 'done') {
+            // rethrow done
+            throw 'done'
+        }
+
+        const errorFile = obj.source.replace(config.path.source, '')
+
+        let multiline = [] // array for writing multiline messages to the console for command line users
+
         if (error.code === 'ENOENT') {
-            const errorFile = obj.source.replace(config.path.source, '')
+            // include file not found
+
             const errorInclude = error.path.replace(config.path.source, '')
 
             if (shared.cli) {
-                // display an error for command line users
+                // command line users
 
-                let multiline = [
-                    /* line 1 */
+                multiline.push(
                     'Include not found while building ' + errorFile,
-                    /* line 2 */
                     'Missing include ' + errorInclude,
-                    /* line 3 */
                     shared.language.display('message.fileWasNotBuilt')
-                ]
-
-                multiline = multiline.map(line => color.red(line))
-
-                functions.logMultiline(multiline)
-
-                functions.playSound('error.wav')
-
-                throw 'done'
+                )
             } else {
                 // api users
                 throw new Error('build.jss -> missing include -> ' + errorInclude + ' in ' + errorFile)
             }
         } else {
-            throw error
-        }
+            // all other errors
+
+            if (shared.cli) {
+                // command line users
+
+                multiline.push(
+                    'Error in ' + errorFile,
+                    error.message + '.',
+                    shared.language.display('message.fileWasNotBuilt')
+                )
+            } else {
+                // api users
+                throw new Error('build.jss -> ' + error.message + ' in ' + errorFile)
+            }
+        } // if
+
+        if (shared.cli) {
+            // command line users
+            multiline = multiline.map(line => color.red(line))
+
+            functions.logMultiline(multiline)
+
+            functions.playSound('error.wav')
+
+            throw 'done'
+        } // if
     } // catch
 } // jss
 
