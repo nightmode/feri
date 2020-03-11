@@ -26,6 +26,7 @@ const clean = {}
 clean.processClean = async function clean_processClean(files, watching) {
     /*
     Remove the destination directory or start a more complex incremental cleanup.
+
     @param   {String,Object}  [files]     Optional. Glob search string like '*.html' or array of full paths like ['/web/dest/about.html', '/web/dest/index.html']
     @param   {Boolean}        [watching]  Optional. If true, we are in watch mode so log less information and do not republish.
     @return  {Promise}                    Promise that returns an array of file path strings for the files cleaned like ['/dest/css/style.css', '/dest/index.html']
@@ -130,6 +131,7 @@ clean.processClean = async function clean_processClean(files, watching) {
 clean.processFiles = function clean_processFiles(files, watching) {
     /*
     Create a promise chain of tasks for each file and control concurrency.
+
     @param   {Object,String}  files  Array of paths like ['/dest/path1', '/dest/path2'] or a string like '/dest/path'
     @return  {Promise}               Promise that returns an array of file path strings for the files cleaned like ['/dest/css/style.css', '/dest/index.html']
     */
@@ -194,6 +196,7 @@ clean.processFiles = function clean_processFiles(files, watching) {
 clean.processOneClean = function clean_processOneClean(filePath) {
     /*
     Create a promise chain of cleaning tasks based on a single file type.
+
     @param   {String}   filePath  Path like '/dest/index.html'
     @return  {Promise}            Promise that returns a file path string if something was cleaned otherwise undefined.
     */
@@ -207,9 +210,10 @@ clean.processOneClean = function clean_processOneClean(filePath) {
 
                 let fileExt = functions.fileExtension(filePath)
 
-                if (prefix === config.includePrefix || fileExt === 'concat') {
+                if (prefix === config.includePrefix || fileExt === 'concat' || fileExt === 'jss') {
                     // prefixed files are includes and should not be in the destination folder
-                    // concat files should not be in the destination folder either
+                    // concat files should not be in the destination folder
+                    // jss files should not be in the destination folder
                     return functions.removeDest(filePath).then(function() {
                         throw 'done'
                     })

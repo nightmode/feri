@@ -67,6 +67,7 @@ const build = {}
 build.processBuild = function build_processBuild(files, watching) {
     /*
     Find all source files or optionally use the files parameter to start a build process.
+
     @param   {String,Object}  [files]     Optional. Glob search string like '*.html' or array of paths like ['/source/about.html', 'source/index.html']
     @param   {Boolean}        [watching]  Optional and defaults to false. If true, log less information.
     @return  {Promise}                    Promise that returns an array of file path strings for the files built like ['/dest/css/style.css', '/dest/index.html']
@@ -167,6 +168,7 @@ build.processBuild = function build_processBuild(files, watching) {
 build.processFiles = function build_processFiles(files) {
     /*
     Create a promise chain of tasks for each file and control concurrency.
+
     @param   {Object,String}  files  Array of paths like ['/source/path1', '/source/path2'] or a string like '/source/path'
     @return  {Promise}               Promise that returns an array of file path strings for the files built like ['/dest/css/style.css', '/dest/index.html']
     */
@@ -230,6 +232,7 @@ build.processFiles = function build_processFiles(files) {
 build.processOneBuild = function build_processOneBuild(filePath) {
     /*
     Create a promise chain of building tasks based on a single file type.
+
     @param   {String}   filePath  Full path to a file like '/web/source/rss.xml'
     @return  {Promise}            Promise that returns a file path string if something was built otherwise undefined.
     */
@@ -287,6 +290,7 @@ build.processOneBuild = function build_processOneBuild(filePath) {
 build.css = function build_css(obj) {
     /*
     Minify CSS using https://www.npmjs.com/package/clean-css.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -370,6 +374,7 @@ build.css = function build_css(obj) {
 build.html = async function build_html(obj) {
     /*
     Minify HTML using https://www.npmjs.com/package/html-minifier.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -396,6 +401,7 @@ build.html = async function build_html(obj) {
 build.js = function build_js(obj) {
     /*
     Minify JavaScript using https://www.npmjs.com/package/terser.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -466,7 +472,7 @@ build.js = function build_js(obj) {
 
         if (jsMin.error) {
             if (shared.cli) {
-                // display but do not throw an error for command line users
+                // display an error for command line users
 
                 const file = obj.source.replace(path.dirname(config.path.source), '')
 
@@ -558,6 +564,7 @@ build.js = function build_js(obj) {
 build.markdown = async function build_markdown(obj) {
     /*
     Markdown using https://www.npmjs.com/package/markdown-it.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -586,6 +593,7 @@ build.markdown = async function build_markdown(obj) {
 build.svg = async function build_svg(obj) {
     /*
     Optimize SVG files using https://www.npmjs.com/package/svgo.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -619,6 +627,7 @@ build.svg = async function build_svg(obj) {
 build.copy = async function build_copy(obj) {
     /*
     Copy source to destination.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -659,6 +668,7 @@ build.copy = async function build_copy(obj) {
 build.gif = async function build_gif(obj) {
     /*
     Losslessly optimize GIF files using https://www.npmjs.com/package/gifsicle.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -681,6 +691,7 @@ build.gif = async function build_gif(obj) {
 build.jpg = async function build_jpg(obj) {
     /*
     Losslessly optimize JPG files using https://www.npmjs.com/package/jpegtran-bin.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -703,6 +714,7 @@ build.jpg = async function build_jpg(obj) {
 build.png = async function build_png(obj) {
     /*
     Losslessly optimize PNG files using https://www.npmjs.com/package/optipng-bin.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -733,6 +745,7 @@ build.png = async function build_png(obj) {
 build.concat = function build_concat(obj) {
     /*
     Concatenate files like 'all.js.concat' which can contain globs and/or file path strings that point to other files.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -884,6 +897,336 @@ build.concat = function build_concat(obj) {
     })
 } // concat
 
+build.jss = async function build_jss(obj) {
+    /*
+    JavaScript Static Server (JSS) files.
+
+    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
+    @return  {Promise}  obj  Promise that returns a reusable object.
+    */
+    try {
+        obj = await functions.objBuildWithIncludes(obj, functions.includePathsJss)
+
+        functions.logWorker('build.jss', obj)
+
+        if (obj.build === false) {
+            // no further chained promises should be called
+            throw 'done'
+        }
+
+        let placeNumber = 0 // will increment to ensure unique placeholders
+
+        async function recurse(data, filePath, parentIncludes) {
+            /*
+            Recursively process JS blocks.
+
+            @param  {String}  data              String with zero or more <js>...</js> blocks.
+            @param  {String}  filePath          Full path to the file that supplied the data.
+            @param  {Object}  [parentIncludes]  Optional array of full path strings to parent include files. Used when recursing.
+            */
+
+            parentIncludes = parentIncludes || []
+
+            let jssCode = []
+            let jssIncludes = []
+            let localPlace = 0
+
+            //-----------------------
+            // Find <js> code blocks
+            //-----------------------
+            data = data.replace(/<js>(.*?)<\/js>/gs, function(match, p1) {
+                // add <js> code to jssCode
+                jssCode.push({
+                    place: placeNumber,
+                    code: functions.removeJsComments(p1)
+                })
+
+                // leave a {{js-0}} numbered placeholder
+                return '{{js-' + (placeNumber++) + '}}'
+            })
+
+            if (jssCode.length === 0) {
+                // return early
+                return data
+            }
+
+            //--------------------------
+            // Find include() functions
+            //--------------------------
+            for (let i = 0; i < jssCode.length; i++) {
+                jssCode[i].code = jssCode[i].code.replace(/(?:^|\s)include\(['|"](.*?)['|"]\s*,?/gs, function(match, p1) {
+                    // in the regex above, we want to capture "include('...'" without any additional arguments or a closing parentheses
+                    // this will allow us pass those arguments to the include file later
+
+                    // add include function to jssIncludes
+                    jssIncludes.push({
+                        jssNumber: i,
+                        place: jssCode[i].place,
+                        localPlace: localPlace,
+                        code: p1
+                    })
+
+                    // leave a {{js-include-0-0}} numbered placeholder
+                    return '{{js-include-' + jssCode[i].place + '-' + (localPlace++) + '}}'
+                })
+            }
+
+            //----------------------
+            // Recurse for includes
+            //----------------------
+            if (jssIncludes.length > 0) {
+                for (let i = 0; i < jssIncludes.length; i++) {
+                    const include = jssIncludes[i]
+
+                    let fullPath = ''
+
+                    if (include.code.charAt(0) === shared.slash) {
+                        // path starting from source
+                        fullPath = path.join(config.path.source, include.code)
+                    } else {
+                        // relative path
+                        fullPath = path.join(path.dirname(filePath), include.code)
+                    }
+
+                    if (parentIncludes.indexOf(fullPath) >= 0) {
+                        // endless nesting detected
+
+                        parentIncludes.push(filePath) // add ourself for error logging
+                        parentIncludes.push(fullPath) // add next include for error logging
+
+                        const file = obj.source.replace(path.dirname(config.path.source), '')
+
+                        const errorSequence = parentIncludes.map(pi => pi.replace(config.path.source, '')).join(' -> ')
+
+                        if (shared.cli) {
+                            // display an error for command line users
+
+                            let multiline = [
+                                /* line 1 */
+                                'Endless nesting ' + shared.language.display('words.in') + ' ' + file,
+                                /* line 2 */
+                                errorSequence,
+                                /* line 3 */
+                                shared.language.display('message.fileWasNotBuilt')
+                            ]
+
+                            multiline = multiline.map(line => color.red(line))
+
+                            functions.logMultiline(multiline)
+
+                            functions.playSound('error.wav')
+
+                            throw 'done'
+                        } else {
+                            // api users
+                            throw new Error('build.jss -> Endless nesting in sequence -> ' + errorSequence)
+                        }
+                    } else {
+                        parentIncludes.push(filePath) // add ourself for the next recurse
+                    }
+
+                    let fileData = await functions.readFile(fullPath)
+
+                    let result = await recurse(fileData, fullPath, parentIncludes)
+
+                    let lookFor = '{{js-include-' + include.place + '-' + include.localPlace + '}}'
+
+                    // replace {{js-include-0-0}} numbered placeholders with a begin type placeholder, the result of the recurse call, and an end type placeholder
+                    jssCode[include.jssNumber].code = jssCode[include.jssNumber].code.replace(lookFor, '{{js-include-begin}}</js>' + result + '<js>{{js-include-end}}')
+                } // for
+            } // jssIncludes.length > 0
+
+            for (let i = 0; i < jssCode.length; i++) {
+                // replace placeholders with code
+                data = data.replace('{{js-' + jssCode[i].place + '}}', '<js>' + jssCode[i].code + '</js>')
+            }
+
+            return data
+        } // recurse
+
+        let data = await recurse(obj.data, obj.source)
+
+        data = data.replace(/<js>\s*<\/js>/gm, '') // remove empty <js> pairs
+
+        data = data.replace(/{{js-include-begin}}/g, ';await (async function(sourcePath, shared, ...args){').replace(/{{js-include-end}}/g, '})(sourcePath, shared,') // because we originally captured "include('...'" without the last parentheses in case there were extra arguments to pass, do no include the last parentheses here
+
+        data = data.replace(/\(sourcePath, shared,\)/g, '(sourcePath, shared)') // clean up any trailing commas
+
+        let jssCode = []
+        let localPlace = 0
+
+        //-----------------------
+        // Find <js> code blocks
+        //-----------------------
+        data = data.replace(/<js>(.*?)<\/js>/gs, function(match, p1) {
+            // add <js> code to jssCode
+            jssCode.push({
+                place: localPlace,
+                code: p1
+            })
+
+            // leave a {{js-0}} numbered placeholder
+            return '{{js-' + (localPlace++) + '}}'
+        })
+
+        //--------------------------------
+        // Add place param to write calls
+        //--------------------------------
+        for (const jss of jssCode) {
+            // have each write pass the current place value
+            jss.code = jss.code.replace(/(write\(['|"]?.*?)\)/gs, function(match, p1) {
+                return p1 + ', place)'
+            })
+        }
+
+        //------------------------------------
+        // Create a write buffer and function
+        //------------------------------------
+        let writeBuffer = []
+
+        function writeFunction(string, place) {
+            writeBuffer.push({
+                place: place,
+                string: string
+            })
+        }
+
+        //-------------------
+        // Construct daFunc!
+        //-------------------
+        let daFunc = '' // a function built out of strings? madness!
+
+        daFunc += 'return async function(write, require, sourcePath, shared) {' + '\n'
+        daFunc += '    let place = 0;' + '\n'
+
+        for (const jss of jssCode) {
+            daFunc += '    place = ' + jss.place + ';' + '\n'
+            daFunc += '    ' + jss.code + '' + '\n'
+        }
+
+        daFunc += '}' + '\n'
+
+        const sourcePath = config.path.source
+
+        const sharedObj = {} // a shared object reference which will be accesible from any include
+
+        await Function(daFunc)()(writeFunction, require, sourcePath, sharedObj) // create with first () then run with second ()
+
+        //-------------------------------------------------
+        // Replace placeholders with write buffer elements
+        //-------------------------------------------------
+        for (const i of writeBuffer) {
+            let placeHolder = '{{js-' + i.place + '}}'
+
+            // replace {{js-0}} numbered placeholders
+            data = data.replace(placeHolder, i.string + placeHolder) // prepend strings before our placeholder in case write() was called more than once
+        }
+
+        data = data.replace(/{{js-[0-9]+}}/g, '') // remove any remaining js placeholders
+
+        obj.data = data
+
+        obj = functions.buildEmptyOk(obj)
+
+        //-------------------------------
+        // Create a chain of build tasks
+        //-------------------------------
+        let fileExtSource = path.basename(obj.source).split('.').reverse()[1] // for example, return 'html' for a file named 'file.html.jss'
+
+        // now return a chain of build tasks just like build.processOneBuild but don't add build.finalize since that will run after our final return anyway
+        let p = Promise.resolve(obj)
+
+        // figure out which array of functions apply to this file type
+        if (config.map.sourceToDestTasks.hasOwnProperty(fileExtSource)) {
+            let len = config.map.sourceToDestTasks[fileExtSource].length
+
+            for (let i = 0; i < len; i++) {
+                if (typeof config.map.sourceToDestTasks[fileExtSource][i] === 'string') {
+                    // built-in build task
+                    p = p.then(build[config.map.sourceToDestTasks[fileExtSource][i]])
+                } else {
+                    // custom build task function
+                    p = p.then(config.map.sourceToDestTasks[fileExtSource][i])
+                }
+            }
+        } else {
+            if (shared.cache.missingMapBuild.indexOf(fileExtSource) < 0 && fileExtSource !== '') {
+                shared.cache.missingMapBuild.push(fileExtSource)
+            }
+            p = p.then(build.copy) // add default copy task
+        }
+
+        await p
+
+        //--------------------------------------------------------
+        // Return the reusable object for any further build tasks
+        //--------------------------------------------------------
+        return obj
+
+    } catch(error) {
+        if (error === 'done') {
+            // rethrow done
+            throw 'done'
+        }
+
+        const errorFile = obj.source.replace(config.path.source, '')
+
+        let multiline = [] // array for writing multiline messages to the console for command line users
+
+        if (error.code === 'ENOENT') {
+            // include file not found
+
+            const errorInclude = error.path.replace(config.path.source, '')
+
+            if (shared.cli) {
+                // command line users
+
+                multiline.push(
+                    'Include not found while building ' + errorFile,
+                    'Missing include ' + errorInclude,
+                    shared.language.display('message.fileWasNotBuilt')
+                )
+            } else {
+                // api users
+                throw new Error('build.jss -> missing include -> ' + errorInclude + ' in ' + errorFile)
+            }
+        } else {
+            // all other errors
+
+            if (shared.cli) {
+                // command line users
+
+                multiline.push(
+                    'Error in ' + errorFile,
+                    error.message + '.',
+                    shared.language.display('message.fileWasNotBuilt')
+                )
+            } else {
+                // api users
+                let errorMessage = error.message
+
+                if (errorMessage.slice(-1) === '.') {
+                    // remove the last period
+                    errorMessage = errorMessage.slice(0, -1)
+                }
+
+                throw new Error('build.jss -> ' + errorMessage + ' in ' + errorFile)
+            }
+        } // if
+
+        if (shared.cli) {
+            // command line users
+            multiline = multiline.map(line => color.red(line))
+
+            functions.logMultiline(multiline)
+
+            functions.playSound('error.wav')
+
+            throw 'done'
+        } // if
+    } // catch
+} // jss
+
 //------------------
 // Build: Finishers
 //------------------
@@ -894,6 +1237,7 @@ build.concat = function build_concat(obj) {
 build.finalize = async function build_finalize(obj) {
     /*
     Finalize by writing memory to disk or copying source to dest, if needed.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -929,6 +1273,7 @@ build.finalize = async function build_finalize(obj) {
 build.br = async function build_br(obj) {
     /*
     Create a brotli compressed version of a file to live alongside the original.
+
     @param   {Object}          obj  Reusable object originally created by build.processOneBuild
     @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
     */
@@ -955,6 +1300,7 @@ build.br = async function build_br(obj) {
 build.gz = async function build_gz(obj) {
     /*
     Create a gzip compressed version of a file to live alongside the original.
+
     @param   {Object}          obj  Reusable object originally created by build.processOneBuild
     @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
     */
@@ -978,6 +1324,7 @@ build.gz = async function build_gz(obj) {
 build.map = async function build_map(obj) {
     /*
     Build a map file and if needed, also make a br and/or gz version of said map file.
+
     @param   {Object}          obj  Reusable object originally created by build.processOneBuild
     @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
     */

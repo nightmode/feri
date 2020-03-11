@@ -875,6 +875,92 @@ describe('File -> ../code/6 - build.js\n', function() {
             }) // it
         }) // describe
 
+        //-----------
+        // build.jss
+        //-----------
+        describe('jss', function() {
+            it('should build a file without any js blocks', function() {
+                config.path.source = path.join(testPath, 'jss', 'source')
+                config.path.dest   = path.join(testPath, 'jss', 'dest')
+
+                let obj = {
+                    'source': path.join(config.path.source, 'empty.html.jss'),
+                    'dest': '',
+                    'data': '',
+                    'build': false
+                }
+
+                return build.jss(obj).then(function(returnObj) {
+                    expect(returnObj.data).to.be('<!doctype html>')
+                })
+            }) // it
+
+            it('should build a file with one include', function() {
+                config.path.source = path.join(testPath, 'jss', 'source')
+                config.path.dest   = path.join(testPath, 'jss', 'dest')
+
+                let obj = {
+                    'source': path.join(config.path.source, 'one-include.txt.jss'),
+                    'dest': '',
+                    'data': '',
+                    'build': false
+                }
+
+                return build.jss(obj).then(function(returnObj) {
+                    expect(returnObj.data).to.be('one include successful')
+                })
+            }) // it
+
+            it('should build a file with two includes', function() {
+                config.path.source = path.join(testPath, 'jss', 'source')
+                config.path.dest   = path.join(testPath, 'jss', 'dest')
+
+                let obj = {
+                    'source': path.join(config.path.source, 'two-includes.txt.jss'),
+                    'dest': '',
+                    'data': '',
+                    'build': false
+                }
+
+                return build.jss(obj).then(function(returnObj) {
+                    expect(returnObj.data).to.be('two includes successful')
+                })
+            }) // it
+
+            it('should build a file with nested includes', function() {
+                config.path.source = path.join(testPath, 'jss', 'source')
+                config.path.dest   = path.join(testPath, 'jss', 'dest')
+
+                let obj = {
+                    'source': path.join(config.path.source, 'nested-includes.txt.jss'),
+                    'dest': '',
+                    'data': '',
+                    'build': false
+                }
+
+                return build.jss(obj).then(function(returnObj) {
+                    expect(returnObj.data).to.be('nested includes successful')
+                })
+            }) // it
+
+            it('should build a file and remove any js block comments in the process', function() {
+                config.path.source = path.join(testPath, 'jss', 'source')
+                config.path.dest   = path.join(testPath, 'jss', 'dest')
+
+                let obj = {
+                    'source': path.join(config.path.source, 'comments.txt.jss'),
+                    'dest': '',
+                    'data': '',
+                    'build': false
+                }
+
+                return build.jss(obj).then(function(returnObj) {
+                    const content = returnObj.data.replace(/\n/g, '') // remove newlines
+
+                    expect(content).to.be('Only content remains.')
+                })
+            }) // it
+        }) // describe
     }) // describe
 
     //------------------

@@ -28,6 +28,7 @@ let   reWriteTimer = setTimeout(function() {}, 0)
 const reWriter = function reWriter(goCrazy, filePath, data) {
     /*
     Keep on writing a file until chokidar senpai notices us.
+
     @param  {Boolean}  goCrazy   Start or continue to write a file every 500 ms until someone stops us!
     @param  {String}   filePath  String file path like '/source/file.txt'. Not used if goCrazy is false.
     @param  {String}   [data]    Optional data to write to the file. Defaults to 'changed data'.

@@ -46,6 +46,7 @@ let functions = {}
 functions.addDestToSourceExt = function functions_addDestToSourceExt(ext, mappings) {
     /*
     Add or append a mapping to config.map.destToSourceExt without harming existing entries.
+
     @param  {String}         ext       Extension like 'html'
     @param  {String,Object}  mappings  String like 'md' or array of strings like ['md']
     */
@@ -65,6 +66,7 @@ functions.addDestToSourceExt = function functions_addDestToSourceExt(ext, mappin
 functions.buildEmptyOk = function functions_buildEmptyOk(obj) {
     /*
     Allow empty files to be built in memory once they get to build.finalize.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -91,6 +93,7 @@ functions.cacheReset = function functions_cacheReset() {
 functions.changeExt = function functions_changeExt(filePath, newExtension) {
     /*
     Change one extension to another.
+
     @param   {String}  filePath      File path like '/files/index.md'
     @param   {String}  newExtension  Extension like 'html'
     @return  {String}                File path like '/files/index.html'
@@ -101,6 +104,7 @@ functions.changeExt = function functions_changeExt(filePath, newExtension) {
 functions.cleanArray = function functions_cleanArray(array) {
     /*
     Remove empty items from an array.
+
     @param   {Object}  array  Array like [1,,3]
     @return  {Object}         Cleaned array like [1,3]
     */
@@ -119,6 +123,7 @@ functions.cleanArray = function functions_cleanArray(array) {
 functions.cloneObj = function functions_cloneObj(object) {
     /*
     Clone an object recursively so the return is not a reference to the original object.
+
     @param  {Object}  obj  Object like { number: 1, bool: true, array: [], subObject: {} }
     @return {Object}
     */
@@ -165,6 +170,7 @@ functions.concatMetaClean = async function functions_concatMetaClean() {
 functions.concatMetaRead = async function functions_concatMetaRead(file) {
     /*
     Read a meta information file which lists the includes used to build a concat file.
+
     @param  {String}  file  Full file path to a source concat file.
     */
     file = path.join(path.dirname(file), '.' + path.basename(file))
@@ -185,6 +191,7 @@ functions.concatMetaRead = async function functions_concatMetaRead(file) {
 functions.concatMetaWrite = async function functions_concatMetaWrite(file, includeArray) {
     /*
     Write a meta information file with a list of includes used to build a concat file.
+
     @param  {String}  file          Full file path to a source concat file.
     @param  {Object}  includeArray  Array of include file strings.
     */
@@ -205,6 +212,7 @@ functions.concatMetaWrite = async function functions_concatMetaWrite(file, inclu
 functions.configPathsAreGood = function functions_configPathsAreGood() {
     /*
     Ensure source and destination are not blank, not the same, and not in each other's path. Also ensure that the destination is not a protected folder.
+
     @return  {*}  Boolean true if both paths are good. String with an error message if not.
     */
 
@@ -291,6 +299,7 @@ functions.configPathsAreGood = function functions_configPathsAreGood() {
 functions.destToSource = function functions_destToSource(dest) {
     /*
     Convert a destination path to its source equivalent.
+
     @param   {String}  dest  File path like '/dest/index.html'
     @return  {String}        File path like '/source/index.html'
     */
@@ -313,6 +322,7 @@ functions.destToSource = function functions_destToSource(dest) {
 functions.detectCaseDest = async function functions_detectCaseDest() {
     /*
     Find out how a destination folder deals with case. Writes a test file once and then caches that result for subsequent calls.
+
     @return  {Promise}  Promise that returns a string like 'lower', 'upper', 'nocase', or 'case'.
     */
 
@@ -415,6 +425,7 @@ functions.detectCaseDest = async function functions_detectCaseDest() {
 functions.detectCaseSource = async function functions_detectCaseSource() {
     /*
     Find out how a source folder deals with case. Writes a test file once and then caches that result for subsequent calls.
+
     @return  {Promise}  Promise that returns a string like 'lower', 'upper', 'nocase', or 'case'.
     */
 
@@ -517,6 +528,7 @@ functions.detectCaseSource = async function functions_detectCaseSource() {
 functions.figureOutPath = function functions_figureOutPath(filePath) {
     /*
     Figure out if a path is relative and if so, return an absolute version of the path.
+
     @param   {String}  filePath  File path like '/full/path/to/folder' or '/relative/path'
     @return  {String}            File path like '/fully/resolved/relative/path'
     */
@@ -543,6 +555,7 @@ functions.figureOutPath = function functions_figureOutPath(filePath) {
 functions.fileExists = function functions_fileExists(filePath) {
     /*
     Find out if a file or folder exists.
+
     @param   {String}   filePath  Path to a file or folder.
     @return  {Promise}            Promise that returns a boolean. True if yes.
     */
@@ -556,6 +569,7 @@ functions.fileExists = function functions_fileExists(filePath) {
 functions.fileExistsAndTime = function functions_fileExistsAndTime(filePath) {
     /*
     Find out if a file exists along with its modified time.
+
     @param   {String}   filePath  Path to a file or folder.
     @return  {Promise}            Promise that returns an object like { exists: true, mtime: 123456789 }
     */
@@ -575,6 +589,7 @@ functions.fileExistsAndTime = function functions_fileExistsAndTime(filePath) {
 functions.fileExtension = function functions_fileExtension(filePath) {
     /*
     Return a file extension from a string.
+
     @param   {String}  filePath  File path like '/conan/riddle-of-steel.txt'
     @return  {String}            String like 'txt'
     */
@@ -584,6 +599,7 @@ functions.fileExtension = function functions_fileExtension(filePath) {
 functions.filesExist = function functions_filesExist(filePaths) {
     /*
     Find out if one or more files or folders exist.
+
     @param   {Object}   filePaths  Array of file paths like ['/source/index.html', '/source/about.html']
     @return  {Promise}             Promise that returns an array of booleans. True if a particular file exists.
     */
@@ -597,6 +613,7 @@ functions.filesExist = function functions_filesExist(filePaths) {
 functions.filesExistAndTime = function functions_filesExistAndTime(source, dest) {
     /*
     Find out if one or both files exist along with their modified time.
+
     @param   {String}  source  Source file path like '/source/favicon.ico'
     @param   {String}  dest    Destination file path like '/dest/favicon.ico'
     @return  {Promise}         Promise that returns an object like { source: { exists: true, mtime: 123456789 }, dest: { exists: false, mtime: 0 } }
@@ -617,6 +634,7 @@ functions.filesExistAndTime = function functions_filesExistAndTime(source, dest)
 functions.fileSize = function functions_fileSize(filePath) {
     /*
     Find out the size of a file or folder.
+
     @param  {String}   filePath  Path to a file or folder.
     @return {Promise}            Promise that will return the number of bytes or 0.
     */
@@ -631,6 +649,7 @@ functions.fileStat = async function functions_fileStat(filePath) {
     /*
     Return an fs stats object if a file or folder exists otherwise an error.
     A case sensitive version of fsStatPromise for source and dest locations.
+
     @param   {String}   filePath  Path to a file or folder.
     @return  {Promise}            Promise that returns an fs stats object if a file or folder exists. An error if not.
     */
@@ -737,6 +756,7 @@ functions.fileStat = async function functions_fileStat(filePath) {
 functions.findFiles = function functions_findFiles(match, options) {
     /*
     Find the files using https://www.npmjs.com/package/glob.
+
     @param   {String}  match      String like '*.jpg'
     @param   {Object}  [options]  Optional. Options for glob.
     @return  {Promise}            Promise that returns an array of files or empty array if successful. Error if not.
@@ -769,6 +789,7 @@ functions.findFiles = function functions_findFiles(match, options) {
 functions.globOptions = function functions_globOptions() {
     /*
     Return glob options updated to ignore include prefixed files.
+
     @return  {Object}
     */
     return {
@@ -782,6 +803,7 @@ functions.globOptions = function functions_globOptions() {
 functions.inDest = function functions_inDest(filePath) {
     /*
     Find out if a path is in the destination directory.
+
     @param   {String}   filePath  Full file path like '/projects/dest/index.html'
     @return  {Boolean}            True if the file path is in the destination directory.
     */
@@ -791,6 +813,7 @@ functions.inDest = function functions_inDest(filePath) {
 functions.initFeri = async function initFeri() {
     /*
     If needed, create the source and destination folders along with a custom config file in the present working directory.
+
     @return  {Promise}
     */
 
@@ -830,6 +853,7 @@ functions.initFeri = async function initFeri() {
 functions.inSource = function functions_inSource(filePath) {
     /*
     Find out if a path is in the source directory.
+
     @param   {String}   filePath  Full file path like '/projects/source/index.html'
     @return  {Boolean}            True if the file path is in the source directory.
     */
@@ -839,6 +863,7 @@ functions.inSource = function functions_inSource(filePath) {
 functions.isGlob = function functions_isGlob(string) {
     /*
     Find out if a string is a glob.
+
     @param   {String}   string  String to test.
     @return  {Boolean}          True if string is a glob.
     */
@@ -852,6 +877,7 @@ functions.isGlob = function functions_isGlob(string) {
 functions.log = function functions_log(message, indent) {
     /*
     Display a console message if logging is enabled.
+
     @param  {String}   message   String to display.
     @param  {Boolean}  [indent]  Optional and defaults to true. If true, the string will be indented using the shared.indent value.
     */
@@ -864,6 +890,7 @@ functions.log = function functions_log(message, indent) {
 functions.logError = function functions_logError(error) {
     /*
     Log a stack trace or text string depending on the type of object passed in.
+
     @param  {Object,String}  err  Error object or string describing the error.
     */
     let message = error.message || error
@@ -902,6 +929,7 @@ functions.logError = function functions_logError(error) {
 functions.logMultiline = function functions_logMultiline(lines, indent) {
     /*
     Log a multiline message with a single indent for the first line and two indents for subsequent lines.
+
     @param  {Object}   lines     Array of strings to write on separate lines.
     @param  {Boolean}  [indent]  Optional and defaults to true. If true, each indent will use the shared.indent value.
     */
@@ -923,6 +951,7 @@ functions.logMultiline = function functions_logMultiline(lines, indent) {
 functions.logOutput = function functions_logOutput(destFilePath, message) {
     /*
     Log a pretty output message with a relative looking path.
+
     @param  {String}  destFilePath  Full path to a destination file.
     @param  {String}  [message]     Optional and defaults to 'output'.
     */
@@ -941,6 +970,7 @@ functions.logOutput = function functions_logOutput(destFilePath, message) {
 functions.logWorker = function functions_logWorker(workerName, obj) {
     /*
     Overly chatty logging utility used by build functions.
+
     @param  {String}  workerName  Name of worker.
     @param  {Object}  obj         Reusable object originally created by build.processOneBuild
     */
@@ -958,6 +988,7 @@ functions.logWorker = function functions_logWorker(workerName, obj) {
 functions.makeDirPath = function functions_makeDirPath(filePath, isDir) {
     /*
     Create an entire directory structure leading up to a file or folder, if needed.
+
     @param   {String}   filePath  Path like '/images/koi.png' or '/images'.
     @param   {Boolean}  isDir     True if filePath is a directory that should be used as is.
     @return  {Promise}            Promise that returns true if successful. An error if not.
@@ -976,6 +1007,7 @@ functions.makeDirPath = function functions_makeDirPath(filePath, isDir) {
 functions.mathRoundPlaces = function functions_mathRoundPlaces(number, decimals) {
     /*
     Round a number to a certain amount of decimal places.
+
     @param   {Number}  number    Number to round.
     @param   {Number}  decimals  Number of decimal places.
     @return  {Number}            Returns 0.04 if mathRoundPlaces(0.037, 2) was called.
@@ -986,6 +1018,7 @@ functions.mathRoundPlaces = function functions_mathRoundPlaces(number, decimals)
 functions.normalizeSourceMap = function functions_normalizeSourceMap(obj, sourceMap) {
     /*
     Normalize source maps.
+
     @param   {Object}  obj        Reusable object most likely created by functions.objFromSourceMap
     @param   {Object}  sourceMap  Source map to normalize.
     @return  {Object}             Normalized source map.
@@ -1072,6 +1105,7 @@ functions.normalizeSourceMap = function functions_normalizeSourceMap(obj, source
 functions.objFromSourceMap = function functions_objFromSourceMap(obj, sourceMap) {
     /*
     Create a reusable object based on a source map.
+
     @param   {Object}  obj        Reusable object originally created by build.processOneBuild
     @param   {Object}  sourceMap  Source map to use in the data field of the returned object.
     @return  {Object}             A reusable object crafted especially for build.map
@@ -1087,6 +1121,7 @@ functions.objFromSourceMap = function functions_objFromSourceMap(obj, sourceMap)
 functions.occurrences = function functions_occurrences(string, subString, allowOverlapping) {
     /*
     Find out how many characters or strings are in a string.
+
     @param   {String}   string              String to search.
     @param   {String}   subString           Character or string to search for.
     @param   {Boolean}  [allowOverlapping]  Optional and defaults to false.
@@ -1122,6 +1157,7 @@ functions.occurrences = function functions_occurrences(string, subString, allowO
 functions.playSound = function functions_playSound(file) {
     /*
     Play a sound file using https://www.npmjs.com/package/node-wav-player.
+
     @param  {String}  file  File path or file name string. A file name without a directory component like 'sound.wav' will be prepended with feri's sound folder location.
     */
     if (config.playSound) {
@@ -1166,6 +1202,7 @@ functions.playSound = function functions_playSound(file) {
 functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath) {
     /*
     Figure out all the possible source files for any given destination file path.
+
     @param   {String}  filepath  File path like '/dest/code.js'
     @return  {Object}            Array of possible source files.
     */
@@ -1176,6 +1213,10 @@ functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath)
 
     if (functions.fileExtension(filePath) !== 'concat' && config.fileType.concat.enabled) {
         sources.push(filePath + '.concat')
+    }
+
+    if (functions.fileExtension(filePath) !== 'jss' && config.fileType.jss.enabled) {
+        sources.push(filePath + '.jss')
     }
 
     if (config.map.destToSourceExt.hasOwnProperty(destExt)) {
@@ -1257,6 +1298,7 @@ functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath)
 functions.readFile = function functions_readFile(filePath, encoding) {
     /*
     Promisified version of fs.readFile.
+
     @param   {String}  filePath    File path like '/dest/index.html'
     @param   {String}  [encoding]  Optional and defaults to 'utf8'
     @return  {String}              Data from file.
@@ -1269,6 +1311,7 @@ functions.readFile = function functions_readFile(filePath, encoding) {
 functions.readFiles = function functions_readFiles(filePaths, encoding) {
     /*
     Sequentially read in multiple files and return an array of their contents.
+
     @param   {Object}   filePaths   Array of file paths like ['/source/file1.txt', '/source/file2.txt']
     @param   {String}   [encoding]  Optional and defaults to 'utf8'
     @return  {Promise}              Promise that returns an array of data like ['data from file1', 'data from file2']
@@ -1299,6 +1342,7 @@ functions.readFiles = function functions_readFiles(filePaths, encoding) {
 functions.removeDest = async function functions_removeDest(filePath, log, isDir) {
     /*
     Remove file or folder if unrelated to the source directory.
+
     @param   {String}   filePath  Path to a file or folder.
     @param   {Boolean}  [log]     Optional and defaults to true. Set to false to disable console log removal messages.
     @param   {Boolean}  [isDir]   Optional and defaults to false. If true, log with 'words.removedDir' instead of 'words.remove'.
@@ -1329,6 +1373,7 @@ functions.removeDest = async function functions_removeDest(filePath, log, isDir)
 functions.removeExt = function functions_removeExt(filePath) {
     /*
     Remove one extension from a file path.
+
     @param   {String}  filePath  File path like '/files/index.html.gz'
     @return  {String}            File path like '/files/index.html'
     */
@@ -1338,6 +1383,7 @@ functions.removeExt = function functions_removeExt(filePath) {
 functions.removeFile = function functions_removeFile(filePath) {
     /*
     Remove a file or folder.
+
     @param   {String}   filePath  String like '/dest/index.html'
     @return  {Promise}            Promise that returns true if the file or folder was removed or if there was nothing to do. An error otherwise.
     */
@@ -1349,6 +1395,7 @@ functions.removeFile = function functions_removeFile(filePath) {
 functions.removeFiles = function functions_removeFile(files) {
     /*
     Remove files and folders.
+
     @param   {String,Object}  files  String like '/dest/index.html' or Object like ['/dest/index.html', '/dest/css']
     @return  {Promise}               Promise that returns true if the files and folders were removed or if there was nothing to do. An error otherwise.
     */
@@ -1367,9 +1414,67 @@ functions.removeFiles = function functions_removeFile(files) {
     })
 } // removeFiles
 
+functions.removeJsComments = function functions_removeJsComments(code) {
+    /*
+    Remove single line and block comments from JavaScript.
+
+    @param   {String}  code  JavaScript code to remove comments from.
+    @return  {String}        JavaScript code without comments.
+    */
+
+    // This function is a slightly modified version of https://stackoverflow.com/questions/5989315/regex-for-match-replacing-javascript-comments-both-multiline-and-inline#answer-52630274
+
+    let inQuoteChar = null
+
+    let inBlockComment = false
+    let inLineComment = false
+    let inRegexLiteral = false
+
+    let cleanedCode = ''
+
+    const len = code.length
+
+    for (var i = 0; i < len; i++) {
+        if (!inQuoteChar && !inBlockComment && !inLineComment && !inRegexLiteral) {
+            if (code[i] === '"' || code[i] === "'" || code[i] === '`') {
+                inQuoteChar = code[i]
+            } else if (code[i] === '/' && code[i+1] === '*') {
+                inBlockComment = true
+            } else if (code[i] === '/' && code[i+1] === '/') {
+                inLineComment = true
+            } else if (code[i] === '/' && code[i+1] !== '/') {
+                inRegexLiteral = true
+            }
+        } else {
+            if (inQuoteChar && ((code[i] === inQuoteChar && code[i-1] != '\\') || (code[i] === '\n' && inQuoteChar !== '`'))) {
+                inQuoteChar = null
+            }
+
+            if (inRegexLiteral && ((code[i] === '/' && code[i-1] !== '\\') || code[i] === '\n')) {
+                inRegexLiteral = false
+            }
+
+            if (inBlockComment && code[i-1] === '/' && code[i-2] === '*') {
+                inBlockComment = false
+            }
+
+            if (inLineComment && code[i] === '\n') {
+                inLineComment = false
+            }
+        }
+
+        if (!inBlockComment && !inLineComment) {
+            cleanedCode += code[i]
+        }
+    }
+
+    return cleanedCode
+} // removeJsComments
+
 functions.restoreObj = function functions_restoreObj(obj, fromObj) {
     /*
     Restore an object without affecting any references to said object.
+
     @return {Object}    obj     Object to be restored.
     @param  {Object}    fromObj Object to restore from.
     @return {Object}            Object that is a restore of the original. Not a reference.
@@ -1388,6 +1493,7 @@ functions.restoreObj = function functions_restoreObj(obj, fromObj) {
 functions.sharedStatsTimeTo = function functions_sharedStatsTimeTo(time) {
     /*
     Get the current time or return the time elapsed in seconds from a previous time.
+
     @param   {Number}  [time]  Optional and defaults to 0. Commonly a number produced by a previous call to this function.
     @return  {Number}
     */
@@ -1407,6 +1513,7 @@ functions.sharedStatsTimeTo = function functions_sharedStatsTimeTo(time) {
 functions.setLanguage = function functions_setLanguage(lang) {
     /*
     Replace the shared.language.loaded object with the contents of a JSON language file.
+
     @param   {String}   [lang]  Optional. Defaults to using the value specified by config.language
     @return  {Promise}          Promise that returns true if everything is ok otherwise an error.
     */
@@ -1426,6 +1533,7 @@ functions.setLanguage = function functions_setLanguage(lang) {
 functions.sourceToDest = function functions_sourceToDest(source) {
     /*
     Convert a source path to its destination equivalent.
+
     @param   {String}  source  File path like '/source/index.html'
     @return  {String}          File path like '/dest/index.html'
     */
@@ -1433,7 +1541,7 @@ functions.sourceToDest = function functions_sourceToDest(source) {
 
     let dest = source.replace(config.path.source, '').replace(config.path.dest, '')
 
-    if (sourceExt === 'concat') {
+    if (sourceExt === 'concat' || sourceExt === 'jss') {
         sourceExt = functions.fileExtension(functions.removeExt(source))
         dest = functions.removeExt(dest)
     }
@@ -1462,6 +1570,7 @@ functions.sourceToDest = function functions_sourceToDest(source) {
 functions.stats = function functions_stats() {
     /*
     Returns a copy of the shared.stats object for programatic consumers.
+
     @return  {Object}
     */
     return functions.cloneObj(shared.stats)
@@ -1470,6 +1579,7 @@ functions.stats = function functions_stats() {
 functions.trimSource = function functions_trimSource(filePath) {
     /*
     Trim most of the source path off a string.
+
     @param   {String}  filePath  File path like '/web/projects/source/index.html'
     @return  {String}            String like '/source/index.html'
     */
@@ -1479,6 +1589,7 @@ functions.trimSource = function functions_trimSource(filePath) {
 functions.trimDest = function functions_trimDest(filePath) {
     /*
     Trim most of the dest path off a string.
+
     @param   {String}  filePath  File path like '/web/projects/dest/index.html'
     @return  {String}            String like '/dest/index.html'
     */
@@ -1488,6 +1599,7 @@ functions.trimDest = function functions_trimDest(filePath) {
 functions.uniqueArray = function functions_uniqueArray(array) {
     /*
     Keep only unique values in an array.
+
     @param   {Object}  array  Array like [0,0,7]
     @return  {Object}         Array like [0,7]
     */
@@ -1501,6 +1613,7 @@ functions.uniqueArray = function functions_uniqueArray(array) {
 functions.upgradeAvailable = function functions_upgradeAvailable(specifyRemoteVersion) {
     /*
     Find out if a Feri upgrade is available.
+
     @param   {String}   specifyRemoteVersion  Specify a remote version string like 1.2.3 instead of looking up the exact version on GitHub. Useful for testing.
     @return  {Promise}                        Promise that returns a string with the latest version of Feri if an upgrade is available. Returns a boolean false otherwise.
     */
@@ -1602,6 +1715,7 @@ functions.upgradeAvailable = function functions_upgradeAvailable(specifyRemoteVe
 functions.useExistingSourceMap = async function functions_useExistingSourceMap(filePath) {
     /*
     Use an existing source map if it was modified recently otherwise remove it.
+
     @param   {String}   filePath  Path to a file that may also have a separate '.map' file associated with it.
     @return  {Promise}            Promise that will return a source map object that was generated recently or a boolean false.
     */
@@ -1641,6 +1755,7 @@ functions.useExistingSourceMap = async function functions_useExistingSourceMap(f
 functions.wait = function functions_wait(ms) {
     /*
     Promise that is useful for injecting delays and testing scenarios.
+
     @param   {Number}   ms  Number of milliseconds to wait before returning.
     @return  {Promise}
     */
@@ -1650,6 +1765,7 @@ functions.wait = function functions_wait(ms) {
 functions.writeFile = function functions_writeFile(filePath, data, encoding) {
     /*
     Promisified version of fs.writeFile.
+
     @param   {String}   filePath    File path like '/web/dest/index.html'
     @param   {String}   data        Data to be written.
     @param   {String}   [encoding]  Optional and defaults to 'utf8'
@@ -1670,6 +1786,7 @@ functions.writeFile = function functions_writeFile(filePath, data, encoding) {
 functions.includesNewer = function functions_includesNewer(includePaths, fileType, destTime) {
     /*
     Figure out if any include files are newer than the modified time of the destination file.
+
     @param   {Object}   includePaths  Array of file paths like ['/source/_header.file', '/source/_footer.file']
     @param   {String}   fileType      File type like 'concat'.
     @param   {Number}   destTime      Modified time of the destination file.
@@ -1724,6 +1841,7 @@ functions.includesNewer = function functions_includesNewer(includePaths, fileTyp
 functions.includePathsConcat = function functions_includePathsConcat(data, filePath, includePathsCacheName) {
     /*
     Find CONCAT includes and return an array of matches.
+
     @param   {String}   data                     String to search for include paths.
     @param   {String}   filePath                 Source file where data came from.
     @param   {String}   [includePathsCacheName]  Optional. Unique property name used with shared.cache.includeFilesSeen to keep track of which include files have been found when recursing.
@@ -1851,12 +1969,100 @@ functions.includePathsConcat = function functions_includePathsConcat(data, fileP
     })
 } // includePathsConcat
 
+functions.includePathsJss = async function functions_includePathsJss(data, filePath, includesSoFar) {
+    /*
+    Find JSS includes and return an array of matches.
+
+    @param   {String}   data             String to search for include paths.
+    @param   {String}   filePath         Full path to the file that provided the data string.
+    @param   {Object}   [includesSoFar]  Optional array of full path strings to include files already found. Used when recursing.
+    @return  {Promise}                   Promise that returns an array of files if successful. An error object if not.
+    */
+    includesSoFar = includesSoFar || []
+
+    const jssCode = []
+    const jssIncludes = []
+    let   includes = []
+
+    data.replace(/<js>(.*?)<\/js>/gs, function(match, p1) {
+        jssCode.push(functions.removeJsComments(p1))
+    })
+
+    jssCode.join(' ').replace(/(?:^|\s)include\(['|"](.*?)['|"]/g, function(match, p1) {
+        // in the regex above, we only want the "include('...'" part of an include call that may have more arguments before a closing parentheses.
+        jssIncludes.push(p1)
+    })
+
+    jssIncludes.forEach(function(i) {
+        // convert to full paths
+        let fullPath = ''
+
+        if (i.charAt(0) === shared.slash) {
+            // path starting from source
+            fullPath = path.join(config.path.source, i)
+        } else {
+            // relative path
+            fullPath = path.join(path.dirname(filePath), i)
+        }
+
+        if (includesSoFar.indexOf(fullPath) < 0 && includes.indexOf(fullPath) < 0) {
+            // only add unique includes to avoid duplicates
+            includes.push(fullPath)
+        }
+    })
+
+    includesSoFar = includesSoFar.concat(includes)
+
+    for (const fileName of includes) {
+        let fileData = ''
+
+        try {
+             fileData = await functions.readFile(fileName)
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                const errorFile = filePath.replace(config.path.source, '')
+                const errorInclude = error.path.replace(config.path.source, '')
+
+                if (shared.cli) {
+                    // display an error for command line users
+
+                    let multiline = [
+                        /* line 1 */
+                        'Include not found while building ' + errorFile,
+                        /* line 2 */
+                        'Missing include ' + errorInclude,
+                        shared.language.display('message.fileWasNotBuilt')
+                    ]
+
+                    multiline = multiline.map(line => color.red(line))
+
+                    functions.logMultiline(multiline)
+
+                    functions.playSound('error.wav')
+
+                    throw 'done'
+                } else {
+                    // api users
+                    throw new Error('functions.includePathsJss -> missing include -> ' + errorInclude + ' in ' + errorFile)
+                }
+            }
+        }
+
+        const subIncludes = await functions.includePathsJss(fileData, fileName, includesSoFar)
+
+        includes = includes.concat(subIncludes)
+    }
+
+    return includes
+} // includePathsJss
+
 //-------------------------------------
 // Functions: Reusable Object Building
 //-------------------------------------
 functions.objBuildWithIncludes = async function functions_objBuildWithIncludes(obj, includeFunction) {
     /*
     Figure out if a reusable object, which may have include files, needs to be built in memory.
+
     @param   {Object}    obj              Reusable object originally created by build.processOneBuild
     @param   {Function}  includeFunction  Function that will parse this particular type of file (concat for example) and return any paths to include files.
     @return  {Promise}                    Promise that returns a reusable object.
@@ -1952,6 +2158,7 @@ functions.objBuildWithIncludes = async function functions_objBuildWithIncludes(o
 functions.objBuildInMemory = async function functions_objBuildInMemory(obj) {
     /*
     Figure out if a reusable object needs to be built in memory.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -2017,6 +2224,7 @@ functions.objBuildInMemory = async function functions_objBuildInMemory(obj) {
 functions.objBuildOnDisk = async function functions_objBuildOnDisk(obj) {
     /*
     Figure out if a reusable object needs to be written to disk and if so, prepare for a command line program to use it next.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */

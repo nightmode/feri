@@ -159,7 +159,8 @@ Feri thinks you should be able to grab nearly any npm module and make a [custom 
 
 ### Unique File Types
 
-Feri comes with built-in support for [unique file types](docs/advanced/unique-file-types.md#feri---unique-file-types) such as `concat`, `br`, and `gz`.
+Feri comes with built-in support for [unique file types](docs/advanced/unique-file-types.md#feri---unique-file-types) such as `br`, `concat`, `gz`, and `jss`.
+
 
 ### Feri Extension
 
