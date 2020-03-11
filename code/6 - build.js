@@ -1203,7 +1203,14 @@ build.jss = async function build_jss(obj) {
                 )
             } else {
                 // api users
-                throw new Error('build.jss -> ' + error.message + ' in ' + errorFile)
+                let errorMessage = error.message
+
+                if (errorMessage.slice(-1) === '.') {
+                    // remove the last period
+                    errorMessage = errorMessage.slice(0, -1)
+                }
+
+                throw new Error('build.jss -> ' + errorMessage + ' in ' + errorFile)
             }
         } // if
 
