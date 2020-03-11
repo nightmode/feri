@@ -79,6 +79,7 @@ const feri = {
 const commandLine = async function commandLine() {
     /*
     Command Line checks, options, and startup procedures.
+
     @return  {Promise}
     */
     let configFile = path.join(shared.path.pwd, 'feri.js')
@@ -422,6 +423,7 @@ const commandLine = async function commandLine() {
 const inOptions = function inOptions(search) {
     /*
     Find out if the options variable has any occurence of what we are searching for.
+
     @param  {Object}  search  Array of strings like ['--clean', '-c']
     */
     for (let i in search) {

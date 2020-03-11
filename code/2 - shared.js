@@ -12,6 +12,7 @@ const path = require('path') // ~ 1 ms
 const propertyAccessor = function propertyAccessor(object, keys) {
     /*
     Retrieve an object property with a dot notation string.
+
     @param   {Object}  object   Object to access.
     @param   {String}  keys     Property to access using 0 or more dots for notation.
     @return  {*}
@@ -109,6 +110,7 @@ const shared = {
         display: function shared_language_display(keys) {
             /*
             Return a string from shared.language.loaded if available otherwise return the same string from shared.language.base.
+
             @param   {String}  keys  String like 'error.missingSource'
             @return  {String}        String like 'Missing source file.'
             */

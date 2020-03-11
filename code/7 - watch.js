@@ -70,6 +70,7 @@ const lazyLoadWebSocket = function watch_lazyLoadWebSocket() {
 watch.buildOne = async function watch_buildOne(fileName) {
     /*
     Figure out which files should be processed after receiving an add or change event from the source directory watcher.
+
     @param   {String}   fileName  File path like '/source/js/combined.js'
     @return  {Promise}
     */
@@ -208,6 +209,7 @@ watch.checkExtensionClients = function watch_checkExtensionClients() {
 watch.extensionServer = async function watch_extensionServer() {
     /*
     Run an extension server for clients.
+
     @return  {Promise}
     */
 
@@ -262,6 +264,7 @@ watch.extensionServer = async function watch_extensionServer() {
 watch.notTooRecent = function watch_notTooRecent(file) {
     /*
     Suppress subsequent file change notifications if they happen within 300 ms of a previous event.
+
     @param   {String}   file  File path like '/path/readme.txt'
     @return  {Boolean}        True if a file was not active recently.
     */
@@ -288,6 +291,7 @@ watch.notTooRecent = function watch_notTooRecent(file) {
 watch.processWatch = async function watch_processWatch(sourceFiles, destFiles) {
     /*
     Watch the source folder. Optionally watch the destination folder and start an extension server.
+
     @param   {String,Object}  [sourceFiles]  Optional. Glob search string for watching source files like '*.html' or array of full paths like ['/source/about.html', '/source/index.html']
     @param   {String,Object}  [destFiles]    Optional. Glob search string for watching destination files like '*.css' or array of full paths like ['/dest/fonts.css', '/dest/grid.css']
     @return  {Promise}
@@ -327,6 +331,7 @@ watch.processWatch = async function watch_processWatch(sourceFiles, destFiles) {
 watch.removeOne = async function watch_removeOne(fileName) {
     /*
     Figure out if file or folder should be removed after an unlink or unlinkdir event from the source directory watcher.
+
     @param   {String}   fileName    File path like '/source/js/combined.js'
     @return  {Promise}
     */
@@ -349,6 +354,7 @@ watch.removeOne = async function watch_removeOne(fileName) {
 watch.stop = function watch_stop(stopSource, stopDest, stopExtension) {
     /*
     Stop watching the source and/or destination folders. Optionally stop the extensions server.
+
     @param   {Boolean}  [stopSource]     Optional and defaults to true. If true, stop watching the source folder.
     @param   {Boolean}  [stopDest]       Optional and defaults to true. If true, stop watching the destination folder.
     @param   {Boolean}  [stopExtension]  Optional and defaults to true. If true, stop the extension server.
@@ -394,6 +400,7 @@ watch.stop = function watch_stop(stopSource, stopDest, stopExtension) {
 watch.updateExtensionServer = async function watch_updateExtensionServer(now) {
     /*
     Update the extension server with a list of changed files.
+
     @param   {Boolean}  [now]  Optional and defaults to false. True means we have already waited 300 ms for events to settle.
     @return  {Promise}
     */
@@ -426,6 +433,7 @@ watch.updateExtensionServer = async function watch_updateExtensionServer(now) {
 watch.watchDest = async function watch_watchDest(files) {
     /*
     Watch the destination directory for changes in order to update the extensions server as needed.
+
     @param   {String,Object}  [files]  Optional. Glob search string for watching destination files like '*.css' or array of full paths like ['/dest/fonts.css', '/dest/grid.css']
     @return  {Promise}
     */
@@ -531,6 +539,7 @@ watch.watchDest = async function watch_watchDest(files) {
 watch.watchSource = async function watch_watchSource(files) {
     /*
     Watch source directory for changes and kick off the appropriate response tasks as needed.
+
     @param   {String,Object}  [files]  Optional. Glob search string for watching source files like '*.html' or array of full paths like ['/source/about.html', '/source/index.html']
     @return  {Promise}
     */
@@ -664,6 +673,7 @@ watch.watchSource = async function watch_watchSource(files) {
 watch.workQueueAdd = function watch_workQueueAdd(location, task, path) {
     /*
     Add an event triggered task to the shared.watch.workQueue array.
+
     @param  {String}  location  A string like 'source' or 'dest'.
     @param  {String}  task      An event triggered task string like 'add', 'change', and so on.
     @param  {String}  path      A string with the full path to a file or folder.
@@ -680,6 +690,7 @@ watch.workQueueAdd = function watch_workQueueAdd(location, task, path) {
 watch.workQueueProcess = async function watch_workQueueProcess() {
     /*
     Process the shared.watch.workQueue array and run tasks one at a time to match the order of events.
+
     @return  {Promise}
     */
     if (shared.watch.working || shared.watch.workQueue.length === 0) {

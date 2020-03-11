@@ -67,6 +67,7 @@ const build = {}
 build.processBuild = function build_processBuild(files, watching) {
     /*
     Find all source files or optionally use the files parameter to start a build process.
+
     @param   {String,Object}  [files]     Optional. Glob search string like '*.html' or array of paths like ['/source/about.html', 'source/index.html']
     @param   {Boolean}        [watching]  Optional and defaults to false. If true, log less information.
     @return  {Promise}                    Promise that returns an array of file path strings for the files built like ['/dest/css/style.css', '/dest/index.html']
@@ -167,6 +168,7 @@ build.processBuild = function build_processBuild(files, watching) {
 build.processFiles = function build_processFiles(files) {
     /*
     Create a promise chain of tasks for each file and control concurrency.
+
     @param   {Object,String}  files  Array of paths like ['/source/path1', '/source/path2'] or a string like '/source/path'
     @return  {Promise}               Promise that returns an array of file path strings for the files built like ['/dest/css/style.css', '/dest/index.html']
     */
@@ -230,6 +232,7 @@ build.processFiles = function build_processFiles(files) {
 build.processOneBuild = function build_processOneBuild(filePath) {
     /*
     Create a promise chain of building tasks based on a single file type.
+
     @param   {String}   filePath  Full path to a file like '/web/source/rss.xml'
     @return  {Promise}            Promise that returns a file path string if something was built otherwise undefined.
     */
@@ -287,6 +290,7 @@ build.processOneBuild = function build_processOneBuild(filePath) {
 build.css = function build_css(obj) {
     /*
     Minify CSS using https://www.npmjs.com/package/clean-css.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -370,6 +374,7 @@ build.css = function build_css(obj) {
 build.html = async function build_html(obj) {
     /*
     Minify HTML using https://www.npmjs.com/package/html-minifier.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -396,6 +401,7 @@ build.html = async function build_html(obj) {
 build.js = function build_js(obj) {
     /*
     Minify JavaScript using https://www.npmjs.com/package/terser.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -558,6 +564,7 @@ build.js = function build_js(obj) {
 build.markdown = async function build_markdown(obj) {
     /*
     Markdown using https://www.npmjs.com/package/markdown-it.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -586,6 +593,7 @@ build.markdown = async function build_markdown(obj) {
 build.svg = async function build_svg(obj) {
     /*
     Optimize SVG files using https://www.npmjs.com/package/svgo.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -619,6 +627,7 @@ build.svg = async function build_svg(obj) {
 build.copy = async function build_copy(obj) {
     /*
     Copy source to destination.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -659,6 +668,7 @@ build.copy = async function build_copy(obj) {
 build.gif = async function build_gif(obj) {
     /*
     Losslessly optimize GIF files using https://www.npmjs.com/package/gifsicle.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -681,6 +691,7 @@ build.gif = async function build_gif(obj) {
 build.jpg = async function build_jpg(obj) {
     /*
     Losslessly optimize JPG files using https://www.npmjs.com/package/jpegtran-bin.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -703,6 +714,7 @@ build.jpg = async function build_jpg(obj) {
 build.png = async function build_png(obj) {
     /*
     Losslessly optimize PNG files using https://www.npmjs.com/package/optipng-bin.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -733,6 +745,7 @@ build.png = async function build_png(obj) {
 build.concat = function build_concat(obj) {
     /*
     Concatenate files like 'all.js.concat' which can contain globs and/or file path strings that point to other files.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -887,6 +900,7 @@ build.concat = function build_concat(obj) {
 build.jss = async function build_jss(obj) {
     /*
     JavaScript Static Server (JSS) files.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -904,6 +918,8 @@ build.jss = async function build_jss(obj) {
 
         async function recurse(data, filePath, parentIncludes) {
             /*
+            Recursively process JS blocks.
+
             @param  {String}  data              String with zero or more <js>...</js> blocks.
             @param  {String}  filePath          Full path to the file that supplied the data.
             @param  {Object}  [parentIncludes]  Optional array of full path strings to parent include files. Used when recursing.
@@ -1191,6 +1207,7 @@ build.jss = async function build_jss(obj) {
 build.finalize = async function build_finalize(obj) {
     /*
     Finalize by writing memory to disk or copying source to dest, if needed.
+
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
@@ -1226,6 +1243,7 @@ build.finalize = async function build_finalize(obj) {
 build.br = async function build_br(obj) {
     /*
     Create a brotli compressed version of a file to live alongside the original.
+
     @param   {Object}          obj  Reusable object originally created by build.processOneBuild
     @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
     */
@@ -1252,6 +1270,7 @@ build.br = async function build_br(obj) {
 build.gz = async function build_gz(obj) {
     /*
     Create a gzip compressed version of a file to live alongside the original.
+
     @param   {Object}          obj  Reusable object originally created by build.processOneBuild
     @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
     */
@@ -1275,6 +1294,7 @@ build.gz = async function build_gz(obj) {
 build.map = async function build_map(obj) {
     /*
     Build a map file and if needed, also make a br and/or gz version of said map file.
+
     @param   {Object}          obj  Reusable object originally created by build.processOneBuild
     @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
     */
