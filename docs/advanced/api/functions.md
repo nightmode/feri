@@ -760,3 +760,5 @@ Figure out if a reusable object needs to be written to disk and if so, prepare f
 ## License
 
 MIT © [Kai Nightmode](https://twitter.com/kai_nightmode)
+
+The MIT license does NOT apply to the name `Feri` or any of the images in this repository. Those items are strictly copyrighted to Kai Nightmode.

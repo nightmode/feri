@@ -49,3 +49,5 @@ Create a promise chain of cleaning tasks based on a single file type.
 ## License
 
 MIT © [Kai Nightmode](https://twitter.com/kai_nightmode)
+
+The MIT license does NOT apply to the name `Feri` or any of the images in this repository. Those items are strictly copyrighted to Kai Nightmode.
