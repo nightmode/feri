@@ -1,4 +1,4 @@
 <js>
     write(' includes')
-    include('_nested-b.txt.jss')
+    include('/include/_nested-b.txt.jss')
 </js>

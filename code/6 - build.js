@@ -980,7 +980,7 @@ build.jss = async function build_jss(obj) {
 
                     let fullPath = ''
 
-                    if (include.code.charAt(0) === shared.slash) {
+                    if (include.code.charAt(0) === '/') {
                         // path starting from source
                         fullPath = path.join(config.path.source, include.code)
                     } else {

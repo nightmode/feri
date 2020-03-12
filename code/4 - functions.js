@@ -2004,7 +2004,7 @@ functions.includePathsJss = async function functions_includePathsJss(data, fileP
         // convert to full paths
         let fullPath = ''
 
-        if (i.charAt(0) === shared.slash) {
+        if (i.charAt(0) === '/') {
             // path starting from source
             fullPath = path.join(config.path.source, i)
         } else {
