@@ -12,7 +12,7 @@ const config = require('./3 - config.js')
 //----------
 const fs     = require('fs')     // ~  1 ms
 const glob   = require('glob')   // ~ 13 ms
-const mkdirp = require('mkdirp') // ~  1 ms
+const mkdirp = require('mkdirp') // ~  3 ms
 const path   = require('path')   // ~  1 ms
 const rimraf = require('rimraf') // ~ 13 ms
 const util   = require('util')   // ~  1 ms
@@ -24,7 +24,6 @@ const fsReaddir          = util.promisify(fs.readdir)   // ~ 1 ms
 const fsReadFilePromise  = util.promisify(fs.readFile)  // ~ 1 ms
 const fsStatPromise      = util.promisify(fs.stat)      // ~ 1 ms
 const fsWriteFilePromise = util.promisify(fs.writeFile) // ~ 1 ms
-const mkdirpPromise      = util.promisify(mkdirp)       // ~ 1 ms
 const rimrafPromise      = util.promisify(rimraf)       // ~ 1 ms
 
 //---------------------
@@ -1007,7 +1006,7 @@ functions.makeDirPath = function functions_makeDirPath(filePath, isDir) {
         filePath = path.dirname(filePath)
     }
 
-    return mkdirpPromise(filePath).then(function(confirmPath) {
+    return mkdirp(filePath).then(function(confirmPath) {
         return true
     })
 } // makeDirPath

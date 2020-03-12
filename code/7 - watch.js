@@ -14,15 +14,10 @@ const build     = require('./6 - build.js')
 // Includes
 //----------
 const events      = require('events')      // ~ 1 ms
-const mkdirp      = require('mkdirp')      // ~ 1 ms
+const mkdirp      = require('mkdirp')      // ~ 3 ms
 const path        = require('path')        // ~ 1 ms
 const querystring = require('querystring') // ~ 2 ms
 const util        = require('util')        // ~ 1 ms
-
-//---------------------
-// Includes: Promisify
-//---------------------
-const mkdirpPromise = util.promisify(mkdirp) // ~ 1 ms
 
 //---------------------
 // Includes: Lazy Load
@@ -711,7 +706,7 @@ watch.workQueueProcess = async function watch_workQueueProcess() {
                         break
 
                     case 'adddir':
-                        await mkdirpPromise(functions.sourceToDest(work.path))
+                        await mkdirp(functions.sourceToDest(work.path))
                         break
 
                     case 'change':

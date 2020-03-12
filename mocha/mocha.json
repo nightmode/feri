@@ -1,0 +1,5 @@
+{
+  "bail": true,
+  "slow": 5000,
+  "timeout": 5000
+}
