@@ -30,7 +30,6 @@ describe('File -> ../code/4 - functions.js\n', function() {
     afterEach(function() {
         // runs after each test in this describe block
         config = functions.restoreObj(config, configBackup)
-
         shared = functions.restoreObj(shared, sharedBackup)
     })
 
@@ -688,12 +687,28 @@ describe('File -> ../code/4 - functions.js\n', function() {
         // functions.globOptions
         //-----------------------
         describe('globOptions', function() {
-            it('should ', function() {
+            it('should return desired options', function() {
 
                 let obj = functions.globOptions()
 
                 let desired = {
                     'ignore'  : '**/_*',
+                    'nocase'  : true,
+                    'nodir'   : true,
+                    'realpath': true
+                }
+
+                expect(obj).to.eql(desired)
+
+            }) // it
+
+            it('should return desired options when include prefixes are disabled', function() {
+
+                config.includePrefix = '' // disable include prefixes
+
+                let obj = functions.globOptions()
+
+                let desired = {
                     'nocase'  : true,
                     'nodir'   : true,
                     'realpath': true

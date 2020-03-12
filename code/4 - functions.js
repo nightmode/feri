@@ -792,12 +792,20 @@ functions.globOptions = function functions_globOptions() {
 
     @return  {Object}
     */
-    return {
+
+    const obj = {
         'ignore'  : '**/' + config.includePrefix + '*', // glob ignores dot files by default
         'nocase'  : true,
         'nodir'   : true,
         'realpath': true
     }
+
+    if (config.includePrefix === '') {
+        // remove the ignore option
+        delete obj.ignore
+    }
+
+    return obj
 } // globOptions
 
 functions.inDest = function functions_inDest(filePath) {

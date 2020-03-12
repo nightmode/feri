@@ -94,7 +94,7 @@ watch.buildOne = async function watch_buildOne(fileName) {
 
     const isIncludePrefixFile = path.basename(fileName).substr(0, config.includePrefix.length) === config.includePrefix
 
-    if (isIncludePrefixFile) {
+    if (isIncludePrefixFile && config.includePrefix !== '') {
         if (config.includeFileTypes.indexOf(ext) >= 0) {
             // included file could be in any of this type of file so check them all
             files = await functions.findFiles(config.path.source + "/**/*." + ext)
@@ -112,7 +112,7 @@ watch.buildOne = async function watch_buildOne(fileName) {
     if (checkConcatFiles && config.fileType.concat.enabled) {
 
         if (ext === 'concat') {
-            if (isIncludePrefixFile) {
+            if (isIncludePrefixFile && config.includePrefix !== '') {
                 // concat files that are also _ prefixed include files will not trigger a rebuild of their parent concat file when modified
                 // only a modification of the parent concat file or the modification of any non-concat included files would trigger a rebuild
                 // in other words, avoid creating files like _edgeCase.js.concat

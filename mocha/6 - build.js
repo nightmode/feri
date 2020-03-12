@@ -74,6 +74,41 @@ describe('File -> ../code/6 - build.js\n', function() {
 
             }) // it
 
+            it('should build all files when include prefixes are disabled', function() {
+
+                config.includePrefix = '' // disable include prefixes
+
+                config.path.source = path.join(testPath, 'processBuild', 'source')
+                config.path.dest   = path.join(testPath, 'processBuild', 'dest')
+
+                let destFile1 = path.join(config.path.dest, '_include.txt')
+                let destFile2 = path.join(config.path.dest, 'index.html')
+                let destFile3 = path.join(config.path.dest, 'sample.html')
+
+                return Promise.resolve().then(function() {
+
+                    return build.processBuild()
+
+                }).then(function() {
+
+                    return functions.findFiles(config.path.dest + '/**/*')
+
+                }).then(function(files) {
+
+                    let objDesired = [destFile1, destFile2, destFile3]
+
+                    expect(files).to.eql(objDesired)
+
+                }).then(function() {
+
+                    return functions.removeFiles([destFile1, destFile2, destFile3]).then(function(ok) {
+                        expect(ok).to.be(true)
+                    })
+
+                })
+
+            }) // it
+
             it('should build the files specified by a glob search', function() {
 
                 config.path.source = path.join(testPath, 'processBuild', 'source')

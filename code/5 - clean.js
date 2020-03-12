@@ -206,11 +206,12 @@ clean.processOneClean = function clean_processOneClean(filePath) {
             if (!destExists) {
                 throw 'done'
             } else {
-                let prefix = path.basename(filePath).substr(0, config.includePrefix.length)
+                const prefix = path.basename(filePath).substr(0, config.includePrefix.length)
 
-                let fileExt = functions.fileExtension(filePath)
+                const fileExt = functions.fileExtension(filePath)
 
-                if (prefix === config.includePrefix || fileExt === 'concat' || fileExt === 'jss') {
+                if ((prefix === config.includePrefix && config.includePrefix !== '')
+                    || fileExt === 'concat' || fileExt === 'jss') {
                     // prefixed files are includes and should not be in the destination folder
                     // concat files should not be in the destination folder
                     // jss files should not be in the destination folder

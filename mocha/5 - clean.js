@@ -71,6 +71,50 @@ describe('File -> ../code/5 - clean.js\n', function() {
 
         }) // it
 
+        it('should clean up a folder when include prefixes are disabled', function() {
+
+            config.includePrefix = '' // disable include prefixes
+
+            let kodoFile = path.join(config.path.dest, 'kodo.txt')
+            let includeFile = path.join(config.path.dest, '_include.txt')
+
+            return Promise.resolve().then(function() {
+
+                // create one file that should be cleaned up
+                return functions.writeFile(kodoFile, '...')
+
+            }).then(function() {
+
+                // create one file that should not be cleaned up
+                return functions.writeFile(includeFile, '...')
+
+            }).then(function() {
+
+                return clean.processClean()
+
+            }).then(function() {
+
+                return functions.findFiles(config.path.dest + '/**/*')
+
+            }).then(function(files) {
+
+                // check return to make sur
+                let objDesired = [
+                    includeFile,
+                    path.join(config.path.dest, 'css', 'style.css'),
+                    path.join(config.path.dest, 'index.html')
+                ]
+
+                expect(files).to.eql(objDesired)
+
+            }).then(function() {
+
+                return functions.removeFiles(kodoFile, includeFile)
+
+            })
+
+        }) // it
+
         it('should clean up based on a glob search', function() {
 
             let kodoFile = path.join(config.path.dest, 'kodo.txt')

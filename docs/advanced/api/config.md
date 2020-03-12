@@ -194,6 +194,13 @@ Files prefixed with this string will not be published directly to the destinatio
 config.includePrefix = '_'
 ```
 
+To disable include prefixes completely and allow those files to be published directly to the destination directory, set an empty string.
+
+```js
+// disable include prefixes
+config.includePrefix = ''
+```
+
 ## config.glob
 
 Type: `object`

@@ -31,7 +31,7 @@ const config = {
     },
     fileType: null, // object that will hold options for individual file types
     includeFileTypes: [], // Used by watch.buildOne to know which file types may use includes.
-    includePrefix: '_',   // Files prefixed with this string will not be published directly to the destination directory. Prefixed files can be included inside other files that do get published to destination though.
+    includePrefix: '_', // Files prefixed with this string will not be published directly to the destination directory. Prefixed files can be included by files that do get published to the destination directory. Disable include prefixes by setting this value to an empty string.
     glob: { // glob search strings like **/*.gif
         'clean': '', // If specified, use when running clean.processClean without the files parameter.
         'build': '', // If specified, use when running build.processBuild without the files parameter.
