@@ -15,9 +15,9 @@ To enable Brotli compressed versions of your destination files, add the followin
 
 ```js
 // add br build tasks for the following extensions
-let types = ['css', 'html', 'js']
-for (const i in types) {
-    feri.config.map.sourceToDestTasks[types[i]].push('br')
+const types = ['css', 'html', 'js', 'svg']
+for (const type of types) {
+    feri.config.map.sourceToDestTasks[type].push('br')
 }
 ```
 
@@ -99,9 +99,9 @@ To enable Gzip compressed versions of your destination files, add the following 
 
 ```js
 // add gz build tasks for the following extensions
-let types = ['css', 'html', 'js']
-for (const i in types) {
-    feri.config.map.sourceToDestTasks[types[i]].push('gz')
+const types = ['css', 'html', 'js', 'svg']
+for (const type of types) {
+    feri.config.map.sourceToDestTasks[type].push('gz')
 }
 ```
 
