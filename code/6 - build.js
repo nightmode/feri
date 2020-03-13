@@ -334,10 +334,10 @@ build.css = function build_css(obj) {
         if (config.sourceMaps || config.fileType.css.sourceMaps) {
             options.sourceMap = true
             options.sourceMapInlineSources = true
-            options.target = path.dirname(obj.dest)
+            options.rebaseTo = path.dirname(obj.dest)
         }
 
-        let cssMin = new css(options).minify(obj.data)
+        const cssMin = new css(options).minify(obj.data)
 
         if (config.sourceMaps || config.fileType.css.sourceMaps) {
 
@@ -354,7 +354,7 @@ build.css = function build_css(obj) {
 
             sourceMap = functions.normalizeSourceMap(obj, sourceMap)
 
-            let mapObject = functions.objFromSourceMap(obj, sourceMap)
+            const mapObject = functions.objFromSourceMap(obj, sourceMap)
 
             return build.map(mapObject)
 
