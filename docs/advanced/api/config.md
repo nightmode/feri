@@ -603,14 +603,33 @@ Options for [clean-css](https://www.npmjs.com/package/clean-css). Used by [build
 
 ```js
 config.thirdParty.cleanCss = {
-    'advanced'           : false,
-    'aggressiveMerging'  : false,
-    'keepSpecialComments': 0,
-    'mediaMerging'       : false,
-    'processImport'      : false,
-    'rebase'             : false,
-    'roundingPrecision'  : -1,
-    'shorthandCompacting': false
+    level: {
+        1: {
+            cleanupCharsets: true,
+            normalizeUrls: true,
+            optimizeBackground: true,
+            optimizeBorderRadius: true,
+            optimizeFilter: true,
+            optimizeFont: true,
+            optimizeFontWeight: true,
+            optimizeOutline: true,
+            removeEmpty: true,
+            removeNegativePaddings: true,
+            removeQuotes: true,
+            removeWhitespace: true,
+            replaceMultipleZeros: true,
+            replaceTimeUnits: true,
+            replaceZeroUnits: true,
+            roundingPrecision: -1,
+            selectorsSortingMethod: false,
+            specialComments: 0,
+            tidyAtRules: true,
+            tidyBlockScopes: true,
+            tidySelectors: true,
+            transform: function () {}
+        }
+
+    }
 }
 ```
 
