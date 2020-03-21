@@ -1,6 +1,6 @@
 # Feri - Feri Extension
 
-Reload a web browser tab when files change with the [Feri Extension](https://github.com/nightmode/feri-extension#feri-extension) for Chrome and Firefox.
+Reload a web browser tab when files change with the [Feri Extension](https://github.com/nightmode/feri-extension#feri-extension) for Chrome, Edge, and Firefox.
 
 ## Extension Server
 

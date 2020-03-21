@@ -164,7 +164,7 @@ Feri comes with built-in support for [unique file types](docs/advanced/unique-fi
 
 ### Feri Extension
 
-Reload a web browser tab when files change with the [Feri Extension](docs/advanced/feri-extension.md#feri---feri-extension) for Chrome and Firefox.
+Reload a web browser tab when files change with the [Feri Extension](docs/advanced/feri-extension.md#feri---feri-extension) for Chrome, Edge, and Firefox.
 
 ### Edge Cases
 
