@@ -161,10 +161,12 @@ watch.buildOne = async function watch_buildOne(fileName) {
     } // checkJssFiles && config.fileType.jss.enabled
 
     if (files.length > 0) {
-        files = files.filter(function(y) {
-            // filter out any _ prefixed includes
-            return path.basename(y).substr(0, config.includePrefix.length) !== config.includePrefix
-        })
+        if (config.includePrefix !== '') {
+            files = files.filter(function(y) {
+                // filter out any _ prefixed includes
+                return path.basename(y).substr(0, config.includePrefix.length) !== config.includePrefix
+            })
+        } // if
 
         if (files.includes(fileName)) {
             // things can be weird during rename events
