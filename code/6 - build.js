@@ -72,6 +72,7 @@ build.processBuild = function build_processBuild(files, watching) {
     @param   {Boolean}        [watching]  Optional and defaults to false. If true, log less information.
     @return  {Promise}                    Promise that returns an array of file path strings for the files built like ['/dest/css/style.css', '/dest/index.html']
     */
+
     watching = watching || false
 
     if (!config.option.build && !watching) {
@@ -172,6 +173,7 @@ build.processFiles = function build_processFiles(files) {
     @param   {Object,String}  files  Array of paths like ['/source/path1', '/source/path2'] or a string like '/source/path'
     @return  {Promise}               Promise that returns an array of file path strings for the files built like ['/dest/css/style.css', '/dest/index.html']
     */
+
     let filesBuilt = [] // keep track of any files built
 
     return new Promise(function(resolve, reject) {
@@ -236,6 +238,7 @@ build.processOneBuild = function build_processOneBuild(filePath) {
     @param   {String}   filePath  Full path to a file like '/web/source/rss.xml'
     @return  {Promise}            Promise that returns a file path string if something was built otherwise undefined.
     */
+
     let fileExt = functions.fileExtension(filePath)
 
     // reusable object that will be passed between build functions
@@ -294,6 +297,7 @@ build.css = function build_css(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
+
     let buildAlreadySet = obj.build
 
     let sourceBaseName = path.basename(config.path.source)
@@ -378,6 +382,7 @@ build.html = async function build_html(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
+
     obj = await functions.objBuildInMemory(obj)
 
     functions.logWorker('build.html', obj)
@@ -405,6 +410,7 @@ build.js = function build_js(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
+
     let buildAlreadySet = obj.build
 
     let previousSourceMap = false
@@ -568,6 +574,7 @@ build.markdown = async function build_markdown(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
+
     obj = await functions.objBuildInMemory(obj)
 
     functions.logWorker('build.markdown', obj)
@@ -597,6 +604,7 @@ build.svg = async function build_svg(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
+
     obj = await functions.objBuildInMemory(obj)
 
     functions.logWorker('build.svg', obj)
@@ -631,6 +639,7 @@ build.copy = async function build_copy(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
+
     functions.logWorker('build.copy', obj)
 
     if (obj.data === '') {
@@ -672,6 +681,7 @@ build.gif = async function build_gif(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
+
     obj = await functions.objBuildOnDisk(obj)
 
     functions.logWorker('build.gif', obj)
@@ -695,6 +705,7 @@ build.jpg = async function build_jpg(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
+
     obj = await functions.objBuildOnDisk(obj)
 
     functions.logWorker('build.jpg', obj)
@@ -718,6 +729,7 @@ build.png = async function build_png(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
+
     obj = await functions.objBuildOnDisk(obj)
 
     functions.logWorker('build.png', obj)
@@ -749,6 +761,7 @@ build.concat = function build_concat(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
+
     return functions.objBuildWithIncludes(obj, functions.includePathsConcat).then(function(obj) {
 
         functions.logWorker('build.concat', obj)
@@ -904,6 +917,7 @@ build.jss = async function build_jss(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
+
     try {
         obj = await functions.objBuildWithIncludes(obj, functions.includePathsJss)
 
@@ -1241,6 +1255,7 @@ build.finalize = async function build_finalize(obj) {
     @param   {Object}   obj  Reusable object originally created by build.processOneBuild
     @return  {Promise}  obj  Promise that returns a reusable object.
     */
+
     functions.logWorker('build.finalize', obj)
 
     if (obj.data !== '') {
@@ -1277,6 +1292,7 @@ build.br = async function build_br(obj) {
     @param   {Object}          obj  Reusable object originally created by build.processOneBuild
     @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
     */
+
     if (obj.build) {
         obj = await build.finalize(obj) // build.finalize ensures our destination file is ready to be compressed
 
@@ -1304,6 +1320,7 @@ build.gz = async function build_gz(obj) {
     @param   {Object}          obj  Reusable object originally created by build.processOneBuild
     @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
     */
+
     if (obj.build) {
         obj = await build.finalize(obj) // build.finalize ensures our destination file is ready to be compressed
 
@@ -1328,6 +1345,7 @@ build.map = async function build_map(obj) {
     @param   {Object}          obj  Reusable object originally created by build.processOneBuild
     @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
     */
+
     // Troubleshooting a JavaScript source map? Try http://sokra.github.io/source-map-visualization/ and https://sourcemaps.io
     if (obj.build) {
         obj = await build.finalize(obj) // build.finalize ensures our destination file is written to disk

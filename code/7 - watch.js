@@ -188,6 +188,7 @@ watch.checkExtensionClients = function watch_checkExtensionClients() {
     /*
     Ping clients to make sure they are still connected. Terminate clients which have not responded to three or more pings.
     */
+
     extensionServer.clients.forEach(function each(client) {
         if (client.readyState === WebSocket.OPEN) {
             if (client._pingAttempt >= 3) {
@@ -263,6 +264,7 @@ watch.notTooRecent = function watch_notTooRecent(file) {
     @param   {String}   file  File path like '/path/readme.txt'
     @return  {Boolean}        True if a file was not active recently.
     */
+
     let time = new Date().getTime()
     let expireTime = time - 300
 
@@ -291,6 +293,7 @@ watch.processWatch = async function watch_processWatch(sourceFiles, destFiles) {
     @param   {String,Object}  [destFiles]    Optional. Glob search string for watching destination files like '*.css' or array of full paths like ['/dest/fonts.css', '/dest/grid.css']
     @return  {Promise}
     */
+
     if (config.option.watch) {
         // start watch timer
         shared.stats.timeTo.watch = functions.sharedStatsTimeTo(shared.stats.timeTo.watch)
@@ -355,6 +358,7 @@ watch.stop = function watch_stop(stopSource, stopDest, stopExtension) {
     @param   {Boolean}  [stopExtension]  Optional and defaults to true. If true, stop the extension server.
     @return  {Promise}
     */
+
     stopSource    = typeof stopSource    === 'boolean' ? stopSource    : true
     stopDest      = typeof stopDest      === 'boolean' ? stopDest      : true
     stopExtension = typeof stopExtension === 'boolean' ? stopExtension : true
@@ -399,6 +403,7 @@ watch.updateExtensionServer = async function watch_updateExtensionServer(now) {
     @param   {Boolean}  [now]  Optional and defaults to false. True means we have already waited 300 ms for events to settle.
     @return  {Promise}
     */
+
     now = now || false
 
     if (!now) {
@@ -432,6 +437,7 @@ watch.watchDest = async function watch_watchDest(files) {
     @param   {String,Object}  [files]  Optional. Glob search string for watching destination files like '*.css' or array of full paths like ['/dest/fonts.css', '/dest/grid.css']
     @return  {Promise}
     */
+
     lazyLoadChokidar()
 
     let filesType = typeof files
@@ -538,6 +544,7 @@ watch.watchSource = async function watch_watchSource(files) {
     @param   {String,Object}  [files]  Optional. Glob search string for watching source files like '*.html' or array of full paths like ['/source/about.html', '/source/index.html']
     @return  {Promise}
     */
+
     lazyLoadChokidar()
 
     let filesType = typeof files
@@ -673,6 +680,7 @@ watch.workQueueAdd = function watch_workQueueAdd(location, task, path) {
     @param  {String}  task      An event triggered task string like 'add', 'change', and so on.
     @param  {String}  path      A string with the full path to a file or folder.
     */
+
     shared.watch.workQueue.push({
         location: location,
         task: task,
@@ -688,6 +696,7 @@ watch.workQueueProcess = async function watch_workQueueProcess() {
 
     @return  {Promise}
     */
+
     if (shared.watch.working || shared.watch.workQueue.length === 0) {
         // an instance of this function is already working the queue or there is nothing to do
         return 'early'

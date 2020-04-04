@@ -33,6 +33,7 @@ const reWriter = function reWriter(goCrazy, filePath, data) {
     @param  {String}   filePath  String file path like '/source/file.txt'. Not used if goCrazy is false.
     @param  {String}   [data]    Optional data to write to the file. Defaults to 'changed data'.
     */
+
     if (goCrazy) {
         data = data || 'changed data'
         fs.writeFileSync(filePath, data)

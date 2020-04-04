@@ -17,6 +17,7 @@ const propertyAccessor = function propertyAccessor(object, keys) {
     @param   {String}  keys     Property to access using 0 or more dots for notation.
     @return  {*}
     */
+
     let array = keys.split('.')
     while (array.length && (object = object[array.shift()]));
     return object
@@ -114,6 +115,7 @@ const shared = {
             @param   {String}  keys  String like 'error.missingSource'
             @return  {String}        String like 'Missing source file.'
             */
+
             let alreadyLoaded = propertyAccessor(shared.language.loaded, keys)
 
             if (typeof alreadyLoaded === 'string') {

@@ -31,6 +31,7 @@ clean.processClean = async function clean_processClean(files, watching) {
     @param   {Boolean}        [watching]  Optional. If true, we are in watch mode so log less information and do not republish.
     @return  {Promise}                    Promise that returns an array of file path strings for the files cleaned like ['/dest/css/style.css', '/dest/index.html']
     */
+
     watching = watching || false
 
     let filesCleaned = [] // keep track of any files cleaned
@@ -135,6 +136,7 @@ clean.processFiles = function clean_processFiles(files, watching) {
     @param   {Object,String}  files  Array of paths like ['/dest/path1', '/dest/path2'] or a string like '/dest/path'
     @return  {Promise}               Promise that returns an array of file path strings for the files cleaned like ['/dest/css/style.css', '/dest/index.html']
     */
+
     watching = watching || false
 
     let filesCleaned = [] // keep track of any files cleaned
@@ -200,6 +202,7 @@ clean.processOneClean = function clean_processOneClean(filePath) {
     @param   {String}   filePath  Path like '/dest/index.html'
     @return  {Promise}            Promise that returns a file path string if something was cleaned otherwise undefined.
     */
+
     return new Promise(function(resolve, reject) {
         return functions.fileExists(filePath).then(function(destExists) {
 
