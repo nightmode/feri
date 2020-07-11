@@ -84,28 +84,19 @@ watch.buildOne = async function watch_buildOne(fileName) {
 
     let files = []
 
-    let checkConcatFiles = false
-    let checkJssFiles = false
-
     const isIncludePrefixFile = path.basename(fileName).substr(0, config.includePrefix.length) === config.includePrefix
 
     if (isIncludePrefixFile && config.includePrefix !== '') {
         if (config.includeFileTypes.indexOf(ext) >= 0) {
             // included file could be in any of this type of file so check them all
             files = await functions.findFiles(config.path.source + "/**/*." + ext)
-        } else {
-            checkConcatFiles = true
-            checkJssFiles = true
         }
     } else {
         // not an include prefixed file
         files.push(fileName) // this file should be built
-        checkConcatFiles = true
-        checkJssFiles = true
     }
 
-    if (checkConcatFiles && config.fileType.concat.enabled) {
-
+    if (config.fileType.concat.enabled) {
         if (ext === 'concat') {
             if (isIncludePrefixFile && config.includePrefix !== '') {
                 // concat files that are also _ prefixed include files will not trigger a rebuild of their parent concat file when modified
@@ -136,16 +127,11 @@ watch.buildOne = async function watch_buildOne(fileName) {
                 }
             }
         }
-    } // checkConcatFiles && config.fileType.concat.enabled
+    } // config.fileType.concat.enabled
 
-    if (checkJssFiles && config.fileType.jss.enabled) {
-
-        if (ext === 'jss') {
-            ext = functions.fileExtension(functions.removeExt(fileName))
-        }
-
-        // .jss files can encapsulate almost anything so check all fileName.ext.jss files
-        const possibleFiles = await functions.findFiles(config.path.source + '/**/*.' + ext + '.jss')
+    if (config.fileType.jss.enabled) {
+        // .jss files can encapsulate almost anything so check all .jss files
+        const possibleFiles = await functions.findFiles(config.path.source + '/**/*.jss')
 
         if (possibleFiles.length > 0) {
             for (const x in possibleFiles) {
@@ -158,7 +144,7 @@ watch.buildOne = async function watch_buildOne(fileName) {
                 }
             }
         }
-    } // checkJssFiles && config.fileType.jss.enabled
+    } // config.fileType.jss.enabled
 
     if (files.length > 0) {
         if (config.includePrefix !== '') {

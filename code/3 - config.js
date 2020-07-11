@@ -30,7 +30,7 @@ const config = {
         port: 4000 // websocket server port
     },
     fileType: null, // object that will hold options for individual file types
-    includeFileTypes: [], // Used by watch.buildOne to know which file types may use includes.
+    includeFileTypes: [], // Used by watch.buildOne to know which file types may use includes. Do not specify "concat" or "jss" since those file types will always be checked.
     includePrefix: '_', // Files prefixed with this string will not be published directly to the destination directory. Prefixed files can be included by files that do get published to the destination directory. Disable include prefixes by setting this value to an empty string.
     glob: { // glob search strings like **/*.gif
         'clean': '', // If specified, use when running clean.processClean without the files parameter.

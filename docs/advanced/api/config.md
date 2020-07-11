@@ -178,7 +178,7 @@ Note: Feri will only generate a source map when the file it is based on needs to
 
 Type: `array`
 
-Used by [watch.buildOne](watch.md#buildone) to know which file types may use includes. Any array items should be a file extension string without a dot like `txt` or `js`.
+Used by [watch.buildOne](watch.md#buildone) to know which file types may use includes. Any array items should be a file extension string without a dot like `txt` or `js`. Do not specify `concat` or `jss` since those file types will always be checked.
 
 ```js
 config.includeFileTypes = []
