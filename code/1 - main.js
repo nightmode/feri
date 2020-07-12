@@ -405,12 +405,25 @@ const commandLine = async function commandLine() {
         message = message.replace('{software}', 'Feri')
         message = message.replace('{version}', require('../package.json').version)
 
+        const lastLine = (shared.platform === 'win32') ? '' : '\n'
+
         if (err.message === shared.language.display('error.missingSourceDirectory')) {
-            // less scary error with extra help
+            // missing source directory
             functions.log('', false)
             functions.log(color.gray(message) + '\n', false)
             functions.log(color.red(err.message) + '\n', false)
-            functions.log(color.gray(shared.language.display('message.missingSourceHelp')) + '\n', false)
+            functions.log(color.gray(shared.language.display('message.missingSourceHelp')) + lastLine, false)
+        } else if (err.code === 'EADDRINUSE') {
+            // address already in use
+            const errorMessage = shared.language.display('error.portInUse').replace('{port}', config.extension.port)
+
+            functions.log('', false)
+            functions.log(color.gray(message) + '\n', false)
+            functions.log(color.red(errorMessage) + '\n', false)
+            functions.log(color.gray(shared.language.display('message.portInUse')) + lastLine, false)
+
+            // stop watching source, watching dest, and the extension server
+            await watch.stop()
         } else {
             functions.log('\n' + color.gray(message), false)
 
@@ -418,6 +431,9 @@ const commandLine = async function commandLine() {
 
             throw err
         }
+
+        // exit with a failure code of 1
+        process.exit(1)
     }
 } // commandLine
 

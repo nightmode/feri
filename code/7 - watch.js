@@ -204,45 +204,55 @@ watch.extensionServer = async function watch_extensionServer() {
         await watch.stop(false, false, true)
 
         await new Promise(function(resolve, reject) {
-            extensionServer = new WebSocket.Server({ port: config.extension.port }, function(err) {
-                if (err) {
-                    if (shared.cli) {
-                        console.error(err)
-                    }
-                    reject(err)
-                } else {
-                    extensionServer.on('connection', function connection(server) {
-                        server._pingAttempt = 0
-
-                        server.on('message', function incoming(message) {
-                            if (message === 'ping') {
-                                // reply with pong
-                                server.send('pong')
-                            } else if (message === 'pong') {
-                                // client responded to a ping so reset _pingAttempt
-                                server._pingAttempt = 0
-                            }
-                        })
-
-                        server.on('close', function close(o) {
-                            // do nothing
-                        })
-
-                        // send the default document once
-                        server.send(JSON.stringify({ defaultDocument: config.extension.defaultDocument }))
-                    })
-
-                    // check clients for dropped connections every 10 seconds
-                    extensionServerTimer = setInterval(watch.checkExtensionClients, 10000)
-
-                    // extension server is running
-                    functions.log(color.gray(shared.language.display('message.listeningOnPort').replace('{software}', 'Extension server').replace('{port}', config.extension.port)))
-
-                    resolve()
-                }
+            extensionServer = new WebSocket.Server({
+                port: config.extension.port
             })
-        })
-    }
+
+            //------------
+            // Connection
+            //------------
+            extensionServer.on('connection', function connection(server) {
+                server._pingAttempt = 0
+
+                server.on('message', function incoming(message) {
+                    if (message === 'ping') {
+                        // reply with pong
+                        server.send('pong')
+                    } else if (message === 'pong') {
+                        // client responded to a ping so reset _pingAttempt
+                        server._pingAttempt = 0
+                    }
+                })
+
+                server.on('close', function close(o) {
+                    // do nothing
+                })
+
+                // send the default document once
+                server.send(JSON.stringify({ defaultDocument: config.extension.defaultDocument }))
+            }) // connection
+
+            //-------
+            // Error
+            //-------
+            extensionServer.on('error', function (error) {
+                reject(error)
+            }) // error
+
+            //-----------
+            // Listening
+            //-----------
+            extensionServer.on('listening', function listening() {
+                // check clients for dropped connections every 10 seconds
+                extensionServerTimer = setInterval(watch.checkExtensionClients, 10000)
+
+                // extension server is running
+                functions.log(color.gray(shared.language.display('message.listeningOnPort').replace('{software}', 'Extension server').replace('{port}', config.extension.port)))
+
+                resolve()
+            }) // listening
+        }) // await new Promise
+    } // if
 } // extensionServer
 
 watch.notTooRecent = function watch_notTooRecent(file) {

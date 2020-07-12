@@ -64,6 +64,7 @@ const shared = {
                 "missingDest"           : "Missing destination file.",
                 "missingSource"         : "Missing source file.",
                 "missingSourceDirectory": "Missing source directory.",
+                "portInUse"             : "Port {port} is already in use.",
                 "removeDest"            : "Source file delete ignored since source files should never be harmed.",
                 "watchingDest"          : "Error watching destination folder.",
                 "watchingSource"        : "Error watching source folder."
@@ -75,6 +76,7 @@ const shared = {
                 "listeningOnPort"         : "{software} listening on port {port}.",
                 "missingSourceHelp"       : "Check your folders for existing projects or run \"feri --init\" to start a new project.",
                 "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
+                "portInUse"               : "Another instance of Feri may already be running an extension server.",
                 "usingConfigFile"         : "Using {file} file.",
                 "watchUpdated"            : "{software} updated.",
                 "watchingDirectory"       : "Watching {directory} for changes."
@@ -135,6 +137,7 @@ const shared = {
                 "missingDest"           : "Missing destination file.",
                 "missingSource"         : "Missing source file.",
                 "missingSourceDirectory": "Missing source directory.",
+                "portInUse"             : "Port {port} is already in use.",
                 "removeDest"            : "Source file delete ignored since source files should never be harmed.",
                 "watchingDest"          : "Error watching destination folder.",
                 "watchingSource"        : "Error watching source folder."
@@ -146,6 +149,7 @@ const shared = {
                 "listeningOnPort"         : "{software} listening on port {port}.",
                 "missingSourceHelp"       : "Check your folders for existing projects or run \"feri --init\" to start a new project.",
                 "missingSourceToDestTasks": "Missing config.map.sourceToDestTasks for the following file types:",
+                "portInUse"               : "Another instance of Feri may already be running an extension server.",
                 "usingConfigFile"         : "Using {file} file.",
                 "watchUpdated"            : "{software} updated.",
                 "watchingDirectory"       : "Watching {directory} for changes."
