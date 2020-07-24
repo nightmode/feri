@@ -221,7 +221,7 @@ Example
 
 ```js
 // only clean image files
-config.glob.clean = '**/*.{gif,jpg,png}'
+config.glob.clean = '**/*.{gif,jpg,png,svg,webp}'
 ```
 
 ## config.glob.build
@@ -341,6 +341,7 @@ config.map.sourceToDestTasks = {
     'md'    : ['markdown', 'html'],
     'png'   : ['png'],
     'svg'   : ['svg'],
+    'webp'  : ['webp'],
     // copy only tasks
     '7z'    : ['copy'],
     'ai'    : ['copy'],

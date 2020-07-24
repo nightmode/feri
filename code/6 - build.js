@@ -28,19 +28,22 @@ const gzipPromise        = util.promisify(zlib.gzip) // ~ 1 ms
 //-----------------------------
 // Includes: Paths to Binaries
 //-----------------------------
-let gif = '',
-    jpg = '',
-    png = ''
+let gif  = '',
+    jpg  = '',
+    png  = '',
+    webp = ''
 
 if (shared.global) {
     // each of these take ~ 0 ms instead of ~ 297 ms when using require('name').path
-    gif = path.join(shared.path.self, 'node_modules', 'gifsicle', 'vendor', 'gifsicle')
-    jpg = path.join(shared.path.self, 'node_modules', 'jpegtran-bin', 'vendor', 'jpegtran')
-    png = path.join(shared.path.self, 'node_modules', 'optipng-bin', 'vendor', 'optipng')
+    gif  = path.join(shared.path.self, 'node_modules', 'gifsicle', 'vendor', 'gifsicle')
+    jpg  = path.join(shared.path.self, 'node_modules', 'jpegtran-bin', 'vendor', 'jpegtran')
+    png  = path.join(shared.path.self, 'node_modules', 'optipng-bin', 'vendor', 'optipng')
+    webp = path.join(shared.path.self, 'node_modules', 'cwebp-bin', 'vendor', 'cwebp')
 } else {
-    gif = path.join(shared.path.self, '..', 'gifsicle', 'vendor', 'gifsicle')
-    jpg = path.join(shared.path.self, '..', 'jpegtran-bin', 'vendor', 'jpegtran')
-    png = path.join(shared.path.self, '..', 'optipng-bin', 'vendor', 'optipng')
+    gif  = path.join(shared.path.self, '..', 'gifsicle', 'vendor', 'gifsicle')
+    jpg  = path.join(shared.path.self, '..', 'jpegtran-bin', 'vendor', 'jpegtran')
+    png  = path.join(shared.path.self, '..', 'optipng-bin', 'vendor', 'optipng')
+    webp = path.join(shared.path.self, '..', 'cwebp-bin', 'vendor', 'cwebp')
 }
 
 //---------------------
@@ -748,6 +751,31 @@ build.png = async function build_png(obj) {
 
     return obj
 } // png
+
+build.webp = async function build_webp(obj) {
+    /*
+    Losslessly optimize WEBP files using https://www.npmjs.com/package/cwebp-bin.
+
+    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
+    @return  {Promise}  obj  Promise that returns a reusable object.
+    */
+
+    obj = await functions.objBuildOnDisk(obj)
+
+    functions.logWorker('build.webp', obj)
+
+    if (obj.build) {
+        // on the next line "-z 9" means lossless preset and slowest level to make the smallest possible file without using lossy compression
+        await execFilePromise(webp, ['-z', '9', obj.source, '-o', obj.dest])
+    } else {
+        // no further chained promises should be called
+        throw 'done'
+    }
+
+    functions.logOutput(obj.dest)
+
+    return obj
+} // webp
 
 //----------------------
 // Build: With Includes

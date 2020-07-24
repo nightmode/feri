@@ -111,6 +111,7 @@ config.map.sourceToDestTasks = {
     'md'    : ['markdown', 'html'],
     'png'   : ['png'],
     'svg'   : ['svg'],
+    'webp'  : ['webp'],
     // copy only tasks
     '7z'    : ['copy'],
     'ai'    : ['copy'],

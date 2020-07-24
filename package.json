@@ -16,6 +16,7 @@
     "bufferutil": "4.0.1",
     "chokidar": "3.4.1",
     "clean-css": "4.2.3",
+    "cwebp-bin": "6.1.1",
     "gifsicle": "4.0.1",
     "glob": "7.1.6",
     "html-minifier": "4.0.0",

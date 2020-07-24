@@ -32,7 +32,7 @@ Incrementally clean, build, and watch with little to no configuration required.
 * Clean, Build, and Watch
 * Command Line and API
 * Concatenate
-* GIF, JPG, PNG, and SVG
+* GIF, JPG, PNG, SVG, and WEBP
 * HTML, CSS, and JavaScript
 * Linux, macOS, and Windows
 * Markdown
@@ -48,14 +48,14 @@ A single source directory which builds/compiles/minifies into a single destinati
 
 **Build**: If a source file is missing a destination equivalent, build the file. If a source file is newer than a destination equivalent, build the file.
 
-**Watch**: Run a clean or build task in reaction to file system changes.
+**Watch**: Run clean and build tasks in reaction to file system changes.
 
 ### File Extension Based
 
 A single plan of action for each file type. CSS files are minified. JPG files are losslessly optimized. Markdown files are compiled, then minified, and so on. Each extension can have its own unique build process but all files with that extension are treated equally.
 
 ### Include Files
-Any file prefixed with an underscore `_` is considered an include file. Include files do not get directly published from source to destination. Instead, include files contents are only published when a file that can leverage includes is published.
+Any file prefixed with an underscore `_` is considered an include file. Include files do not get directly published from source to destination. Instead, include file contents are only published when a file that can leverage includes is published.
 
 ### Customizable
 
@@ -63,7 +63,7 @@ Although capable as is, Feri is designed to be extremely customizable. Using the
 
 ## Install
 
-Make sure you have [Node](https://nodejs.org/en/) version 11.0.0 or greater. Depending on your operating system, you may also need to install python or other tools used by dependencies that need to be compiled.
+Make sure you have [Node](https://nodejs.org/en/) version 11 or greater. Depending on your operating system, you may also need to install python or other tools used by dependencies that need to be compiled.
 
 Install Feri globally as a command line tool, accessible from anywhere.
 
