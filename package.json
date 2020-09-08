@@ -34,6 +34,10 @@
   "engines": {
     "node": ">= 11"
   },
+  "funding": {
+    "type": "patreon",
+    "url": "https://www.patreon.com/nightmode"
+  },
   "keywords": [
     "clean",
     "build",
