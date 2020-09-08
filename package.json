@@ -1,14 +1,8 @@
 {
   "name": "feri",
-  "version": "4.4.0",
   "description": "An easy to use build tool for web files.",
-  "license": "MIT",
+  "version": "4.4.0",
   "author": "Kai Nightmode",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/nightmode/feri.git"
-  },
-  "main": "code/1 - main.js",
   "bin": {
     "feri": "code/1 - main.js"
   },
@@ -39,14 +33,6 @@
   "engines": {
     "node": ">= 11"
   },
-  "scripts": {
-    "test": "npm run test-shared -loglevel silent && npm run test-functions -loglevel silent && npm run test-clean -loglevel silent && npm run test-build -loglevel silent && npm run test-watch -loglevel silent",
-    "test-shared": "mocha \"mocha/2 - shared.js\" --config \"mocha/mocha.json\"",
-    "test-functions": "mocha \"mocha/4 - functions.js\" --config \"mocha/mocha.json\"",
-    "test-clean": "mocha \"mocha/5 - clean.js\" --config \"mocha/mocha.json\"",
-    "test-build": "mocha \"mocha/6 - build.js\" --config \"mocha/mocha.json\"",
-    "test-watch": "mocha \"mocha/7 - watch.js\" --config \"mocha/mocha.json\""
-  },
   "keywords": [
     "clean",
     "build",
@@ -63,5 +49,19 @@
     "svg",
     "gzip",
     "brotli"
-  ]
+  ],
+  "license": "MIT",
+  "main": "code/1 - main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nightmode/feri.git"
+  },
+  "scripts": {
+    "test": "npm run test-shared -loglevel silent && npm run test-functions -loglevel silent && npm run test-clean -loglevel silent && npm run test-build -loglevel silent && npm run test-watch -loglevel silent",
+    "test-shared": "mocha \"mocha/2 - shared.js\" --config \"mocha/mocha.json\"",
+    "test-functions": "mocha \"mocha/4 - functions.js\" --config \"mocha/mocha.json\"",
+    "test-clean": "mocha \"mocha/5 - clean.js\" --config \"mocha/mocha.json\"",
+    "test-build": "mocha \"mocha/6 - build.js\" --config \"mocha/mocha.json\"",
+    "test-watch": "mocha \"mocha/7 - watch.js\" --config \"mocha/mocha.json\""
+  }
 }
