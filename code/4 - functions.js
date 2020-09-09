@@ -576,6 +576,27 @@ functions.fileExists = function functions_fileExists(filePath) {
     })
 } // fileExists
 
+functions.fileExistsAndSize = function functions_fileExistsAndSize(filePath) {
+    /*
+    Find out if a file exists along with its size.
+
+    @param   {String}   filePath  Path to a file or folder.
+    @return  {Promise}            Promise that returns an object like { exists: true, size: 12345 }
+    */
+
+    return functions.fileStat(filePath).then(function(stat) {
+        return {
+            'exists': true,
+            'size': stat.size // bytes
+        }
+    }).catch(function(err) {
+        return {
+            'exists': false,
+            'size': 0
+        }
+    })
+} // fileExistsAndSize
+
 functions.fileExistsAndTime = function functions_fileExistsAndTime(filePath) {
     /*
     Find out if a file exists along with its modified time.
@@ -622,6 +643,27 @@ functions.filesExist = function functions_filesExist(filePaths) {
 
     return Promise.all(files)
 } // filesExist
+
+functions.filesExistAndSize = function functions_filesExistAndSize(source, dest) {
+    /*
+    Find out if one or both files exist along with their file size.
+
+    @param   {String}  source  Source file path like '/source/favicon.ico'
+    @param   {String}  dest    Destination file path like '/dest/favicon.ico'
+    @return  {Promise}         Promise that returns an object like { source: { exists: true, size: 12345 }, dest: { exists: false, size: 0 } }
+    */
+
+    let files = [source, dest].map(function(file) {
+        return functions.fileExistsAndSize(file)
+    })
+
+    return Promise.all(files).then(function(array) {
+        return {
+            'source': array[0],
+            'dest': array[1]
+        }
+    })
+} // filesExistAndSize
 
 functions.filesExistAndTime = function functions_filesExistAndTime(source, dest) {
     /*

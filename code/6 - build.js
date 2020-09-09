@@ -767,12 +767,29 @@ build.webp = async function build_webp(obj) {
     if (obj.build) {
         // on the next line "-z 9" means lossless preset and slowest level to make the smallest possible file without using lossy compression
         await execFilePromise(webp, ['-z', '9', obj.source, '-o', obj.dest])
+
+        // losslessly compressing a lossy source file can lead a larger destination file
+        // get the file size of the source and destination
+        const files = await functions.filesExistAndSize(obj.source, obj.dest)
+
+        // check the size of the source and destination
+        if (files.source.size < files.dest.size || files.dest.size === 0) {
+            // source file is smaller or destination is zero bytes
+
+            if (files.dest.exists === true) {
+                // remove the destination file
+                await functions.removeFile(obj.dest)
+            }
+
+            // copy source to destination
+            await build.copy(obj)
+        } else {
+            functions.logOutput(obj.dest)
+        }
     } else {
         // no further chained promises should be called
         throw 'done'
     }
-
-    functions.logOutput(obj.dest)
 
     return obj
 } // webp

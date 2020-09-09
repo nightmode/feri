@@ -779,13 +779,13 @@ describe('File -> ../code/6 - build.js\n', function() {
         // build.webp
         //------------
         describe('webp', function() {
-            it('should output a dest webp smaller than the source\n', function() {
+            it('should output a dest webp smaller than a lossless source', function() {
 
                 config.path.source = path.join(testPath, 'webp', 'source')
                 config.path.dest   = path.join(testPath, 'webp', 'dest')
 
-                const sourceFile = path.join(config.path.source, 'feri.webp')
-                const destFile = path.join(config.path.dest, 'feri.webp')
+                const sourceFile = path.join(config.path.source, 'lossless.webp')
+                const destFile = path.join(config.path.dest, 'lossless.webp')
 
                 let destFileSize = 0
                 let sourceFileSize = 0
@@ -818,6 +818,52 @@ describe('File -> ../code/6 - build.js\n', function() {
                     sourceFileSize = fileSize
 
                     expect(destFileSize).to.be.lessThan(sourceFileSize)
+
+                    return functions.removeFile(config.path.dest)
+
+                })
+
+            }) // it
+
+            it('should output a dest webp the same size as a lossy source\n', function() {
+
+                config.path.source = path.join(testPath, 'webp', 'source')
+                config.path.dest   = path.join(testPath, 'webp', 'dest')
+
+                const sourceFile = path.join(config.path.source, 'lossy.webp')
+                const destFile = path.join(config.path.dest, 'lossy.webp')
+
+                let destFileSize = 0
+                let sourceFileSize = 0
+
+                const obj = {
+                    'source': sourceFile,
+                    'dest': '',
+                    'data': '',
+                    'build': false
+                }
+
+                return functions.removeFile(destFile).then(function() {
+
+                    return build.webp(obj)
+
+                }).then(function(returnObj) {
+
+                    expect(returnObj.build).to.be(true)
+
+                    return functions.fileSize(destFile)
+
+                }).then(function(fileSize) {
+
+                    destFileSize = fileSize
+
+                    return functions.fileSize(sourceFile)
+
+                }).then(function(fileSize) {
+
+                    sourceFileSize = fileSize
+
+                    expect(destFileSize).to.be(sourceFileSize)
 
                     return functions.removeFile(config.path.dest)
 

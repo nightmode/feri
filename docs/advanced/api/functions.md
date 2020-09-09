@@ -25,9 +25,11 @@ The functions object is grouped into three categories.
 * [detectCaseSource](#functionsdetectcasesource)
 * [figureOutPath](#functionsfigureoutpath)
 * [fileExists](#functionsfileexists)
+* [fileExistsAndSize](#functionsfileexistsandsize)
 * [fileExistsAndTime](#functionsfileexistsandtime)
 * [fileExtension](#functionsfileextension)
 * [filesExist](#functionsfilesexist)
+* [filesExistAndSize](#functionsfilesexistandsize)
 * [filesExistAndTime](#functionsfilesexistandtime)
 * [fileSize](#functionsfilesize)
 * [fileStat](#functionsfilestat)
@@ -232,6 +234,17 @@ Find out if a file or folder exists.
 @return  {Promise}            Promise that returns a boolean. True if yes.
 ```
 
+### functions.fileExistsAndSize
+
+Type: `function`
+
+Find out if a file exists along with its size.
+
+```
+@param   {String}   filePath  Path to a file or folder.
+@return  {Promise}            Promise that returns an object like { exists: true, size: 12345 }
+```
+
 ### functions.fileExistsAndTime
 
 Type: `function`
@@ -263,6 +276,18 @@ Find out if one or more files or folders exist.
 ```
 @param   {Object}   filePaths  Array of file paths like ['/source/index.html', '/source/about.html']
 @return  {Promise}             Promise that returns an array of booleans. True if a particular file exists.
+```
+
+### functions.filesExistAndSize
+
+Type: `function`
+
+Find out if one or both files exist along with their file size.
+
+```
+@param   {String}  source  Source file path like '/source/favicon.ico'
+@param   {String}  dest    Destination file path like '/dest/favicon.ico'
+@return  {Promise}         Promise that returns an object like { source: { exists: true, size: 12345 }, dest: { exists: false, size: 0 } }
 ```
 
 ### functions.filesExistAndTime
