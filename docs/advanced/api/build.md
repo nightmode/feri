@@ -28,6 +28,7 @@ The build object is grouped into five categories.
 * [gif](#buildgif)
 * [jpg](#buildjpg)
 * [png](#buildpng)
+* [webp](#buildwebp)
 
 ### Build: With Includes
 
@@ -181,6 +182,17 @@ Losslessly optimize JPG files using [jpegtran-bin](https://www.npmjs.com/package
 Type: `function`
 
 Losslessly optimize PNG files using [optipng-bin](https://www.npmjs.com/package/optipng-bin).
+
+```
+@param   {Object}   obj  Reusable object originally created by build.processOneBuild
+@return  {Promise}  obj  Promise that returns a reusable object.
+```
+
+### build.webp
+
+Type: `function`
+
+Losslessly optimize WEBP files using [cwebp-bin](https://www.npmjs.com/package/cwebp-bin).
 
 ```
 @param   {Object}   obj  Reusable object originally created by build.processOneBuild

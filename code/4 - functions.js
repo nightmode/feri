@@ -35,7 +35,7 @@ let playSound // require('node-wav-player') // ~ 11 ms
 //-----------
 // Variables
 //-----------
-let playSoundLastFile = '' // used by functions.playSound()
+let playSoundLastFile = ''   // used by functions.playSound()
 let playSoundPlaying = false // used by functions.playSound()
 let functions = {}
 
@@ -576,6 +576,27 @@ functions.fileExists = function functions_fileExists(filePath) {
     })
 } // fileExists
 
+functions.fileExistsAndSize = function functions_fileExistsAndSize(filePath) {
+    /*
+    Find out if a file exists along with its size.
+
+    @param   {String}   filePath  Path to a file or folder.
+    @return  {Promise}            Promise that returns an object like { exists: true, size: 12345 }
+    */
+
+    return functions.fileStat(filePath).then(function(stat) {
+        return {
+            'exists': true,
+            'size': stat.size // bytes
+        }
+    }).catch(function(err) {
+        return {
+            'exists': false,
+            'size': 0
+        }
+    })
+} // fileExistsAndSize
+
 functions.fileExistsAndTime = function functions_fileExistsAndTime(filePath) {
     /*
     Find out if a file exists along with its modified time.
@@ -622,6 +643,27 @@ functions.filesExist = function functions_filesExist(filePaths) {
 
     return Promise.all(files)
 } // filesExist
+
+functions.filesExistAndSize = function functions_filesExistAndSize(source, dest) {
+    /*
+    Find out if one or both files exist along with their file size.
+
+    @param   {String}  source  Source file path like '/source/favicon.ico'
+    @param   {String}  dest    Destination file path like '/dest/favicon.ico'
+    @return  {Promise}         Promise that returns an object like { source: { exists: true, size: 12345 }, dest: { exists: false, size: 0 } }
+    */
+
+    let files = [source, dest].map(function(file) {
+        return functions.fileExistsAndSize(file)
+    })
+
+    return Promise.all(files).then(function(array) {
+        return {
+            'source': array[0],
+            'dest': array[1]
+        }
+    })
+} // filesExistAndSize
 
 functions.filesExistAndTime = function functions_filesExistAndTime(source, dest) {
     /*
@@ -1191,11 +1233,12 @@ functions.occurrences = function functions_occurrences(string, subString, allowO
     return n
 } // occurrences
 
-functions.playSound = function functions_playSound(file) {
+functions.playSound = async function functions_playSound(file) {
     /*
     Play a sound file using https://www.npmjs.com/package/node-wav-player.
 
-    @param  {String}  file  File path or file name string. A file name without a directory component like 'sound.wav' will be prepended with feri's sound folder location.
+    @param   {String}  file  File path or file name string. A file name without a directory component like 'sound.wav' will be prepended with feri's sound folder location.
+    @return  {Promise}
     */
 
     if (config.playSound) {
@@ -1218,23 +1261,20 @@ functions.playSound = function functions_playSound(file) {
             } else {
                 playSound.stop()
             }
-        }
+        } // if
 
         if (proceed) {
             playSoundPlaying = true
+            playSoundLastFile = file
 
-            playSound.play({
+            await playSound.play({
                 path: file,
                 sync: true
-            }).then(function() {
-                playSoundPlaying = false
-            }).catch(function(err) {
-                playSoundPlaying = false
             })
-        }
 
-        playSoundLastFile = file
-    }
+            playSoundPlaying = false
+        } // if
+    } // if
 } // playSound
 
 functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath) {
@@ -1398,6 +1438,22 @@ functions.removeDest = async function functions_removeDest(filePath, log, isDir)
     }
 
     await functions.removeFile(filePath)
+
+    if (isDir === false) {
+        const fileExt = functions.fileExtension(filePath)
+
+        const tasks = config.map.sourceToDestTasks[fileExt]
+
+        if (Array.isArray(tasks)) {
+            if (tasks.indexOf('br') >= 0) {
+                await functions.removeFile(filePath + '.br')
+            }
+
+            if (tasks.indexOf('gz') >= 0) {
+                await functions.removeFile(filePath + '.gz')
+            }
+        } // if
+    } // if
 
     if (log) {
         let message = 'words.removed'
@@ -2098,7 +2154,7 @@ functions.includePathsJss = async function functions_includePathsJss(data, fileP
 
                     functions.logMultiline(multiline)
 
-                    functions.playSound('error.wav')
+                    functions.playSound('error.wav') // promise we do not need to wait for
 
                     throw 'done'
                 } else {

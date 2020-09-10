@@ -428,9 +428,10 @@ const commandLine = async function commandLine() {
             functions.log('\n' + color.gray(message), false)
 
             functions.logError(err)
-
-            throw err
         }
+
+        // play an error sound before exiting
+        await functions.playSound('error.wav')
 
         // exit with a failure code of 1
         process.exit(1)

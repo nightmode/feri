@@ -28,19 +28,22 @@ const gzipPromise        = util.promisify(zlib.gzip) // ~ 1 ms
 //-----------------------------
 // Includes: Paths to Binaries
 //-----------------------------
-let gif = '',
-    jpg = '',
-    png = ''
+let gif  = '',
+    jpg  = '',
+    png  = '',
+    webp = ''
 
 if (shared.global) {
     // each of these take ~ 0 ms instead of ~ 297 ms when using require('name').path
-    gif = path.join(shared.path.self, 'node_modules', 'gifsicle', 'vendor', 'gifsicle')
-    jpg = path.join(shared.path.self, 'node_modules', 'jpegtran-bin', 'vendor', 'jpegtran')
-    png = path.join(shared.path.self, 'node_modules', 'optipng-bin', 'vendor', 'optipng')
+    gif  = path.join(shared.path.self, 'node_modules', 'gifsicle', 'vendor', 'gifsicle')
+    jpg  = path.join(shared.path.self, 'node_modules', 'jpegtran-bin', 'vendor', 'jpegtran')
+    png  = path.join(shared.path.self, 'node_modules', 'optipng-bin', 'vendor', 'optipng')
+    webp = path.join(shared.path.self, 'node_modules', 'cwebp-bin', 'vendor', 'cwebp')
 } else {
-    gif = path.join(shared.path.self, '..', 'gifsicle', 'vendor', 'gifsicle')
-    jpg = path.join(shared.path.self, '..', 'jpegtran-bin', 'vendor', 'jpegtran')
-    png = path.join(shared.path.self, '..', 'optipng-bin', 'vendor', 'optipng')
+    gif  = path.join(shared.path.self, '..', 'gifsicle', 'vendor', 'gifsicle')
+    jpg  = path.join(shared.path.self, '..', 'jpegtran-bin', 'vendor', 'jpegtran')
+    png  = path.join(shared.path.self, '..', 'optipng-bin', 'vendor', 'optipng')
+    webp = path.join(shared.path.self, '..', 'cwebp-bin', 'vendor', 'cwebp')
 }
 
 //---------------------
@@ -498,7 +501,7 @@ build.js = function build_js(obj) {
 
                 functions.logMultiline(multiline)
 
-                functions.playSound('error.wav')
+                functions.playSound('error.wav') // promise we do not need to wait for
 
                 throw 'done'
             } else {
@@ -748,6 +751,48 @@ build.png = async function build_png(obj) {
 
     return obj
 } // png
+
+build.webp = async function build_webp(obj) {
+    /*
+    Losslessly optimize WEBP files using https://www.npmjs.com/package/cwebp-bin.
+
+    @param   {Object}   obj  Reusable object originally created by build.processOneBuild
+    @return  {Promise}  obj  Promise that returns a reusable object.
+    */
+
+    obj = await functions.objBuildOnDisk(obj)
+
+    functions.logWorker('build.webp', obj)
+
+    if (obj.build) {
+        // on the next line "-z 9" means lossless preset and slowest level to make the smallest possible file without using lossy compression
+        await execFilePromise(webp, ['-z', '9', obj.source, '-o', obj.dest])
+
+        // losslessly compressing a lossy source file can lead a larger destination file
+        // get the file size of the source and destination
+        const files = await functions.filesExistAndSize(obj.source, obj.dest)
+
+        // check the size of the source and destination
+        if (files.source.size < files.dest.size || files.dest.size === 0) {
+            // source file is smaller or destination is zero bytes
+
+            if (files.dest.exists === true) {
+                // remove the destination file
+                await functions.removeFile(obj.dest)
+            }
+
+            // copy source to destination
+            await build.copy(obj)
+        } else {
+            functions.logOutput(obj.dest)
+        }
+    } else {
+        // no further chained promises should be called
+        throw 'done'
+    }
+
+    return obj
+} // webp
 
 //----------------------
 // Build: With Includes
@@ -1028,7 +1073,7 @@ build.jss = async function build_jss(obj) {
 
                             functions.logMultiline(multiline)
 
-                            functions.playSound('error.wav')
+                            functions.playSound('error.wav') // promise we do not need to wait for
 
                             throw 'done'
                         } else {
@@ -1234,7 +1279,7 @@ build.jss = async function build_jss(obj) {
 
             functions.logMultiline(multiline)
 
-            functions.playSound('error.wav')
+            functions.playSound('error.wav') // promise we do not need to wait for
 
             throw 'done'
         } // if

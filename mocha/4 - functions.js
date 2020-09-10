@@ -1115,9 +1115,20 @@ describe('File -> ../code/4 - functions.js\n', function() {
         // functions.playSound
         //---------------------
         describe('playSound', function() {
-            it('should play a sound', function() {
+            it('should play a sound and wait for it to finish', async function() {
 
-                let file = path.join(testPath, 'playSound', 'audio.wav')
+                const file = path.join(testPath, 'playSound', 'audio-wait.wav')
+
+                try {
+                    await functions.playSound(file)
+                } catch (error) {
+                    throw 'Error playing sound.'
+                }
+            }) // it
+
+            it('should play a sound without waiting', function() {
+
+                const file = path.join(testPath, 'playSound', 'audio.wav')
 
                 try {
                     functions.playSound(file) // this sound should play
