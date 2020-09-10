@@ -1439,6 +1439,22 @@ functions.removeDest = async function functions_removeDest(filePath, log, isDir)
 
     await functions.removeFile(filePath)
 
+    if (isDir === false) {
+        const fileExt = functions.fileExtension(filePath)
+
+        const tasks = config.map.sourceToDestTasks[fileExt]
+
+        if (Array.isArray(tasks)) {
+            if (tasks.indexOf('br') >= 0) {
+                await functions.removeFile(filePath + '.br')
+            }
+
+            if (tasks.indexOf('gz') >= 0) {
+                await functions.removeFile(filePath + '.gz')
+            }
+        } // if
+    } // if
+
     if (log) {
         let message = 'words.removed'
 
