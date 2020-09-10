@@ -35,7 +35,7 @@ let playSound // require('node-wav-player') // ~ 11 ms
 //-----------
 // Variables
 //-----------
-let playSoundLastFile = '' // used by functions.playSound()
+let playSoundLastFile = ''   // used by functions.playSound()
 let playSoundPlaying = false // used by functions.playSound()
 let functions = {}
 
@@ -1233,11 +1233,12 @@ functions.occurrences = function functions_occurrences(string, subString, allowO
     return n
 } // occurrences
 
-functions.playSound = function functions_playSound(file) {
+functions.playSound = async function functions_playSound(file) {
     /*
     Play a sound file using https://www.npmjs.com/package/node-wav-player.
 
-    @param  {String}  file  File path or file name string. A file name without a directory component like 'sound.wav' will be prepended with feri's sound folder location.
+    @param   {String}  file  File path or file name string. A file name without a directory component like 'sound.wav' will be prepended with feri's sound folder location.
+    @return  {Promise}
     */
 
     if (config.playSound) {
@@ -1260,23 +1261,20 @@ functions.playSound = function functions_playSound(file) {
             } else {
                 playSound.stop()
             }
-        }
+        } // if
 
         if (proceed) {
             playSoundPlaying = true
+            playSoundLastFile = file
 
-            playSound.play({
+            await playSound.play({
                 path: file,
                 sync: true
-            }).then(function() {
-                playSoundPlaying = false
-            }).catch(function(err) {
-                playSoundPlaying = false
             })
-        }
 
-        playSoundLastFile = file
-    }
+            playSoundPlaying = false
+        } // if
+    } // if
 } // playSound
 
 functions.possibleSourceFiles = function functions_possibleSourceFiles(filePath) {
@@ -2140,7 +2138,7 @@ functions.includePathsJss = async function functions_includePathsJss(data, fileP
 
                     functions.logMultiline(multiline)
 
-                    functions.playSound('error.wav')
+                    functions.playSound('error.wav') // promise we do not need to wait for
 
                     throw 'done'
                 } else {

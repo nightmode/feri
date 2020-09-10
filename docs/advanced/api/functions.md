@@ -500,7 +500,8 @@ Type: `function`
 Play a sound file using [node-wav-player](https://www.npmjs.com/package/node-wav-player).
 
 ```
-@param  {String}  file  File path or file name string. A file name without a directory component like 'sound.wav' will be prepended with feri's sound folder location.
+@param   {String}  file  File path or file name string. A file name without a directory component like 'sound.wav' will be prepended with feri's sound folder location.
+@return  {Promise}
 ```
 
 ### functions.possibleSourceFiles

@@ -501,7 +501,7 @@ build.js = function build_js(obj) {
 
                 functions.logMultiline(multiline)
 
-                functions.playSound('error.wav')
+                functions.playSound('error.wav') // promise we do not need to wait for
 
                 throw 'done'
             } else {
@@ -1073,7 +1073,7 @@ build.jss = async function build_jss(obj) {
 
                             functions.logMultiline(multiline)
 
-                            functions.playSound('error.wav')
+                            functions.playSound('error.wav') // promise we do not need to wait for
 
                             throw 'done'
                         } else {
@@ -1279,7 +1279,7 @@ build.jss = async function build_jss(obj) {
 
             functions.logMultiline(multiline)
 
-            functions.playSound('error.wav')
+            functions.playSound('error.wav') // promise we do not need to wait for
 
             throw 'done'
         } // if
