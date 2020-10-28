@@ -159,6 +159,7 @@ config.map.sourceToDestTasks = {
     'ttf'   : ['copy'],
     'txt'   : ['copy'],
     'vtt'   : ['copy'],
+    'wasm'  : ['copy'],
     'wav'   : ['copy'],
     'weba'  : ['copy'],
     'webm'  : ['copy'],
