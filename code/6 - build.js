@@ -617,9 +617,7 @@ build.svg = async function build_svg(obj) {
             svg = require('svgo')
         }
 
-        let svgo = new svg(config.thirdParty.svgo)
-
-        let result = await svgo.optimize(obj.data)
+        const result = svg.optimize(obj.data, config.thirdParty.svgo)
 
         obj.data = result.data
 
