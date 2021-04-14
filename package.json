@@ -1,7 +1,7 @@
 {
   "name": "feri",
   "description": "An easy to use build tool for web files.",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "author": "Kai Nightmode",
   "bin": {
     "feri": "code/1 - main.js"
