@@ -159,6 +159,7 @@ config.map.sourceToDestTasks = {
     'ttf'   : ['copy'],
     'txt'   : ['copy'],
     'vtt'   : ['copy'],
+    'wasm'  : ['copy'],
     'wav'   : ['copy'],
     'weba'  : ['copy'],
     'webm'  : ['copy'],
@@ -205,8 +206,7 @@ config.thirdParty = {
                 specialComments: 0, // denotes a number of /*! ... */ comments preserved; defaults to `all`
                 tidyAtRules: true, // controls at-rules (e.g. `@charset`, `@import`) optimizing; defaults to `true`
                 tidyBlockScopes: true, // controls block scopes (e.g. `@media`) optimizing; defaults to `true`
-                tidySelectors: true, // controls selectors optimizing; defaults to `true`,
-                transform: function () {} // defines a callback for fine-grained property optimization; defaults to no-op
+                tidySelectors: true, // controls selectors optimizing; defaults to `true`
             }
             // level 2 options -> https://github.com/jakubpawlowicz/clean-css#level-2-optimizations
         }
@@ -247,7 +247,6 @@ config.thirdParty = {
         'xhtmlOut': false
     },
     svgo: { // used by build.svg
-        'full': true, // true means use the defined plugins only
         'js2svg': {
             pretty: false,
             indent: '    '
@@ -255,60 +254,60 @@ config.thirdParty = {
         'multipass': true,
         'plugins': [
             // the array order may be important so do not alpha sort
-            // disable most plugins by passing false as the only value
-            // enable most plugins by passing true as the only value
-            // enable some plugins by passing an object to the plugin -> { removeDesc: { removeAny: true } }
-            { 'removeDoctype': true },
-            { 'removeXMLProcInst': true },
-            { 'removeComments': true },
-            { 'removeMetadata': true },
-            { 'removeXMLNS': false },
-            { 'removeEditorsNSData': true },
-            { 'cleanupAttrs': true },
-            { 'inlineStyles': true },
-            { 'minifyStyles': true },
-            { 'convertStyleToAttrs': true },
-            { 'cleanupIDs': true },
-            { 'prefixIds': { 'prefixIds': false, 'prefixClassNames': false }},
-            { 'removeRasterImages': false },
-            { 'removeUselessDefs': true },
-            { 'cleanupNumericValues': true },
-            { 'cleanupListOfValues': false },
-            { 'convertColors': true },
-            { 'removeUnknownsAndDefaults': true },
-            { 'removeNonInheritableGroupAttrs': true },
-            { 'removeUselessStrokeAndFill': true },
-            { 'removeViewBox': true },
-            { 'cleanupEnableBackground': true },
-            { 'removeHiddenElems': true },
-            { 'removeEmptyText': true },
-            { 'convertShapeToPath': true },
-            { 'convertEllipseToCircle': true },
-            { 'moveElemsAttrsToGroup': true },
-            { 'moveGroupAttrsToElems': true },
-            { 'collapseGroups': true },
-            { 'convertPathData': true },
-            { 'convertTransform': true },
-            { 'removeEmptyAttrs': true },
-            { 'removeEmptyContainers': true },
-            { 'mergePaths': true },
-            { 'removeUnusedNS': true },
-            { 'sortAttrs': false },
-            { 'sortDefsChildren': true },
-            { 'removeTitle': true },
-            { 'removeDesc': true },
-            { 'removeDimensions': false },
-            { 'removeAttrs': false },
-            { 'removeAttributesBySelector': false },
-            { 'removeElementsByAttr': false },
-            { 'removeStyleElement': false },
-            { 'removeScriptElement': false },
-            { 'removeOffCanvasPaths': false }
+            { 'name': 'removeDoctype',                  'active': true },
+            { 'name': 'removeXMLProcInst',              'active': true },
+            { 'name': 'removeComments',                 'active': true },
+            { 'name': 'removeMetadata',                 'active': true },
+            { 'name': 'removeXMLNS',                    'active': false },
+            { 'name': 'removeEditorsNSData',            'active': true },
+            { 'name': 'cleanupAttrs',                   'active': true },
+            { 'name': 'mergeStyles',                    'active': false },
+            { 'name': 'inlineStyles',                   'active': true },
+            { 'name': 'minifyStyles',                   'active': true },
+            { 'name': 'convertStyleToAttrs',            'active': true },
+            { 'name': 'cleanupIDs',                     'active': true },
+            { 'name': 'prefixIds',
+                'params': { 'prefixIds': false, 'prefixClassNames': false }
+            },
+            { 'name': 'removeRasterImages',             'active': false },
+            { 'name': 'removeUselessDefs',              'active': true },
+            { 'name': 'cleanupNumericValues',           'active': true },
+            { 'name': 'cleanupListOfValues',            'active': false },
+            { 'name': 'convertColors',                  'active': true },
+            { 'name': 'removeUnknownsAndDefaults',      'active': true },
+            { 'name': 'removeNonInheritableGroupAttrs', 'active': true },
+            { 'name': 'removeUselessStrokeAndFill',     'active': true },
+            { 'name': 'removeViewBox',                  'active': true },
+            { 'name': 'cleanupEnableBackground',        'active': true },
+            { 'name': 'removeHiddenElems',              'active': true },
+            { 'name': 'removeEmptyText',                'active': true },
+            { 'name': 'convertShapeToPath',             'active': true },
+            { 'name': 'convertEllipseToCircle',         'active': true },
+            { 'name': 'moveElemsAttrsToGroup',          'active': true },
+            { 'name': 'moveGroupAttrsToElems',          'active': true },
+            { 'name': 'collapseGroups',                 'active': true },
+            { 'name': 'convertPathData',                'active': true },
+            { 'name': 'convertTransform',               'active': true },
+            { 'name': 'removeEmptyAttrs',               'active': true },
+            { 'name': 'removeEmptyContainers',          'active': true },
+            { 'name': 'mergePaths',                     'active': true },
+            { 'name': 'removeUnusedNS',                 'active': true },
+            { 'name': 'sortAttrs',                      'active': false },
+            { 'name': 'sortDefsChildren',               'active': true },
+            { 'name': 'removeTitle',                    'active': true },
+            { 'name': 'removeDesc',                     'active': true },
+            { 'name': 'removeDimensions',               'active': false },
+            { 'name': 'removeAttrs',                    'active': false },
+            { 'name': 'removeAttributesBySelector',     'active': false },
+            { 'name': 'removeElementsByAttr',           'active': false },
+            { 'name': 'removeStyleElement',             'active': false },
+            { 'name': 'removeScriptElement',            'active': false },
+            { 'name': 'removeOffCanvasPaths',           'active': false }
             /*
             The following plugins do not support passing false and must be passed options they like in order to use them.
-            { 'addAttributesToSVGElement': ... }
-            { 'addClassesToSVGElement': ... }
-            { 'reusePaths': ... }
+                addAttributesToSVGElement
+                addClassesToSVGElement
+                reusePaths
             */
         ]
     }
