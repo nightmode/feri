@@ -12,10 +12,10 @@
     "clean-css": "5.1.2",
     "cwebp-bin": "6.1.1",
     "gifsicle": "5.2.0",
-    "glob": "7.1.6",
+    "glob": "7.1.7",
     "html-minifier": "4.0.0",
     "jpegtran-bin": "5.0.2",
-    "markdown-it": "12.0.4",
+    "markdown-it": "12.0.6",
     "mkdirp": "1.0.4",
     "multi-stage-sourcemap": "0.3.1",
     "node-wav-player": "0.2.0",
@@ -23,13 +23,13 @@
     "rimraf": "3.0.2",
     "source-map": "0.7.3",
     "svgo": "2.3.0",
-    "terser": "5.6.1",
-    "utf-8-validate": "5.0.4",
-    "ws": "7.4.4"
+    "terser": "5.7.0",
+    "utf-8-validate": "5.0.5",
+    "ws": "7.4.6"
   },
   "devDependencies": {
     "expect.js": "0.3.1",
-    "mocha": "8.3.2"
+    "mocha": "8.4.0"
   },
   "engines": {
     "node": ">= 11"
