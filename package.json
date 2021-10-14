@@ -7,29 +7,29 @@
     "feri": "code/1 - main.js"
   },
   "dependencies": {
-    "bufferutil": "4.0.3",
-    "chokidar": "3.5.1",
-    "clean-css": "5.1.2",
+    "bufferutil": "4.0.5",
+    "chokidar": "3.5.2",
+    "clean-css": "5.2.1",
     "cwebp-bin": "6.1.1",
-    "gifsicle": "5.2.0",
-    "glob": "7.1.7",
+    "gifsicle": "5.2.1",
+    "glob": "7.2.0",
     "html-minifier": "4.0.0",
     "jpegtran-bin": "5.0.2",
-    "markdown-it": "12.0.6",
+    "markdown-it": "12.2.0",
     "mkdirp": "1.0.4",
     "multi-stage-sourcemap": "0.3.1",
     "node-wav-player": "0.2.0",
     "optipng-bin": "7.0.0",
     "rimraf": "3.0.2",
     "source-map": "0.7.3",
-    "svgo": "2.3.0",
-    "terser": "5.7.0",
-    "utf-8-validate": "5.0.5",
-    "ws": "7.4.6"
+    "svgo": "2.7.0",
+    "terser": "5.9.0",
+    "utf-8-validate": "5.0.7",
+    "ws": "7.5.5"
   },
   "devDependencies": {
     "expect.js": "0.3.1",
-    "mocha": "8.4.0"
+    "mocha": "9.1.2"
   },
   "engines": {
     "node": ">= 11"
