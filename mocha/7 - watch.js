@@ -11,8 +11,6 @@ const WebSocket = require('ws')
 const shared    = require('../code/2 - shared.js')
 let   config    = require('../code/3 - config.js')
 const functions = require('../code/4 - functions.js')
-const clean     = require('../code/5 - clean.js')
-const build     = require('../code/6 - build.js')
 const watch     = require('../code/7 - watch.js')
 
 //-----------
