@@ -627,7 +627,7 @@ config.thirdParty.cleanCss = {
             tidyAtRules: true,
             tidyBlockScopes: true,
             tidySelectors: true,
-            transform: function () {}
+            transform: function() {}
         }
 
     }
