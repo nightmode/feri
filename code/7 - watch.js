@@ -19,8 +19,8 @@ const path        = require('path')        // ~ 1 ms
 //---------------------
 // Includes: Lazy Load
 //---------------------
-let chokidar  // require('chokidar') // ~ 75 ms
-let WebSocket // require('ws')       // ~ 34 ms
+let chokidar  // require('chokidar') // ~ 22 ms
+let WebSocket // require('ws')       // ~ 27 ms
 
 //-----------
 // Variables
@@ -45,13 +45,13 @@ const watch = {
 // Private Functions
 //-------------------
 const lazyLoadChokidar = function watch_lazyLoadChokidar() {
-    if (typeof chokidar !== 'object') {
+    if (typeof chokidar === 'undefined') {
         chokidar = require('chokidar')
     }
 } // lazyLoadChokidar
 
 const lazyLoadWebSocket = function watch_lazyLoadWebSocket() {
-    if (typeof WebSocket !== 'object') {
+    if (typeof WebSocket === 'undefined') {
         WebSocket = require('ws')
     }
 } // lazyLoadWebSocket
@@ -211,7 +211,9 @@ watch.extensionServer = async function watch_extensionServer() {
             extensionServer.on('connection', function connection(server) {
                 server._pingAttempt = 0
 
-                server.on('message', function incoming(message) {
+                server.on('message', function incoming(buffer) {
+                    const message = buffer.toString()
+
                     if (message === 'ping') {
                         // reply with pong
                         server.send('pong')
@@ -221,10 +223,6 @@ watch.extensionServer = async function watch_extensionServer() {
                     }
                 })
 
-                server.on('close', function close(o) {
-                    // do nothing
-                })
-
                 // send the default document once
                 server.send(JSON.stringify({ defaultDocument: config.extension.defaultDocument }))
             }) // connection
@@ -232,7 +230,7 @@ watch.extensionServer = async function watch_extensionServer() {
             //-------
             // Error
             //-------
-            extensionServer.on('error', function (error) {
+            extensionServer.on('error', function(error) {
                 reject(error)
             }) // error
 
@@ -379,15 +377,15 @@ watch.stop = function watch_stop(stopSource, stopDest, stopExtension) {
             clearInterval(extensionServerTimer) // no need to check for disconnected clients anymore
 
             if (typeof extensionServer === 'object') {
-                extensionServer.close(function() {
-                    resolve()
-                })
-            } else {
-                resolve()
-            }
-        } else {
-            resolve()
-        }
+                extensionServer.close()
+
+                for (const client of extensionServer.clients) {
+                    client.terminate()
+                } // for
+            } // if
+        } // if
+
+        resolve()
     })
 } // stop
 
