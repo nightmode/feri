@@ -12,7 +12,6 @@ const functions = require('./4 - functions.js')
 // Includes
 //----------
 const fs   = require('fs')   // ~  1 ms
-const glob = require('glob') // ~ 13 ms
 const path = require('path') // ~  1 ms
 const util = require('util') // ~  1 ms
 const zlib = require('zlib') // ~  6 ms

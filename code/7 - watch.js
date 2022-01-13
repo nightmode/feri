@@ -7,7 +7,6 @@ const color     = require('./color.js')
 const shared    = require('./2 - shared.js')
 const config    = require('./3 - config.js')
 const functions = require('./4 - functions.js')
-const clean     = require('./5 - clean.js')
 const build     = require('./6 - build.js')
 
 //----------
@@ -16,8 +15,6 @@ const build     = require('./6 - build.js')
 const events      = require('events')      // ~ 1 ms
 const mkdirp      = require('mkdirp')      // ~ 3 ms
 const path        = require('path')        // ~ 1 ms
-const querystring = require('querystring') // ~ 2 ms
-const util        = require('util')        // ~ 1 ms
 
 //---------------------
 // Includes: Lazy Load

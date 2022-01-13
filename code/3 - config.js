@@ -3,7 +3,6 @@
 //----------------
 // Includes: Self
 //----------------
-const color  = require('./color.js')
 const shared = require('./2 - shared.js')
 
 //----------
