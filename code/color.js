@@ -49,7 +49,7 @@ function showColor(hue, info = '') {
 function setupColors() {
     for (let item in colors) {
         const hue = item
-        color[hue] = function (info) {
+        color[hue] = function(info) {
             return showColor(hue, info)
         }
     }

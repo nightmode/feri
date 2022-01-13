@@ -1713,7 +1713,7 @@ functions.uniqueArray = function functions_uniqueArray(array) {
     */
 
     // Code from http://stackoverflow.com/questions/1960473/unique-values-in-an-array
-    return array.filter(function (a, b, c) {
+    return array.filter(function(a, b, c) {
         // keeps first occurrence
         return c.indexOf(a) === b
     })

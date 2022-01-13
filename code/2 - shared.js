@@ -21,7 +21,7 @@ const propertyAccessor = function propertyAccessor(object, keys) {
     let array = keys.split('.')
     while (array.length && (object = object[array.shift()]));
     return object
-}
+} // propertyAccessor
 
 //-----------
 // Variables

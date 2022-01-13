@@ -23,7 +23,7 @@ try {
     }
 } catch(e) {
     // do nothing
-}
+} // catch
 
 //----------
 // Includes
@@ -45,13 +45,13 @@ try {
     shared.global = typeof(fs.statSync(pathToModules)) === 'object'
 } catch(e) {
     shared.global = false
-}
+} // catch
 
 //-----------------------
 // Includes: Self Part 2
 //-----------------------
-const config    = require('./3 - config.js')    // ~  3 ms
-const functions = require('./4 - functions.js') // ~ 20 ms
+const config    = require('./3 - config.js')
+const functions = require('./4 - functions.js')
 const clean     = require('./5 - clean.js')
 const build     = require('./6 - build.js')
 const watch     = require('./7 - watch.js')
@@ -71,7 +71,7 @@ const feri = {
     'clean'    : clean,
     'build'    : build,
     'watch'    : watch
-}
+} // feri
 
 //-----------
 // Functions
@@ -99,8 +99,8 @@ const commandLine = async function commandLine() {
             configFileExists = await fsStatPromise(configFile)
         } catch (error) {
             // do nothing
-        }
-    }
+        } // catch
+    } // catch
 
     try {
         if (configFileExists) {
@@ -108,12 +108,12 @@ const commandLine = async function commandLine() {
                 require(configFile)(feri) // share our feri reference with this require
             } catch(e) {
                 throw new Error('Loading ' + configFile + ' \n\n' + 'Make sure the file is a valid module like...\n\n' + 'module.exports = function(feri) { /* code */ }')
-            }
-        }
+            } // catch
+        } // if
 
         if (config.language !== 'en-us') {
             await functions.setLanguage()
-        }
+        } // if
 
         //----------------------------------------------
         // Command Line Options: Source and Destination
@@ -133,8 +133,8 @@ const commandLine = async function commandLine() {
                 } else {
                     // lower case this option
                     commandLineOptions[i] = commandLineOptions[i].toLowerCase()
-                }
-            }
+                } // if
+            } // for
         })()
 
         //----------------------
@@ -161,7 +161,7 @@ const commandLine = async function commandLine() {
                 console.log(message)
             } else {
                 console.log()
-            }
+            } // if
         } else if (inOptions(['--help', '-h'])) {
             shared.help = true
             //----------------------------
@@ -229,22 +229,22 @@ const commandLine = async function commandLine() {
             //-----------------------------
             if (inOptions(['--clean', '-c'])) {
                 config.option.clean = true
-            }
+            } // if
 
             if (inOptions(['--noclean', '-nc'])) {
                 config.option.clean = false
-            }
+            } // if
 
             //-----------------------------
             // Command Line Options: Build
             //-----------------------------
             if (inOptions(['--build', '-b'])) {
                 config.option.build = true
-            }
+            } // if
 
             if (inOptions(['--nobuild', '-nb'])) {
                 config.option.build = false
-            }
+            } // if
 
             //-----------------------------
             // Command Line Options: Watch
@@ -252,31 +252,31 @@ const commandLine = async function commandLine() {
             if (inOptions(['--extensions', '-e'])) {
                 config.option.extensions = true
                 config.option.watch = true // extensions on so better turn on watch too
-            }
+            } // if
 
             if (inOptions(['--noextensions', '-ne'])) {
                 config.option.extensions = false
-            }
+            } // if
 
             if (inOptions(['--watch', '-w'])) {
                 config.option.watch = true
-            }
+            } // if
 
             if (inOptions(['--nowatch', '-nw'])) {
                 config.option.watch = false
                 config.option.extensions = false // no watch, no point in extensions
-            }
+            } // if
 
             //-----------------------------
             // Command Line Options: Stats
             //-----------------------------
             if (inOptions(['--stats', '-s'])) {
                 config.option.stats = true
-            }
+            } // if
 
             if (inOptions(['--nostats', '-ns'])) {
                 config.option.stats = false
-            }
+            } // if
 
             //---------------------------
             // Command Line Options: All
@@ -287,7 +287,7 @@ const commandLine = async function commandLine() {
                 config.option.watch = true
                 config.option.stats = true
                 config.option.extensions = true
-            }
+            } // if
 
             //-----------------------------------
             // Command Line Options: Force Build
@@ -296,7 +296,7 @@ const commandLine = async function commandLine() {
                 // forcebuild is a stronger option than nobuild
                 config.option.build = true
                 config.option.forcebuild = true
-            }
+            } // if
 
             //---------------------------------
             // Command Line Options: Republish
@@ -306,7 +306,7 @@ const commandLine = async function commandLine() {
                 config.option.republish = true
                 config.option.clean = true
                 config.option.build = true
-            }
+            } // if
 
             //----------------------------
             // Command Line Options: Misc
@@ -331,21 +331,21 @@ const commandLine = async function commandLine() {
             } else {
                 if (configFileExists) {
                     functions.log(color.gray(shared.language.display('message.usingConfigFile').replace('{file}', '"' + path.basename(configFile) + '"')), false)
-                }
+                } // if
 
                 //-------
                 // Clean
                 //-------
                 if (config.option.clean) {
                     await clean.processClean()
-                }
+                } // if
 
                 //-------
                 // Build
                 //-------
                 if (config.option.build) {
                     await build.processBuild()
-                }
+                } // if
 
                 //-------
                 // Watch
@@ -354,7 +354,7 @@ const commandLine = async function commandLine() {
                     shared.suppressWatchEvents = true // suppress watch events until the title "Watching" is displayed
 
                     await watch.processWatch()
-                }
+                } // if
 
                 //-------
                 // Stats
@@ -386,7 +386,7 @@ const commandLine = async function commandLine() {
 
                     functions.log('', false)
                     functions.log(color.gray(shared.language.display('paddedGroups.stats.total')) + ' ' + color.cyan(totalTime) + color.gray(' ' + shared.language.display('words.seconds') + '\n'))
-                }
+                } // if
 
                 //----------
                 // Watching
@@ -428,14 +428,14 @@ const commandLine = async function commandLine() {
             functions.log('\n' + color.gray(message), false)
 
             functions.logError(err)
-        }
+        } // if
 
         // play an error sound before exiting
         await functions.playSound('error.wav')
 
         // exit with a failure code of 1
         process.exit(1)
-    }
+    } // catch
 } // commandLine
 
 const inOptions = function inOptions(search) {
@@ -449,7 +449,7 @@ const inOptions = function inOptions(search) {
         if (commandLineOptions.indexOf(search[i]) >= 0) {
             return true
         }
-    }
+    } // for
 
     return false
 } // inOptions
@@ -481,7 +481,7 @@ if (shared.cli) {
     // Load Timer: End
     //-----------------
     shared.stats.timeTo.load = functions.sharedStatsTimeTo(time)
-}
+} // if
 
 //---------
 // Exports

@@ -11,8 +11,6 @@ const WebSocket = require('ws')
 const shared    = require('../code/2 - shared.js')
 let   config    = require('../code/3 - config.js')
 const functions = require('../code/4 - functions.js')
-const clean     = require('../code/5 - clean.js')
-const build     = require('../code/6 - build.js')
 const watch     = require('../code/7 - watch.js')
 
 //-----------
@@ -143,10 +141,10 @@ describe('File -> ../code/7 - watch.js\n', function() {
                 return new Promise(function(resolve, reject) {
                     let sock = new WebSocket('ws://localhost:' + config.extension.port)
 
-                    sock.onopen = function(event) {
+                    sock.on('open', function() {
                         // one time event
                         resolve()
-                    }
+                    }) // sock.on('open')
                 })
 
             })
@@ -164,14 +162,14 @@ describe('File -> ../code/7 - watch.js\n', function() {
                 return new Promise(function(resolve, reject) {
                     let sock = new WebSocket('ws://localhost:' + config.extension.port)
 
-                    sock.onmessage = function (event) {
-                        let data = event.data
+                    sock.on('message', function(buffer) {
+                        let data = {}
 
                         try {
-                            data = JSON.parse(data)
+                            data = JSON.parse(buffer.toString())
                         } catch(e) {
                             // do nothing
-                        }
+                        } // catch
 
                         if (data.hasOwnProperty('defaultDocument')) {
                             if (typeof data.defaultDocument === 'string') {
@@ -180,8 +178,8 @@ describe('File -> ../code/7 - watch.js\n', function() {
                                 expect(defaultDocument).to.be(config.extension.defaultDocument)
                                 resolve()
                             }
-                        }
-                    }
+                        } // if
+                    }) // sock.on('message')
                 })
 
             })
@@ -199,16 +197,16 @@ describe('File -> ../code/7 - watch.js\n', function() {
                 return new Promise(function(resolve, reject) {
                     let sock = new WebSocket('ws://localhost:' + config.extension.port)
 
-                    sock.onopen = function(event) {
+                    sock.on('open', function() {
                         // one time event
-                        sock.send("ping")
-                    }
+                        sock.send('ping')
+                    }) // sock.on('open')
 
-                    sock.onmessage = function (event) {
-                        if (event.data === 'pong') {
+                    sock.on('message', function(buffer) {
+                        if (buffer.toString() === 'pong') {
                             resolve()
                         }
-                    }
+                    }) // sock.on('message')
                 })
 
             })
@@ -672,30 +670,30 @@ describe('File -> ../code/7 - watch.js\n', function() {
                 return new Promise(function(resolve, reject) {
                     let sock = new WebSocket('ws://localhost:' + config.extension.port)
 
-                    sock.onopen = function(event) {
+                    sock.on('open', function() {
                         // one time event
 
                         // simulate changed files
                         shared.extension.changedFiles = ['index.html']
 
                         watch.updateExtensionServer('now')
-                    }
+                    }) // sock.on('open')
 
-                    sock.onmessage = function (event) {
-                        let data = event.data
+                    sock.on('message', function(buffer) {
+                        let data = {}
 
                         try {
-                            data = JSON.parse(data)
+                            data = JSON.parse(buffer.toString())
                         } catch(e) {
                             // do nothing
-                        }
+                        } // catch
 
                         if (data.hasOwnProperty('files')) {
                             if (Array.isArray(data.files) && data.files.length === 1 && data.files[0] === 'index.html') {
                                 resolve()
                             }
                         }
-                    }
+                    }) // sock.on('message')
                 })
 
             })
