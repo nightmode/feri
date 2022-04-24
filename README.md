@@ -63,7 +63,7 @@ Although capable as is, Feri is designed to be extremely customizable. Using the
 
 ## Install
 
-Make sure you have [Node](https://nodejs.org/en/) version 11 or greater. Depending on your operating system, you may also need to install python or other tools used by dependencies that need to be compiled.
+Make sure you have [Node](https://nodejs.org/en/) version 12 or greater. Depending on your operating system, you may also need to install python or other tools used by dependencies that need to be compiled.
 
 Install Feri globally as a command line tool, accessible from anywhere.
 

@@ -32,7 +32,7 @@
     "mocha": "9.2.2"
   },
   "engines": {
-    "node": ">= 11"
+    "node": ">= 12"
   },
   "funding": {
     "type": "patreon",
