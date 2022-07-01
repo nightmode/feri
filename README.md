@@ -25,7 +25,7 @@ Incrementally clean, build, and watch with little to no configuration required.
   * [Feri Extension](docs/advanced/feri-extension.md#feri---feri-extension)
   * [Edge Cases](docs/advanced/edge-cases.md#feri---edge-cases)
   * [API](docs/advanced/api/index.md#feri---api)
-* [Support](#support)
+* [Donate](#donate)
 
 ## Features
 
@@ -174,16 +174,9 @@ Some [edge cases](docs/advanced/edge-cases.md#feri---edge-cases) you may want to
 
 Leverage or even replace anything behind the scenes with [full access](docs/advanced/api/index.md#feri---api) to the [API](docs/advanced/api/index.md#feri---api).
 
-## Support
+## Donate
 
-Help [support this project](https://www.patreon.com/nightmode) on Patreon. Help me caretake and craft new software, videos, and interactive art. All for as little as $1 a month.
-
-In addition to Patreon, here are some other ways you can help this project.
-
- * [Translate Feri](docs/multilingual.md#translation-guide) into other languages. tlhIngan maH!
- * [Report any issues](https://github.com/nightmode/feri/issues) on GitHub.
- * Social media, meetups, fan art, papercraft, or any other way you like sharing your enthusiasm.
- * Pull reqrests to improv spellng in documantations!
+Buy me [Bubble Tea](https://ko-fi.com/kai_nightmode). Support my work and get the ability to send me private messages on Ko-fi. ^_^
 
 ## License
 
