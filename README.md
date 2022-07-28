@@ -34,7 +34,6 @@ Incrementally clean, build, and watch with little to no configuration required.
 * Concatenate
 * GIF, JPG, PNG, SVG, and WEBP
 * HTML, CSS, and JavaScript
-* Linux, macOS, and Windows
 * Markdown
 * [Multilingual](docs/multilingual.md#feri---multilingual)
 
@@ -96,20 +95,6 @@ npx feri --version
 ```
 
 The above commands will provide additional upgrade information if a newer version is available. Otherwise, just the currently installed version will be listed.
-
-### Upgrade from Version 3
-
-Two potentially critical things to be aware of.
-
-* The dependency `livereload` has been replaced by a new extension server.
-* Many dependencies have been removed.
-    * If you still want to work with CoffeeScript, EJS, Jade, JSX, Less, Pug, Sass, and/or Stylus, you'll need to create your own custom build task.
-
-Custom config files using the boolean `feri.config.option.livereload` should be changed to `feri.config.option.extensions`.
-
-API use for anything `livereload` related should be changed to an `extension` or `extensions` equivalent depending on where you are in the plumbing.
-
-Command line options like `--livereload` and `--nolivereload` have new equivalents like `--extensions` and `--noextensions`.
 
 ## Command Line
 
