@@ -62,7 +62,7 @@ Although capable as is, Feri is designed to be extremely customizable. Using the
 
 ## Install
 
-Make sure you have [Node](https://nodejs.org/en/) version 12 or greater. Depending on your operating system, you may also need to install python or other tools used by dependencies that need to be compiled.
+Make sure you have [Node](https://nodejs.org/en/) version 13 or greater. Depending on your operating system, you may also need to install python or other tools used by dependencies that need to be compiled.
 
 Install Feri globally as a command line tool, accessible from anywhere.
 
@@ -145,7 +145,6 @@ Feri thinks you should be able to grab nearly any npm module and make a [custom 
 ### Unique File Types
 
 Feri comes with built-in support for [unique file types](docs/advanced/unique-file-types.md#feri---unique-file-types) such as `br`, `concat`, `gz`, and `jss`.
-
 
 ### Feri Extension
 
