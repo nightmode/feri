@@ -1,7 +1,4 @@
 {
-  "name": "feri",
-  "description": "An easy to use build tool for web files.",
-  "version": "4.11.0",
   "author": "Kai Nightmode",
   "bin": {
     "feri": "code/1 - main.js"
@@ -27,6 +24,7 @@
     "utf-8-validate": "5.0.9",
     "ws": "8.8.1"
   },
+  "description": "An easy to use build tool for web files.",
   "devDependencies": {
     "expect.js": "0.3.1",
     "mocha": "10.0.0"
@@ -58,6 +56,7 @@
   ],
   "license": "MIT",
   "main": "code/1 - main.js",
+  "name": "feri",
   "repository": {
     "type": "git",
     "url": "https://github.com/nightmode/feri.git"
@@ -69,5 +68,6 @@
     "test-clean": "mocha \"mocha/5 - clean.js\" --config \"mocha/mocha.json\"",
     "test-build": "mocha \"mocha/6 - build.js\" --config \"mocha/mocha.json\"",
     "test-watch": "mocha \"mocha/7 - watch.js\" --config \"mocha/mocha.json\""
-  }
+  },
+  "version": "4.11.0"
 }
