@@ -440,7 +440,7 @@ const commandLine = async function commandLine() {
 
 const inOptions = function inOptions(search) {
     /*
-    Find out if the options variable has any occurence of what we are searching for.
+    Find out if the options variable has any occurrence of what we are searching for.
 
     @param  {Object}  search  Array of strings like ['--clean', '-c']
     */
@@ -472,7 +472,7 @@ if (shared.cli) {
     // Require
     //---------
 
-    // set sensible defaults for programatic consumers
+    // set sensible defaults for programmatic consumers
     config.option.clean = true
     config.option.build = true
     config.option.watch = true

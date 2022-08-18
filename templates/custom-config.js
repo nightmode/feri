@@ -38,5 +38,5 @@ module.exports = function(feri) {
     // config.path.dest   = 'dest'
 
     // Looking for even more options?
-    // https://github.com/nightmode/feri/blob/master/docs/advanced/api/config.md
+    // https://github.com/nightmode/feri/blob/main/docs/advanced/api/config.md
 }

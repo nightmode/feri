@@ -1,6 +1,6 @@
-# Feri
+<img src="https://raw.githubusercontent.com/nightmode/feri/main/images/feri.jpg" width="830" alt="">
 
-<img src="https://raw.githubusercontent.com/nightmode/feri/master/images/feri-the-ferret.png" width="420" height="453" align="right" alt="">
+# Feri
 
 An easy to use build tool for web files.
 
@@ -122,7 +122,7 @@ feri --init
 
 This will create a `source` and `dest` folder along with a custom config file. To make sure everything works, place some files in the `source` folder. Now run `feri` from the directory where you can see the source and destination folders. After a short time, your published files should appear in the `dest` folder.
 
-You'll need to run `feri` everytime you want to clean and/or build new files. Once you are comfortable with that pattern, try running the following command instead.
+You'll need to run `feri` every time you want to clean and/or build new files. Once you are comfortable with that pattern, try running the following command instead.
 
 ```
 feri --watch

@@ -53,7 +53,7 @@ For more information, see the [Shared](shared.md#feri---shared) documentation.
 
 ### Config
 
-Config holds all the variables that may be set by the command line, set by a [custom config file](../custom-config-file.md#feri---custom-config-file) for the command line, or set programatically.
+Config holds all the variables that may be set by the command line, set by a [custom config file](../custom-config-file.md#feri---custom-config-file) for the command line, or set programmatically.
 
 For more information, see the [Config](config.md#feri---config) documentation.
 

@@ -100,7 +100,7 @@ watch.buildOne = async function watch_buildOne(fileName) {
                 // only a modification of the parent concat file or the modification of any non-concat included files would trigger a rebuild
                 // in other words, avoid creating files like _edgeCase.js.concat
                 functions.log(color.red(shared.language.display('error.concatInclude')))
-                functions.log(color.gray('https://github.com/nightmode/feri/blob/master/docs/extension-specific-info.md#twilight-zone') + '\n')
+                functions.log(color.gray('https://github.com/nightmode/feri/blob/main/docs/extension-specific-info.md#twilight-zone') + '\n')
             }
 
             ext = functions.fileExtension(functions.removeExt(fileName))

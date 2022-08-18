@@ -197,7 +197,7 @@ config.thirdParty = {
                 removeNegativePaddings: true, // controls removing negative paddings; defaults to `true`
                 removeQuotes: true, // controls removing quotes when unnecessary; defaults to `true`
                 removeWhitespace: true, // controls removing unused whitespace; defaults to `true`
-                replaceMultipleZeros: true, // contols removing redundant zeros; defaults to `true`
+                replaceMultipleZeros: true, // controls removing redundant zeros; defaults to `true`
                 replaceTimeUnits: true, // controls replacing time units with shorter values; defaults to `true`
                 replaceZeroUnits: true, // controls replacing zero values with units; defaults to `true`
                 roundingPrecision: -1, // rounds pixel values to `N` decimal places; `false` disables rounding; defaults to `false`

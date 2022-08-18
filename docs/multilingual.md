@@ -30,11 +30,11 @@ module.exports = function(feri) {
 }
 ```
 
-By setting `feri.config.langauge` to `sv-se`, we are telling Feri to look in its own [language](https://github.com/nightmode/feri/tree/master/language) directory for a file called `sv-se.json`. Assuming the language file exists and is valid, the next time you run Feri you'll be doing so in a certain Muppet Chef's preferred language!
+By setting `feri.config.language` to `sv-se`, we are telling Feri to look in its own [language](https://github.com/nightmode/feri/tree/main/language) directory for a file called `sv-se.json`. Assuming the language file exists and is valid, the next time you run Feri you'll be doing so in a certain Muppet Chef's preferred language!
 
 ## Translation Guide
 
-In addition to US English, Feri stores translations inside her [language](https://github.com/nightmode/feri/tree/master/language) directory. Files are named by language, then country, and saved as JSON.
+In addition to US English, Feri stores translations inside her [language](https://github.com/nightmode/feri/tree/main/language) directory. Files are named by language, then country, and saved as JSON.
 
 To make a new translation, start by copying `en-us.json` to a new file. If you are not sure which language or country abbreviation to use, feel free to name your file `new.json` or similar.
 
@@ -129,11 +129,11 @@ Each word in a group should be padded with enough spaces to equal the longest st
 
 For example, `paddedGroups.build` has two keys, `output` and `copy`. The longest string is `output` with 6 characters. Extra spaces were added `copy` to reach a matching length of 6 characters. Now they both display nicely together.
 
-<img src="https://raw.githubusercontent.com/nightmode/feri/master/images/translation-guide-build.png" width="918" height="150" alt="">
+<img src="https://raw.githubusercontent.com/nightmode/feri/main/images/translation-guide-build.png" width="918" height="150" alt="">
 
 Same idea for `paddedGroups.stats` except the longest strings here are 5 characters. Adding 1 space to `load` allows all of these strings to line up nicely when displayed.
 
-<img src="https://raw.githubusercontent.com/nightmode/feri/master/images/translation-guide-stats.png" width="918" height="227" alt="">
+<img src="https://raw.githubusercontent.com/nightmode/feri/main/images/translation-guide-stats.png" width="918" height="227" alt="">
 
 ### Words
 

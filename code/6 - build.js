@@ -1164,7 +1164,7 @@ build.jss = async function build_jss(obj) {
 
         const sourcePath = config.path.source
 
-        const sharedObj = {} // a shared object reference which will be accesible from any include
+        const sharedObj = {} // a shared object reference which will be accessible from any include
 
         await Function(daFunc)()(writeFunction, require, sourcePath, sharedObj) // create with first () then run with second ()
 

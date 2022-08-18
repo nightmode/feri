@@ -634,7 +634,7 @@ Convert a source path to its destination equivalent.
 
 Type: `function`
 
-Returns a copy of the shared.stats object for programatic consumers.
+Returns a copy of the shared.stats object for programmatic consumers.
 
 ```
 @return  {Object}

@@ -58,7 +58,7 @@ Chokidar + Mac = Weird
     Let's say you are using chokidar to watch a directory.
     First you create a file in said directory, witness a watch event, then immediately run functions.removeFile to remove the parent directory containing the file.
     You then receive an error like "ENOTEMPTY: directory not empty, rmdir /path/to/file".
-    If you have to conpensate for this, delete files first to ensure empty folders. Then remove empty folders.
+    If you have to compensate for this, delete files first to ensure empty folders. Then remove empty folders.
 */
 
 //-------------

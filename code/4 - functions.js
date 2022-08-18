@@ -351,7 +351,7 @@ functions.detectCaseDest = async function functions_detectCaseDest() {
     if (shared.folder.dest.lastPath === dest) {
         // dest has not changed since we last checked
         if (shared.folder.dest.case !== '') {
-            // case is not empty so return the previuosly figured out case
+            // case is not empty so return the previously figured out case
             return Promise.resolve(shared.folder.dest.case)
         }
     } else {
@@ -454,7 +454,7 @@ functions.detectCaseSource = async function functions_detectCaseSource() {
     if (shared.folder.source.lastPath === source) {
         // source has not changed since we last checked
         if (shared.folder.source.case !== '') {
-            // case is not empty so return the previuosly figured out case
+            // case is not empty so return the previously figured out case
             return Promise.resolve(shared.folder.source.case)
         }
     } else {
@@ -715,7 +715,7 @@ functions.fileStat = async function functions_fileStat(filePath) {
     if (functions.inDest(filePath)) {
         //check the file case style of the destination volume
         if (config.case.dest !== '') {
-            // user specified overide
+            // user specified override
             theCase = config.case.dest
         } else {
             theCase = await functions.detectCaseDest()
@@ -723,7 +723,7 @@ functions.fileStat = async function functions_fileStat(filePath) {
     } else if (functions.inSource(filePath)) {
         //check the file case style of the source volume
         if (config.case.source !== '') {
-            // user specified overide
+            // user specified override
             theCase = config.case.source
         } else {
             theCase = await functions.detectCaseSource()
@@ -1674,7 +1674,7 @@ functions.sourceToDest = function functions_sourceToDest(source) {
 
 functions.stats = function functions_stats() {
     /*
-    Returns a copy of the shared.stats object for programatic consumers.
+    Returns a copy of the shared.stats object for programmatic consumers.
 
     @return  {Object}
     */
@@ -1691,7 +1691,7 @@ functions.trimSource = function functions_trimSource(filePath) {
     */
 
     return filePath.replace(path.dirname(config.path.source), '')
-} // tirmSource
+} // trimSource
 
 functions.trimDest = function functions_trimDest(filePath) {
     /*
@@ -1740,7 +1740,7 @@ functions.upgradeAvailable = function functions_upgradeAvailable(specifyRemoteVe
 
             https.get({
                 host: 'raw.githubusercontent.com',
-                path: '/nightmode/feri/master/package.json'
+                path: '/nightmode/feri/main/package.json'
             }, function(response) {
                 // explicitly treat incoming data as utf8 (avoids issues with multi-byte chars)
                 response.setEncoding('utf8')
@@ -1842,7 +1842,7 @@ functions.useExistingSourceMap = async function functions_useExistingSourceMap(f
         // map file already exists but has it been generated recently?
         if (mapFile.mtime < (new Date().getTime() - 5000)) {
             // map file is older than 5 seconds and most likely not just built
-            // remove old map file so the build tool calling this function can genereate a new one
+            // remove old map file so the build tool calling this function can generate a new one
             removeFile = true
         } else {
             let data = await functions.readFile(filePath)

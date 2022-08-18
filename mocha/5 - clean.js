@@ -170,7 +170,7 @@ describe('File -> ../code/5 - clean.js\n', function() {
 
             }).then(function() {
 
-                // create onother file that should be cleaned up
+                // create another file that should be cleaned up
                 return functions.writeFile(podoFile, '...')
 
             }).then(function() {

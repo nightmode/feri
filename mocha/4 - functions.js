@@ -23,7 +23,7 @@ const testPath = path.join(shared.path.self, 'mocha', 'files', 'functions')
 describe('File -> ../code/4 - functions.js\n', function() {
 
     beforeEach(function() {
-        // runs before each test in this descibe block
+        // runs before each test in this describe block
         config.option.concurLimit = 1
     })
 
@@ -1615,7 +1615,7 @@ describe('File -> ../code/4 - functions.js\n', function() {
 
             }) // it
 
-            it('should return a version string if the remote verion is newer than the local version', function() {
+            it('should return a version string if the remote version is newer than the local version', function() {
 
                 return functions.upgradeAvailable('9.9.9').then(function(result) {
                     expect(result).to.be('9.9.9')
