@@ -22,6 +22,6 @@ Visit the [Feri Extension](https://github.com/nightmode/feri-extension#feri-exte
 
 ## License
 
-MIT © [Kai Nightmode](https://twitter.com/kai_nightmode)
+MIT © [Kai Nightmode](https://nightmode.fm/)
 
 The MIT license does NOT apply to the name `Feri` or any of the images in this repository. Those items are strictly copyrighted to Kai Nightmode.
