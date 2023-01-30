@@ -235,78 +235,83 @@ config.thirdParty = {
         }
     },
     markdownIt: { // used by build.markdown
-        'breaks': false,
-        'highlight': null,
-        'html': false,
-        'langPrefix': 'language-',
-        'linkify': true,
-        'maxNesting': 100,
-        'quotes': '“”‘’',
+        'breaks'     : false,
+        'highlight'  : null,
+        'html'       : false,
+        'langPrefix' : 'language-',
+        'linkify'    : true,
+        'maxNesting' : 100,
+        'quotes'     : '“”‘’',
         'typographer': false,
-        'xhtmlOut': false
+        'xhtmlOut'   : false
     },
     svgo: { // used by build.svg
         'js2svg': {
-            pretty: false,
-            indent: '    '
+            indent: '    ',
+            pretty: false
         },
         'multipass': true,
         'plugins': [
-            // the array order may be important so do not alpha sort
-            { 'name': 'removeDoctype',                  'active': true },
-            { 'name': 'removeXMLProcInst',              'active': true },
-            { 'name': 'removeComments',                 'active': true },
-            { 'name': 'removeMetadata',                 'active': true },
-            { 'name': 'removeXMLNS',                    'active': false },
-            { 'name': 'removeEditorsNSData',            'active': true },
-            { 'name': 'cleanupAttrs',                   'active': true },
-            { 'name': 'mergeStyles',                    'active': false },
-            { 'name': 'inlineStyles',                   'active': true },
-            { 'name': 'minifyStyles',                   'active': true },
-            { 'name': 'convertStyleToAttrs',            'active': true },
-            { 'name': 'cleanupIDs',                     'active': true },
-            { 'name': 'prefixIds',
-                'params': { 'prefixIds': false, 'prefixClassNames': false }
+            // enabled plugins
+            'cleanupAttrs',
+            'cleanupEnableBackground',
+            'cleanupIds',
+            'cleanupNumericValues',
+            'collapseGroups',
+            'convertColors',
+            'convertEllipseToCircle',
+            'convertPathData',
+            'convertShapeToPath',
+            'convertStyleToAttrs',
+            'convertTransform',
+            'inlineStyles',
+            'mergePaths',
+            'minifyStyles',
+            'moveElemsAttrsToGroup',
+            'moveGroupAttrsToElems',
+            {
+                'name': 'prefixIds',
+                'params': {
+                    'prefixIds': false,
+                    'prefixClassNames': false
+                }
             },
-            { 'name': 'removeRasterImages',             'active': false },
-            { 'name': 'removeUselessDefs',              'active': true },
-            { 'name': 'cleanupNumericValues',           'active': true },
-            { 'name': 'cleanupListOfValues',            'active': false },
-            { 'name': 'convertColors',                  'active': true },
-            { 'name': 'removeUnknownsAndDefaults',      'active': true },
-            { 'name': 'removeNonInheritableGroupAttrs', 'active': true },
-            { 'name': 'removeUselessStrokeAndFill',     'active': true },
-            { 'name': 'removeViewBox',                  'active': true },
-            { 'name': 'cleanupEnableBackground',        'active': true },
-            { 'name': 'removeHiddenElems',              'active': true },
-            { 'name': 'removeEmptyText',                'active': true },
-            { 'name': 'convertShapeToPath',             'active': true },
-            { 'name': 'convertEllipseToCircle',         'active': true },
-            { 'name': 'moveElemsAttrsToGroup',          'active': true },
-            { 'name': 'moveGroupAttrsToElems',          'active': true },
-            { 'name': 'collapseGroups',                 'active': true },
-            { 'name': 'convertPathData',                'active': true },
-            { 'name': 'convertTransform',               'active': true },
-            { 'name': 'removeEmptyAttrs',               'active': true },
-            { 'name': 'removeEmptyContainers',          'active': true },
-            { 'name': 'mergePaths',                     'active': true },
-            { 'name': 'removeUnusedNS',                 'active': true },
-            { 'name': 'sortAttrs',                      'active': false },
-            { 'name': 'sortDefsChildren',               'active': true },
-            { 'name': 'removeTitle',                    'active': true },
-            { 'name': 'removeDesc',                     'active': true },
-            { 'name': 'removeDimensions',               'active': false },
-            { 'name': 'removeAttrs',                    'active': false },
-            { 'name': 'removeAttributesBySelector',     'active': false },
-            { 'name': 'removeElementsByAttr',           'active': false },
-            { 'name': 'removeStyleElement',             'active': false },
-            { 'name': 'removeScriptElement',            'active': false },
-            { 'name': 'removeOffCanvasPaths',           'active': false }
+            'removeComments',
+            'removeDesc',
+            'removeDoctype',
+            'removeEditorsNSData',
+            'removeEmptyAttrs',
+            'removeEmptyContainers',
+            'removeEmptyText',
+            'removeHiddenElems',
+            'removeMetadata',
+            'removeNonInheritableGroupAttrs',
+            'removeTitle',
+            'removeUnknownsAndDefaults',
+            'removeUnusedNS',
+            'removeUselessDefs',
+            'removeUselessStrokeAndFill',
+            'removeViewBox',
+            'removeXMLProcInst',
+            'sortDefsChildren'
+
+            // disabled plugins
             /*
-            The following plugins do not support passing false and must be passed options they like in order to use them.
-                addAttributesToSVGElement
-                addClassesToSVGElement
-                reusePaths
+               addAttributesToSVGElement
+               addClassesToSVGElement
+               cleanupListOfValues
+               mergeStyles
+               removeAttributesBySelector
+               removeAttrs
+               removeDimensions
+               removeElementsByAttr
+               removeOffCanvasPaths
+               removeRasterImages
+               removeScriptElement
+               removeStyleElement
+               removeXMLNS
+               reusePaths
+               sortAttrs
             */
         ]
     }

@@ -695,67 +695,73 @@ Options for [svgo](https://www.npmjs.com/package/svgo). Used by [build.svg](buil
 ```js
 'full': true, // true means use the defined plugins only
 'js2svg': {
-    pretty: false,
-    indent: '    '
+    indent: '    ',
+    pretty: false
 },
 'multipass': true,
 'plugins': [
-    // the array order is important so do not alpha sort
-    // disable a plugin by passing false as the only value
-    // enable a plugin by passing true as the only value
-    // enable a plugin by passing an object to the plugin -> { removeDesc: { removeAny: true } }
-    { 'removeDoctype': true },
-    { 'removeXMLProcInst': true },
-    { 'removeComments': true },
-    { 'removeMetadata': true },
-    { 'removeXMLNS': false },
-    { 'removeEditorsNSData': true },
-    { 'cleanupAttrs': true },
-    { 'inlineStyles': true },
-    { 'minifyStyles': true },
-    { 'convertStyleToAttrs': true },
-    { 'cleanupIDs': true },
-    { 'prefixIds': false },
-    { 'removeRasterImages': false },
-    { 'removeUselessDefs': true },
-    { 'cleanupNumericValues': true },
-    { 'cleanupListOfValues': false },
-    { 'convertColors': true },
-    { 'removeUnknownsAndDefaults': true },
-    { 'removeNonInheritableGroupAttrs': true },
-    { 'removeUselessStrokeAndFill': true },
-    { 'removeViewBox': true },
-    { 'cleanupEnableBackground': true },
-    { 'removeHiddenElems': true },
-    { 'removeEmptyText': true },
-    { 'convertShapeToPath': true },
-    { 'convertEllipseToCircle': true },
-    { 'moveElemsAttrsToGroup': true },
-    { 'moveGroupAttrsToElems': true },
-    { 'collapseGroups': true },
-    { 'convertPathData': true },
-    { 'convertTransform': true },
-    { 'removeEmptyAttrs': true },
-    { 'removeEmptyContainers': true },
-    { 'mergePaths': true },
-    { 'removeUnusedNS': true },
-    { 'sortAttrs': false },
-    { 'sortDefsChildren': true },
-    { 'removeTitle': true },
-    { 'removeDesc': true },
-    { 'removeDimensions': false },
-    { 'removeAttrs': false },
-    { 'removeAttributesBySelector': false },
-    { 'removeElementsByAttr': false },
-    { 'removeStyleElement': false },
-    { 'removeScriptElement': false },
-    { 'removeOffCanvasPaths': false }
+    // enabled plugins
+    'cleanupAttrs',
+    'cleanupEnableBackground',
+    'cleanupIds',
+    'cleanupNumericValues',
+    'collapseGroups',
+    'convertColors',
+    'convertEllipseToCircle',
+    'convertPathData',
+    'convertShapeToPath',
+    'convertStyleToAttrs',
+    'convertTransform',
+    'inlineStyles',
+    'mergePaths',
+    'minifyStyles',
+    'moveElemsAttrsToGroup',
+    'moveGroupAttrsToElems',
+    {
+        'name': 'prefixIds',
+        'params': {
+            'prefixIds': false,
+            'prefixClassNames': false
+        }
+    },
+    'removeComments',
+    'removeDesc',
+    'removeDoctype',
+    'removeEditorsNSData',
+    'removeEmptyAttrs',
+    'removeEmptyContainers',
+    'removeEmptyText',
+    'removeHiddenElems',
+    'removeMetadata',
+    'removeNonInheritableGroupAttrs',
+    'removeTitle',
+    'removeUnknownsAndDefaults',
+    'removeUnusedNS',
+    'removeUselessDefs',
+    'removeUselessStrokeAndFill',
+    'removeViewBox',
+    'removeXMLProcInst',
+    'sortDefsChildren'
+
+    // disabled plugins
     /*
-    The following plugins do not support passing false and must be passed options they like in order to use them.
-    { 'addAttributesToSVGElement': ... }
-    { 'addClassesToSVGElement': ... }
-    { 'reusePaths': ... }
+        addAttributesToSVGElement
+        addClassesToSVGElement
+        cleanupListOfValues
+        mergeStyles
+        removeAttributesBySelector
+        removeAttrs
+        removeDimensions
+        removeElementsByAttr
+        removeOffCanvasPaths
+        removeRasterImages
+        removeScriptElement
+        removeStyleElement
+        removeXMLNS
+        reusePaths
+        sortAttrs
     */
+]
 ```
 
 ## License

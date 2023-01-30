@@ -24,7 +24,6 @@ const fsReaddir          = util.promisify(fs.readdir)   // ~ 1 ms
 const fsReadFilePromise  = util.promisify(fs.readFile)  // ~ 1 ms
 const fsStatPromise      = util.promisify(fs.stat)      // ~ 1 ms
 const fsWriteFilePromise = util.promisify(fs.writeFile) // ~ 1 ms
-const rimrafPromise      = util.promisify(rimraf)       // ~ 1 ms
 
 //---------------------
 // Includes: Lazy Load
@@ -1487,7 +1486,7 @@ functions.removeFile = function functions_removeFile(filePath) {
     @return  {Promise}            Promise that returns true if the file or folder was removed or if there was nothing to do. An error otherwise.
     */
 
-    return rimrafPromise(filePath, { glob: false }).then(function(error) {
+    return rimraf(filePath, { glob: false }).then(function(error) {
         return error || true
     })
 } // removeFile
