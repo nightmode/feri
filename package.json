@@ -69,5 +69,5 @@
     "test-build": "mocha \"mocha/6 - build.js\" --config \"mocha/mocha.json\"",
     "test-watch": "mocha \"mocha/7 - watch.js\" --config \"mocha/mocha.json\""
   },
-  "version": "5.0.0"
+  "version": "5.1.0"
 }
