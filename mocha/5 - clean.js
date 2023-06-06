@@ -62,7 +62,7 @@ describe('File -> ../code/5 - clean.js\n', function() {
 
                 let objDesired = [
                     path.join(config.path.dest, 'css', 'style.css'),
-                    path.join(config.path.dest, 'index.html'),
+                    path.join(config.path.dest, 'index.html')
                 ]
 
                 expect(files).to.eql(objDesired)
@@ -98,7 +98,6 @@ describe('File -> ../code/5 - clean.js\n', function() {
 
             }).then(function(files) {
 
-                // check return to make sur
                 let objDesired = [
                     includeFile,
                     path.join(config.path.dest, 'css', 'style.css'),
@@ -140,7 +139,6 @@ describe('File -> ../code/5 - clean.js\n', function() {
 
             }).then(function(files) {
 
-                // check return to make sur
                 let objDesired = [
                     path.join(config.path.dest, 'css', 'style.css'),
                     path.join(config.path.dest, 'index.html'),
@@ -188,7 +186,6 @@ describe('File -> ../code/5 - clean.js\n', function() {
 
             }).then(function(files) {
 
-                // check return to make sur
                 let objDesired = [
                     path.join(config.path.dest, 'css', 'style.css'),
                     path.join(config.path.dest, 'index.html'),

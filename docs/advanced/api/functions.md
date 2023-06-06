@@ -333,7 +333,7 @@ Find the files using [glob](https://www.npmjs.com/package/glob).
 ```
 @param   {String}  match      String like '*.jpg'
 @param   {Object}  [options]  Optional. Options for glob.
-@return  {Promise}            Promise that returns an array of files or empty array if successful. Error if not.
+@return  {Promise}            Promise that returns an array of files or empty array if successful. Returns an error if not successful.
 ```
 
 ### functions.globOptions

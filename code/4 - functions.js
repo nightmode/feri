@@ -10,12 +10,12 @@ const config = require('./3 - config.js')
 //----------
 // Includes
 //----------
-const fs     = require('fs')     // ~  1 ms
-const glob   = require('glob')   // ~ 13 ms
-const mkdirp = require('mkdirp') // ~  3 ms
-const path   = require('path')   // ~  1 ms
-const rimraf = require('rimraf') // ~ 13 ms
-const util   = require('util')   // ~  1 ms
+const fs         = require('fs')     // ~  1 ms
+const { glob }   = require('glob')   // ~ 13 ms
+const { mkdirp } = require('mkdirp') // ~  3 ms
+const path       = require('path')   // ~  1 ms
+const { rimraf } = require('rimraf') // ~ 13 ms
+const util       = require('util')   // ~  1 ms
 
 //---------------------
 // Includes: Promisify
@@ -809,38 +809,36 @@ functions.fileStat = async function functions_fileStat(filePath) {
     }
 } // fileStat
 
-functions.findFiles = function functions_findFiles(match, options) {
+functions.findFiles = async function functions_findFiles(match, options) {
     /*
     Find the files using https://www.npmjs.com/package/glob.
 
     @param   {String}  match      String like '*.jpg'
     @param   {Object}  [options]  Optional. Options for glob.
-    @return  {Promise}            Promise that returns an array of files or empty array if successful. Error if not.
+    @return  {Promise}            Promise that returns an array of files or empty array if successful. Returns an error if not successful.
     */
 
-    return new Promise(function(resolve, reject) {
-        if (typeof options === 'undefined') {
-            options = functions.globOptions()
-        }
+    if (typeof options === 'undefined') {
+        options = functions.globOptions()
+    } // if
 
-		if (match.charAt(1) === ':') {
-			// we have a windows path
+    if (match.charAt(1) === ':') {
+        // we have a windows path
 
-			// glob doesn't like c: or similar so trim two characters
-			match = match.substr(2)
+        // glob doesn't like c: or similar so trim two characters
+        match = match.substr(2)
 
-			// glob only likes forward slashes
-			match = match.replace(/\\/g, '/')
-		}
+        // glob only likes forward slashes
+        match = match.replace(/\\/g, '/')
+    } // if
 
-        glob(match, options, function(err, files) {
-            if (err) {
-                reject(err)
-            } else {
-                resolve(files)
-            }
-        })
-    })
+    try {
+        const files = await glob(match, options)
+
+        return files.sort()
+    } catch (err) {
+        throw new Error('functions.findFiles -> ' + err.message)
+    } // try
 } // findFiles
 
 functions.globOptions = function functions_globOptions() {
