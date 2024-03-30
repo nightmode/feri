@@ -212,10 +212,4 @@ Total 0.392 seconds
 
 Firstly, you are awesome! Thank you.
 
-If you have not already, try testing your translation with different command line switches like `--republish`, `--watch`, and/or `--extensions` to see how everything looks. Once everything is set you can send a [pull request](https://github.com/nightmode/feri/pulls) or contact [Kai Nightmode](https://nightmode.fm/) for assistance.
-
-## License
-
-MIT © [Kai Nightmode](https://nightmode.fm/)
-
-The MIT license does NOT apply to the name `Feri` or any of the images in this repository. Those items are strictly copyrighted to Kai Nightmode.
+If you have not already, try testing your translation with different command line switches like `--republish`, `--watch`, and/or `--extensions` to see how everything looks. Once everything is set you can send a [pull request](https://github.com/nightmode/feri/pulls).

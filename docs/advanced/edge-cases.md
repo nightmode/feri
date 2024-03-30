@@ -18,9 +18,3 @@ So, if your files are a fighting, you now know why and how to break 'em up!
 It may be tempting to include [concatenate](unique-file-types.md#concatenate-concat) files within other `.concat` files. If you do, you'll increase the human cost of figuring out what files are being published from the source directory. Not only do you have to peek inside the first CONCAT file, but you have to trace any included CONCAT files, the files they include, and so on. A nesting nightmare.
 
 Even worse, any CONCAT files that are also [include files](../../readme.MD#include-files) can lead to a twilight zone where files build once but never again. When watching, Feri will try to warn you when she detects this situation but if unheeded... you won't be able to trust that all your source folder changes are being published. Yikes!
-
-## License
-
-MIT © [Kai Nightmode](https://nightmode.fm/)
-
-The MIT license does NOT apply to the name `Feri` or any of the images in this repository. Those items are strictly copyrighted to Kai Nightmode.

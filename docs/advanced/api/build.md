@@ -261,9 +261,3 @@ Build a map file. If needed, also make `.br` and/or `.gz` compressed versions of
 @param   {Object}          obj  Reusable object originally created by build.processOneBuild
 @return  {Promise,Object}  obj  Promise that returns a reusable object or just the reusable object.
 ```
-
-## License
-
-MIT © [Kai Nightmode](https://nightmode.fm/)
-
-The MIT license does NOT apply to the name `Feri` or any of the images in this repository. Those items are strictly copyrighted to Kai Nightmode.

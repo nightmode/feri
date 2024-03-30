@@ -197,9 +197,3 @@ Plus, any require already in use by Feri or a dependency means free performance.
 The functions `include()` and `write()` are critical to how JSS files get built and their function names must not be redeclared in your own code.
 
 The strings `{{js-include-begin}}` and `{{js-include-end}}` must not be used. String variants like `{{js-0}}` and `{{js-include-0-0}}` where `0` can be replaced with a number must not be used either. All of these strings are used internally when building JSS files.
-
-## License
-
-MIT © [Kai Nightmode](https://nightmode.fm/)
-
-The MIT license does NOT apply to the name `Feri` or any of the images in this repository. Those items are strictly copyrighted to Kai Nightmode.

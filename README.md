@@ -25,7 +25,7 @@ Incrementally clean, build, and watch with little to no configuration required.
   * [Feri Extension](docs/advanced/feri-extension.md#feri---feri-extension)
   * [Edge Cases](docs/advanced/edge-cases.md#feri---edge-cases)
   * [API](docs/advanced/api/index.md#feri---api)
-* [Donate](#donate)
+* [License](#license)
 
 ## Features
 
@@ -158,12 +158,8 @@ Some [edge cases](docs/advanced/edge-cases.md#feri---edge-cases) you may want to
 
 Leverage or even replace anything behind the scenes with [full access](docs/advanced/api/index.md#feri---api) to the [API](docs/advanced/api/index.md#feri---api).
 
-## Donate
-
-This software may be free but my love of loose leaf tea is not. Donate to [support my work](https://ko-fi.com/kai_nightmode) and unlock private messages on Ko-fi.
-
 ## License
 
-MIT © [Kai Nightmode](https://nightmode.fm/)
+[CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/)
 
-The MIT license does NOT apply to the name `Feri` or any of the images in this repository. Those items are strictly copyrighted to Kai Nightmode.
+This work has been marked as dedicated to the public domain.

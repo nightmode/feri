@@ -45,9 +45,3 @@ Create a promise chain of cleaning tasks based on a single file type.
 @param   {String}   filePath  Path like '/dest/index.html'
 @return  {Promise}            Promise that returns a file path string if something was cleaned otherwise undefined.
 ```
-
-## License
-
-MIT © [Kai Nightmode](https://nightmode.fm/)
-
-The MIT license does NOT apply to the name `Feri` or any of the images in this repository. Those items are strictly copyrighted to Kai Nightmode.

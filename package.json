@@ -32,10 +32,6 @@
   "engines": {
     "node": ">= 18"
   },
-  "funding": {
-    "type": "individual",
-    "url": "https://ko-fi.com/kai_nightmode"
-  },
   "keywords": [
     "clean",
     "build",
@@ -54,7 +50,7 @@
     "svg",
     "webp"
   ],
-  "license": "MIT",
+  "license": "CC0-1.0",
   "main": "code/1 - main.js",
   "name": "feri",
   "repository": {
@@ -69,5 +65,5 @@
     "test-build": "mocha \"mocha/6 - build.js\" --config \"mocha/mocha.json\"",
     "test-watch": "mocha \"mocha/7 - watch.js\" --config \"mocha/mocha.json\""
   },
-  "version": "5.2.0"
+  "version": "6.0.0"
 }

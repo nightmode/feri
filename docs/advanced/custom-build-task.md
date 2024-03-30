@@ -134,9 +134,3 @@ There is no reason to return the object for any further build tasks. Knowing the
 ## More Complex Tasks
 
 When building more complex tasks, your best friends will be [functions.objBuildInMemory](api/functions.md#functionsobjbuildinmemory), [functions.objBuildOnDisk](api/functions.md#functionsobjbuildondisk), and [functions.objBuildWithIncludes](api/functions.md#functionsobjbuildwithincludes). Each of these is used in various bundled [build](api/build.md#feri---build) tasks so feel free to use any of the built-in tasks as a template for your own custom build task.
-
-## License
-
-MIT © [Kai Nightmode](https://nightmode.fm/)
-
-The MIT license does NOT apply to the name `Feri` or any of the images in this repository. Those items are strictly copyrighted to Kai Nightmode.

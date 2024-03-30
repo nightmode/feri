@@ -19,9 +19,3 @@ extension: { // web browser extension support
 ## Extension Client
 
 Visit the [Feri Extension](https://github.com/nightmode/feri-extension#feri-extension) project for an overview, install information, usage guide, and more.
-
-## License
-
-MIT © [Kai Nightmode](https://nightmode.fm/)
-
-The MIT license does NOT apply to the name `Feri` or any of the images in this repository. Those items are strictly copyrighted to Kai Nightmode.

@@ -80,9 +80,3 @@ For more information, see the [Build](build.md#feri---build) documentation.
 Watch is all about watching source and destination folders for changes. Initiating the appropriate clean or build tasks in response to file system events.
 
 For more information, see the [Watch](watch.md#feri---watch) documentation.
-
-## License
-
-MIT © [Kai Nightmode](https://nightmode.fm/)
-
-The MIT license does NOT apply to the name `Feri` or any of the images in this repository. Those items are strictly copyrighted to Kai Nightmode.

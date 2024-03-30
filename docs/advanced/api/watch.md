@@ -214,9 +214,3 @@ Process the `shared.watch.workQueue` array and run tasks one at a time to match 
 ```
 @return  {Promise}
 ```
-
-## License
-
-MIT © [Kai Nightmode](https://nightmode.fm/)
-
-The MIT license does NOT apply to the name `Feri` or any of the images in this repository. Those items are strictly copyrighted to Kai Nightmode.
