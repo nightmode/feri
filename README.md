@@ -22,7 +22,6 @@ Incrementally clean, build, and watch with little to no configuration required.
   * [Custom Config File](docs/advanced/custom-config-file.md#feri---custom-config-file)
   * [Custom Build Task](docs/advanced/custom-build-task.md#feri---custom-build-task)
   * [Unique File Types](docs/advanced/unique-file-types.md#feri---unique-file-types)
-  * [Feri Extension](docs/advanced/feri-extension.md#feri---feri-extension)
   * [Edge Cases](docs/advanced/edge-cases.md#feri---edge-cases)
   * [API](docs/advanced/api/index.md#feri---api)
 * [License](#license)
@@ -145,10 +144,6 @@ Feri thinks you should be able to grab nearly any npm module and make a [custom 
 ### Unique File Types
 
 Feri comes with built-in support for [unique file types](docs/advanced/unique-file-types.md#feri---unique-file-types) such as `br`, `concat`, `gz`, and `jss`.
-
-### Feri Extension
-
-Reload a web browser tab when files change with the [Feri Extension](docs/advanced/feri-extension.md#feri---feri-extension) for Chrome, Edge, and Firefox.
 
 ### Edge Cases
 

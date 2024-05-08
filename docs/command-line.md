@@ -95,9 +95,3 @@ Republish from a specific source folder to a specific destination folder.
 ```
 feri --republish /path/to/source /path/to/destination
 ```
-
-Clean, build, watch, and host a [Feri Extension](https://github.com/nightmode/feri-extension#feri-extension) server for Chrome, Edge, and Firefox.
-
-```
-feri --extensions
-```
