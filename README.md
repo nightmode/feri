@@ -151,7 +151,7 @@ Some [edge cases](docs/advanced/edge-cases.md#feri---edge-cases) you may want to
 
 ### API
 
-Leverage or even replace anything behind the scenes with [full access](docs/advanced/api/index.md#feri---api) to the [API](docs/advanced/api/index.md#feri---api).
+Leverage or even replace anything behind the scenes with full access to the [API](docs/advanced/api/index.md#feri---api).
 
 ## License
 
