@@ -447,6 +447,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                         "sources": ["source/sample.js"],
                         "names": ["mellow"],
                         "mappings": "AAAA,IAAIA,OAAS",
+                        "ignoreList": [],
                         "sourceRoot": "/source-maps",
                         "sourcesContent": ["var mellow = 'yellow'"]
                     }
@@ -1350,6 +1351,7 @@ describe('File -> ../code/6 - build.js\n', function() {
                         'sources': ['source/treasure.js'],
                         'names': ['treasure','music'],
                         'mappings': 'AAAA,IAAIA,SAAW,OACXC,MAAQD,SAAW',
+                        'ignoreList': [],
                         'file': 'treasure.js',
                         'sourceRoot': '/source-maps',
                         'sourcesContent': ['var treasure = \'gold\'\nvar music = treasure + \' plated records\'']
