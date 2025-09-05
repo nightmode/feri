@@ -286,32 +286,32 @@ config.thirdParty = {
             'removeHiddenElems',
             'removeMetadata',
             'removeNonInheritableGroupAttrs',
-            'removeTitle',
             'removeUnknownsAndDefaults',
             'removeUnusedNS',
             'removeUselessDefs',
             'removeUselessStrokeAndFill',
-            'removeViewBox',
             'removeXMLProcInst',
             'sortDefsChildren'
 
             // disabled plugins
             /*
-               addAttributesToSVGElement
-               addClassesToSVGElement
-               cleanupListOfValues
-               mergeStyles
-               removeAttributesBySelector
-               removeAttrs
-               removeDimensions
-               removeElementsByAttr
-               removeOffCanvasPaths
-               removeRasterImages
-               removeScriptElement
-               removeStyleElement
-               removeXMLNS
-               reusePaths
-               sortAttrs
+                addAttributesToSVGElement
+                addClassesToSVGElement
+                cleanupListOfValues
+                mergeStyles
+                removeAttributesBySelector
+                removeAttrs
+                removeDimensions
+                removeElementsByAttr
+                removeOffCanvasPaths
+                removeRasterImages
+                removeScripts
+                removeStyleElement
+                removeTitle
+                removeViewBox
+                removeXMLNS
+                reusePaths
+                sortAttrs
             */
         ]
     }

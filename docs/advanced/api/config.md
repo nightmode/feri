@@ -734,12 +734,10 @@ Options for [svgo](https://www.npmjs.com/package/svgo). Used by [build.svg](buil
     'removeHiddenElems',
     'removeMetadata',
     'removeNonInheritableGroupAttrs',
-    'removeTitle',
     'removeUnknownsAndDefaults',
     'removeUnusedNS',
     'removeUselessDefs',
     'removeUselessStrokeAndFill',
-    'removeViewBox',
     'removeXMLProcInst',
     'sortDefsChildren'
 
@@ -755,8 +753,10 @@ Options for [svgo](https://www.npmjs.com/package/svgo). Used by [build.svg](buil
         removeElementsByAttr
         removeOffCanvasPaths
         removeRasterImages
-        removeScriptElement
+        removeScripts
         removeStyleElement
+        removeTitle
+        removeViewBox
         removeXMLNS
         reusePaths
         sortAttrs
