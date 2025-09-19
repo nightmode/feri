@@ -1069,7 +1069,16 @@ functions.makeDirPath = function functions_makeDirPath(filePath, isDir) {
 
     if (!isDir) {
         filePath = path.dirname(filePath)
-    }
+    } // if
+
+    if (shared.slash === '\\') {
+        // we are on windows
+
+        // ensure drive letters are uppercase for mkdirp
+        filePath = filePath.replace(/^([a-z]:)/, function(match, p1) {
+            return p1.toUpperCase()
+        })
+    } // if
 
     return mkdirp(filePath).then(function(confirmPath) {
         return true

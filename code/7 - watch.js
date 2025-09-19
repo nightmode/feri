@@ -12,9 +12,8 @@ const build     = require('./6 - build.js')
 //----------
 // Includes
 //----------
-const events     = require('events') // ~ 1 ms
-const { mkdirp } = require('mkdirp') // ~ 3 ms
-const path       = require('path')   // ~ 1 ms
+const events = require('events') // ~ 1 ms
+const path   = require('path')   // ~ 1 ms
 
 //---------------------
 // Includes: Lazy Load
@@ -708,7 +707,9 @@ watch.workQueueProcess = async function watch_workQueueProcess() {
                         break
 
                     case 'adddir':
-                        await mkdirp(functions.sourceToDest(work.path))
+                        await functions.makeDirPath(
+                            functions.sourceToDest(work.path),
+                            true) // true meaning the file path is a directory
                         break
 
                     case 'change':
