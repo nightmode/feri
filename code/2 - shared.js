@@ -23,6 +23,19 @@ const propertyAccessor = function propertyAccessor(object, keys) {
     return object
 } // propertyAccessor
 
+const windowsDriveCase = function windowsDriveCase(filePath) {
+    /*
+    Capitalize the drive letter in a Windows style path.
+
+    @param   {String}  filePath  File path like 'c:\Users\Feri'
+    @return  {String}            File path like 'C:\users\Feri'
+    */
+
+    return filePath.replace(/^([a-z]:)/, function(match, p1) {
+        return p1.toUpperCase()
+    })
+} // windowsDriveCase
+
 //-----------
 // Variables
 //-----------
@@ -214,6 +227,10 @@ const shared = {
 //------------------
 if (shared.platform === 'win32') {
     shared.slash = '\\'
+
+    // ensure drive letters are uppercase for glob and possibly other libraries
+    shared.path.pwd  = windowsDriveCase(shared.path.pwd)
+    shared.path.self = windowsDriveCase(shared.path.self)
 }
 
 //---------
