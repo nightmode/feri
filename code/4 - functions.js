@@ -12,7 +12,6 @@ const config = require('./3 - config.js')
 //----------
 const fs         = require('fs')     // ~  1 ms
 const { glob }   = require('glob')   // ~ 13 ms
-const { mkdirp } = require('mkdirp') // ~  3 ms
 const path       = require('path')   // ~  1 ms
 const { rimraf } = require('rimraf') // ~ 13 ms
 const util       = require('util')   // ~  1 ms
@@ -20,6 +19,7 @@ const util       = require('util')   // ~  1 ms
 //---------------------
 // Includes: Promisify
 //---------------------
+const fsMkdir            = util.promisify(fs.mkdir)     // ~ 1 ms
 const fsReaddir          = util.promisify(fs.readdir)   // ~ 1 ms
 const fsReadFilePromise  = util.promisify(fs.readFile)  // ~ 1 ms
 const fsStatPromise      = util.promisify(fs.stat)      // ~ 1 ms
@@ -1067,20 +1067,14 @@ functions.makeDirPath = function functions_makeDirPath(filePath, isDir) {
 
     isDir = isDir || false
 
-    if (!isDir) {
+    if (isDir === false) {
+        // remove file name from the path
         filePath = path.dirname(filePath)
     } // if
 
-    if (shared.slash === '\\') {
-        // we are on windows
-
-        // ensure drive letters are uppercase for mkdirp
-        filePath = filePath.replace(/^([a-z]:)/, function(match, p1) {
-            return p1.toUpperCase()
-        })
-    } // if
-
-    return mkdirp(filePath).then(function(confirmPath) {
+    return fsMkdir(filePath, { recursive: true }).then(function(createdPath) {
+        // createdPath will be undefined if the requested filePath already exists
+        // createdPath will be a string that looks similiar to filePath but it will only be up to the first directory created, even if further sub-directories were also created// remove file name from path
         return true
     })
 } // makeDirPath

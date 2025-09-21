@@ -16,7 +16,6 @@
     "html-minifier": "4.0.0",
     "jpegtran-bin": "7.0.0",
     "markdown-it": "14.1.0",
-    "mkdirp": "3.0.1",
     "multi-stage-sourcemap": "0.3.1",
     "node-wav-player": "1.0.0",
     "optipng-bin": "9.0.0",
