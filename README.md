@@ -53,7 +53,7 @@ A single source directory which builds/compiles/minifies into a single destinati
 A single plan of action for each file type. CSS files are minified. JPG files are losslessly optimized. Markdown files are compiled, then minified, and so on. Each extension can have its own unique build process but all files with that extension are treated equally.
 
 ### Include Files
-Any file prefixed with an underscore `_` is considered an include file. Include files do not get directly published from source to destination. Instead, include file contents are only published when a file that can leverage includes is published.
+Any file or folder prefixed with an underscore `_` is considered an include. Includes do not get directly published from source to destination. Instead, include file contents are only published when a file that can leverage includes is published.
 
 ### Customizable
 
